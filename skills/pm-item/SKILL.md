@@ -35,8 +35,9 @@ contract in the pm-skills section of the agent instructions file
 
 ## Steps
 
-1. Show the item and the change. For `drop`, ask once: `Drop <ID> <title>?
-   (yes / no)`. Other modes need no confirmation.
+1. Show the item and the change. For `drop`, ask one choice question:
+   `Drop <ID> <title>?` with the options `Drop it`, `Keep it
+   (recommended)`, and `Type something`. Other modes need no confirmation.
 2. Apply the edit to `ROADMAP.md`. Moves to Next go at the bottom.
 3. For `drop`, append to `## Dropped` in `LOG.md`:
    `- <date> <ID> <title>. Reason: <reason>.`

@@ -29,9 +29,9 @@ installed. Existing content is never rewritten, reordered, or removed.
 
 If an existing PM state-directory setting is present in a pm-skills
 section, preserve it and do not ask again. Otherwise ask this before any
-other question:
-
-`Which repository-relative folder should hold the planning files? (Default: planning/)`
+other question, as a choice question: `Which folder should hold the
+planning files?` with the options `planning/ (recommended)` and `Type
+another folder`.
 
 - Use `planning/` if the user accepts the default.
 - Accept only a repository-relative directory. Reject absolute paths, paths
@@ -95,10 +95,11 @@ Collect these facts. Write nothing yet.
 
 If only `.claude/CLAUDE.md` exists, treat it as `CLAUDE.md`.
 
-## Step 4: Show the plan and get one confirmation
+## Step 4: Show the plan and ask one question
 
-Show this, then ask exactly one more question: `Apply? (yes / no / change
-<item>)`. The folder question in Step 1 is the only other question.
+Show this, then ask exactly one choice question: `Apply this plan?` with
+the options `Apply (recommended)`, `Change something` (free text), and
+`No`. The folder question in Step 1 is the only other question.
 
 ```markdown
 ## pm-setup plan
@@ -127,7 +128,9 @@ Rules for this step:
 - If there are no conflicts, omit the Conflicts section.
 - For each conflict, the default proposal is **Leave it**. The managed
   section already states precedence. Offer to edit a conflicting line only
-  if the user asks, and then ask for a yes per line.
+  if the user asks, and then ask one choice question per line: `Change this
+  line?` with the options `Leave it (recommended)` and `Change it` (free
+  text).
 - If skills are missing, add this line to the plan:
   `Missing skills: run npx skills add https://github.com/kjldev/pm-skills -y
   after this merge.`
@@ -139,7 +142,7 @@ Rules for this step:
 - If the mode is "already current" and no skills are missing, stop after
   showing the plan.
 
-## Step 5: Apply (only after "yes")
+## Step 5: Apply (only after the user chooses Apply)
 
 1. **Section.** Read `references/AGENTS-section.md`.
    - If no setting existed, replace its default `PM state directory` value

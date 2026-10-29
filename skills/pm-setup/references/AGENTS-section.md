@@ -1,4 +1,4 @@
-<!-- pm-skills:start version=2 -->
+<!-- pm-skills:start version=3 -->
 <!-- Managed by pm-setup. Edit outside these markers; content inside is replaced on upgrade. -->
 
 ## Project management layer (`pm-*` skills)
@@ -118,6 +118,13 @@ Output must be literal, predictable, and immediately actionable.
 - At most 5 bullets per section. At most 3 sentences per paragraph.
 - Ask one question at a time. State any assumption explicitly as
   `Assumption: ...`.
+- **Ask with choices.** When a step needs the user's decision, use the
+  agent's interactive choice prompt (for example, a `question` tool). Offer
+  the affirmative action first, then the negative option, then a free-text
+  escape such as `Type something`. Label options with the action they take
+  ("Apply the plan", "Drop R-004"), not a bare keyword. Never require the
+  user to type `yes`, `ok`, `approve`, or another literal word. If the
+  agent has no choice prompt, ask inline with the same options.
 - Flag scope changes explicitly as `SCOPE CHANGE: ...`. Never expand scope
   silently.
 - Neutral wording about progress. Report facts (counts, dates), not

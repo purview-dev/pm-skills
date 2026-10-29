@@ -29,7 +29,9 @@ contract in the pm-skills section of the agent instructions file
      it).
    - Inbox count, Next count against the max, Later count.
 3. Triage the inbox **one file at a time**, oldest first. For each, show
-   its title and idea, propose one action, and wait:
+   its title and idea, propose one action, then ask one choice question:
+   the proposed action (recommended), the other actions, and `Type
+   something`. Wait for the answer.
    - `add to Next` or `add to Later`: new roadmap item with a new ID (Shared
      definitions), `Serves`, `Done when`, `Size`, `Status: ready`. Put the
      idea text in `Note:`.
@@ -39,7 +41,9 @@ contract in the pm-skills section of the agent instructions file
    - Delete the inbox file after the action is applied.
 4. If Next is above its max, propose which items move to Later. If it has
    fewer ready items than the max, propose promotions from Later. Order
-   Next by dependency, then by the vision's v1 outcomes. One confirmation.
+   Next by dependency, then by the vision's v1 outcomes. Ask one choice
+   question: `Accept this order?` with the options `Accept (recommended)`
+   and `Type changes`.
 5. Set `Last review` Date in `config.md` to today. Append to `## Reviews`
    in `LOG.md`: `- <date> Inbox <n> to <m>. <one-line summary>.`
 

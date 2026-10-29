@@ -22,7 +22,9 @@ contract in the pm-skills section of the agent instructions file
 | `done` | The item's `Done when` checks all pass | Log it, set `NOW.md` to idle |
 | `switch` | The user wants a different item | Move the active item back to Next as `paused`, set idle |
 
-If the mode is unclear, choose `pause` and say `Assumption: pause`.
+If the mode is unclear, ask one choice question: `What should I save?`
+with the options `Pause (recommended)`, `Mark done`, `Switch item`, and
+`Type something`.
 
 ## Guard
 

@@ -28,13 +28,15 @@ contract in the pm-skills section of the agent instructions file
 
 1. Take the first `Status: ready` item in `## Next`. Show it.
 2. If its `Size` is `L`, or its `Done when` is not observable, propose a
-   split into items of size S or M, with new IDs from the ID rule. Ask for
-   one confirmation (`ok` or changes). Insert the parts at the top of Next
+   split into items of size S or M, with new IDs from the ID rule. Ask one
+   choice question: `Accept this split?` with the options `Accept
+   (recommended)` and `Type changes`. Insert the parts at the top of Next
    in dependency order. If Next would then exceed the max in `config.md`,
    move the lowest items to the top of Later and say which. Then claim the
    first part.
-3. Ask one question only if the item is ambiguous: `Assumption: <x>. Is
-   this right? (yes / change)`
+3. Ask one question only if the item is ambiguous. State the assumption
+   first, then ask a choice question: `Is this assumption right?` with the
+   options `Yes (recommended)`, `No`, and `Type a correction`.
 4. Write `NOW.md` with the schema fields: `Status: active`, `Item`,
    `Session` (current branch), `Stage: design`, `Started` (today),
    empty `Spec` and `Plan`, and the item's `Done when` under `## Done

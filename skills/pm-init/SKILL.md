@@ -41,8 +41,9 @@ contract in the pm-skills section of the agent instructions file
    | `inbox-README.md` | `<PM root>/inbox/README.md` |
 
 3. Fill `<PM root>/VISION.md` by asking these questions **one at a time**,
-   in this order. After each answer, show the line you wrote and move on.
-   Do not debate the answer.
+   in this order. Ask each as a free-text question; do not offer preset
+   answers. After each answer, show the line you wrote and move on. Do not
+   debate the answer.
    1. "In one sentence, what problem does the product solve?"
    2. "Who has this problem and pays to solve it?"
    3. "List 3 to 5 things that must be true for v1 to be done. Each one
@@ -50,15 +51,18 @@ contract in the pm-skills section of the agent instructions file
    4. "What is explicitly not in v1?"
    5. "Hours per week, monthly budget, and any fixed technology choices?"
 4. If an answer to question 3 cannot be checked (for example "it's
-   polished"), propose one checkable version and ask for yes or no.
-5. Seed the roadmap. Ask: "List the features you already have in mind, in
-   any order." Then:
+   polished"), propose one checkable version and ask a choice question:
+   `Use this wording?` with the options `Use it (recommended)`, `No`, and
+   `Type your own`.
+5. Seed the roadmap. Ask as a free-text question: "List the features you
+   already have in mind, in any order." Then:
    - Give each item an ID (`R-001` upwards), a `Serves:` line (V1, V2, and
      so on), a `Done when:`, and a size.
    - Anything matching "Out of scope" goes to `## Later` with
      `Status: ready` and the note `Out of scope for v1`.
    - Propose the top 5 for `## Next` in dependency order, with one reason
-     per item. Ask for one confirmation: "ok", or the user's changes.
+     per item. Ask one choice question: `Accept this Next list?` with the
+     options `Accept (recommended)` and `Type changes`.
 6. Verify the specs path in the Handoffs table: check whether the installed
    design skill states a save location. If it differs, update
    `<PM root>/config.md`.

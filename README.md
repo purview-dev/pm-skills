@@ -7,7 +7,9 @@ feature is worked on. The workflow skills decide **how** it is built.
 
 The skills are designed for literal, predictable, low-friction output: one
 next action, an explicit "done when", and fixed templates. Ideas are
-captured without derailing the current task.
+captured without derailing the current task. At decision points the skills
+use the agent's choice prompt (yes / no / type something) instead of
+requiring a typed approval.
 
 ## Install
 
