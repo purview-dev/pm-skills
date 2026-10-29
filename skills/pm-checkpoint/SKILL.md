@@ -1,77 +1,91 @@
 ---
 name: pm-checkpoint
-description: Use when the user says stop, pause, done for today, checkpoint, or switch; or immediately after a design, plan, or finish handoff skill from pm/config.md completes.
+description: Use when a session ends, a workflow stage finishes, the user says pause or stop, work on the active item is done, or they want to switch items. Saves state to NOW.md and closes finished items in the PM root.
 ---
 
 # pm-checkpoint
 
-Save exactly where work stopped, so `pm-resume` can restart it with no
-thinking required. It also records stage changes and closes finished items.
+Save state so the next session can continue with no memory of this one.
+Writes only inside the PM root, in the main worktree.
 
-Follow the Non-interruption rules and Communication contract in `AGENTS.md`.
-
-## Guard
-
-- Never run in the middle of a workflow step. If the user says "pause"
-  during a workflow, let the current atomic step finish (the current test,
-  edit, or command), then run.
-- Only the session named in `pm/NOW.md` may checkpoint that item
-  (Non-interruption rule 7).
+Follow the Non-interruption rules, Shared definitions, and Communication
+contract in the pm-skills section of the agent instructions file
+(`AGENTS.md` or `CLAUDE.md`). PM root is its `PM state directory` setting
+(default `planning/`).
 
 ## Modes
 
-Choose the mode from the trigger:
+| Mode | When | Effect |
+| --- | --- | --- |
+| `stage` | A design, plan, or finish handoff skill just completed | Update `Stage`, `Spec`, `Plan`; continue to the next handoff |
+| `pause` | Session ends, or the user says "pause" or "stop" | Write the checkpoint; item stays active |
+| `done` | The item's `Done when` checks all pass | Log it, set `NOW.md` to idle |
+| `switch` | The user wants a different item | Move the active item back to Next as `paused`, set idle |
 
-| Trigger | Mode |
-| --- | --- |
-| Design skill completed | `stage` (record spec, set `Stage: plan`) |
-| Plan skill completed | `stage` (record plan, set `Stage: execute`) |
-| User stops or pauses, item unfinished | `save` |
-| User says "switch" | `pause` |
-| Finish skill completed | `close` |
+If the mode is unclear, choose `pause` and say `Assumption: pause`.
+
+## Guard
+
+- If `<PM root>/config.md` or `NOW.md` is missing: `No <PM root> state. Run
+  pm-init.` Stop.
+- If `Status: idle`, reply `Nothing active. Run pm-next.` Stop.
+- If the `Session` in `NOW.md` does not match the current session (Shared
+  definitions), stop. Reply: `<ID> belongs to <Session>. Not changed.`
+- If a workflow is active and the user did not say "pause", apply
+  Non-interruption rule 4, except in `stage` mode right after a handoff
+  skill finishes.
 
 ## Steps
 
-1. Get the time with `date "+%Y-%m-%d %H:%M"`.
-2. **stage**: in `pm/NOW.md`, set `Stage` and add the `Spec` or `Plan`
-   path that the handoff skill reported. Then also do step 3.
-3. **save** (and after **stage**): replace the `## Checkpoint` section in
-   `pm/NOW.md` with:
-   - `Stopped at:` the last completed step (a commit, task number, or
-     file).
-   - `Next action:` one action that can start in under 15 minutes.
-   - `Start with:` an exact command or file path.
-   - `Open question:` only if something blocks the next action.
-4. **pause**: do step 3. Then move the item back to the top of `## Next` in
-   `pm/ROADMAP.md` with `Status: paused` and the checkpoint copied into
-   `Paused checkpoint:`. Set `pm/NOW.md` to `Status: idle`.
-5. **close**: check each `Done when` line against evidence (test output,
-   endpoint response, merged commit). Then:
-   - If every line passes, add a line to `## Done` in `pm/LOG.md` with the
-     date, ID, title, plan path, and PR or commit. Set `pm/NOW.md` to
-     `Status: idle`.
-   - If any line fails, do not close. List the failing lines and run
-     **save** mode.
-6. Print the suggested commit command. Do not run it (Non-interruption rule
-   6).
+1. Timestamp: Shared definitions.
+2. **stage:** set `Stage` to the next stage in Handoffs order
+   (design, plan, execute, finish). Fill `Spec` or `Plan` with the file the
+   finished skill wrote. Do not write a checkpoint block. Then invoke the
+   next handoff skill. In the output, show any commit as a Note, not under
+   "Do this next".
+3. **pause:** replace `## Checkpoint` with this block, using real values:
+
+   ```markdown
+   ## Checkpoint <YYYY-MM-DD HH:MM>
+
+   - Stopped at: <last completed step>
+   - Next action: <one action>
+   - Start with: <exact command or file path>
+   - Open question: <only if blocking>
+   ```
+
+   Derive `Stopped at` from the plan checkboxes and `git status`. List
+   uncommitted files as a Note.
+4. **done:** check every line under `## Done when` against evidence (test
+   output, file existence). If any is unproven, stay in `pause` and list
+   them. Otherwise append to `## Done` in `LOG.md`:
+   `- <date> <ID> <Title>. Plan: <path>. Result: <PR or commit>.`
+   Then set `NOW.md` to idle: `Status: idle`, every other field empty,
+   `## Done when` and `## Checkpoint` empty.
+5. **switch:** copy the active item to the top of `## Next` in
+   `ROADMAP.md` with `Status: paused` and `Paused checkpoint:` set to the
+   current checkpoint (write one first, as in `pause`). If Next is at its
+   max from `config.md`, move the lowest Next item to the top of Later and
+   say so. Then set `NOW.md` to idle as in `done`.
 
 ## Output
 
 ```markdown
-## Checkpoint saved
+## Saved
 
-- Item: <ID> <title> (stage: <stage>)
-- Mode: <stage | save | pause | close>
-- Next time: <next action, or "closed">
+- Mode: <mode>
+- Item: <ID Title | none>
+- Stage: <stage | idle>
 
 ## Do this next
 
-1. Commit PM state.
-   - Start with: `git -C <main worktree> add pm && git -C <main worktree> commit -m "pm: <mode> <ID>"`
-   - Done when: pm/ is clean in `git status`
+1. <one action>
+   - Start with: <exact command, file, or skill name>
+   - Done when: <observable check>
+
+## Note
+
+- <uncommitted files, commit command to run, assumptions>
 ```
 
-After a `stage` checkpoint, continue straight into the next handoff skill,
-without waiting.
-
-After `close` or `pause`, ask one question: `Run pm-next?`
+Do not run `git commit`. Print suggested commands for the user.

@@ -1,70 +1,59 @@
 ---
 name: pm-review
-description: Use only when the user asks for a review, says they feel lost, off track, or overwhelmed by the backlog, or after pm-resume reports that a review is due.
+description: Use when the user asks for a weekly review, or pm-resume reports review is due. Triages the inbox and reorders the roadmap against the vision, one decision at a time.
 ---
 
 # pm-review
 
-Weekly triage: empty the inbox, check the roadmap against the vision, and
-end with one clear next item. Takes 10 to 15 minutes.
+Triage the inbox and re-order the roadmap against `VISION.md`.
 
-Follow the Non-interruption rules and Communication contract in `AGENTS.md`.
+Follow the Non-interruption rules, Shared definitions, and Communication
+contract in the pm-skills section of the agent instructions file
+(`AGENTS.md` or `CLAUDE.md`). PM root is its `PM state directory` setting
+(default `planning/`).
 
 ## Guard
 
-- If a workflow is active, apply Non-interruption rule 4.
-- Never change the item in `pm/NOW.md` or its spec or plan. Review edits
-  only `pm/ROADMAP.md`, `pm/inbox/`, `pm/LOG.md`, `pm/config.md`, and,
-  with explicit approval, `pm/VISION.md`.
+- If `<PM root>/config.md` is missing: `No <PM root> state. Run pm-init.`
+  Stop.
+- If a workflow is active, apply Non-interruption rule 4 and stop.
+- Do not change the active item in `NOW.md`.
 
 ## Steps
 
-Run the steps in order. Show the step number as `Step <n> of 5`.
+1. Read `VISION.md`, `ROADMAP.md`, `NOW.md`, `LOG.md`, and `config.md`.
+2. State these facts (all computable):
+   - Days since last review, and days the active item has been active
+     (from `Started`).
+   - Items closed since the last review (`LOG.md` Done lines dated after
+     it).
+   - Inbox count, Next count against the max, Later count.
+3. Triage the inbox **one file at a time**, oldest first. For each, show
+   its title and idea, propose one action, and wait:
+   - `add to Next` or `add to Later`: new roadmap item with a new ID (Shared
+     definitions), `Serves`, `Done when`, `Size`, `Status: ready`. Put the
+     idea text in `Note:`.
+   - `merge into <ID>`: append the idea as a `Note:` line on that item.
+   - `drop`: append to `## Dropped` in `LOG.md`:
+     `- <date> <title>. Reason: <one line>.`
+   - Delete the inbox file after the action is applied.
+4. If Next is above its max, propose which items move to Later. If it has
+   fewer ready items than the max, propose promotions from Later. Order
+   Next by dependency, then by the vision's v1 outcomes. One confirmation.
+5. Set `Last review` Date in `config.md` to today. Append to `## Reviews`
+   in `LOG.md`: `- <date> Inbox <n> to <m>. <one-line summary>.`
 
-1. **Inbox triage.** Show inbox items in batches of 5 as a table:
-
-   | File | Title | Proposed | Reason |
-   | --- | --- | --- | --- |
-   | ... | ... | Next, Later, Drop, or Merge into R-NNN | One line |
-
-   Use "Drop" for items that match `Out of scope`, and say so in the
-   Reason column. The user replies "ok" or changes specific rows. Then
-   apply the batch:
-   - Next or Later: create an item with a new ID, then delete the inbox
-     file.
-   - Merge: add the raw text under the target item as `- Note:`, then
-     delete the file.
-   - Drop: add a line to `## Dropped` in `pm/LOG.md`, then delete the file.
-2. **Scope check.** For each item in `## Next`, confirm that its `Serves:`
-   line matches a v1 outcome. List mismatches. For each mismatch, propose
-   one action: move to Later, or change the vision. Vision changes need an
-   explicit "yes".
-3. **Order Next.** Propose an order of at most 5 items, with one reason per
-   item (dependency, risk, or value). Move any extra items to Later. One
-   confirmation applies the order.
-4. **Facts since last review.** Report numbers only:
-   - Items closed (from `pm/LOG.md`).
-   - Items started that were not in Next at the last review.
-   - Ideas parked.
-   - Days the current item has been active.
-
-   If the current item has been active for more than 14 days, propose one
-   option: split it, or pause it.
-5. **Record.** Add a line to `## Reviews` in `pm/LOG.md`. Set `Last review`
-   in `pm/config.md` to today.
-
-## Output (final)
+## Output
 
 ```markdown
-## Review done
+## Review <YYYY-MM-DD>
 
-- Inbox: <n> to 0 (<n> added, <n> merged, <n> dropped)
-- Next: <IDs in order>
-- Scope changes: <none, or list>
+- Closed since last review: <n>
+- Inbox: <before> to <after>
+- Next: <n>/<max>. Later: <n>.
 
 ## Do this next
 
-1. <pm-resume if an item is active, otherwise pm-next>
-   - Start with: `<skill name>`
-   - Done when: <item> is claimed or resumed
+1. Run `pm-next`, or `pm-status` to see the queue.
+   - Done when: <NOW.md shows the claimed item | queue shown>
 ```

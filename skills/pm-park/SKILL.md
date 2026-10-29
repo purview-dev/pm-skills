@@ -1,47 +1,50 @@
 ---
 name: pm-park
-description: Use when the user raises a new idea, feature, bug, or "we should also" that is not part of the current task, or says "park this". Capture only; never discuss.
+description: Use when the user mentions an off-task idea, feature, or bug during other work and wants it saved without discussion. Writes one inbox file and replies in one line. Capture only.
 ---
 
 # pm-park
 
-Capture an off-task idea in about 10 seconds, then return to exactly where
-work was. This is the only PM skill allowed during an active workflow
-(Non-interruption rule 3).
+Capture one idea in one file, reply in one line, return to the task in
+progress. This is the only `pm-*` skill that may run during an active
+workflow.
 
-## Rules
+Follow the Non-interruption rules, Shared definitions, and Communication
+contract in the pm-skills section of the agent instructions file
+(`AGENTS.md` or `CLAUDE.md`). PM root is its `PM state directory` setting
+(default `planning/`).
 
-- Do not evaluate, discuss, estimate, or plan the idea.
-- Do not ask follow-up questions. If the idea is unclear, store it verbatim.
-- Do not edit `pm/NOW.md`, `pm/ROADMAP.md`, or any spec or plan.
-- Write exactly one new file. Never edit existing inbox files.
+## Guard
 
-## Exception: the idea is part of the current task
-
-If the idea is required to meet the current item's `Done when` in
-`pm/NOW.md`, do not park it. Reply with one line:
-`Not parked: this is needed for <ID> "Done when". Continuing.` Then
-continue.
+- If `<PM root>/` does not exist, reply: `No <PM root> folder. Run pm-init.
+  Idea (not saved): <the idea, verbatim>`. Stop.
+- Write in the main worktree, not the current feature worktree.
 
 ## Steps
 
-1. Get the time with `date +%Y-%m-%d-%H%M`.
-2. Write `pm/inbox/<time>-<slug>.md` in the main worktree. The slug is 2 to
-   5 lowercase words from the idea, joined with hyphens.
+1. Build the slug: lowercase, ASCII letters, digits and hyphens, at most 5
+   words from the idea.
+2. Get the timestamp with the command for the current shell (see Shared
+   definitions). The filename is `<PM root>/inbox/<YYYY-MM-DD-HHMM>-<slug>.md`.
+   If that path exists, append `-2`, then `-3`, before `.md`.
+3. Write the file:
 
    ```markdown
-   # <Short title>
+   # <Short title, max 8 words>
 
-   - Type: idea | bug | tech-debt | question
-   - Raised during: <NOW item ID, or "none">
-   - Date: <YYYY-MM-DD HH:MM>
+   - Captured: <YYYY-MM-DD HH:MM>
+   - Context: <active item ID and stage, or "none">
 
-   ## Raw
+   ## Idea
 
-   <The user's words, verbatim.>
+   <the user's words, verbatim, no rewriting>
    ```
 
-3. Reply with exactly one line, then resume the previous step without
-   waiting:
+4. Reply with exactly one line:
+   `Parked: <filename>. Back to <current step>.`
+5. Resume the step that was in progress. Do not evaluate, estimate, or
+   discuss the idea. Ask no questions.
 
-   `Parked: <title> -> pm/inbox/<file>. Back to: <step in progress>.`
+## Output
+
+One line. Nothing else.

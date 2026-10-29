@@ -1,69 +1,63 @@
 ---
 name: pm-next
-description: Use only when pm/NOW.md is idle and the user asks what to work on next, or immediately after pm-checkpoint closes or pauses an item.
+description: Use only when the user asks what to build next, or no item is active and they want to start one. Claims the top ready roadmap item, writes NOW.md, and hands off to the design skill.
 ---
 
 # pm-next
 
-Pick one roadmap item, claim it in `pm/NOW.md`, and hand off to the design
-skill.
+Claim the next roadmap item and start its design. Writes only `NOW.md` and
+`ROADMAP.md`.
 
-Follow the Non-interruption rules and Communication contract in `AGENTS.md`.
+Follow the Non-interruption rules, Shared definitions, and Communication
+contract in the pm-skills section of the agent instructions file
+(`AGENTS.md` or `CLAUDE.md`). PM root is its `PM state directory` setting
+(default `planning/`).
 
 ## Guard
 
-- If `pm/NOW.md` is `Status: active`, do not pick anything. Run
-  `pm-resume` instead. To switch items, the user must say "switch". Then
-  run `pm-checkpoint` in pause mode first.
-- If a workflow is active, apply Non-interruption rule 4.
+- If `<PM root>/config.md` or `NOW.md` is missing: `No <PM root> state. Run
+  pm-init.` Stop.
+- If `NOW.md` lacks the schema fields (see pm-resume), say it is malformed
+  and stop.
+- If a workflow is active, apply Non-interruption rule 4 and stop.
+- If `Status: active`, stop. Reply: `<ID> is active. Run pm-checkpoint
+  (switch) first, or pm-resume.`
+- If Next has no `Status: ready` item: `Next is empty. Run pm-review.` Stop.
 
 ## Steps
 
-1. Read `pm/VISION.md`, `pm/ROADMAP.md`, and `pm/config.md`.
-2. Take the first item in `## Next` with `Status: ready` or
-   `Status: paused`. Skip `blocked` items and name them in Notes.
-3. If Next has no usable item, reply `Next is empty. Run pm-review.` and
-   stop.
-4. Check the item before claiming it:
-   - **Scope.** Its `Serves:` line must match a v1 outcome in
-     `pm/VISION.md`. If it does not, say `SCOPE CHANGE:` with the reason,
-     and ask whether to start it anyway or skip it.
-   - **Size.** If `Size: L`, or the item covers more than one independent
-     subsystem, propose a split into 2 or 3 items. Each split item gets its
-     own ID and `Done when:`. Ask for one confirmation, write the split to
-     `pm/ROADMAP.md`, and take the first part.
-   - **Done when.** If it cannot be checked, propose a checkable version
-     and ask yes or no.
-5. Claim the item. Write `pm/NOW.md` with `Status: active`, `Item`,
-   `Session` (the branch name from the pattern in `pm/config.md`),
-   `Stage: design`, `Started`, and `## Done when`. If the item was paused,
-   copy its paused checkpoint into NOW.md and set `Stage` to the stage it
-   was paused at.
-6. Remove the item from `## Next` in `pm/ROADMAP.md`.
-7. Print the output, then invoke the handoff skill for the current stage
-   from `pm/config.md`. For a new item, that is the design skill. Pass:
-   - the item title and `Done when`,
-   - the v1 outcome it serves,
-   - the relevant `Out of scope` and `Constraints` lines from the vision.
+1. Take the first `Status: ready` item in `## Next`. Show it.
+2. If its `Size` is `L`, or its `Done when` is not observable, propose a
+   split into items of size S or M, with new IDs from the ID rule. Ask for
+   one confirmation (`ok` or changes). Insert the parts at the top of Next
+   in dependency order. If Next would then exceed the max in `config.md`,
+   move the lowest items to the top of Later and say which. Then claim the
+   first part.
+3. Ask one question only if the item is ambiguous: `Assumption: <x>. Is
+   this right? (yes / change)`
+4. Write `NOW.md` with the schema fields: `Status: active`, `Item`,
+   `Session` (current branch), `Stage: design`, `Started` (today),
+   empty `Spec` and `Plan`, and the item's `Done when` under `## Done
+   when`. Leave `## Checkpoint` empty.
+5. Remove the item from `## Next` in `ROADMAP.md`.
+6. Invoke the `design` handoff skill from the Handoffs table in
+   `config.md`, passing the item title, `Serves`, and `Done when`.
 
-   If the handoff skill is not installed, stop and name the Handoffs row
-   to fix. Do not do that stage without the skill.
+If the item has a `Paused checkpoint`, copy it under `## Checkpoint` and set
+`Stage` to the stage recorded there. Then invoke that stage's skill instead
+of design.
 
 ## Output
 
 ```markdown
-## Starting
+## Started
 
-- Item: <ID> <title>
-- Why now: <one line, citing V1, V2, and so on>
-- Done when: <observable check>
+- Item: <ID Title>
+- Done when: <check>
 
-## Handing off
+## Do this next
 
-- Next: <handoff skill> (stage: <stage>)
-- Branch, when created: `<branch>`
-
-## Notes
-
-- <Only if true: Skipped <ID> because it is blocked (<reason>).>
+1. Answer the design questions from <skill>.
+   - Start with: <skill name>
+   - Done when: a spec exists at the path in config.md
 ```

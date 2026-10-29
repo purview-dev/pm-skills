@@ -4,8 +4,8 @@ Read by every `pm-*` skill. Change behaviour here, not in the skills.
 
 ## Location
 
-- PM root: `pm/` in the **main worktree**, which is the first path printed
-  by `git worktree list`. Feature worktrees never edit `pm/`.
+- PM root: `{{PM_ROOT}}` in the **main worktree**, which is the first path
+  printed by `git worktree list`. Feature worktrees never edit the PM root.
 
 ## Handoffs
 
@@ -23,7 +23,6 @@ The skills invoke these by name. To swap frameworks, change this table only.
 
 ## Limits
 
-- WIP limit: 1
 - Max items in Next: 5
 - Review cadence: 7 days
 - Inbox size that triggers a review prompt: 10

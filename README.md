@@ -29,19 +29,24 @@ Then, in your agent:
    `CLAUDE.md`, between `<!-- pm-skills:start -->` and
    `<!-- pm-skills:end -->` markers. Nothing outside the markers changes.
 2. Commit, using the command `pm-setup` prints.
-3. `run pm-init` writes `pm/VISION.md` and seeds the roadmap.
+3. `run pm-init` writes `planning/VISION.md` by default and seeds the
+   roadmap. `pm-setup` asks where to store the planning files before its
+   other setup questions; choose a different repository-relative directory
+   if needed.
 
 ## Skills
 
 | Skill | Purpose | When it runs |
 | --- | --- | --- |
 | [`pm-setup`](skills/pm-setup/SKILL.md) | Merge the rules into the agent file; check the install | User asks |
-| [`pm-init`](skills/pm-init/SKILL.md) | Create `pm/`, write the vision, seed the roadmap | User asks, once per repo |
+| [`pm-init`](skills/pm-init/SKILL.md) | Create the PM state directory, write the vision, seed the roadmap | User asks, once per repo |
 | [`pm-resume`](skills/pm-resume/SKILL.md) | Where you stopped and the one next action | Session start |
 | [`pm-next`](skills/pm-next/SKILL.md) | Pick and claim the next item, hand off to design | No active item |
 | [`pm-park`](skills/pm-park/SKILL.md) | Capture an off-task idea in one line | Any time |
 | [`pm-checkpoint`](skills/pm-checkpoint/SKILL.md) | Save state, record stage changes, close finished items | Session or stage end |
 | [`pm-review`](skills/pm-review/SKILL.md) | Triage the inbox, check scope, order Next | Weekly |
+| [`pm-item`](skills/pm-item/SKILL.md) | Drop, block, unblock, or move one roadmap item | User asks |
+| [`pm-status`](skills/pm-status/SKILL.md) | Show active item, queue, inbox, review state (read-only) | User asks |
 
 ## The loop
 
@@ -51,31 +56,37 @@ pm-resume -> pm-next -> [design -> plan -> execute -> finish] -> pm-checkpoint
                 |       pm-checkpoint (stage updates)              close
                 +--------------------------------------------------+
 pm-park: any time, capture only.   pm-review: weekly.
+pm-item / pm-status: on request, when no workflow is active.
 ```
 
 ## Non-interruption guarantee
 
 The merged rules make an active workflow own the session. During a
 workflow, only `pm-park` may run, and only to capture. Any other PM skill
-waits until the workflow finishes, or until you say "pause". PM skills
-write only to `pm/` in the main worktree. They never change specs, plans,
-branches, or git state. Full rules:
+waits until the workflow finishes, or until you say "pause". PM state skills
+write only to the configured planning directory (default `planning/`) in
+the main worktree. They never change specs, plans, branches, or git state.
+`pm-setup` edits only the managed section in the selected agent
+instructions file. Full rules:
 [`skills/pm-setup/references/AGENTS-section.md`](skills/pm-setup/references/AGENTS-section.md).
 
 ## Files created by pm-init
 
+The paths below use the default PM root; replace `planning/` with the
+directory selected during `pm-setup`.
+
 | File | Holds |
 | --- | --- |
-| `pm/config.md` | Handoffs to workflow skills, limits, last review date |
-| `pm/VISION.md` | v1 outcomes, out of scope, constraints |
-| `pm/NOW.md` | The one active item and its checkpoint |
-| `pm/ROADMAP.md` | Next (ordered, maximum 5) and Later |
-| `pm/LOG.md` | Done, Dropped, Reviews |
-| `pm/inbox/` | One file per parked idea |
+| `planning/config.md` | Handoffs to workflow skills, limits, last review date |
+| `planning/VISION.md` | v1 outcomes, out of scope, constraints |
+| `planning/NOW.md` | The one active item and its checkpoint |
+| `planning/ROADMAP.md` | Next (ordered, maximum 5) and Later |
+| `planning/LOG.md` | Done, Dropped, Reviews |
+| `planning/inbox/` | One file per parked idea |
 
 ## Using a different workflow framework
 
-Edit the Handoffs table in `pm/config.md`. The skills refer to stages
+Edit the Handoffs table in `<PM root>/config.md`. The skills refer to stages
 (design, plan, execute, finish), not to Superpowers skill names.
 
 ## Upgrading
@@ -102,4 +113,7 @@ skills/
   pm-park/SKILL.md
   pm-checkpoint/SKILL.md
   pm-review/SKILL.md
+  pm-item/SKILL.md
+  pm-status/SKILL.md
+scripts/validate.ts
 ```

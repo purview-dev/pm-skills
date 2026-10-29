@@ -8,7 +8,8 @@
 
 ## Dropped
 
-<!-- - 2026-10-29 <inbox title>. Reason: <one line>. -->
+<!-- - 2026-10-29 R-012 <title>. Reason: <one line>. -->
+<!-- Inbox items dropped before they became roadmap items have no ID. -->
 
 ## Reviews
 

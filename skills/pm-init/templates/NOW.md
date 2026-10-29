@@ -1,8 +1,24 @@
 # Now
 
-<!-- Edited only by pm-* skills in the main worktree. WIP limit is in pm/config.md. -->
+<!--
+Edited only by pm-* skills in the main worktree.
+Fields are fixed. When idle, every field except Status is empty.
+Status: idle | active
+Stage: design | plan | execute | finish
+Session: <branch> (worktree <path>, optional)
+-->
 
 - Status: idle
+- Item:
+- Session:
+- Stage:
+- Spec:
+- Plan:
+- Started:
+
+## Done when
+
+## Checkpoint
 
 <!--
 Active example:
@@ -10,7 +26,7 @@ Active example:
 - Status: active
 - Item: R-007 Tenant billing
 - Session: feat/r-007-tenant-billing (worktree ../saas-r-007)
-- Stage: design | plan | execute | finish
+- Stage: design
 - Spec: docs/superpowers/specs/<file>.md
 - Plan: docs/superpowers/plans/<file>.md
 - Started: 2026-10-29
