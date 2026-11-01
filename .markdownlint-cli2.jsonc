@@ -2,5 +2,7 @@
   "config": {
     "default": true,
     "MD013": false
-  }
+  },
+  // LICENSE.md is legal text, not Markdown documentation (MD041 does not apply).
+  "ignores": ["LICENSE.md"]
 }

@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate and lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # Mirrors `just validate`: frontmatter, README, managed-section, setup
+      # inventory, markers, and template placeholders.
+      - name: Validate skills
+        run: bun scripts/validate.ts
+
+      # Mirrors `just lint-check`: markdownlint-cli2 with the repository config.
+      - name: Lint Markdown
+        run: bunx markdownlint-cli2 "**/*.md" "#node_modules"

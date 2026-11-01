@@ -40,9 +40,11 @@ reference, not in generated copies.
 
 ## Build, test, and lint
 
-There is no build system or automated test suite configured in this
-repository. Markdown is linted with `markdownlint-cli2`, using
-`.markdownlint-cli2.jsonc` (default rules, with `MD013` disabled):
+There is no build system or automated test suite. Validation and Markdown
+linting run locally and in CI (`.github/workflows/ci.yml`, which runs the
+same `bun` commands as the `just` recipes). Markdown is linted with
+`markdownlint-cli2`, using `.markdownlint-cli2.jsonc` (default rules, with
+`MD013` disabled):
 
 - Install git hooks (requires `bun` and `lefthook`): `just install`
 - Lint all Markdown and validate skills: `just lint-check` (auto-fix
@@ -58,6 +60,10 @@ repository. Markdown is linted with `markdownlint-cli2`, using
 Hooks are configured in `.config/lefthook.yml`: `commit-msg` runs
 `bunx commitlint --edit {1}` (rules in `commitlint.config.mts`), and
 `pre-push` runs `just lint-check`.
+
+Releases are tagged from `package.json`: `.github/workflows/release.yml`
+creates the `v{version}` tag and a GitHub release when `package.json`
+changes on `main`. Bump `version` to cut a release.
 
 ## Repository conventions
 

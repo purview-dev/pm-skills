@@ -136,6 +136,26 @@ npx skills update
 Then `run pm-setup` again. It replaces only the section between the markers
 when its version has changed.
 
+## Development
+
+Requires [`bun`](https://bun.sh) and, for the git hooks,
+[`lefthook`](https://lefthook.dev/installation) and
+[`just`](https://github.com/casey/just).
+
+- `just validate` checks skill frontmatter, the README and managed-section
+  tables, the `pm-setup` inventory, the section markers, and the template
+  placeholders.
+- `just lint-check` runs `just validate` and lints all Markdown.
+- `just lint-fix` applies Markdown fixes.
+- `just install` verifies the tools and installs the git hooks (commitlint
+  on commit, `just lint-check` on push).
+
+CI runs the same checks on every push and pull request to `main`. Adding a
+skill means creating `skills/<name>/SKILL.md` and listing it in the README
+table, the managed-section table, the `pm-setup` inventory, and the
+`pm-help` skill guide; `just validate` fails otherwise. Full conventions
+are in [`AGENTS.md`](AGENTS.md).
+
 ## Repository layout
 
 ```text
@@ -161,4 +181,15 @@ skills/
   pm-status/SKILL.md
   pm-help/SKILL.md
 scripts/validate.ts
+.github/
+  copilot-instructions.md
+  workflows/
+    ci.yml
+    release.yml
+package.json
+LICENSE.md
 ```
+
+## License
+
+MIT. See [`LICENSE.md`](LICENSE.md).

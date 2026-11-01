@@ -1,0 +1,22 @@
+root = true
+
+# Universal defaults. Line endings match .gitattributes (* text=auto).
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Markdown may use two trailing spaces for an intentional hard line break.
+[*.md]
+trim_trailing_whitespace = false
+
+# Data, config, and TypeScript files are two-space indented.
+[*.{json,jsonc,yml,yaml,ts,mts,cts}]
+indent_style = space
+indent_size = 2
+
+# justfile recipes are four-space indented.
+[justfile]
+indent_style = space
+indent_size = 4
