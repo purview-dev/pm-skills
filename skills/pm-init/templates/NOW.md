@@ -6,12 +6,14 @@ Fields are fixed. When idle, every field except Status is empty.
 Status: idle | active
 Stage: design | plan | execute | finish
 Session: <branch> (worktree <path>, optional)
+Brief: optional; the item's brief, if it has one
 -->
 
 - Status: idle
 - Item:
 - Session:
 - Stage:
+- Brief:
 - Spec:
 - Plan:
 - Started:
@@ -27,6 +29,7 @@ Active example:
 - Item: R-007 Tenant billing
 - Session: feat/r-007-tenant-billing (worktree ../saas-r-007)
 - Stage: design
+- Brief: {{PM_ROOT}}briefs/R-007-tenant-billing.md
 - Spec: docs/superpowers/specs/<file>.md
 - Plan: docs/superpowers/plans/<file>.md
 - Started: 2026-10-29
@@ -40,5 +43,7 @@ Active example:
 - Stopped at: <last completed step>
 - Next action: <one action>
 - Start with: <exact command or file path>
+- Decisions: <decisions made since the last checkpoint, with reasons | none>
+- Context: <facts the next session needs that are not in the spec or plan | none>
 - Open question: <only if blocking>
 -->

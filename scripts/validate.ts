@@ -14,6 +14,7 @@ const skills = readdirSync(skillsDir, { withFileTypes: true })
 const readme = read("README.md");
 const section = read("skills", "pm-setup", "references", "AGENTS-section.md");
 const setup = read("skills", "pm-setup", "SKILL.md");
+const help = read("skills", "pm-help", "SKILL.md");
 
 for (const name of skills) {
   const file = join("skills", name, "SKILL.md");
@@ -32,6 +33,7 @@ for (const name of skills) {
   if (!readme.includes(`skills/${name}/SKILL.md`)) fail(`README.md: ${name} not linked in skills table`);
   if (!section.includes(`| \`${name}\` |`)) fail(`AGENTS-section.md: ${name} not in skills table`);
   if (name !== "pm-setup" && !setup.includes(`\`${name}\``)) fail(`pm-setup/SKILL.md: ${name} not in inventory`);
+  if (!help.includes(`| \`${name}\` |`)) fail(`pm-help/SKILL.md: ${name} not in skill guide`);
 }
 
 const starts = section.match(/<!-- pm-skills:start version=\d+ -->/g) ?? [];

@@ -54,7 +54,8 @@ Collect these facts. Write nothing yet.
    `<!-- pm-skills:start`. If it does, read its `version=` value and
    compare it with the version in `references/AGENTS-section.md`.
 4. **Installed skills:** for each of `pm-init`, `pm-resume`, `pm-next`,
-   `pm-park`, `pm-checkpoint`, `pm-review`, `pm-item`, and `pm-status`,
+   `pm-park`, `pm-shape`, `pm-discover`, `pm-strategy`, `pm-purview`,
+   `pm-checkpoint`, `pm-review`, `pm-item`, `pm-status`, and `pm-help`,
    check that a `SKILL.md` exists.
    - First run `npx skills list` (or `bunx skills list`), if either runs.
    - Otherwise check `.agents/skills/<name>/`, `.claude/skills/<name>/`,
@@ -63,8 +64,10 @@ Collect these facts. Write nothing yet.
      user's home folder.
    - A symlink counts. A user-level install counts.
 5. **PM state:** whether the selected directory contains PM state
-   (`config.md` and `NOW.md`). Also run `git check-ignore -q <directory>`.
-   If the directory is ignored by git, record it as a warning.
+   (`config.md` and `NOW.md`). If it does, record which of `STRATEGY.md`,
+   `briefs/`, and `research/` are missing (created by version 4 skills on
+   first use). Also run `git check-ignore -q <directory>`. If the
+   directory is ignored by git, record it as a warning.
 6. **Workflow framework:** look for skills named `brainstorming`,
    `writing-plans`, `executing-plans`, and `subagent-driven-development` in
    the same folders as step 4, and in `.claude/plugins/` in the user's home
@@ -72,8 +75,9 @@ Collect these facts. Write nothing yet.
    found (name it), or none.
 7. **Conflicting instructions:** search the agent files (case-insensitive)
    for `brainstorm`, `using-superpowers`, `always invoke`, `TODO.md`,
-   `backlog`, `roadmap`, `task list`, `commit automatically`, `auto-commit`,
-   `worktree`. Read each match in context. It is a conflict only if
+   `backlog`, `roadmap`, `task list`, `ideas`, `parking lot`,
+   `commit automatically`, `auto-commit`, `worktree`, `type yes`,
+   `reply with`. Read each match in context. It is a conflict only if
    following it would break a Non-interruption rule in
    `references/AGENTS-section.md`. For example:
    - "Always brainstorm new ideas immediately" conflicts with rule 5.
@@ -81,6 +85,8 @@ Collect these facts. Write nothing yet.
      the configured PM state directory as the single source of truth.
    - "Commit after every change", applied to PM files, conflicts with
      rule 6.
+   - "Ask the user to type yes to continue" conflicts with Asking the
+     user.
 
 ## Step 3: Choose the target file
 
@@ -97,9 +103,11 @@ If only `.claude/CLAUDE.md` exists, treat it as `CLAUDE.md`.
 
 ## Step 4: Show the plan and ask one question
 
-Show this, then ask exactly one choice question: `Apply this plan?` with
-the options `Apply (recommended)`, `Change something` (free text), and
-`No`. The folder question in Step 1 is the only other question.
+Show this, then ask exactly one question with the agent's question tool
+(never as typed options): `Apply this pm-setup plan to <target>?` with
+the options `Apply (recommended)` and `Do not apply`; the tool's free-text
+entry covers "change something". The folder question in Step 1 is the
+only other question.
 
 ```markdown
 ## pm-setup plan
@@ -107,7 +115,7 @@ the options `Apply (recommended)`, `Change something` (free text), and
 - Mode: install | upgrade v<old> to v<new> | already current (nothing to do)
 - Target: <file> (<append section | replace between markers>)
 - Extra: <@AGENTS.md import added to CLAUDE.md | none>
-- Skills: <n> of 8 installed. Missing: <names | none>
+- Skills: <n> of 13 installed. Missing: <names | none>
 - Workflow framework: <Superpowers | name | none>
 - PM state directory: <path>
 
@@ -178,21 +186,24 @@ Rules for this step:
 ## pm-setup done
 
 - Target: <file> (<installed | upgraded to v<n>>)
-- Skills: <8 of 8 installed | missing: names>
+- Skills: <13 of 13 installed | missing: names>
 - Diff check: only the managed section changed
+- PM state: <not initialized | current | missing version 4 files: names>
 
 ## Do this next
 
 1. <Only if skills are missing:> Install the missing skills.
    - Start with: `npx skills add https://github.com/kjldev/pm-skills -y`
-   - Done when: all 8 pm-* skills are listed by `npx skills list`
+   - Done when: all 13 pm-* skills are listed by `npx skills list`
 2. Commit.
    - Start with: `git add <changed paths> && git commit -m "chore: add pm-* skills"`.
      List only paths that exist, taken from: `.agents/skills/pm-*`,
      `.claude/skills/pm-*`, `.github/skills/pm-*`, `AGENTS.md`, and
      `CLAUDE.md`.
    - Done when: `git status` is clean
-3. <Run pm-init, if the PM state is not initialized. Otherwise run pm-resume.>
+3. <Run pm-init, if the PM state is not initialized. Run pm-strategy, if
+   `STRATEGY.md` is missing after an upgrade. Otherwise run pm-resume, or
+   pm-help for an overview of every skill.>
 ```
 
 Do not run the install or the commit. Print them for the user.

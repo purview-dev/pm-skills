@@ -5,6 +5,7 @@
 ## Done
 
 <!-- - 2026-10-29 R-007 Tenant billing. Plan: <path>. Result: <PR or commit>. -->
+<!-- - 2026-10-30 R-009 Open a Stripe account. Owner: user. Result: <evidence>. -->
 
 ## Dropped
 

@@ -1,6 +1,6 @@
 # Vision
 
-<!-- Written by pm-init. Changed only during pm-review, with user approval. -->
+<!-- Written by pm-init. Changed only by pm-strategy (vision mode), with user approval and a Decisions line in STRATEGY.md. -->
 
 ## Problem
 

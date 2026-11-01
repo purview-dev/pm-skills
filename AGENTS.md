@@ -12,10 +12,21 @@ The skills form a lifecycle: `pm-setup` installs the shared rules,
 `pm-init` creates project state, `pm-resume` reads it, `pm-next` claims an
 item and hands off to a development workflow, `pm-checkpoint` records
 progress or closes the item, and `pm-review` triages the roadmap and
-inbox. `pm-park` captures off-task ideas without interrupting active work.
-`pm-item` drops, blocks, or moves roadmap items; `pm-status` is a
-read-only view. Shared definitions (IDs, limits, session matching,
-timestamps) live in the managed section, and skills must not redefine them.
+inbox. `pm-park` captures ideas (from the user or the agent) without
+interrupting active work. `pm-shape` discusses and challenges one idea
+into a brief, `pm-discover` analyses the existing product for evidence,
+and `pm-strategy` owns vision, milestones, and roadmap generation.
+`pm-purview` matches .NET projects to Purview tools using the dated
+snapshot in `skills/pm-purview/references/catalogue.md`; refresh that
+snapshot from `https://purview.dev/llms.txt` when Purview releases change.
+`pm-item` edits single roadmap items; `pm-status` is a read-only summary,
+board, roadmap, or user-queue view. `pm-help` explains every skill and
+diagnoses gaps in the install and PM state; when adding or changing a
+skill, update its row in the `pm-help` skill guide and, if the skill
+needs setup, a diagnosis check. Shared definitions (IDs, item fields,
+owners, file formats, limits, session matching, timestamps) and the
+Challenge protocol, Persistence, and Asking-the-user rules live in the
+managed section, and skills must not redefine them.
 The installed project's PM root (default `planning/`) contains `config.md`,
 the source of truth for workflow handoffs. Keep skills framework-neutral
 and change handoffs there rather than hardcoding a different framework into
@@ -40,7 +51,8 @@ repository. Markdown is linted with `markdownlint-cli2`, using
   and setup inventory, markers, template placeholders): `just validate`
 - Lint one file: `bunx markdownlint-cli2 skills/pm-next/SKILL.md`
 - Adding a skill: create `skills/<name>/SKILL.md`, then list it in the
-  README table, the managed-section table, and the `pm-setup` inventory.
+  README table, the managed-section table, the `pm-setup` inventory, and
+  the `pm-help` skill guide.
   `just validate` fails otherwise.
 
 Hooks are configured in `.config/lefthook.yml`: `commit-msg` runs

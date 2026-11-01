@@ -1,6 +1,12 @@
 # Inbox
 
-One file per parked idea, written by `pm-park`. Triaged by `pm-review`.
+The parking lot. One file per idea, bug, question, or piece of
+inspiration, written by `pm-park` (from the user or the agent) and by
+`pm-discover`. Discussed with `pm-shape`. Triaged by `pm-review`.
 
 File name: `YYYY-MM-DD-HHMM-<slug>.md`. One file per idea means parallel
-sessions never conflict.
+sessions never conflict. Ideas are kept verbatim; later thoughts are
+appended under `## Notes`.
+
+Files marked `Discuss: yes` are waiting for a `pm-shape` session. Files
+with a `Reviewed` date were kept on purpose during a review.
