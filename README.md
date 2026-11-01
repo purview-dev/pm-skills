@@ -33,9 +33,9 @@ next action, an explicit "done when", and fixed templates.
 Run this from the root of the target repository:
 
 ```bash
-npx skills add https://github.com/kjldev/pm-skills -y
+npx skills add https://github.com/purview-dev/pm-skills -y
 # or
-bunx skills add https://github.com/kjldev/pm-skills -y
+bunx skills add https://github.com/purview-dev/pm-skills -y
 ```
 
 Skills install at project level by default. Add `-g` for a user-level

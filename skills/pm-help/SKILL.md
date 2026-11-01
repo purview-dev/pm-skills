@@ -66,7 +66,7 @@ Non-interruption rules, and the Handoffs table in `<PM root>/config.md`.
    | --- | --- | --- | --- |
    | 1 | `AGENTS.md` or `CLAUDE.md` contains `<!-- pm-skills:start` | Rules not installed | `pm-setup` |
    | 2 | Its `version=` equals the version in `pm-setup`'s `references/AGENTS-section.md`, if readable | `Rules out of date (v<old>, v<new> available)` | `pm-setup` |
-   | 3 | Every skill in the guide has an installed `SKILL.md` (same locations as `pm-setup` step 2) | Missing skills: names | `npx skills add https://github.com/kjldev/pm-skills -y` |
+   | 3 | Every skill in the guide has an installed `SKILL.md` (same locations as `pm-setup` step 2) | Missing skills: names | `npx skills add https://github.com/purview-dev/pm-skills -y` |
    | 4 | `<PM root>/config.md` and `NOW.md` exist | PM state not initialised | `pm-init` |
    | 5 | `VISION.md` has no `[...]` placeholders left | Vision incomplete | `pm-strategy` (vision) |
    | 6 | `STRATEGY.md` exists and has at least one milestone and a `Current focus` | No strategy or focus | `pm-strategy` |

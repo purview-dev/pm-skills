@@ -9,7 +9,7 @@ Wire the `pm-*` skills into a repository. Merge their rules into the
 existing agent instructions file, and check that every `pm-*` skill is
 installed. Existing content is never rewritten, reordered, or removed.
 
-- Source repository: `https://github.com/kjldev/pm-skills`
+- Source repository: `https://github.com/purview-dev/pm-skills`
 - Rules to merge: `references/AGENTS-section.md` in this skill's folder.
 - Skills are installed by the `skills` CLI, not by this skill:
   `npx skills add <source> -y` (or `bunx skills add <source> -y`)
@@ -140,7 +140,7 @@ Rules for this step:
   line?` with the options `Leave it (recommended)` and `Change it` (free
   text).
 - If skills are missing, add this line to the plan:
-  `Missing skills: run npx skills add https://github.com/kjldev/pm-skills -y
+  `Missing skills: run npx skills add https://github.com/purview-dev/pm-skills -y
   after this merge.`
   Do not install them yourself.
 - If the framework is "none" or "other", add `Assumption: the Handoffs
@@ -193,7 +193,7 @@ Rules for this step:
 ## Do this next
 
 1. <Only if skills are missing:> Install the missing skills.
-   - Start with: `npx skills add https://github.com/kjldev/pm-skills -y`
+   - Start with: `npx skills add https://github.com/purview-dev/pm-skills -y`
    - Done when: all 13 pm-* skills are listed by `npx skills list`
 2. Commit.
    - Start with: `git add <changed paths> && git commit -m "chore: add pm-* skills"`.
