@@ -7,6 +7,10 @@ Read by every `pm-*` skill. Change behaviour here, not in the skills.
 - PM root: `{{PM_ROOT}}` in the **main worktree**, which is the first path
   printed by `git worktree list`. Feature worktrees never edit the PM root.
 
+## Install
+
+- Rules version: 6
+
 ## Handoffs
 
 The skills invoke these by name. To swap frameworks, change this table only.
@@ -29,6 +33,11 @@ The skills invoke these by name. To swap frameworks, change this table only.
 - Blocked item is stale after: 14 days
 - Board shows items done in the last: 14 days
 - Branch name pattern: `feat/<id>-<slug>` (example: `feat/r-007-tenant-billing`)
+
+## Commits
+
+- PM state commit: ask
+- PM branch: main
 
 ## Last review
 

@@ -71,6 +71,8 @@ If the user's request fits no mode, ask one choice question with the 2 or
    on it.
 6. **block, unblock, move, owner:** apply the edit. Moves to Next go at the
    bottom.
+7. **Commit** the PM state (rules: Committing PM state), with the message
+   `docs(pm): <mode> <ID>`.
 
 ## Output
 
@@ -78,6 +80,7 @@ If the user's request fits no mode, ask one choice question with the 2 or
 ## Updated
 
 - <ID Title>: <what changed>
+- PM state: <commit result>
 
 ## Do this next
 

@@ -116,6 +116,8 @@ snapshot of `https://purview.dev/llms.txt`.
      item lists it in `Depends on`.
    - If the project already uses an alternative that works, recommend
      nothing for that need.
+7. **Commit** the PM state (rules: Committing PM state), with the message
+   `docs(pm): purview fit`.
 
 ## Output
 
@@ -126,6 +128,7 @@ snapshot of `https://purview.dev/llms.txt`.
 - Recommended: <n> (<names> | none)
 - Ruled out: <n>
 - Report: <path>
+- PM state: <commit result>
 
 ## Do this next
 

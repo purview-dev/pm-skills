@@ -95,6 +95,9 @@ into?` with the options `Analyse the product for opportunities
    `## Links`. In question mode, offer this only if the answer revealed an
    opportunity.
 
+8. **Commit** the PM state (rules: Committing PM state), with the message
+   `docs(pm): discover <slug>`.
+
 ## Report template
 
 ```markdown
@@ -149,6 +152,7 @@ into?` with the options `Analyse the product for opportunities
 - Findings: <n> (<n> high confidence)
 - Parked: <n> inbox files
 - Roadmap challenges: <n>
+- PM state: <commit result>
 
 ## Do this next
 

@@ -31,6 +31,8 @@ steps of the current plan.
   Idea (not saved): <the idea, verbatim>`. Stop.
 - Write in the main worktree, not the current feature worktree.
 - Create `<PM root>/inbox/` if it is missing.
+- Never commit. Inbox files are committed by the next skill that commits,
+  usually `pm-checkpoint` (rules: Committing PM state).
 
 ## Steps
 

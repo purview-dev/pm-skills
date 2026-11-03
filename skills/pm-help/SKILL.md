@@ -40,6 +40,7 @@ asked, the skill's own `SKILL.md` steps.
 | `pm-setup` | Installing or upgrading the skills and the rules in `AGENTS.md` or `CLAUDE.md` | "set up the pm skills" | The managed section only |
 | `pm-init` | Starting project management in a repository, once | "initialise planning" | The PM root, `VISION.md`, a seeded roadmap |
 | `pm-resume` | Starting a session, or after the context was compacted | "where was I?" | Nothing |
+| `pm-rejoin` | You lost the pm thread, a workflow is running that `NOW.md` does not record, or a session started mid-task | "where am I in the pm lifecycle?", "rejoin", "get back on track" | `NOW.md`, `ROADMAP.md` |
 | `pm-next` | Nothing is active and you want to start the next item | "what's next?", "start R-007" | `NOW.md`, `ROADMAP.md` |
 | `pm-park` | You or the agent have an idea, bug, question, or inspiration to remember, even mid-task | "park this: ...", "note that ..." | One inbox file |
 | `pm-shape` | You want to brainstorm, discuss, or challenge one idea before committing to it | "let's think through dark mode" | A brief; a roadmap item if accepted |
@@ -55,7 +56,9 @@ asked, the skill's own `SKILL.md` steps.
 Concepts to explain on request, from the pm-skills section: the PM root,
 item IDs and fields, owners (agent, user, both), claimable items, the
 inbox file, briefs, the Challenge protocol, Persistence, the
-Non-interruption rules, and the Handoffs table in `<PM root>/config.md`.
+Non-interruption rules, PM commits and the `Commits` section in
+`<PM root>/config.md`, the rules version and the upgrade check, drift and
+`pm-rejoin`, and the Handoffs table in `<PM root>/config.md`.
 
 ## Steps (overview)
 
@@ -64,8 +67,8 @@ Non-interruption rules, and the Handoffs table in `<PM root>/config.md`.
 
    | # | Check | Finding if it fails | Fix |
    | --- | --- | --- | --- |
-   | 1 | `AGENTS.md` or `CLAUDE.md` contains `<!-- pm-skills:start` | Rules not installed | `pm-setup` |
-   | 2 | Its `version=` equals the version in `pm-setup`'s `references/AGENTS-section.md`, if readable | `Rules out of date (v<old>, v<new> available)` | `pm-setup` |
+   | 1 | `AGENTS.md` or `CLAUDE.md` contains `<!-- pm-skills:start` | Rules not installed (`<PM root>/config.md` records the version when they were) | `pm-setup` |
+   | 2 | `Rules version` in `<PM root>/config.md` equals the `version=` in `pm-setup`'s `references/AGENTS-section.md`, if readable; a legacy `version=` in the marker counts when `config.md` records none | `Rules out of date (v<old>, v<new> available)`, `Rules version not recorded`, or `Skills older than the rules (v<old>, v<new>)` | `pm-setup`, or `npx skills update` then `pm-setup` |
    | 3 | Every skill in the guide has an installed `SKILL.md` (same locations as `pm-setup` step 2) | Missing skills: names | `npx skills add https://github.com/purview-dev/pm-skills -y` |
    | 4 | `<PM root>/config.md` and `NOW.md` exist | PM state not initialised | `pm-init` |
    | 5 | `VISION.md` has no `[...]` placeholders left | Vision incomplete | `pm-strategy` (vision) |
@@ -79,6 +82,8 @@ Non-interruption rules, and the Handoffs table in `<PM root>/config.md`.
    | 13 | No `Owner: user` item blocks an agent item | `Your task <ID> blocks <IDs>` | Do it, then `pm-item done <ID>` |
    | 14 | If the repository has `.csproj`, `.slnx`, or `.sln` files: a `research/*purview-fit.md` report exists | Purview fit not assessed | `pm-purview` |
    | 15 | If the repository has substantial code: a `research/` report exists | Roadmap not checked against the existing product | `pm-discover` |
+   | 16 | `NOW.md` agrees with the work: when idle, the current branch does not match the `Branch name pattern`; when active, `Session` equals the current branch | Drifted from the lifecycle | `pm-rejoin` |
+   | 17 | **Uncommitted PM state** is empty | `<n>` uncommitted PM files | `pm-checkpoint`, which commits them |
 
    Stop at the first failing check among 1 to 4; later checks depend on
    them.
@@ -106,7 +111,7 @@ Non-interruption rules, and the Handoffs table in `<PM root>/config.md`.
 ```markdown
 ## PM help
 
-- Rules: <v<n> installed | out of date (v<old> to v<new>) | not installed>
+- Rules: <v<n> installed | out of date (v<old> to v<new>) | skills older (v<old> to v<new>) | version not recorded | not installed>
 - Skills: <n>/<total> installed
 - PM state: <initialised at <PM root> | not initialised>
 - Now: <ID Title (stage) | idle>

@@ -1,5 +1,7 @@
-<!-- pm-skills:start version=4 -->
-<!-- Managed by pm-setup. Edit outside these markers; content inside is replaced on upgrade. -->
+<!-- pm-skills:start version=6 -->
+<!-- Managed by pm-setup. Edit outside these markers; content inside is replaced on upgrade.
+     Installed copies keep this marker without a version. The version of record is
+     `Rules version` in the PM root config.md, so editing or merging this file cannot lose it. -->
 
 ## Project management layer (`pm-*` skills)
 
@@ -20,6 +22,7 @@ repository root.
 | `pm-setup` | Install or upgrade these skills and this section | User asks |
 | `pm-init` | Create the PM root, write `VISION.md`, seed the roadmap | User asks |
 | `pm-resume` | Show where work stopped and the next action for the agent and the user | Session start, after compaction, or user asks |
+| `pm-rejoin` | Find the true position in the lifecycle from git and PM state, then rejoin at the right stage | Drifted or detached from the lifecycle, NOW.md disagrees with the work, user asks "where am I" |
 | `pm-next` | Pick and claim the next claimable item, hand off to design | No active item, user asks |
 | `pm-park` | Capture an idea, bug, question, or inspiration without derailing | Any time (capture mode only during a workflow) |
 | `pm-shape` | Discuss, challenge, and flesh out one idea; decide park, roadmap, build, or drop | No active workflow, user asks |
@@ -119,7 +122,30 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   review cadence, or the open inbox count is at least the inbox threshold.
   If `Last review` is `never`, only the inbox threshold applies.
 - **Main worktree:** the first path in `git worktree list`. PM root paths
-  are resolved inside it.
+  are resolved inside it. Quote the path in commands, because it may
+  contain spaces.
+- **PM branch:** the branch named by `PM branch` in `<PM root>/config.md`.
+  It is where PM state is committed, normally the repository's default
+  branch. Installs without the setting use the main worktree's current
+  branch.
+- **Uncommitted PM state:** the paths printed by
+  `git -C <main worktree> status --porcelain -- <PM root>`.
+- **Drift:** the PM state disagrees with the work in progress. Either
+  `NOW.md` is idle while the current branch matches the `Branch name
+  pattern`, or `NOW.md` names another `Session` while this branch is the
+  item's own branch. `pm-rejoin` locates drift and repairs it.
+- **Rules version:** the installed version of this section, recorded as
+  `Rules version` in the `Install` section of `<PM root>/config.md`. It is
+  the only version of record, and it survives edits, merges, and rewrites
+  of the agent instructions file.
+- **Skills version:** the `N` in `<!-- pm-skills:start version=N -->` at the
+  top of `references/AGENTS-section.md` in the installed `pm-setup` skill
+  folder (locations: `pm-setup` step 2, item 4). The rules and the skills
+  ship together, so equal numbers mean a current install.
+- **Legacy version:** an install made before version 6 carries `version=N`
+  in its start marker instead. Treat it as the **Rules version** when
+  `config.md` has none; `pm-setup` migrates it and rewrites the marker
+  without a version.
 
 ## Non-interruption rules (mandatory)
 
@@ -144,9 +170,11 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    mode.** Write one inbox file, reply with one line, then resume the exact
    step that was in progress. No discussion, no evaluation, no follow-up
    questions. If the user wants to discuss the idea, set `Discuss: yes`; it
-   is discussed later with `pm-shape`. The one exception: `pm-help` may
+   is discussed later with `pm-shape`. The exceptions: `pm-help` may
    answer a question about a skill in explain mode, without reading PM
-   state, then the step in progress resumes.
+   state; `pm-rejoin` may run in `locate` mode, which reads git and PM
+   state and writes nothing. In both cases the step in progress resumes
+   afterwards.
 4. **If the user names another PM skill mid-workflow**, do not run it. Ask
    one choice question: `<skill> is at <step>. When should <pm-skill> run?`
    with the options `After <skill> finishes (recommended)` and `Pause now
@@ -157,14 +185,18 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    feature starts only from `pm-next`.
 6. **PM state skills write only inside the PM root, in the main worktree.**
    `pm-setup` may also edit only the managed section in the selected agent
-   instructions file. PM state skills never:
+   instructions file, and the `Rules version` line in `<PM root>/config.md`.
+   PM state skills never:
    - edit source code, spec, or plan files,
-   - run git commands that change state (`checkout`, `switch`, `stash`,
-     `commit`, `reset`, `merge`, `push`),
-   - create or remove worktrees or branches.
+   - create or remove worktrees or branches,
+   - `stash`, `reset`, `merge`, `push`, `rebase`, or `cherry-pick`,
+   - switch branches, except the switch to the PM branch that a PM commit
+     offers,
+   - stage or commit anything outside the PM root.
 
-   Read-only git (`status`, `log`, `branch`, `worktree list`, `diff`) is
-   allowed. Suggested commit commands are printed for the user to run.
+   The only state-changing git commands a skill runs are the `add` and
+   `commit` of one PM commit (see **Committing PM state**). Read-only git
+   (`status`, `log`, `branch`, `worktree list`, `diff`) is always allowed.
 7. **Other sessions' claims are read-only.** If the `Session` in `NOW.md`
    does not match the current session, treat that item and its files as
    read-only. Inbox files are one-file-per-idea so parallel sessions never
@@ -225,6 +257,135 @@ PM files are the only memory that survives compaction and new sessions.
   content contradicts the files, the files are correct.
 - Before a session ends, or when context is about to be compacted, with an
   item active, run `pm-checkpoint` (pause).
+
+## Committing PM state (mandatory)
+
+PM files are the memory, so they are committed as part of the work. No
+skill leaves them loose in the working tree for the user to find, add, and
+commit later. A commit made this way is a **PM commit**.
+
+1. **Read the policy** from the `Commits` section of `<PM root>/config.md`:
+   `PM state commit: always | ask | never` and `PM branch: <branch>`. A
+   missing section (installs before version 5) means `ask`, with the main
+   worktree's current branch as the PM branch.
+2. **Check the changes** in the main worktree: **Uncommitted PM state**
+   (Shared definitions). No output means there is nothing to commit; say
+   nothing about commits. Otherwise continue.
+3. **Check the branch:** `git -C <main worktree> branch --show-current`.
+   If it is empty (detached HEAD) or is not the PM branch, ask one choice
+   question: `The main worktree is on <branch>. How should the PM state be
+   committed?` with the options `Switch to <PM branch> and commit
+   (recommended)`, `Commit on <branch>`, and `Leave it uncommitted`. Offer
+   the switch only when every changed path in that worktree is inside the
+   PM root; otherwise omit that option and say which path blocks it. After
+   the switch, the main worktree stays on the PM branch.
+4. **Stop, print, and commit nothing** when the main worktree has a merge,
+   rebase, cherry-pick, revert, or bisect in progress, or when the commit
+   fails. Show the git output, put the two commands from step 6 in a
+   `Note`, and finish the skill's own output. Repair a failed pre-commit
+   hook only when the repair is inside the PM root, then retry once. Never
+   retry with `--no-verify`, and never `stash` or `reset` to force a
+   commit.
+5. **Ask, unless the policy says otherwise.** On `ask`, ask one choice
+   question: `Commit the <n> changed PM files?` with the options `Commit
+   them (recommended)` and `Leave them uncommitted`; the free-text entry is
+   the commit message. On `always`, commit without asking. On `never`, put
+   the commands in a `Note` and run nothing.
+6. **Run these two commands, in this order:**
+
+   ```bash
+   git -C "<main worktree>" add -A -- "<PM root>"
+   git -C "<main worktree>" commit -m "<message>" -- "<PM root>"
+   ```
+
+   The pathspec keeps another session's staged work out of the commit. Then
+   rerun the check from step 2 and confirm it prints nothing.
+
+7. **Message:** `docs(pm): <verb> <what changed>`, at most 72 characters,
+   for example `docs(pm): close R-007 tenant billing` or `docs(pm): pause
+   R-007 at execute`. Use the repository's own commit convention instead
+   when its agent instructions or contributing guide states one.
+
+Rules:
+
+- One commit per skill run, after the last PM file is written, and none at
+  all for a skill that wrote nothing.
+- Leftovers are swept in: PM files left uncommitted by an earlier session
+  belong in this commit. When `NOW.md` belongs to another session
+  (Non-interruption rule 7), commit only the paths this run changed.
+- Commit the PM root only. Source code, specs, plans, and agent instruction
+  files are never included, even when the same work changed them.
+- `pm-park` never commits: it runs mid-workflow and must return in one
+  line. Its inbox files are committed by the next skill that commits,
+  usually `pm-checkpoint`.
+- A PM commit never pushes, tags, merges, rebases, or creates or deletes
+  branches.
+- Report the result as one `Note` line: `<short sha> <subject>`, `PM state
+  unchanged`, or `PM state left uncommitted: <n> files`.
+
+## Upgrading before work resumes (mandatory)
+
+The rules and the skills carry the same version, and a new behaviour
+usually needs both. The version of the rules installed here is recorded in
+PM state (`Rules version` in `<PM root>/config.md`), not in the agent
+instructions file, so editing, merging, or rewriting that file cannot lose
+it.
+
+`pm-resume`, `pm-rejoin`, and `pm-next` run this check before anything
+else. `pm-help` reports it as a diagnosis. `pm-setup` never runs it,
+because it is the fix.
+
+1. **Read the state** (Shared definitions): the **Rules version** from
+   `<PM root>/config.md`, the **Skills version** from the installed
+   `pm-setup` reference, and whether any agent instructions file still
+   contains `<!-- pm-skills:start`. In bash,
+   `grep -o 'Rules version: [0-9]*' <PM root>/config.md`; in PowerShell,
+   `Select-String -Path '<PM root>/config.md' -Pattern 'Rules version: \d+'`.
+   If `<PM root>/config.md` is missing, skip this check: the skill's own
+   guard reports the missing state. If `pm-setup` is not installed, the
+   skills version is unknown: reply `Skills version unknown: pm-setup is
+   not installed.`, recommend
+   `npx skills add https://github.com/purview-dev/pm-skills -y`, and stop.
+2. **Compare:**
+
+   | Rules version | Start marker in the agent file | Action |
+   | --- | --- | --- |
+   | equal to the skills version | present | continue |
+   | older than the skills version | present | step 3 |
+   | any, including a legacy marker version | absent | step 4 |
+   | not recorded | present | step 4 |
+
+3. **Upgrade.** Ask one choice question: `Rules are v<old>; the skills are
+   v<new>. Upgrade before continuing?` with the options `Run pm-setup now
+   (recommended)` and `Continue on v<old> for this session`. On `Run
+   pm-setup now`, run it, show its output, then continue the skill that
+   asked. On `Continue`, put `Upgrade debt: rules v<old>, skills v<new>.`
+   in the output `Note` and continue.
+4. **Repair, record, or migrate.** Reply `Rules: v<version or not
+   recorded>; skills: v<version>; section: <present | missing>.` Then ask:
+   `Run pm-setup now?` with the options `Run pm-setup now (recommended)`
+   and `Continue`. `pm-setup` records the version, migrates a legacy marker,
+   and re-installs a missing section. On `Continue`, put `Upgrade debt:
+   rules <version or not recorded>, skills v<new>.` in the output `Note`
+   and continue, except when the section is missing: then stop, because the
+   rules the user relies on are not in the agent file.
+5. **Skills older:** reply `Skills are older than the rules (v<old> against
+   v<new>).` and ask: `Update the skills now?` with the options `Update,
+   then run pm-setup (recommended)` and `Continue on v<old>`. Print
+   `npx skills update` for the user to run; never run the skills CLI
+   yourself. Then run `pm-setup` when the user asks.
+6. **A start marker without a version is normal.** It marks the boundaries
+   only. A marker that still carries `version=N` is a legacy install, and
+   `pm-setup` migrates it.
+7. **During a workflow** these questions wait for the workflow to finish
+   (Non-interruption rule 4). `pm-checkpoint` and `pm-park` never run this
+   check: saving the state always comes first.
+
+After an upgrade, check `<PM root>/config.md` for the settings the new
+version adds; version 5 adds the `## Commits` section. Ask one choice
+question: `config.md has no Commits section. Add it with defaults?` with
+the options `Add it (recommended)` and `Leave it`. If the user leaves it,
+PM commits ask before each commit.
 
 ## Asking the user (mandatory)
 
