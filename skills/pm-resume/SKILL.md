@@ -17,6 +17,9 @@ directory` setting (default `planning/`).
 
 ## Guard
 
+- Before step 1, run the upgrade check (rules: Upgrading before work
+  resumes). Put any `Upgrade debt` in the `Note`. A workflow is never
+  interrupted by it.
 - If `<PM root>/config.md` or `<PM root>/NOW.md` is missing, reply:
   `No <PM root> state. Run pm-init.` Stop.
 - If a workflow is active and this is not a post-compaction resume, apply
@@ -34,16 +37,23 @@ directory` setting (default `planning/`).
    milestone only). If `NOW.md` has a `Brief`, read its `## Decision` and
    `## Open questions`.
 2. Count the open inbox (Shared definitions) and the inbox files with
-   `Discuss: yes`. List briefs with `Status: shaping`.
+   `Discuss: yes`. List briefs with `Status: shaping`. Count the
+   **Uncommitted PM state** files for the `Note` section.
 3. Evaluate **Review due** (Shared definitions).
-4. If `Status: idle`: the next action is `pm-next`. If review is due, it is
-   `pm-review` instead. If Next has no claimable item, it is the user task
-   that unblocks the most items, or `pm-review`.
+4. If `Status: idle`: check for drift first (Shared definitions). The state
+   has drifted when the current branch matches the `Branch name pattern` in
+   `config.md`, because then the branch names an item that `NOW.md` does not
+   record. The next action is then `pm-rejoin`, not `pm-next`. Otherwise the
+   next action is `pm-next`. If review is due, it is `pm-review` instead. If
+   Next has no claimable item, it is the user task that unblocks the most
+   items, or `pm-review`.
 5. If `Status: active`:
    - **Session match** (Shared definitions): a mismatch means another
-     session owns the item. Report it read-only. The next action is
-     `pm-next` only if Next has a claimable item, which would claim a
-     different item. Otherwise it is
+     session owns the item. Report it read-only, unless the current branch
+     matches the `Branch name pattern` in `config.md` for this item's ID:
+     then the work moved to this branch and the next action is `pm-rejoin`.
+     Otherwise the next action is `pm-next` only if Next has a claimable
+     item, which would claim a different item. Otherwise it is
      `wait, or ask the owner of <Session>`.
    - If the `Plan` file exists, count its `- [ ]` (open) and `- [x]`
      (done) checkboxes.
@@ -95,5 +105,5 @@ directory` setting (default `planning/`).
 
 ## Note
 
-- <only if needed: review due, inbox count, session mismatch, missing file>
+- <only if needed: review due, inbox count, session mismatch, drift, uncommitted PM state, missing file>
 ```

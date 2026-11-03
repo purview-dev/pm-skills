@@ -118,6 +118,8 @@ label).
 10. Write the decision, date, and reason under `## Decision`, and set
     `Updated`. If the decision rejected an earlier strategy line, append
     to `## Decisions` in `STRATEGY.md`.
+11. **Commit** the PM state (rules: Committing PM state), with the message
+    `docs(pm): shape <slug>`.
 
 If the user stops partway, the brief keeps `Status: shaping` with the
 remaining questions under `## Open questions`; the next `pm-shape` run on
@@ -141,5 +143,5 @@ it continues from there.
 
 ## Note
 
-- <commit suggestion: `git add <PM root> && git commit -m "docs(pm): shape <slug>"`>
+- <commit result>
 ```

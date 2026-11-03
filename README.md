@@ -25,6 +25,11 @@ next action, an explicit "done when", and fixed templates.
   scale. Non-.NET projects get no suggestions.
 - **Memory across sessions and compaction:** every decision is written to
   a file the moment it is made. `pm-resume` restores the state afterwards.
+  `pm-rejoin` puts a session back on the lifecycle after the thread is
+  lost.
+- **Commits without the chore:** the skill that writes the planning files
+  commits them, in the main worktree, on the branch you plan on. The
+  default asks first; `config.md` can make it automatic.
 - **Questions use the agent's question UI:** choices with a recommended
   option and free text. You are never asked to type `yes` or `a`/`b`/`c`.
 
@@ -62,6 +67,7 @@ Then, in your agent:
 | [`pm-setup`](skills/pm-setup/SKILL.md) | Merge the rules into the agent file; check the install | User asks |
 | [`pm-init`](skills/pm-init/SKILL.md) | Create the PM state directory, write the vision, seed the roadmap | User asks, once per repo |
 | [`pm-resume`](skills/pm-resume/SKILL.md) | Where you stopped, the next action, and what is waiting for you | Session start, after compaction |
+| [`pm-rejoin`](skills/pm-rejoin/SKILL.md) | Find the real position in the lifecycle and rejoin at the right stage | The thread is lost, or state and work disagree |
 | [`pm-next`](skills/pm-next/SKILL.md) | Check, claim, and hand off the next item to design | No active item |
 | [`pm-park`](skills/pm-park/SKILL.md) | Capture an idea, bug, question, or inspiration in one line | Any time |
 | [`pm-shape`](skills/pm-shape/SKILL.md) | Brainstorm and challenge one idea into a brief and a decision | No active workflow |
@@ -84,6 +90,7 @@ pm-resume -> pm-next -> [design -> plan -> execute -> finish] -> pm-checkpoint
 pm-park: any time, capture only.   pm-review: weekly.
 pm-shape / pm-discover / pm-strategy: think before building, no workflow active.
 pm-item / pm-status: on request, when no workflow is active.
+pm-rejoin: any time the position is unclear; it hands back to the stage.
 ```
 
 Ideas flow: `pm-park` (or `pm-discover`) -> inbox -> `pm-shape` -> brief
@@ -93,13 +100,17 @@ and focus -> ordered Next -> `pm-status` board.
 ## Non-interruption guarantee
 
 The merged rules make an active workflow own the session. During a
-workflow, only `pm-park` may run, and only to capture. Any other PM skill
-waits until the workflow finishes; the agent asks whether to run it after
-the workflow or pause now. PM state skills
-write only to the configured planning directory (default `planning/`) in
-the main worktree. They never change specs, plans, branches, or git state.
+workflow, only `pm-park` may run, and only to capture; `pm-rejoin` may
+report the position, read-only, and `pm-help` may explain a skill. Any
+other PM skill waits until the workflow finishes; the agent asks whether
+to run it after the workflow or pause now. PM state skills write only to
+the configured planning directory (default `planning/`) in the main
+worktree, and never touch specs, plans, or code. The one git state change
+they make is the commit of those planning files, plus the offered switch
+to the planning branch when the main worktree is on another one.
 `pm-setup` edits only the managed section in the selected agent
-instructions file. Full rules:
+instructions file, plus the `Rules version` line in `config.md`. Full
+rules:
 [`skills/pm-setup/references/AGENTS-section.md`](skills/pm-setup/references/AGENTS-section.md).
 
 ## Files created by pm-init
@@ -109,7 +120,7 @@ directory selected during `pm-setup`.
 
 | File | Holds |
 | --- | --- |
-| `planning/config.md` | Handoffs to workflow skills, limits, last review date |
+| `planning/config.md` | Handoffs to workflow skills, limits, commit policy, rules version, last review date |
 | `planning/VISION.md` | v1 outcomes, out of scope, constraints |
 | `planning/STRATEGY.md` | Focus, milestones, bets, assumptions, not doing, decisions |
 | `planning/NOW.md` | The one active item, its checkpoint, decisions, and context |
@@ -122,6 +133,23 @@ directory selected during `pm-setup`.
 Projects initialised before version 4 keep working. The new files are
 created on first use; run `pm-strategy` to create `STRATEGY.md`.
 
+Version 5 adds the `Commits` section to `config.md`. Without it, a PM
+commit asks before each commit and treats the main worktree's current
+branch as the planning branch. Add the section to choose `always`, `ask`,
+or `never`, and to name the branch.
+
+Version 5 also adds the upgrade check. `pm-resume`, `pm-rejoin`, and
+`pm-next` compare the installed rules version with the installed skills
+version and offer `pm-setup` before any work resumes.
+
+Version 6 moves that version of record out of the agent file: it is
+`Rules version` in `planning/config.md`, so a merge, rewrite, or removed
+marker in `AGENTS.md` cannot lose it. Installed markers therefore carry no
+version, and `pm-setup` migrates an older `version=` marker into
+`config.md` the next time it runs. If the section itself is dropped from
+the agent file, the recorded version lets `pm-setup` reinstall or re-wrap
+it instead of appending a second copy.
+
 ## Using a different workflow framework
 
 Edit the Handoffs table in `<PM root>/config.md`. The skills refer to stages
@@ -133,8 +161,14 @@ Edit the Handoffs table in `<PM root>/config.md`. The skills refer to stages
 npx skills update
 ```
 
-Then `run pm-setup` again. It replaces only the section between the markers
-when its version has changed.
+Then `run pm-setup` again. It replaces only the section between the
+markers, which now carry no version, and records the new `Rules version` in
+`config.md`; `pm-setup` reports when it is missing. An older marker that
+still carries `version=N` is migrated on that run.
+
+You do not have to remember the order. The next `pm-resume`, `pm-rejoin`,
+or `pm-next` compares the rules version with the installed skills version
+and asks before work resumes; `pm-help` reports the same finding.
 
 ## Development
 
@@ -167,6 +201,7 @@ skills/
     SKILL.md
     templates/
   pm-resume/SKILL.md
+  pm-rejoin/SKILL.md
   pm-next/SKILL.md
   pm-park/SKILL.md
   pm-shape/SKILL.md

@@ -1,6 +1,6 @@
 ---
 name: pm-init
-description: Use only when the user explicitly asks to set up project management, create its state directory, or write the product vision for this repository. Creates the PM root, writes a challenged VISION.md, and seeds the roadmap.
+description: Use only when the user explicitly asks to set up project management, create its state directory, or write the product vision for this repository. Creates the PM root, writes a challenged VISION.md, seeds the roadmap, and commits it.
 ---
 
 # pm-init
@@ -29,7 +29,7 @@ section of the agent instructions file (`AGENTS.md` or `CLAUDE.md`).
 1. Find the main worktree: the first path in `git worktree list`.
 2. Copy the templates from this skill's `templates/` folder into the PM
    root. In every copied file, replace `{{PM_ROOT}}` with the configured
-   directory. In `config.md`, set `Last review` Date to `never`:
+   directory:
 
    | Template | Destination |
    | --- | --- |
@@ -43,7 +43,22 @@ section of the agent instructions file (`AGENTS.md` or `CLAUDE.md`).
    | `briefs-README.md` | `<PM root>/briefs/README.md` |
    | `research-README.md` | `<PM root>/research/README.md` |
 
-3. Read the repository for context before asking anything: `README*`,
+   In `config.md`, set `Last review` Date to `never`, and set `PM branch`
+   to the repository's default branch: run
+   `git symbolic-ref --short refs/remotes/origin/HEAD`, strip any `origin/`
+   prefix, and fall back to `main`, then `master`, then the current branch.
+   Set `Rules version` to the `version=N` in the pm-skills start marker when
+   that marker still carries one (a legacy install); keep the template value
+   when the marker is present without a version, because the template ships
+   with the skills that `pm-setup` merged; and when no agent file has the
+   marker, leave the value empty and add the Note `Rules not installed. Run
+   pm-setup.`
+   Then ask one choice question: `When a skill writes planning files, how
+   should they be committed?` with the options `Commit automatically
+   (recommended)`, `Ask me each time`, and `Never commit`; set `PM state
+   commit` to `always`, `ask`, or `never` to match.
+
+3. Read the repository for context before the vision questions: `README*`,
    package or project manifests, top-level folders, and the last 20 lines
    of `git log --oneline`. Record whether the repository already has
    substantial code (more than a scaffold).
@@ -101,6 +116,8 @@ section of the agent instructions file (`AGENTS.md` or `CLAUDE.md`).
 7. Verify the specs path in the Handoffs table: check whether the installed
    design skill states a save location. If it differs, update
    `<PM root>/config.md`.
+8. **Commit** the PM state (rules: Committing PM state), with the message
+   `docs(pm): initialise planning`. Then show the output.
 
 ## Output
 
@@ -110,12 +127,13 @@ section of the agent instructions file (`AGENTS.md` or `CLAUDE.md`).
 - Created: `<PM root>/config.md`, `VISION.md`, `STRATEGY.md`, `NOW.md`, `ROADMAP.md`, `LOG.md`, `inbox/`, `briefs/`, `research/`
 - Vision: <n> v1 outcomes, <n> out-of-scope items, <n> challenges raised
 - Roadmap: <n> in Next (<n> for you), <n> in Later
+- Last review: never
+- PM state: <committed <short sha> | left uncommitted (policy: never)>
 
 ## Do this next
 
-1. Commit the PM files.
-   - Start with: `git add <PM root> && git commit -m "chore: initialise project planning"`
-   - Done when: `git status` shows the PM root clean
-2. <If the repository has substantial code:> Run `pm-discover` to check the roadmap against the existing product.
+1. <If the repository has substantial code:> Run `pm-discover` to check the roadmap against the existing product.
    <Otherwise:> Run `pm-strategy` to set milestones, or `pm-next` to start <first claimable ID>.
+   - Start with: <skill name>
+   - Done when: <observable check>
 ```

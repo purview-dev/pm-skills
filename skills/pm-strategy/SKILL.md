@@ -148,6 +148,11 @@ facts:
 4. List roadmap items whose `Serves` no longer exists, and recommend Mode:
    roadmap.
 
+## Every mode
+
+**Commit** the PM state at the end (rules: Committing PM state), with the
+message `docs(pm): update strategy`.
+
 ## Output
 
 ```markdown
@@ -166,5 +171,5 @@ facts:
 
 ## Note
 
-- <commit suggestion: `git add <PM root> && git commit -m "docs(pm): update strategy"`>
+- <commit result>
 ```

@@ -75,6 +75,8 @@ root is its `PM state directory` setting (default `planning/`).
    only with `pm-strategy` (vision mode).
 7. Set `Last review` Date in `config.md` to today. Append to `## Reviews`
    in `LOG.md`: `- <date> Inbox <n> to <m>. <one-line summary>.`
+8. **Commit** the PM state (rules: Committing PM state), with the message
+   `docs(pm): review <date>`.
 
 ## Output
 
@@ -86,6 +88,7 @@ root is its `PM state directory` setting (default `planning/`).
 - Next: <n>/<max>. Later: <n>.
 - Focus: <M Name> <done>/<total>
 - Challenges: <n> raised, <n> applied
+- PM state: <commit result>
 
 ## Do this next
 

@@ -19,6 +19,11 @@ installed. Existing content is never rewritten, reordered, or removed.
 - If a workflow skill is active in this conversation (brainstorming,
   planning, executing, debugging, TDD), do not start. Reply:
   `Active: <skill> at <step>. I'll run pm-setup when this finishes.`
+- This skill is the fix for the upgrade check (rules: Upgrading before work
+  resumes), so it never runs that check.
+- The only PM state this skill writes is the `Rules version` line in
+  `<PM state directory>/config.md`. It never creates or edits any other PM
+  file.
 - The current folder must be inside a git repository. Work in the **main
   worktree**: the first path in `git worktree list`.
 - If `AGENTS.md` or `CLAUDE.md` has uncommitted changes, stop. Reply:
@@ -50,13 +55,18 @@ Collect these facts. Write nothing yet.
    its line endings (LF or CRLF), whether it starts with a UTF-8 BOM, and
    whether it ends with a newline.
 2. **Imports:** whether `CLAUDE.md` contains a line `@AGENTS.md`.
-3. **Existing merge:** whether any agent file contains
-   `<!-- pm-skills:start`. If it does, read its `version=` value and
-   compare it with the version in `references/AGENTS-section.md`.
-4. **Installed skills:** for each of `pm-init`, `pm-resume`, `pm-next`,
-   `pm-park`, `pm-shape`, `pm-discover`, `pm-strategy`, `pm-purview`,
-   `pm-checkpoint`, `pm-review`, `pm-item`, `pm-status`, and `pm-help`,
-   check that a `SKILL.md` exists.
+3. **Existing merge and versions:** whether any agent file contains
+   `<!-- pm-skills:start`, and whether that marker still carries a
+   `version=` value (a legacy install, before version 6); whether any agent
+   file contains the section heading `## Project management layer` without a
+   start marker (a stranded section); the version in
+   `references/AGENTS-section.md` (the skills version); and `Rules version`
+   in `<PM state directory>/config.md`, if that file exists. A legacy
+   marker's `version=` counts only when `config.md` records none.
+4. **Installed skills:** for each of `pm-init`, `pm-resume`, `pm-rejoin`,
+   `pm-next`, `pm-park`, `pm-shape`, `pm-discover`, `pm-strategy`,
+   `pm-purview`, `pm-checkpoint`, `pm-review`, `pm-item`, `pm-status`, and
+   `pm-help`, check that a `SKILL.md` exists.
    - First run `npx skills list` (or `bunx skills list`), if either runs.
    - Otherwise check `.agents/skills/<name>/`, `.claude/skills/<name>/`,
      and `.github/skills/<name>/` in the repository, then
@@ -83,8 +93,8 @@ Collect these facts. Write nothing yet.
    - "Always brainstorm new ideas immediately" conflicts with rule 5.
    - "Track tasks in TODO.md" is a second task system, which conflicts with
      the configured PM state directory as the single source of truth.
-   - "Commit after every change", applied to PM files, conflicts with
-     rule 6.
+   - "Commit after every change", applied to source, specs, or plans,
+     conflicts with rule 6. Only the PM root is committed, by a PM commit.
    - "Ask the user to type yes to continue" conflicts with Asking the
      user.
 
@@ -112,10 +122,11 @@ only other question.
 ```markdown
 ## pm-setup plan
 
-- Mode: install | upgrade v<old> to v<new> | already current (nothing to do)
-- Target: <file> (<append section | replace between markers>)
+- Mode: install | upgrade v<old> to v<new> | repair (re-wrap the section) | reinstall (section missing, recorded v<n>) | already current (nothing to do)
+- Target: <file> (<append section | replace between markers | wrap the stranded section>)
 - Extra: <@AGENTS.md import added to CLAUDE.md | none>
-- Skills: <n> of 13 installed. Missing: <names | none>
+- Skills: <n> of 14 installed. Missing: <names | none>
+- Rules version: <v<n> recorded | not recorded | legacy v<n> in the marker | PM state not initialised>
 - Workflow framework: <Superpowers | name | none>
 - PM state directory: <path>
 
@@ -156,17 +167,36 @@ Rules for this step:
    - If no setting existed, replace its default `PM state directory` value
      with the path chosen in Step 1.
    - If a setting existed, preserve its current value.
+   - Write the start marker as `<!-- pm-skills:start -->`, with no version.
+     The version of record is written to `config.md` in item 3.
    - Upgrade: replace everything from `<!-- pm-skills:start` through
      `<!-- pm-skills:end -->`, inclusive. Change nothing else.
-   - Install: append to the end of the target file. If the file does not
-     end with a newline, add one, then a blank line, then the section.
+   - Repair: when the section heading exists without a start marker, wrap
+     the existing section instead of appending. Insert the start marker
+     before the heading `## Project management layer` and the end marker
+     after the last line of its `## Communication contract` section, which
+     runs to the next level-two heading (`##`) that is not one of the
+     section's own headings, or to the end of the file. Then replace the
+     text between the markers with the reference. Never leave two copies of
+     the section.
+   - Install or reinstall: append to the end of the target file. If the
+     file does not end with a newline, add one, then a blank line, then the
+     section.
    - Match the target file's existing line endings and BOM. Do not
      re-wrap, re-indent, or reformat any existing line.
 2. **Import.** If Step 3 calls for it, append `@AGENTS.md` on its own line
    at the end of `CLAUDE.md`, preceded by one blank line.
-3. **PM config.** If `<PM state directory>/config.md` exists, check that
-   each skill in its Handoffs table exists. Report any missing ones. Do not
-   edit the file.
+3. **Version of record.** If `<PM state directory>/config.md` exists, set
+   `Rules version` to the skills version from the reference, and create the
+   `## Install` section when it is missing. This is the migration: a legacy
+   `version=` in the old marker becomes this line, and the marker is
+   rewritten without it. Change nothing else in the file. If the file does
+   not exist, say `PM state not initialised: pm-init records Rules version.`
+4. **PM config check.** If `<PM state directory>/config.md` exists, check
+   that each skill in its Handoffs table exists and that it has a `Commits`
+   section (added in version 5). Report anything missing, including
+   `No Commits section in config.md: PM state commits will ask first.` Do
+   not edit anything else in the file.
 
 ## Step 6: Verify
 
@@ -175,7 +205,9 @@ Rules for this step:
    If anything else changed, revert that file with
    `git restore -- <file>` and report the failure.
 2. Check that the start marker and end marker each appear exactly once,
-   across all agent files.
+   across all agent files, and that the start marker carries no
+   `version=`. Check that `config.md`, if changed, differs only in its
+   `Rules version` line.
 3. If the repository has a markdownlint config, run
    `npx markdownlint-cli2 <files>` (or `bunx markdownlint-cli2 <files>`) on
    the changed files and report the result.
@@ -185,21 +217,23 @@ Rules for this step:
 ```markdown
 ## pm-setup done
 
-- Target: <file> (<installed | upgraded to v<n>>)
-- Skills: <13 of 13 installed | missing: names>
-- Diff check: only the managed section changed
-- PM state: <not initialized | current | missing version 4 files: names>
+- Target: <file> (<installed | upgraded to v<n> | repaired>)
+- Skills: <14 of 14 installed | missing: names>
+- Rules version: <v<n> recorded in <PM root>/config.md | legacy v<n> migrated | PM state not initialised>
+- Diff check: only the managed section changed, plus the Rules version line
+- PM state: <not initialized | current | missing version 4 files or the Commits section: names>
+- Upgrade gate: <cleared, rules at v<n> | unchanged>
 
 ## Do this next
 
 1. <Only if skills are missing:> Install the missing skills.
    - Start with: `npx skills add https://github.com/purview-dev/pm-skills -y`
-   - Done when: all 13 pm-* skills are listed by `npx skills list`
+   - Done when: all 14 pm-* skills are listed by `npx skills list`
 2. Commit.
    - Start with: `git add <changed paths> && git commit -m "chore: add pm-* skills"`.
      List only paths that exist, taken from: `.agents/skills/pm-*`,
-     `.claude/skills/pm-*`, `.github/skills/pm-*`, `AGENTS.md`, and
-     `CLAUDE.md`.
+     `.claude/skills/pm-*`, `.github/skills/pm-*`, `AGENTS.md`,
+     `CLAUDE.md`, and `<PM state directory>/config.md`.
    - Done when: `git status` is clean
 3. <Run pm-init, if the PM state is not initialized. Run pm-strategy, if
    `STRATEGY.md` is missing after an upgrade. Otherwise run pm-resume, or

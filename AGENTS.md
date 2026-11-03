@@ -11,11 +11,13 @@ project state in this repository.
 The skills form a lifecycle: `pm-setup` installs the shared rules,
 `pm-init` creates project state, `pm-resume` reads it, `pm-next` claims an
 item and hands off to a development workflow, `pm-checkpoint` records
-progress or closes the item, and `pm-review` triages the roadmap and
-inbox. `pm-park` captures ideas (from the user or the agent) without
-interrupting active work. `pm-shape` discusses and challenges one idea
-into a brief, `pm-discover` analyses the existing product for evidence,
-and `pm-strategy` owns vision, milestones, and roadmap generation.
+progress, commits the PM state, or closes the item, and `pm-review`
+triages the roadmap and inbox. `pm-rejoin` re-establishes the position
+when a session drifts out of the lifecycle. `pm-park` captures ideas (from
+the user or the agent) without interrupting active work. `pm-shape`
+discusses and challenges one idea into a brief, `pm-discover` analyses the
+existing product for evidence, and `pm-strategy` owns vision, milestones,
+and roadmap generation.
 `pm-purview` matches .NET projects to Purview tools using the dated
 snapshot in `skills/pm-purview/references/catalogue.md`; refresh that
 snapshot from `https://purview.dev/llms.txt` when Purview releases change.
@@ -33,10 +35,18 @@ and change handoffs there rather than hardcoding a different framework into
 the skills.
 
 The shared rules merged by `pm-setup` are maintained in
-`skills/pm-setup/references/AGENTS-section.md`. Its start/end markers and
-version are used by setup to safely add or upgrade that section in a
-consumer's agent instructions. Keep changes to the managed rules in this
-reference, not in generated copies.
+`skills/pm-setup/references/AGENTS-section.md`. Its start/end markers bound
+the section that setup replaces, and the version in that marker is the
+skills version. Installed copies keep the same markers without a version,
+because the version of record is `Rules version` in the consumer's
+`config.md`: an agent file can be merged, rewritten, or stripped without
+losing the record. Keep changes to the managed rules in this reference, not
+in generated copies, and bump its marker version when the section changes;
+`scripts/validate.ts` keeps `skills/pm-init/templates/config.md` equal to
+it. The rules and the skills carry the same version, and `pm-resume`,
+`pm-rejoin`, and `pm-next` gate work on it: a consumer whose recorded rules
+are older than its installed skills is asked to run `pm-setup` before work
+resumes.
 
 ## Build, test, and lint
 
@@ -78,7 +88,8 @@ changes on `main`. Bump `version` to cut a release.
   holds the single active item; `ROADMAP.md` separates ordered `Next` from
   `Later`; and parked ideas each have their own inbox file.
 - Keep PM workflow actions bounded: PM skills operate on PM state in the
-  main worktree, do not perform git state changes, and print suggested
-  commit commands for the user rather than running them.
+  main worktree and commit only that PM root, as defined by *Committing PM
+  state* in the managed section. They never commit code, specs, plans, or
+  agent instruction files, and never push, merge, or create branches.
 - Markdown follows the repository's configured markdownlint defaults.
   Long lines are allowed (`MD013` is disabled).

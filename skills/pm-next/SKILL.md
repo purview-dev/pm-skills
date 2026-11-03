@@ -15,6 +15,10 @@ root is its `PM state directory` setting (default `planning/`).
 
 ## Guard
 
+- Before step 1, run the upgrade check (rules: Upgrading before work
+  resumes). Do not claim an item while the rules are older than the skills,
+  unless the user accepts `Continue on v<old>` and the `Upgrade debt` Note
+  is written.
 - If `<PM root>/config.md` or `NOW.md` is missing: `No <PM root> state. Run
   pm-init.` Stop.
 - If `NOW.md` lacks the schema fields (see pm-resume), say it is malformed
@@ -69,7 +73,10 @@ root is its `PM state directory` setting (default `planning/`).
    `Done when` under `## Done when`. Leave `## Checkpoint` empty.
 6. Remove the item from `## Next` in `ROADMAP.md`. If it has a brief, set
    the brief's `Status: on roadmap (<ID>), active`.
-7. Invoke the `design` handoff skill from the Handoffs table in
+7. **Commit** the PM state (rules: Committing PM state), with the message
+   `docs(pm): claim <ID> <slug>`. The claim must survive compaction, so
+   commit before the handoff.
+8. Invoke the `design` handoff skill from the Handoffs table in
    `config.md`, passing the item title, `Serves`, `Done when`, and the
    brief path. Tell it the brief already records the problem, the
    alternatives, the challenges, and the ramifications, so it does not ask
@@ -104,5 +111,5 @@ branches.
 
 ## Note
 
-- <branch name, assumptions>
+- <commit result, branch name, assumptions>
 ```

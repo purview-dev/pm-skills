@@ -41,6 +41,16 @@ const ends = section.match(/<!-- pm-skills:end -->/g) ?? [];
 if (starts.length !== 1) fail("AGENTS-section.md: need exactly one start marker with version=N");
 if (ends.length !== 1) fail("AGENTS-section.md: need exactly one end marker");
 
+// The template records the skills version, so keep it equal to the reference.
+const sectionVersion = /<!-- pm-skills:start version=(\d+) -->/.exec(section)?.[1];
+const configTemplate = read("skills", "pm-init", "templates", "config.md");
+const templateVersion = /^- Rules version: (\d+)$/m.exec(configTemplate)?.[1];
+if (sectionVersion && templateVersion !== sectionVersion) {
+  fail(
+    `templates/config.md: Rules version ${templateVersion} != AGENTS-section version ${sectionVersion}`,
+  );
+}
+
 const templates = join(skillsDir, "pm-init", "templates");
 const initText = read("skills", "pm-init", "SKILL.md");
 for (const m of initText.matchAll(/^\| `([^`]+\.md)` \| `<PM root>\/[^`]+` \|$/gm)) {
