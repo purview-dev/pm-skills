@@ -65,18 +65,43 @@ same `bun` commands as the `just` recipes). Markdown is linted with
 - Validate only (`scripts/validate.ts`: frontmatter, README, managed-section
   and setup inventory, markers, template placeholders): `just validate`
 - Lint one file: `bunx markdownlint-cli2 skills/pm-next/SKILL.md`
-- Adding a skill: create `skills/<name>/SKILL.md`, then list it in the
-  README table, the managed-section table, the `pm-setup` inventory, and
-  the `pm-help` skill guide.
-  `just validate` fails otherwise.
+- Adding a shipped skill: create `skills/<name>/SKILL.md`, then list it in
+  the README table, the managed-section table, the `pm-setup` inventory, and
+  the `pm-help` skill guide. `just validate` fails otherwise.
+- A repo-local skill that must not reach a consumer lives in
+  `.agents/skills/<name>/SKILL.md` and sets `metadata.internal: true`, which
+  hides it from the `skills` CLI. `just validate` checks its frontmatter and
+  requires the flag; it is exempt from the four consumer tables.
+- Bump the release version: `just bump patch|minor|major`
+  (`scripts/bump-version.ts`).
 
 Hooks are configured in `.config/lefthook.yml`: `commit-msg` runs
 `bunx commitlint --edit {1}` (rules in `commitlint.config.mts`), and
 `pre-push` runs `just lint-check`.
 
-Releases are tagged from `package.json`: `.github/workflows/release.yml`
-creates the `v{version}` tag and a GitHub release when `package.json`
-changes on `main`. Bump `version` to cut a release.
+Releases are driven by the `version` field in `package.json`:
+
+- `.github/workflows/release.yml` creates the `v{version}` tag and a GitHub
+  release when `package.json` changes on `main`, and skips when the tag
+  already exists.
+- `.github/workflows/ci.yml` requires a `package.json` version bump in any
+  pull request that changes `skills/**`, and refuses a version whose
+  `v{version}` tag already exists. A pull request that touches nothing under
+  `skills/` (docs, CI, scripts, this file) merges without a bump.
+- A change to the managed section must also bump its `version=N` marker. CI
+  fails a section change whose marker did not move, because `pm-setup` only
+  replaces the section when the version changes; otherwise the fix never
+  reaches a consumer. `scripts/validate.ts` keeps
+  `skills/pm-init/templates/config.md` equal to the marker, and `pm-setup`
+  writes it to the consumer's `Rules version`.
+- `just bump patch|minor|major` (`scripts/bump-version.ts`) writes the next
+  version and refuses one that is already tagged. The repository-only
+  `release` skill (`.agents/skills/release/SKILL.md`) picks the part from
+  the conventional commits since the last tag, bumps, and commits.
+- The release version and the rules/skills version are independent: the
+  rules/skills version is the `version=N` marker in the managed section
+  (mirrored by `Rules version` in a consumer's `config.md`), bumped by hand
+  when that section changes.
 
 ## Repository conventions
 

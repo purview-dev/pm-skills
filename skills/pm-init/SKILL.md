@@ -110,9 +110,10 @@ section of the agent instructions file (`AGENTS.md` or `CLAUDE.md`).
      that serve no `V` line, or match "Out of scope", go to `## Later` with
      `Status: ready` and a `Note:` stating why.
    - Propose the top items for `## Next`, up to the max in `config.md`, in
-     dependency order, with one reason per item. Ask one choice question:
-     `Accept this Next list?` with the options `Accept (recommended)` and
-     `Change the order or items`.
+     dependency order, with one reason per item, each shown as
+     `R-NNN <title>` (Shared definitions: Reference legend). Ask one choice
+     question: `Accept this Next list?` with the options `Accept
+     (recommended)`, `Change the order or items`, and `Explain <ID>`.
 7. Verify the specs path in the Handoffs table: check whether the installed
    design skill states a save location. If it differs, update
    `<PM root>/config.md`.

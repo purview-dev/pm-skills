@@ -1,4 +1,4 @@
-<!-- pm-skills:start version=7 -->
+<!-- pm-skills:start version=8 -->
 <!-- Managed by pm-setup. Edit outside these markers; content inside is replaced on upgrade.
      Installed copies keep this marker without a version. The version of record is
      `Rules version` in the PM root config.md, so editing or merging this file cannot lose it. -->
@@ -72,6 +72,11 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
 - **Claimable:** an item in `## Next` whose `Status` is `ready` or
   `paused`, whose `Owner` is `agent` or `both`, and whose every
   `Depends on` ID appears in `## Done` in `LOG.md`.
+- **Reference legend:** the short list of the IDs a question uses, each with
+  the words needed to decide it: a milestone's name, whether it is the
+  focus, and the items in it; a roadmap item's title, owner, size, and
+  status; a `V` line, bet, or inbox file's one-line text. A question that
+  names IDs prints it (Asking the user).
 - **Optional files:** `STRATEGY.md`, `briefs/`, and `research/` in the PM
   root may be missing in projects initialised before version 4. Skills that
   read them treat a missing file as empty. Skills that write them create
@@ -458,6 +463,24 @@ PM commits ask before each commit.
   covers anything else.
 - Make each question stand on its own. The dialog may hide earlier text,
   so include the ID, title, or fact the user needs to decide.
+- **Name what you reference.** Never ask about a milestone, item, bet, `V`
+  line, brief, or inbox file by ID alone. Print a `## For this question`
+  legend (Communication contract) above the question, listing each ID it
+  names with the words needed to decide it (Shared definitions: Reference
+  legend). Keep it to the IDs the question uses; do not print the whole
+  roadmap.
+- **Offer a way to see more.** Add one escape option after the decision
+  options; it does not count towards the 2 to 4 and is never an answer.
+  `Explain <ID>` when the question names IDs, `Show the roadmap` for a
+  milestone, focus, or ordering question, `Show the board` for an owner,
+  column, or "what is in progress" question. On `Explain <ID>`, print that
+  item's or milestone's full block from its file (`ROADMAP.md`,
+  `STRATEGY.md`, `LOG.md`, or the brief) — every field, and for a milestone
+  its exit criteria and its items — then ask the same question again with
+  the same options. On `Show the roadmap` or `Show the board`, run that
+  read-only view (`pm-roadmap`, `pm-board`), then ask the same question
+  again. Neither changes state. Where the tool caps the option count, keep
+  two decision options and the escape option.
 - Ask one decision at a time. Up to 4 independent questions may share one
   prompt when the tool supports it. A question that depends on an earlier
   answer waits for it.
@@ -481,6 +504,8 @@ Output must be literal, predictable, and immediately actionable.
   "consider", "maybe"). No idioms.
 - Use the skill's fixed template with the same headings in the same order
   every time. Omit empty optional sections. Do not invent new sections.
+- Before a question that names IDs, print the `## For this question` legend
+  (Asking the user). It is the only section a question adds.
 - At most 5 bullets per section, except boards, tables, and lists that a
   skill's template defines as complete. At most 3 sentences per paragraph.
 - State any assumption explicitly as `Assumption: ...`.

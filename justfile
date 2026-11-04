@@ -28,3 +28,7 @@ lint-check: validate
 # Lint all Markdown and apply automatic fixes.
 lint-fix:
     bunx markdownlint-cli2 --fix "**/*.md" "#node_modules"
+
+# Bump the release version in package.json (patch, minor, or major).
+bump part:
+    bun scripts/bump-version.ts {{part}}

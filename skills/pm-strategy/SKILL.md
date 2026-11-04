@@ -47,6 +47,8 @@ facts:
 
 - Per `V` line: items done, open in Next, open in Later.
 - Per milestone: items done and open; exit criteria met or not.
+- The milestone legend, one line each (Shared definitions: Reference
+  legend): `M1 <Name> (focus): R-002 <title>, R-005 <title>`.
 - Throughput: items done per week over the last 4 weeks (from `LOG.md`).
 - Forecast: open items in the focus milestone divided by throughput, as an
   `Assumption:` with the arithmetic shown. If there is no history, say so
@@ -58,12 +60,16 @@ facts:
 
 1. **Milestones.** Propose milestones as checkable outcomes that group `V`
    lines, ordered so each unlocks the next. Prefer the order that tests
-   the riskiest assumption soonest. Ask with the question tool: `Use these
-   milestones?` with the options `Use them (recommended)`, and up to 2
-   meaningfully different orderings, each labelled by what it puts first.
+   the riskiest assumption soonest. Show the milestone legend (Shared
+   definitions: Reference legend) before asking. Ask with the question
+   tool: `Use these milestones?` with the options `Use them
+   (recommended)`, and up to 2 meaningfully different orderings, each
+   labelled by what it puts first, plus `Explain M<n>` and `Show the
+   roadmap`.
 2. **Focus.** Recommend one milestone as `Current focus`, with `Why now`
    and its evidence. Ask: `Focus on <M>?` with the options `Focus on <M>
-   (recommended)` and the next most plausible milestone.
+   (recommended)`, the next most plausible milestone, and `Explain M<n>`
+   plus `Show the roadmap`.
 3. **Bets and assumptions.** For the focus milestone, write each bet as
    `We believe <change> will <result> for <who>`, with its evidence and
    the signal that settles it. List the assumptions it rests on, each
@@ -104,10 +110,12 @@ facts:
    focus milestone first; then by dependency; then risk first (items that
    test an open assumption); then by value per size. User tasks that block
    agent items go first, so they are done in parallel.
-5. **Propose.** Show the proposal in this format, then ask one question per
-   section, in this order: `Accept this Next order?` (`Accept
-   (recommended)`, `Change the order`), `Which new items should be added?`
-   (multi-select), `Which items should be dropped?` (multi-select).
+5. **Propose.** Show the proposal in this format (the `Proposed Next` and
+   `Proposed Later` tables are the reference legend), then ask one question
+   per section, in this order: `Accept this Next order?` (`Accept
+   (recommended)`, `Change the order`, `Show the board`), `Which new items
+   should be added?` (multi-select), `Which items should be dropped?`
+   (multi-select).
 
    ```markdown
    ## Proposed Next

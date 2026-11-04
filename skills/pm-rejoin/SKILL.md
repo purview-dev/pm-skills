@@ -68,12 +68,15 @@ ambiguous, ask which one is true.
    spec with no plan is `plan`; no spec is `design`. State the rule you
    used when the stage comes from anything other than `NOW.md`.
 4. Show the `## Where you are` template below. Write nothing.
-5. Ask one choice question with the options for that position:
-   - `moved`, `unclaimed`, `unplanned`, `unrecorded`: `Rejoin <ID> at
-     <stage>?` with `Rejoin at <stage> (recommended)` (run `repair`) and
-     `Pick a roadmap item first` (run `pm-next`).
-   - `recorded`: `Continue <ID> at <stage>?` with `Continue (recommended)`
-     (invoke the stage skill, no repair) and `Run pm-resume`.
+5. Show the item's legend line, `R-NNN <title>` (Shared definitions:
+   Reference legend). Ask one choice question with the options for that
+   position:
+   - `moved`, `unclaimed`, `unplanned`, `unrecorded`: `Rejoin <ID> <title>`
+     `at <stage>?` with `Rejoin at <stage> (recommended)` (run `repair`),
+     `Pick a roadmap item first` (run `pm-next`), and `Explain <ID>`.
+   - `recorded`: `Continue <ID> <title> at <stage>?` with
+     `Continue (recommended)` (invoke the stage skill, no repair) and
+     `Run pm-resume`.
    - `another session's`: `Wait for <Session>?` with `Read only: show the
      board (recommended)` (run `pm-board`) and `Wait`.
 6. On `Pick a roadmap item first`, run `pm-next`. On `Continue`, invoke the

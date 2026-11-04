@@ -63,7 +63,9 @@ Non-interruption rules, PM commits and the `Commits` section in
 `<PM root>/config.md`, the rules version and the upgrade check, drift and
 `pm-rejoin`, the Handoffs table in `<PM root>/config.md`, the board
 columns, the Roadmap order and edits rules, roadmap positions (`top`,
-`bottom`, `before`, `after`), and the up-next queue.
+`bottom`, `before`, `after`), the up-next queue, the reference legend that
+questions print, and the escape options (`Explain <ID>`, `Show the
+roadmap`, `Show the board`).
 
 ## Steps (overview)
 

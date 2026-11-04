@@ -23,9 +23,11 @@ directory` setting (default `planning/`).
 | `done` | The item's `Done when` checks all pass | Log it, set `NOW.md` to idle |
 | `switch` | The user wants a different item | Move the active item back to Next as `paused`, set idle |
 
-If the mode is unclear, ask one choice question: `<ID> is at <stage>. What
-should I save?` with the options `Pause it (recommended)`, `Mark it done`,
-and `Switch to another item`.
+If the mode is unclear, show the active item's legend line, `R-NNN <title>
+(owner, size, status)` (Shared definitions: Reference legend), then ask one
+choice question: `<ID> <title> is at <stage>. What should I save?` with the
+options `Pause it (recommended)`, `Mark it done`, `Switch to another item`,
+and `Explain <ID>`.
 
 ## Guard
 
@@ -85,7 +87,8 @@ and `Switch to another item`.
      `All <M> items are done. Run pm-strategy to check its exit criteria.`
    - If items in Next list this ID in `Depends on`, name the ones now
      claimable as a Note.
-6. **switch:** write a checkpoint first, as in `pause`. Copy the active
+6. **switch:** write a checkpoint first, as in `pause`. When the user names
+   the item to switch to, show `R-NNN <title>`. Copy the active
    item to the top of `## Next` in `ROADMAP.md` with `Status: paused` and
    `Paused checkpoint:` set to that checkpoint, keeping its `Brief` and
    `Milestone`. If Next is at its max from `config.md`, apply the **Full
