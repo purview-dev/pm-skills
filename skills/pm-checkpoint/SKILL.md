@@ -76,7 +76,8 @@ and `Switch to another item`.
    output, file existence, command output). If any is unproven, stay in
    `pause` and list them. Otherwise:
    - Append to `## Done` in `LOG.md`:
-     `- <date> <ID> <Title>. Plan: <path>. Result: <PR or commit>.`
+     `- <date> <ID> <Title>. Milestone: <the Milestone in NOW.md, or none>.
+     Owner: <owner>. Plan: <path>. Result: <PR or commit>.`
    - If the item has a brief, set its `Status: done`.
    - Set `NOW.md` to idle: `Status: idle`, every other field empty,
      `## Done when` and `## Checkpoint` empty.
@@ -86,9 +87,10 @@ and `Switch to another item`.
      claimable as a Note.
 6. **switch:** write a checkpoint first, as in `pause`. Copy the active
    item to the top of `## Next` in `ROADMAP.md` with `Status: paused` and
-   `Paused checkpoint:` set to that checkpoint, keeping its `Brief`. If
-   Next is at its max from `config.md`, move the lowest Next item to the
-   top of Later and say so. Then set `NOW.md` to idle as in `done`.
+   `Paused checkpoint:` set to that checkpoint, keeping its `Brief` and
+   `Milestone`. If Next is at its max from `config.md`, apply the **Full
+   Next** rule (Roadmap order and edits) and name the item moved to Later.
+   Then set `NOW.md` to idle as in `done`.
 7. **Commit** the PM state (rules: Committing PM state) in every mode,
    after the last PM file is written. Message: `docs(pm): <mode> <ID>
    <detail>`, for example `docs(pm): pause R-007 at execute` or

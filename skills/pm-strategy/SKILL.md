@@ -10,10 +10,11 @@ says what v1 is. `STRATEGY.md` says which milestone comes first, the bets
 behind that choice, and every decision made along the way. `ROADMAP.md`
 is generated from both.
 
-Follow the Non-interruption rules, Shared definitions, Challenge protocol,
-Persistence, Asking the user, and Communication contract in the pm-skills
-section of the agent instructions file (`AGENTS.md` or `CLAUDE.md`). PM
-root is its `PM state directory` setting (default `planning/`).
+Follow the Non-interruption rules, Shared definitions, Roadmap order and
+edits, Challenge protocol, Persistence, Asking the user, and
+Communication contract in the pm-skills section of the agent instructions
+file (`AGENTS.md` or `CLAUDE.md`). PM root is its `PM state directory`
+setting (default `planning/`).
 
 ## Modes
 
@@ -127,11 +128,12 @@ facts:
    - R-NNN <title>: <reason>
    ```
 
-6. **Apply.** Rewrite `ROADMAP.md` with the accepted result. Keep every
-   existing field value the user did not change, including `Paused
-   checkpoint`, `Brief`, and `Note`. Group Later by milestone. Append
-   accepted drops to `## Dropped` in `LOG.md`, delete inbox files that
-   became items, and append to `## Decisions` in `STRATEGY.md`:
+6. **Apply.** Rewrite `ROADMAP.md` with the accepted result, following the
+   **Roadmap order and edits** rules. Keep every existing field value the
+   user did not change, including `Paused checkpoint`, `Brief`, and `Note`.
+   Group Later by milestone. Append accepted drops to `## Dropped` in
+   `LOG.md`, delete inbox files that became items, and append to
+   `## Decisions` in `STRATEGY.md`:
    `- <date> Re-planned roadmap. Why: <reason>. Rejected: <alternatives>.`
 
 ## Mode: vision

@@ -7,6 +7,7 @@ Status: idle | active
 Stage: design | plan | execute | finish
 Session: <branch> (worktree <path>, optional)
 Brief: optional; the item's brief, if it has one
+Milestone: optional; the item's milestone while it is active
 -->
 
 - Status: idle
@@ -14,6 +15,7 @@ Brief: optional; the item's brief, if it has one
 - Session:
 - Stage:
 - Brief:
+- Milestone:
 - Spec:
 - Plan:
 - Started:
@@ -30,6 +32,7 @@ Active example:
 - Session: feat/r-007-tenant-billing (worktree ../saas-r-007)
 - Stage: design
 - Brief: {{PM_ROOT}}briefs/R-007-tenant-billing.md
+- Milestone: M1
 - Spec: docs/superpowers/specs/<file>.md
 - Plan: docs/superpowers/plans/<file>.md
 - Started: 2026-10-29

@@ -1,6 +1,6 @@
 ---
 name: pm-next
-description: Use only when the user asks what to build next, names a roadmap item to start, or no item is active and they want to start one. Checks the first claimable roadmap item is still the right one, claims it, writes NOW.md, and hands off to the design skill with its brief.
+description: Use only when the user asks to start or claim a roadmap item, names an item to start, or no item is active and they want to start one. Checks the first claimable roadmap item is still the right one, claims it, writes NOW.md, and hands off to the design skill with its brief.
 ---
 
 # pm-next
@@ -30,7 +30,7 @@ root is its `PM state directory` setting (default `planning/`).
 - If the user named an ID, it must be in `## Next` or `## Later` and be
   claimable apart from its position; otherwise say which condition fails
   (owner, status, or which `Depends on` ID is not done) and stop. A named
-  item in Later moves to the top of Next first.
+  item in Later moves to the top of Next first (Roadmap order and edits).
 - If Next has no claimable item: `Nothing in Next is claimable.` List the
   reasons per item (owner `user`, blocked, dependency not done), then
   recommend `pm-review`, or the user task that unblocks the most items.
@@ -60,8 +60,8 @@ root is its `PM state directory` setting (default `planning/`).
    ID rule. Ask one choice question: `Accept this split?` with the options
    `Accept (recommended)` and `Change the split`. Insert the parts at the
    top of Next in dependency order. If Next would then exceed the max in
-   `config.md`, move the lowest items to the top of Later and say which.
-   Then claim the first part.
+   `config.md`, apply the **Full Next** rule (Roadmap order and edits) and
+   say which item moved to Later. Then claim the first part.
 4. **Ambiguity.** If the item is still ambiguous, state the assumption
    first, then ask a choice question: `<ID>: is this assumption right?
    <assumption>` with the options `Yes, that's right (recommended)` and
@@ -69,8 +69,9 @@ root is its `PM state directory` setting (default `planning/`).
    as a `Note:`.
 5. Write `NOW.md` with the schema fields: `Status: active`, `Item`,
    `Session` (current branch), `Stage: design`, `Brief` (from the item, or
-   empty), `Started` (today), empty `Spec` and `Plan`, and the item's
-   `Done when` under `## Done when`. Leave `## Checkpoint` empty.
+   empty), `Milestone` (from the item, or empty), `Started` (today), empty
+   `Spec` and `Plan`, and the item's `Done when` under `## Done when`. Leave
+   `## Checkpoint` empty.
 6. Remove the item from `## Next` in `ROADMAP.md`. If it has a brief, set
    the brief's `Status: on roadmap (<ID>), active`.
 7. **Commit** the PM state (rules: Committing PM state), with the message

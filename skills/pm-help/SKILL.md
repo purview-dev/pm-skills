@@ -41,7 +41,7 @@ asked, the skill's own `SKILL.md` steps.
 | `pm-init` | Starting project management in a repository, once | "initialise planning" | The PM root, `VISION.md`, a seeded roadmap |
 | `pm-resume` | Starting a session, or after the context was compacted | "where was I?" | Nothing |
 | `pm-rejoin` | You lost the pm thread, a workflow is running that `NOW.md` does not record, or a session started mid-task | "where am I in the pm lifecycle?", "rejoin", "get back on track" | `NOW.md`, `ROADMAP.md` |
-| `pm-next` | Nothing is active and you want to start the next item | "what's next?", "start R-007" | `NOW.md`, `ROADMAP.md` |
+| `pm-next` | Nothing is active and you want to start the next item | "start R-007", "claim R-007" | `NOW.md`, `ROADMAP.md` |
 | `pm-park` | You or the agent have an idea, bug, question, or inspiration to remember, even mid-task | "park this: ...", "note that ..." | One inbox file |
 | `pm-shape` | You want to brainstorm, discuss, or challenge one idea before committing to it | "let's think through dark mode" | A brief; a roadmap item if accepted |
 | `pm-discover` | You want evidence from the code, history, or usage data, or an answer about how the product works today | "what should we fix next?", "is export used?" | A research report; inbox ideas |
@@ -49,8 +49,11 @@ asked, the skill's own `SKILL.md` steps.
 | `pm-purview` | A .NET project wants to know which Purview tools would help, or a new project is choosing its stack | "would Purview help here?" | A research report; roadmap items if accepted |
 | `pm-checkpoint` | Stopping, pausing, switching items, or finishing one | "pause", "R-007 is done" | `NOW.md`, `LOG.md`, `ROADMAP.md` |
 | `pm-review` | Weekly, or when `pm-resume` says a review is due | "weekly review" | Inbox, `ROADMAP.md`, `LOG.md`, `config.md` |
-| `pm-item` | Changing one roadmap item: add, edit, drop, block, move, reassign, or mark a task of yours done | "drop R-012", "I've done R-009" | `ROADMAP.md`, `LOG.md` |
-| `pm-status` | Seeing the summary, task board, milestone roadmap, or your own queue | "show the board", "what do I need to do?" | Nothing |
+| `pm-item` | Changing one roadmap item: add, edit, drop, block, move or insert at a position, reassign, or mark a task of yours done | "drop R-012", "put R-012 before R-008", "I've done R-009" | `ROADMAP.md`, `LOG.md` |
+| `pm-board` | Seeing the task board, or moving, adding, inserting, or closing one card | "show the board", "move R-012 to Next" | Nothing in view mode; `ROADMAP.md`, `LOG.md` in edit modes |
+| `pm-roadmap` | Seeing the full roadmap by milestone, or moving, adding, or inserting one item | "show the roadmap", "put R-012 at the top of Next" | Nothing in view mode; `ROADMAP.md` in edit modes |
+| `pm-status` | Seeing the one-screen summary or your own queue | "where are we?", "what do I need to do?" | Nothing |
+| `pm-up-next` | Seeing the ordered queue and the one next action without starting anything | "what's next?", "up next" | Nothing |
 | `pm-help` | Not sure which skill to use | "pm help" | Nothing |
 
 Concepts to explain on request, from the pm-skills section: the PM root,
@@ -58,7 +61,9 @@ item IDs and fields, owners (agent, user, both), claimable items, the
 inbox file, briefs, the Challenge protocol, Persistence, the
 Non-interruption rules, PM commits and the `Commits` section in
 `<PM root>/config.md`, the rules version and the upgrade check, drift and
-`pm-rejoin`, and the Handoffs table in `<PM root>/config.md`.
+`pm-rejoin`, the Handoffs table in `<PM root>/config.md`, the board
+columns, the Roadmap order and edits rules, roadmap positions (`top`,
+`bottom`, `before`, `after`), and the up-next queue.
 
 ## Steps (overview)
 

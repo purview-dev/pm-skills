@@ -29,7 +29,8 @@ directory` setting (default `planning/`).
 - If `NOW.md` lacks the fields `Status`, `Item`, `Session`, `Stage`,
   `Spec`, `Plan`, `Started`, or the `## Done when` and `## Checkpoint`
   headings, reply: `NOW.md is malformed: missing <field>. Fix it by hand or
-  restore it with git.` Stop. Do not repair it. `Brief` is optional.
+  restore it with git.` Stop. Do not repair it. `Brief` and `Milestone` are
+  optional.
 
 ## Steps
 
@@ -75,7 +76,7 @@ directory` setting (default `planning/`).
    shaping`; the count of inbox files with `Discuss: yes`.
 7. Show the output. Then ask one choice question: `Start "<next action>"
    now?` with the options `Start it (recommended)` and `Show the board
-   first` (run `pm-status` board). If a "For you" item blocks the next
+   first` (run `pm-board`). If a "For you" item blocks the next
    action, put `Do <user item> first` as the recommended option instead.
 
 ## Output

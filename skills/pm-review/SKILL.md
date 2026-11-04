@@ -43,9 +43,9 @@ root is its `PM state directory` setting (default `planning/`).
    - `Add to Next` or `Add to Later`: new roadmap item with a new ID
      (Shared definitions), `Serves`, `Milestone`, `Owner`, `Done when`,
      `Size`, `Depends on`, `Status: ready`, and the idea text in `Note:`.
-     If it has a brief, set `Brief:` and update the brief's `Status`.
-     Recommend `Shape it` instead for size `M` or `L`, or an unclear
-     problem.
+     Place it with the **Roadmap order and edits** rules. If it has a
+     brief, set `Brief:` and update the brief's `Status`. Recommend `Shape
+     it` instead for size `M` or `L`, or an unclear problem.
    - `Merge into <ID>`: append the idea as a `Note:` line on that item.
    - `Shape it`: set `Discuss: yes`. It is listed in "Do this next" and
      shaped after the review, not during it.
@@ -64,11 +64,12 @@ root is its `PM state directory` setting (default `planning/`).
    - The active item running longer than twice the average from `LOG.md`.
 
    For each, propose one fix and ask a choice question with the fix first.
-5. **Order Next.** If Next is above its max, propose which items move to
-   Later. If it has fewer claimable items than the max, propose promotions
-   from Later. Order Next by focus milestone, then dependency, then the
-   vision's v1 outcomes. Ask one choice question: `Accept this Next
-   order?` with the options `Accept (recommended)` and `Change the order`.
+5. **Order Next.** Apply the **Roadmap order and edits** rules. If Next is
+   above its max, propose which items move to Later. If it has fewer
+   claimable items than the max, propose promotions from Later. Order Next
+   by focus milestone, then dependency, then the vision's v1 outcomes. Ask
+   one choice question: `Accept this Next order?` with the options `Accept
+   (recommended)` and `Change the order`.
 6. **Strategy check.** If the focus milestone's items are all done, or the
    findings contradict a bet or assumption in `STRATEGY.md`, recommend
    `pm-strategy` in "Do this next" and say why. Vision changes are made

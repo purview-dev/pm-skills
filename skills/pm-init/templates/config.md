@@ -9,7 +9,7 @@ Read by every `pm-*` skill. Change behaviour here, not in the skills.
 
 ## Install
 
-- Rules version: 6
+- Rules version: 7
 
 ## Handoffs
 
