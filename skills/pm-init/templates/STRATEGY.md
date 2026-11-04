@@ -2,7 +2,8 @@
 
 <!--
 Written by pm-strategy, one approved section at a time. Read by pm-next,
-pm-review, pm-shape, pm-discover, and pm-status. VISION.md says what v1 is;
+pm-review, pm-shape, pm-discover, pm-status, pm-board, pm-roadmap, and
+pm-up-next. VISION.md says what v1 is;
 this file says the order of attack, the bets behind it, and the decisions
 made along the way.
 -->

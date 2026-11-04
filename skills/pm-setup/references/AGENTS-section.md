@@ -1,4 +1,4 @@
-<!-- pm-skills:start version=6 -->
+<!-- pm-skills:start version=7 -->
 <!-- Managed by pm-setup. Edit outside these markers; content inside is replaced on upgrade.
      Installed copies keep this marker without a version. The version of record is
      `Rules version` in the PM root config.md, so editing or merging this file cannot lose it. -->
@@ -31,8 +31,11 @@ repository root.
 | `pm-purview` | Recommend Purview (purview.dev) .NET tools only where they add value; ask about stack and scale for new projects | User asks, or `pm-init`, `pm-discover`, `pm-shape`, `pm-strategy` find a .NET need it covers |
 | `pm-checkpoint` | Save state at a stopping point; close finished items | Session end, before compaction, stage end, user asks |
 | `pm-review` | Weekly triage of inbox and roadmap | User asks, or `pm-resume` says review is due |
-| `pm-item` | Add, edit, drop, block, unblock, move, reassign, or complete one roadmap item | User asks |
-| `pm-status` | Show the summary, task board, roadmap, or the user's queue (read-only) | User asks |
+| `pm-item` | Add, edit, drop, block, unblock, move (including position), reassign, or complete one roadmap item | User asks |
+| `pm-board` | Show the task board; move, add, insert, or close one card | User asks |
+| `pm-roadmap` | Show the full roadmap; move, add, or insert one item | User asks |
+| `pm-status` | Show the summary or the user's queue (read-only) | User asks |
+| `pm-up-next` | Show the ordered queue and the one next action (read-only) | User asks |
 | `pm-help` | Explain the skills, find what is missing in the setup, recommend the next skill (read-only) | User asks (explain mode only during a workflow) |
 
 State lives in the PM root (see `config.md` there). Handoffs to workflow
@@ -147,6 +150,56 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   `config.md` has none; `pm-setup` migrates it and rewrites the marker
   without a version.
 
+## Roadmap order and edits (mandatory)
+
+`ROADMAP.md` has two sections: `## Next` (ordered, at most the max in
+`config.md`) and `## Later` (grouped by milestone where one is set). An
+item's position is the order of its `### <ID> <Title>` block in its
+section. In `Later`, milestone groups follow the order in `STRATEGY.md`,
+with `Unassigned` last. IDs never change and are never reused when an item
+moves.
+
+The edit skills `pm-board`, `pm-roadmap`, `pm-item`, `pm-review`,
+`pm-strategy`, `pm-checkpoint`, and `pm-next` apply these operations. The
+view skills `pm-status`, `pm-board`, `pm-roadmap`, and `pm-up-next` read
+the same state and render it without changing the order or writing.
+
+- **Position:** `top`, `bottom` (the default), `before <ID>`, or
+  `after <ID>`. `before` and `after` name an item in the destination
+  section.
+- **move `<ID>` `<next|later>` [`<position>`]:** change section and
+  position in one step. Keep every field, including `Status`; a plain
+  `move` never unblocks an item or marks it ready. `unblock` is a separate
+  operation, run by the board's `Waiting -> Next` column move. In `Later`,
+  keep the item under its `Milestone` group.
+- **add `<title>` [`<next|later>`] [`<position>`]:** create one item with a
+  new ID, the required fields, and `Status: ready`. The default is the
+  bottom of `Later`, under its milestone. Apply Challenge protocol checks
+  1, 2, and 5.
+- **insert `<ID>` `<before|after>` `<ID>`:** move an existing item within
+  its section. It is a `move` that leaves the section unchanged.
+- **Board columns:** `Next -> Now` is `pm-next` (claim);
+  `Now -> Next` is `pm-checkpoint` (switch); `Next -> For you` and
+  `For you -> Next` change `Owner`; `Next -> Waiting` is `block` or
+  `depends`; `Waiting -> Next` is `unblock`; `-> Done` is `pm-checkpoint`
+  done for the active item or `pm-item done` for a user task. `Done` is
+  history in `LOG.md`: a done item returns only as a new item with a new
+  ID.
+- **Full Next:** when a move, insert, or add would put `Next` over the max,
+  move the bottom item of `Next` to the top of `Later` in the same
+  operation and name it in the output. Never exceed the max and never drop
+  an item.
+- **Active item:** the active item is in `NOW.md`, not in `ROADMAP.md`.
+  Move it with `pm-checkpoint` (switch). No board or roadmap edit writes
+  `NOW.md`.
+- **Preserve fields:** keep every field the operation does not change,
+  including `Brief`, `Paused checkpoint`, and `Note`. Dependency and cycle
+  checks apply whenever `Depends on` changes.
+- **Confirm, then commit:** a view writes nothing. An edit shows one line
+  (`R-012: Later -> Next top`), asks one choice question when it changes
+  order, removes an item from `Next`, or adds an item, then applies it and
+  makes one PM commit (rules: Committing PM state).
+
 ## Non-interruption rules (mandatory)
 
 These rules override any general instruction to invoke skills eagerly,
@@ -166,15 +219,17 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    - immediately after a design, plan, or finish handoff skill completes
      (`pm-checkpoint`, stage update only), or
    - when the agent parks its own finding (`pm-park`, capture mode).
-3. **Mid-workflow, the only permitted PM action is `pm-park` in capture
+3. **Mid-workflow, the only permitted PM write is `pm-park` in capture
    mode.** Write one inbox file, reply with one line, then resume the exact
    step that was in progress. No discussion, no evaluation, no follow-up
    questions. If the user wants to discuss the idea, set `Discuss: yes`; it
-   is discussed later with `pm-shape`. The exceptions: `pm-help` may
-   answer a question about a skill in explain mode, without reading PM
-   state; `pm-rejoin` may run in `locate` mode, which reads git and PM
-   state and writes nothing. In both cases the step in progress resumes
-   afterwards.
+   is discussed later with `pm-shape`. The read-only exceptions: `pm-help`
+   may answer a question about a skill in explain mode, without reading PM
+   state; `pm-rejoin` may run in `locate` mode; and `pm-status`,
+   `pm-board`, `pm-roadmap`, and `pm-up-next` may render their view when
+   the user explicitly asks for it. None of them may add, move, insert,
+   close, or reorder anything during a workflow. In every case the step in
+   progress resumes afterwards.
 4. **If the user names another PM skill mid-workflow**, do not run it. Ask
    one choice question: `<skill> is at <step>. When should <pm-skill> run?`
    with the options `After <skill> finishes (recommended)` and `Pause now
@@ -208,7 +263,8 @@ Every idea, feature, roadmap item, vision line, milestone, bet, or priority
 order is challenged before it is accepted. This applies equally to ideas
 from the user and to the agent's own proposals. It applies in `pm-init`,
 `pm-shape`, `pm-discover`, `pm-strategy`, `pm-purview`, `pm-review`,
-`pm-item` (add and edit), and `pm-next` (before claiming). It never applies to `pm-park`
+`pm-item` (add and edit), `pm-board` and `pm-roadmap` (add),
+and `pm-next` (before claiming). It never applies to `pm-park`
 capture during a workflow.
 
 1. **Problem:** what problem, for whom, and what evidence shows it exists

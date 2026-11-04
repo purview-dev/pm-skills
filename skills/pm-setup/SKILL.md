@@ -64,9 +64,10 @@ Collect these facts. Write nothing yet.
    in `<PM state directory>/config.md`, if that file exists. A legacy
    marker's `version=` counts only when `config.md` records none.
 4. **Installed skills:** for each of `pm-init`, `pm-resume`, `pm-rejoin`,
-   `pm-next`, `pm-park`, `pm-shape`, `pm-discover`, `pm-strategy`,
-   `pm-purview`, `pm-checkpoint`, `pm-review`, `pm-item`, `pm-status`, and
-   `pm-help`, check that a `SKILL.md` exists.
+   `pm-next`, `pm-up-next`, `pm-park`, `pm-shape`, `pm-discover`,
+   `pm-strategy`, `pm-purview`, `pm-checkpoint`, `pm-review`, `pm-item`,
+   `pm-board`, `pm-roadmap`, `pm-status`, and `pm-help`, check that a
+   `SKILL.md` exists.
    - First run `npx skills list` (or `bunx skills list`), if either runs.
    - Otherwise check `.agents/skills/<name>/`, `.claude/skills/<name>/`,
      and `.github/skills/<name>/` in the repository, then
@@ -125,7 +126,7 @@ only other question.
 - Mode: install | upgrade v<old> to v<new> | repair (re-wrap the section) | reinstall (section missing, recorded v<n>) | already current (nothing to do)
 - Target: <file> (<append section | replace between markers | wrap the stranded section>)
 - Extra: <@AGENTS.md import added to CLAUDE.md | none>
-- Skills: <n> of 14 installed. Missing: <names | none>
+- Skills: <n> of 17 installed. Missing: <names | none>
 - Rules version: <v<n> recorded | not recorded | legacy v<n> in the marker | PM state not initialised>
 - Workflow framework: <Superpowers | name | none>
 - PM state directory: <path>
@@ -218,7 +219,7 @@ Rules for this step:
 ## pm-setup done
 
 - Target: <file> (<installed | upgraded to v<n> | repaired>)
-- Skills: <14 of 14 installed | missing: names>
+- Skills: <17 of 17 installed | missing: names>
 - Rules version: <v<n> recorded in <PM root>/config.md | legacy v<n> migrated | PM state not initialised>
 - Diff check: only the managed section changed, plus the Rules version line
 - PM state: <not initialized | current | missing version 4 files or the Commits section: names>
@@ -228,7 +229,7 @@ Rules for this step:
 
 1. <Only if skills are missing:> Install the missing skills.
    - Start with: `npx skills add https://github.com/purview-dev/pm-skills -y`
-   - Done when: all 14 pm-* skills are listed by `npx skills list`
+   - Done when: all 17 pm-* skills are listed by `npx skills list`
 2. Commit.
    - Start with: `git add <changed paths> && git commit -m "chore: add pm-* skills"`.
      List only paths that exist, taken from: `.agents/skills/pm-*`,

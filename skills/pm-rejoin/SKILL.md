@@ -75,7 +75,7 @@ ambiguous, ask which one is true.
    - `recorded`: `Continue <ID> at <stage>?` with `Continue (recommended)`
      (invoke the stage skill, no repair) and `Run pm-resume`.
    - `another session's`: `Wait for <Session>?` with `Read only: show the
-     board (recommended)` (run `pm-status`) and `Wait`.
+     board (recommended)` (run `pm-board`) and `Wait`.
 6. On `Pick a roadmap item first`, run `pm-next`. On `Continue`, invoke the
    stage skill from the Handoffs table. Otherwise run `repair`.
 
@@ -87,9 +87,10 @@ ambiguous, ask which one is true.
    Next (recommended)` (run `pm-item add`) and `Pick an existing item`.
 2. **Write `NOW.md`.** Set `Status: active`, `Item` (`<ID Title>`),
    `Session` (the current branch; if HEAD is detached, say so and stop),
-   `Stage` (from the evidence), `Brief`, `Spec`, and `Plan` (only paths
-   that exist), `Started` (today, or the value `NOW.md` already records for
-   this item), and the item's `Done when` under `## Done when`.
+   `Stage` (from the evidence), `Brief`, `Milestone` (from the item, or
+   empty), `Spec`, and `Plan` (only paths that exist), `Started` (today, or
+   the value `NOW.md` already records for this item), and the item's `Done
+   when` under `## Done when`.
 3. **Write `## Checkpoint`** in the `pause` format from `pm-checkpoint`:
    `Stopped at` (the last checked plan step, or `nothing built yet`),
    `Next action` (the first unchecked plan step, or the stage skill's first

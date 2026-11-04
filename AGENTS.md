@@ -21,14 +21,17 @@ and roadmap generation.
 `pm-purview` matches .NET projects to Purview tools using the dated
 snapshot in `skills/pm-purview/references/catalogue.md`; refresh that
 snapshot from `https://purview.dev/llms.txt` when Purview releases change.
-`pm-item` edits single roadmap items; `pm-status` is a read-only summary,
-board, roadmap, or user-queue view. `pm-help` explains every skill and
+`pm-item` edits single roadmap items; `pm-board` and `pm-roadmap` are the
+task-board and full-roadmap views with move, add, and insert operations;
+`pm-status` is a read-only summary or user-queue view; `pm-up-next` is a
+read-only ordered queue. `pm-help` explains every skill and
 diagnoses gaps in the install and PM state; when adding or changing a
 skill, update its row in the `pm-help` skill guide and, if the skill
 needs setup, a diagnosis check. Shared definitions (IDs, item fields,
-owners, file formats, limits, session matching, timestamps) and the
-Challenge protocol, Persistence, and Asking-the-user rules live in the
-managed section, and skills must not redefine them.
+owners, file formats, limits, session matching, timestamps), the Roadmap
+order and edits rules, and the Challenge protocol, Persistence, and
+Asking-the-user rules live in the managed section, and skills must not
+redefine them.
 The installed project's PM root (default `planning/`) contains `config.md`,
 the source of truth for workflow handoffs. Keep skills framework-neutral
 and change handoffs there rather than hardcoding a different framework into

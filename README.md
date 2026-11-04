@@ -16,9 +16,11 @@ next action, an explicit "done when", and fixed templates.
   `pm-discover` analyses the existing code, history, and usage for
   evidence. Every idea, including the agent's own, is challenged.
 - **Strategy, roadmap, and board:** `pm-strategy` sets milestones, bets,
-  and focus, and generates the roadmap. `pm-status` renders a task board,
-  a milestone roadmap, and your own queue. Items are owned by the agent,
-  the user, or both.
+  and focus, and generates the roadmap. `pm-roadmap` renders the full
+  milestone roadmap, `pm-board` the task board, `pm-up-next` the ordered
+  queue, and `pm-status` the summary and your own queue. Move, add, and
+  insert items from the board or roadmap with the shared ordering rules.
+  Items are owned by the agent, the user, or both.
 - **Purview fit:** for .NET projects, `pm-purview` recommends
   [Purview](https://purview.dev/) tools only where they remove real work.
   For an empty project it asks first what you are building and at what
@@ -69,6 +71,7 @@ Then, in your agent:
 | [`pm-resume`](skills/pm-resume/SKILL.md) | Where you stopped, the next action, and what is waiting for you | Session start, after compaction |
 | [`pm-rejoin`](skills/pm-rejoin/SKILL.md) | Find the real position in the lifecycle and rejoin at the right stage | The thread is lost, or state and work disagree |
 | [`pm-next`](skills/pm-next/SKILL.md) | Check, claim, and hand off the next item to design | No active item |
+| [`pm-up-next`](skills/pm-up-next/SKILL.md) | Show the ordered queue and the one next action, without claiming | User asks |
 | [`pm-park`](skills/pm-park/SKILL.md) | Capture an idea, bug, question, or inspiration in one line | Any time |
 | [`pm-shape`](skills/pm-shape/SKILL.md) | Brainstorm and challenge one idea into a brief and a decision | No active workflow |
 | [`pm-discover`](skills/pm-discover/SKILL.md) | Analyse code, history, and usage for evidence; answer product questions | No active workflow |
@@ -76,8 +79,10 @@ Then, in your agent:
 | [`pm-purview`](skills/pm-purview/SKILL.md) | Recommend [Purview](https://purview.dev/) .NET tools only where they add value | New project, or a matching .NET need |
 | [`pm-checkpoint`](skills/pm-checkpoint/SKILL.md) | Save state and decisions, record stage changes, close finished items | Session or stage end, before compaction |
 | [`pm-review`](skills/pm-review/SKILL.md) | Triage the inbox, check roadmap health, order Next | Weekly |
-| [`pm-item`](skills/pm-item/SKILL.md) | Add, edit, drop, block, move, reassign, or complete one item | User asks |
-| [`pm-status`](skills/pm-status/SKILL.md) | Summary, task board, milestone roadmap, or your queue (read-only) | User asks |
+| [`pm-item`](skills/pm-item/SKILL.md) | Add, edit, drop, block, move or insert at a position, reassign, or complete one item | User asks |
+| [`pm-board`](skills/pm-board/SKILL.md) | Task board; move, add, insert, or close one card | User asks |
+| [`pm-roadmap`](skills/pm-roadmap/SKILL.md) | Full roadmap by milestone; move, add, or insert one item | User asks |
+| [`pm-status`](skills/pm-status/SKILL.md) | Summary or your queue (read-only) | User asks |
 | [`pm-help`](skills/pm-help/SKILL.md) | Explain each skill, find what is missing, recommend the next skill (read-only) | Any time you are unsure |
 
 ## The loop
@@ -89,27 +94,30 @@ pm-resume -> pm-next -> [design -> plan -> execute -> finish] -> pm-checkpoint
                 +--------------------------------------------------+
 pm-park: any time, capture only.   pm-review: weekly.
 pm-shape / pm-discover / pm-strategy: think before building, no workflow active.
-pm-item / pm-status: on request, when no workflow is active.
+pm-item / pm-board / pm-roadmap / pm-status / pm-up-next: on request,
+when no workflow is active (their read-only views also mid-workflow).
 pm-rejoin: any time the position is unclear; it hands back to the stage.
 ```
 
 Ideas flow: `pm-park` (or `pm-discover`) -> inbox -> `pm-shape` -> brief
 -> roadmap item -> `pm-next`. Strategy flows: `pm-strategy` -> milestones
-and focus -> ordered Next -> `pm-status` board.
+and focus -> ordered Next -> `pm-board`.
 
 ## Non-interruption guarantee
 
 The merged rules make an active workflow own the session. During a
-workflow, only `pm-park` may run, and only to capture; `pm-rejoin` may
-report the position, read-only, and `pm-help` may explain a skill. Any
-other PM skill waits until the workflow finishes; the agent asks whether
-to run it after the workflow or pause now. PM state skills write only to
-the configured planning directory (default `planning/`) in the main
-worktree, and never touch specs, plans, or code. The one git state change
-they make is the commit of those planning files, plus the offered switch
-to the planning branch when the main worktree is on another one.
-`pm-setup` edits only the managed section in the selected agent
-instructions file, plus the `Rules version` line in `config.md`. Full
+workflow, only `pm-park` may write, and only to capture; `pm-rejoin` may
+report the position, `pm-help` may explain a skill, and `pm-status`,
+`pm-board`, `pm-roadmap`, and `pm-up-next` may show their read-only view
+when you ask. None of them may move, add, insert, or close anything
+mid-workflow. Any other PM skill waits until the workflow finishes; the
+agent asks whether to run it after the workflow or pause now. PM state
+skills write only to the configured planning directory (default
+`planning/`) in the main worktree, and never touch specs, plans, or code.
+The one git state change they make is the commit of those planning files,
+plus the offered switch to the planning branch when the main worktree is on
+another one. `pm-setup` edits only the managed section in the selected
+agent instructions file, plus the `Rules version` line in `config.md`. Full
 rules:
 [`skills/pm-setup/references/AGENTS-section.md`](skills/pm-setup/references/AGENTS-section.md).
 
@@ -149,6 +157,15 @@ version, and `pm-setup` migrates an older `version=` marker into
 `config.md` the next time it runs. If the section itself is dropped from
 the agent file, the recorded version lets `pm-setup` reinstall or re-wrap
 it instead of appending a second copy.
+
+Version 7 splits the two views out of `pm-status`. `pm-board` owns the
+task board, `pm-roadmap` owns the full milestone roadmap, and `pm-up-next`
+shows the ordered queue without claiming anything. `pm-board`, `pm-roadmap`,
+and `pm-item` can move, add, and insert items; the shared **Roadmap order
+and edits** rules define positions, full-Next demotion, board-column
+mapping, and confirmation. The read-only views may answer mid-workflow.
+Done lines in `LOG.md` now record a `Milestone:` so roadmap progress can be
+counted per milestone.
 
 ## Using a different workflow framework
 
@@ -203,6 +220,7 @@ skills/
   pm-resume/SKILL.md
   pm-rejoin/SKILL.md
   pm-next/SKILL.md
+  pm-up-next/SKILL.md
   pm-park/SKILL.md
   pm-shape/SKILL.md
   pm-discover/SKILL.md
@@ -213,6 +231,8 @@ skills/
   pm-checkpoint/SKILL.md
   pm-review/SKILL.md
   pm-item/SKILL.md
+  pm-board/SKILL.md
+  pm-roadmap/SKILL.md
   pm-status/SKILL.md
   pm-help/SKILL.md
 scripts/validate.ts
