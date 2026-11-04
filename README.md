@@ -167,6 +167,14 @@ mapping, and confirmation. The read-only views may answer mid-workflow.
 Done lines in `LOG.md` now record a `Milestone:` so roadmap progress can be
 counted per milestone.
 
+Version 8 makes every question show what it is about. A question that names
+a milestone, item, bet, `V` line, or inbox file prints a
+`## For this question` legend above it — each ID with the words needed to
+decide it — and carries one escape option, `Explain <ID>`,
+`Show the roadmap`, or `Show the board`, which prints the full block or runs
+the read-only view and then asks the same question again. Neither the legend
+nor the escape option changes state or counts as an answer.
+
 ## Using a different workflow framework
 
 Edit the Handoffs table in `<PM root>/config.md`. The skills refer to stages
@@ -200,12 +208,22 @@ Requires [`bun`](https://bun.sh) and, for the git hooks,
 - `just lint-fix` applies Markdown fixes.
 - `just install` verifies the tools and installs the git hooks (commitlint
   on commit, `just lint-check` on push).
+- `just bump patch|minor|major` writes the next release version to
+  `package.json`.
 
-CI runs the same checks on every push and pull request to `main`. Adding a
-skill means creating `skills/<name>/SKILL.md` and listing it in the README
-table, the managed-section table, the `pm-setup` inventory, and the
-`pm-help` skill guide; `just validate` fails otherwise. Full conventions
-are in [`AGENTS.md`](AGENTS.md).
+CI runs the same checks on every push and pull request to `main`. A pull
+request that changes anything under `skills/` must also bump the
+`package.json` version to one that is not already tagged, and a change to
+the managed rules must bump the rules version too, or `pm-setup` would never
+install it. Pull requests that touch nothing under `skills/` (docs, CI,
+scripts) merge without a bump. The repository-only `release` skill in
+`.agents/skills/release/` picks the bump from the conventional commits since
+the last tag and commits it; it is not installed into consuming projects.
+
+Adding a skill means creating `skills/<name>/SKILL.md` and listing it in the
+README table, the managed-section table, the `pm-setup` inventory, and the
+`pm-help` skill guide; `just validate` fails otherwise. Full conventions are
+in [`AGENTS.md`](AGENTS.md).
 
 ## Repository layout
 

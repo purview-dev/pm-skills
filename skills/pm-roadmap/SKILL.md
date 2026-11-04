@@ -37,7 +37,7 @@ likely modes as options.
 - Never write `NOW.md`. The active item is read-only here; change it with
   `pm-next` or `pm-checkpoint`.
 - If the ID is not found in `ROADMAP.md`, reply `<ID> not found.` and list
-  the open IDs. Stop.
+  the open IDs as `R-NNN <title>`. Stop.
 - `add` needs `Serves`, `Milestone` (or `Unassigned`), `Owner`, `Done
   when`, and `Size`. Ask for any missing field with the question tool,
   offering drafted values. Reject a `Milestone` or `Serves` value that does
@@ -55,9 +55,10 @@ likely modes as options.
    `Milestone: <M>`; adding without one leaves it unassigned. Resolve
    `before <ID>` and `after <ID>` inside the destination section and
    milestone group.
-5. Show one change line (`R-012: Later M2 -> Next top`), ask one choice
-   question when the operation changes order, removes an item from `Next`,
-   or adds an item, then apply it.
+5. Show one change line with the title (`R-012 <title>: Later M2 -> Next
+   top`), ask one choice question when the operation changes order, removes
+   an item from `Next`, or adds an item — with `Show the board` as the
+   escape option — then apply it.
 6. **Commit** the PM state (rules: Committing PM state), with the message
    `docs(pm): <verb> <ID>`. A `view` writes nothing and does not commit.
 

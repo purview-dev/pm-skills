@@ -77,9 +77,10 @@ likely modes as options.
    - `later`: `move <ID> later <position>`. The card leaves the board.
    - `done`: for the active item run `pm-checkpoint` (done); otherwise run
      `pm-item done <ID>` after the same evidence check.
-5. Show one change line (`R-012: For you -> Next top (Owner agent)`), ask
-   one choice question when the operation changes order, removes an item
-   from `Next`, or adds an item, then apply it.
+5. Show one change line with the title (`R-012 <title>: For you -> Next top
+   (Owner agent)`), ask one choice question when the operation changes
+   order, removes an item from `Next`, or adds an item — with `Show the
+   roadmap` as the escape option — then apply it.
 6. Name the items that became claimable or blocked.
 7. **Commit** the PM state (rules: Committing PM state), with the message
    `docs(pm): <verb> <ID>`. A `view` writes nothing and does not commit.

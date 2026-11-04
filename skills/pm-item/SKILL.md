@@ -40,12 +40,15 @@ If the user's request fits no mode, ask one choice question with the 2 or
 - If the ID is the active item in `NOW.md`, reply: `<ID> is active. Run
   pm-checkpoint (switch or done) first.` Stop.
 - If the ID is not found in `ROADMAP.md`, reply `<ID> not found.` and list
-  the IDs. Stop.
+  the open IDs as `R-NNN <title>`. Stop.
 - `move`, `insert`, and `add` into Next when Next is at the max in
   `config.md`: apply the **Full Next** rule (Roadmap order and edits). Do
   not refuse the change, and do not exceed the max.
 
 ## Steps
+
+Whenever a question or reply names an ID, show `R-NNN <title>` with it and
+add `Explain <ID>` to the question (Asking the user).
 
 1. **add:** apply the Challenge protocol checks 1, 2, and 5, plus a search
    of `ROADMAP.md`, briefs, and `LOG.md` Dropped for duplicates. Ask for
@@ -60,10 +63,11 @@ If the user's request fits no mode, ask one choice question with the 2 or
    target must exist in `VISION.md` or `STRATEGY.md`.
 3. **depends:** reject IDs that do not exist, and any change that creates
    a cycle; name the cycle.
-4. **done:** show the item's `Done when` and ask: `Is <ID> done? <Done
-   when>` with the options `Mark it done (recommended)` and `Not yet`. If
-   the check can be verified from the repository, verify it instead of
-   asking and state the evidence. Append to `## Done` in `LOG.md`:
+4. **done:** show the item's `Done when` and ask: `Is <ID> <title> done?
+   <Done when>` with the options `Mark it done (recommended)` and `Not
+   yet`. If the check can be verified from the repository, verify it
+   instead of asking and state the evidence. Append to `## Done` in
+   `LOG.md`:
    `- <date> <ID> <Title>. Milestone: <M | none>. Owner: <owner>. Result:
    <evidence>.` Remove the item from `ROADMAP.md`. Name items whose
    `Depends on` is now met.

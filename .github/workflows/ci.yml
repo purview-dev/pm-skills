@@ -34,3 +34,69 @@ jobs:
       # Mirrors `just lint-check`: markdownlint-cli2 with the repository config.
       - name: Lint Markdown
         run: bunx markdownlint-cli2 "**/*.md" "#node_modules"
+
+  # A skills change ships in a release, so it needs a new package.json
+  # version; anything else (docs, CI, scripts, .agents/skills) merges without
+  # one. A change to the managed rules must also bump the rules version, or
+  # pm-setup and the upgrade check never see it.
+  # Scoped to pull requests: on main the release tag already exists.
+  version:
+    name: Version bump
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Require a version bump for skills changes
+        shell: bash
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          changed="$(git diff --name-only "${BASE}...HEAD")"
+
+          # Non-skills changes (docs, CI, scripts, this file) need no bump.
+          if ! grep -q '^skills/' <<< "$changed"; then
+            echo "No skills changed; a version bump is not required."
+            exit 0
+          fi
+
+          read_version() { sed -n 's/^[[:space:]]*"version":[[:space:]]*"\([^"]*\)".*/\1/p' "$1"; }
+          git show "${BASE}:package.json" > /tmp/base-package.json
+          current="$(read_version package.json)"
+          base="$(read_version /tmp/base-package.json)"
+          if [ -z "$current" ] || [ -z "$base" ]; then
+            echo "::error::cannot read the version from package.json."
+            exit 1
+          fi
+
+          if [ "$current" = "$base" ]; then
+            echo "::error::skills changed but package.json is still v${current}. Bump it: run the release skill, or 'just bump patch|minor|major'."
+            exit 1
+          fi
+          if git rev-parse -q --verify "refs/tags/v${current}" >/dev/null; then
+            echo "::error::package.json is v${current}, but tag v${current} already exists. Bump it to an unused version."
+            exit 1
+          fi
+          echo "Skills changed; v${base} -> v${current} is unused."
+
+          # The managed rules only reach a consumer when the rules version
+          # changes, so a section edit must move version=N (templates/config.md
+          # follows; scripts/validate.ts keeps the two equal).
+          section="skills/pm-setup/references/AGENTS-section.md"
+          if grep -qx "$section" <<< "$changed"; then
+            marker="$(sed -n 's/^<!-- pm-skills:start version=\([0-9][0-9]*\) -->$/\1/p' "$section")"
+            base_marker="$(git show "${BASE}:${section}" 2>/dev/null | sed -n 's/^<!-- pm-skills:start version=\([0-9][0-9]*\) -->$/\1/p' || true)"
+            if [ -z "$marker" ] || [ -z "$base_marker" ]; then
+              echo "::error::${section} has no 'version=N' start marker."
+              exit 1
+            fi
+            if [ "$marker" = "$base_marker" ]; then
+              echo "::error::${section} changed but its rules version is still v${marker}. Bump version=N in the marker (templates/config.md follows) so pm-setup and the upgrade check take effect."
+              exit 1
+            fi
+            echo "Rules version bumped v${base_marker} -> v${marker}."
+          fi

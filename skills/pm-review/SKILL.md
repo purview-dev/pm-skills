@@ -32,7 +32,8 @@ root is its `PM state directory` setting (default `planning/`).
      it), split by owner.
    - Open inbox count, `Discuss: yes` count, Next count against the max,
      Later count.
-   - Focus milestone progress: done and open items.
+   - Focus milestone progress: `<M Name>` done and open, with each open
+     item as `R-NNN <title>` (Shared definitions: Reference legend).
 3. **Triage the open inbox one file at a time**, oldest first. Skip files
    whose `Reviewed` date is after the last review unless they have
    `Discuss: yes`. For each, show its title, kind, source, and idea, apply
@@ -63,13 +64,16 @@ root is its `PM state directory` setting (default `planning/`).
      the last review.
    - The active item running longer than twice the average from `LOG.md`.
 
-   For each, propose one fix and ask a choice question with the fix first.
+   For each, name the item as `R-NNN <title>`, propose one fix, and ask a
+   choice question with the fix first plus `Explain <ID>`.
 5. **Order Next.** Apply the **Roadmap order and edits** rules. If Next is
    above its max, propose which items move to Later. If it has fewer
    claimable items than the max, propose promotions from Later. Order Next
-   by focus milestone, then dependency, then the vision's v1 outcomes. Ask
-   one choice question: `Accept this Next order?` with the options `Accept
-   (recommended)` and `Change the order`.
+   by focus milestone, then dependency, then the vision's v1 outcomes. Show
+   the proposed order as `R-NNN <title>` lines (Shared definitions:
+   Reference legend), then ask one choice question: `Accept this Next
+   order?` with the options `Accept (recommended)`, `Change the order`, and
+   `Show the roadmap`.
 6. **Strategy check.** If the focus milestone's items are all done, or the
    findings contradict a bet or assumption in `STRATEGY.md`, recommend
    `pm-strategy` in "Do this next" and say why. Vision changes are made

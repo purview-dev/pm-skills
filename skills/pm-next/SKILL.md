@@ -38,8 +38,9 @@ root is its `PM state directory` setting (default `planning/`).
 
 ## Steps
 
-1. Take the named item, or the first claimable item in `## Next`. Show it.
-   List any `Owner: user` items above it under "For you".
+1. Take the named item, or the first claimable item in `## Next`. Show its
+   legend line, `R-NNN <title> (owner, size, status)`. List any
+   `Owner: user` items above it under "For you".
 2. **Check it is still the right item** (Challenge protocol, scaled). Ask
    only if a check fails:
    - It serves the `Current focus` milestone in `STRATEGY.md`, if one is
@@ -50,10 +51,11 @@ root is its `PM state directory` setting (default `planning/`).
    - Nothing in `LOG.md` or the inbox since it was added contradicts it.
 
    On a failure, state the claim with evidence and ask one choice
-   question: `<ID> <failed check>. How should we start?` with the
+   question: `<ID> <title> <failed check>. How should we start?` with the
    recommended fix first:
    `Shape it first` (run `pm-shape` on it), `Split it` (step 3), or
-   `Pick <other ID>`; then `Start <ID> as is`. Record a `Start <ID> as is`
+   `Pick <other ID>` (label each candidate `R-NNN <title>`); then
+   `Start <ID> as is`, plus `Explain <ID>`. Record a `Start <ID> as is`
    answer as a `Note:` on the item with the reason.
 3. **Split.** If its `Size` is `L`, or the user chose to split it, propose
    items of size S or M, each with its own `Done when` and new IDs from the

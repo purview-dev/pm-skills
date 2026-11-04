@@ -7,33 +7,54 @@ const errors: string[] = [];
 const fail = (msg: string) => errors.push(msg);
 const read = (...p: string[]) => readFileSync(join(root, ...p), "utf8");
 
-const skills = readdirSync(skillsDir, { withFileTypes: true })
+const shipped = readdirSync(skillsDir, { withFileTypes: true })
   .filter((d) => d.isDirectory())
   .map((d) => d.name);
+
+// Repo-local skills live in .agents/skills/ and are never shipped to a
+// consumer, so they are exempt from the consumer tables. Their frontmatter
+// must set metadata.internal: true, which hides them from the skills CLI.
+const repoDir = join(root, ".agents", "skills");
+const repo = existsSync(repoDir)
+  ? readdirSync(repoDir, { withFileTypes: true })
+      .filter((d) => d.isDirectory())
+      .map((d) => d.name)
+  : [];
 
 const readme = read("README.md");
 const section = read("skills", "pm-setup", "references", "AGENTS-section.md");
 const setup = read("skills", "pm-setup", "SKILL.md");
 const help = read("skills", "pm-help", "SKILL.md");
 
-for (const name of skills) {
-  const file = join("skills", name, "SKILL.md");
+function checkFrontmatter(dir: string, name: string): string | null {
+  const file = join(dir, name, "SKILL.md");
   if (!existsSync(join(root, file))) {
     fail(`${file}: missing`);
-    continue;
+    return null;
   }
-  const text = read(file);
-  const fm = /^---\r?\n([\s\S]*?)\r?\n---/.exec(text)?.[1] ?? "";
+  const fm = /^---\r?\n([\s\S]*?)\r?\n---/.exec(read(file))?.[1] ?? "";
   const fmName = /^name:\s*(.+)$/m.exec(fm)?.[1].trim();
   const desc = /^description:\s*(.+)$/m.exec(fm)?.[1].trim();
   if (fmName !== name) fail(`${file}: frontmatter name "${fmName}" != folder "${name}"`);
   if (!desc) fail(`${file}: description missing`);
   else if (desc.length > 1024) fail(`${file}: description exceeds 1024 characters`);
+  return fm;
+}
 
+for (const name of shipped) {
+  if (checkFrontmatter("skills", name) === null) continue;
   if (!readme.includes(`skills/${name}/SKILL.md`)) fail(`README.md: ${name} not linked in skills table`);
   if (!section.includes(`| \`${name}\` |`)) fail(`AGENTS-section.md: ${name} not in skills table`);
   if (name !== "pm-setup" && !setup.includes(`\`${name}\``)) fail(`pm-setup/SKILL.md: ${name} not in inventory`);
   if (!help.includes(`| \`${name}\` |`)) fail(`pm-help/SKILL.md: ${name} not in skill guide`);
+}
+
+for (const name of repo) {
+  const fm = checkFrontmatter(".agents/skills", name);
+  if (fm === null) continue;
+  if (!/(^|\n)\s*internal:\s*true\s*($|\n)/.test(fm)) {
+    fail(`.agents/skills/${name}/SKILL.md: repo-local skill must set metadata.internal: true`);
+  }
 }
 
 const starts = section.match(/<!-- pm-skills:start version=\d+ -->/g) ?? [];
@@ -63,7 +84,7 @@ for (const f of readdirSync(templates)) {
   }
 }
 
-for (const name of skills) {
+for (const name of shipped) {
   if (name === "pm-setup") continue;
   const text = read("skills", name, "SKILL.md");
   if (/(^|[^\w.-])pm\/[A-Za-z]/.test(text.replace(/`pm-[a-z]+`/g, ""))) fail(`skills/${name}/SKILL.md: literal pm/ path`);
@@ -73,4 +94,5 @@ if (errors.length) {
   console.error(errors.map((e) => `- ${e}`).join("\n"));
   process.exit(1);
 }
-console.log(`validate: ${skills.length} skills OK`);
+const repoNote = repo.length ? `, ${repo.length} repo-local (${repo.sort().join(", ")})` : "";
+console.log(`validate: ${shipped.length} skills OK${repoNote}`);

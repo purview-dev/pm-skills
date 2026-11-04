@@ -91,7 +91,9 @@ label).
    when`, in dependency order. Propose `Serves`, `Milestone`, `Owner`, and
    `Depends on`. Anything still undecided goes under `## Open questions`.
 8. **Decide.** Ask one choice question: `What should happen to "<title>"?`
-   Offer the recommended outcome first, then the three most plausible
+   When the source is a roadmap ID, include `R-NNN <title>` and its
+   milestone and add `Explain <ID>`. Offer the recommended outcome first,
+   then the three most plausible
    others from: `Add to Next`, `Add to Later`, `Build it now`, `Keep it
    parked`, `Drop it`. Recommend from the evidence: a strategic change
    (new milestone, vision change) is `Keep it parked` plus a
