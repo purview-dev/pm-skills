@@ -43,6 +43,9 @@ section of the agent instructions file (`AGENTS.md` or `CLAUDE.md`).
    | `briefs-README.md` | `<PM root>/briefs/README.md` |
    | `research-README.md` | `<PM root>/research/README.md` |
 
+   The export file (`<PM root>/planning.json`) is not a template:
+   `pm-export` creates it, and its schema, on first use.
+
    In `config.md`, set `Last review` Date to `never`, and set `PM branch`
    to the repository's default branch: run
    `git symbolic-ref --short refs/remotes/origin/HEAD`, strip any `origin/`

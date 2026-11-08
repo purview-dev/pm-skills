@@ -32,9 +32,11 @@ root is its `PM state directory` setting (default `planning/`).
      it), split by owner.
    - Open inbox count, `Discuss: yes` count, Next count against the max,
      Later count.
+   - Open `Kind: bug` files by severity, blockers named first.
    - Focus milestone progress: `<M Name>` done and open, with each open
      item as `R-NNN <title>` (Shared definitions: Reference legend).
-3. **Triage the open inbox one file at a time**, oldest first. Skip files
+3. **Triage the open inbox one file at a time**: `Kind: bug` files with a
+   higher severity first, then oldest first. Skip files
    whose `Reviewed` date is after the last review unless they have
    `Discuss: yes`. For each, show its title, kind, source, and idea, apply
    the Challenge protocol checks 1, 2, and 5, state the result in one line,
