@@ -90,6 +90,54 @@ for (const name of shipped) {
   if (/(^|[^\w.-])pm\/[A-Za-z]/.test(text.replace(/`pm-[a-z]+`/g, ""))) fail(`skills/${name}/SKILL.md: literal pm/ path`);
 }
 
+// The export schema is the contract for `<PM root>/planning.json`, so it must
+// parse, pin the version the skill documents, and still describe the shipped
+// example: same top-level keys, same required set.
+const exportReferences = join(skillsDir, "pm-export", "references");
+const schemaPath = join(exportReferences, "planning.schema.json");
+const examplePath = join(exportReferences, "planning.example.json");
+if (!existsSync(schemaPath)) fail("skills/pm-export/references/planning.schema.json: missing");
+else if (!existsSync(examplePath)) fail("skills/pm-export/references/planning.example.json: missing");
+else {
+  let schema: any = null;
+  let example: any = null;
+  try {
+    schema = JSON.parse(readFileSync(schemaPath, "utf8"));
+  } catch (error) {
+    fail(`planning.schema.json: invalid JSON (${(error as Error).message})`);
+  }
+  try {
+    example = JSON.parse(readFileSync(examplePath, "utf8"));
+  } catch (error) {
+    fail(`planning.example.json: invalid JSON (${(error as Error).message})`);
+  }
+  if (schema && example) {
+    if (!String(schema.$schema ?? "").includes("2020-12")) {
+      fail("planning.schema.json: must declare JSON Schema draft 2020-12");
+    }
+    if (schema.additionalProperties !== false) {
+      fail("planning.schema.json: the top level must set additionalProperties: false");
+    }
+    const schemaVersion = schema.properties?.schemaVersion?.const;
+    if (schemaVersion !== 1) fail(`planning.schema.json: schemaVersion const must be 1 (got ${schemaVersion})`);
+    if (example.schemaVersion !== schemaVersion) {
+      fail("planning.example.json: schemaVersion differs from the schema");
+    }
+    if (example.$schema !== "./planning.schema.json") {
+      fail('planning.example.json: $schema must be "./planning.schema.json"');
+    }
+    const required = [...(schema.required ?? [])].sort().join(",");
+    const present = Object.keys(example).sort().join(",");
+    if (required !== present) {
+      fail(`planning.example.json: top-level keys do not match the schema required list (${present} != ${required})`);
+    }
+    const documented = `| \`schemaVersion\` | constant | \`${schemaVersion}\``;
+    if (!read("skills", "pm-export", "SKILL.md").includes(documented)) {
+      fail(`skills/pm-export/SKILL.md: does not document schemaVersion ${schemaVersion}`);
+    }
+  }
+}
+
 if (errors.length) {
   console.error(errors.map((e) => `- ${e}`).join("\n"));
   process.exit(1);

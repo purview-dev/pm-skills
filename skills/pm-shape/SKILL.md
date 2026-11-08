@@ -46,8 +46,9 @@ label).
 2. **Ground it in evidence.** Before asking anything, read `VISION.md`,
    `STRATEGY.md`, `ROADMAP.md`, `LOG.md` (Done and Dropped), related inbox
    files, briefs, and `research/` reports, and search the code the idea
-   touches. Write what you find under `## Who and evidence` and a first
-   draft of `## Ramifications`, with paths. State immediately if:
+   touches. For a `Kind: bug` file, treat `## Reproduction` as the evidence
+   of the problem. Write what you find under `## Who and evidence` and a
+   first draft of `## Ramifications`, with paths. State immediately if:
    - the idea, or a close variant, was dropped before (quote the `LOG.md`
      line and its reason),
    - it overlaps a roadmap item or another brief,

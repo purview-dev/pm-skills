@@ -1,4 +1,4 @@
-<!-- pm-skills:start version=8 -->
+<!-- pm-skills:start version=9 -->
 <!-- Managed by pm-setup. Edit outside these markers; content inside is replaced on upgrade.
      Installed copies keep this marker without a version. The version of record is
      `Rules version` in the PM root config.md, so editing or merging this file cannot lose it. -->
@@ -25,16 +25,19 @@ repository root.
 | `pm-rejoin` | Find the true position in the lifecycle from git and PM state, then rejoin at the right stage | Drifted or detached from the lifecycle, NOW.md disagrees with the work, user asks "where am I" |
 | `pm-next` | Pick and claim the next claimable item, hand off to design | No active item, user asks |
 | `pm-park` | Capture an idea, bug, question, or inspiration without derailing | Any time (capture mode only during a workflow) |
+| `pm-bug` | Capture a bug with the facts needed to fix it: symptom, expected and actual, reproduction, severity, and evidence | Any time (capture only during a workflow), user asks |
 | `pm-shape` | Discuss, challenge, and flesh out one idea; decide park, roadmap, build, or drop | No active workflow, user asks |
 | `pm-discover` | Analyse the existing product, its history and usage, or answer a product question | No active workflow, user asks |
 | `pm-strategy` | Set vision, milestones, bets, and decisions; generate or re-plan the roadmap | User asks, or another PM skill recommends it |
 | `pm-purview` | Recommend Purview (purview.dev) .NET tools only where they add value; ask about stack and scale for new projects | User asks, or `pm-init`, `pm-discover`, `pm-shape`, `pm-strategy` find a .NET need it covers |
 | `pm-checkpoint` | Save state at a stopping point; close finished items | Session end, before compaction, stage end, user asks |
+| `pm-revise` | Correct work that is not what the user wanted: rewind the active item, fix it in place, or open a revision item | User asks, or a `Done when` check fails, including mid-workflow |
 | `pm-review` | Weekly triage of inbox and roadmap | User asks, or `pm-resume` says review is due |
 | `pm-item` | Add, edit, drop, block, unblock, move (including position), reassign, or complete one roadmap item | User asks |
 | `pm-board` | Show the task board; move, add, insert, or close one card | User asks |
 | `pm-roadmap` | Show the full roadmap; move, add, or insert one item | User asks |
 | `pm-status` | Show the summary or the user's queue (read-only) | User asks |
+| `pm-export` | Write the machine-readable plan document and its schema, or check them against the schema | User asks, or a tool needs the plan as JSON (check only during a workflow) |
 | `pm-up-next` | Show the ordered queue and the one next action (read-only) | User asks |
 | `pm-help` | Explain the skills, find what is missing in the setup, recommend the next skill (read-only) | User asks (explain mode only during a workflow) |
 
@@ -62,8 +65,9 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   reused. Every `LOG.md` line about a roadmap item includes its ID.
 - **Item fields:** `Serves`, `Done when`, `Size`, and `Status` are
   required. `Milestone`, `Owner`, `Depends on`, `Brief`, `Paused
-  checkpoint`, and `Note` are optional. A missing `Owner` means `agent`; a
-  missing `Depends on` means `none`.
+  checkpoint`, `Note`, and `Revisits` are optional. A missing `Owner` means
+  `agent`; a missing `Depends on` means `none`; a missing `Revisits` means
+  the item is not a revision.
 - **Owner:** `agent` (the agent builds it through the workflow), `user`
   (only the user can do it: decisions, accounts, purchases, reviews,
   content), or `both` (the agent builds it with user input). `agent` and
@@ -91,6 +95,8 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   - Captured: <YYYY-MM-DD HH:MM>
   - Source: user | agent (<skill or item ID and stage>)
   - Kind: feature | bug | improvement | question | inspiration | tech-debt
+  - Severity: blocker | major | minor | cosmetic
+  - Affects: <R-NNN, component, or path | none>
   - Context: <active item ID and stage, or none>
   - Discuss: yes | no
   - Related: <IDs, inbox files, or briefs | none>
@@ -100,6 +106,11 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   ## Idea
 
   <the words as given, verbatim>
+
+  ## Reproduction
+
+  <steps, how often it happens, and the evidence: error text, log,
+  screenshot, or failing test — bugs only>
 
   ## Links
 
@@ -111,14 +122,30 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   ```
 
   Older inbox files may lack fields; treat missing fields as `none`, `no`,
-  or `never`.
+  or `never`. `Severity` and `## Reproduction` are written for `Kind: bug`
+  only, by `pm-bug`.
 - **Brief:** the persistent record of shaping one idea, at
   `<PM root>/briefs/<R-NNN or YYYY-MM-DD>-<slug>.md`, written by
   `pm-shape`. Headings, in order: `Problem`, `Who and evidence`,
   `Original idea`, `Proposal`, `Alternatives considered`, `Challenges and
   answers`, `Ramifications`, `Done when`, `Size and slicing`, `Open
   questions`, `Decision`. Its header lists `Status` (`shaping`, `parked`,
-  `on roadmap (<ID>)`, `done`, `dropped`), `Origin`, and `Updated`.
+  `on roadmap (<ID>)`, `done`, `dropped`), `Origin`, and `Updated`. An
+  optional `## Revisions` heading after `Decision` holds dated corrections
+  written by `pm-revise`; a brief without one is complete.
+- **Bug:** an inbox file with `Kind: bug`, written by `pm-bug`, carrying
+  `Severity`, `Affects`, and a `## Reproduction` block. It is triaged like
+  any other inbox file (`pm-review`), shaped when the fix needs design
+  (`pm-shape`), and closed like any item once its outcome is a roadmap
+  item, at which point the inbox file is deleted. A bug is never a second
+  state system. `Severity` drives the recommendation: `blocker` is fixed
+  before the active item continues, `major` and `minor` are scheduled,
+  `cosmetic` is parked.
+- **Revision:** work that was built and is not what the user wanted.
+  `pm-revise` records it in the brief's `## Revisions` and the `NOW.md`
+  checkpoint while the item is open, or as a new roadmap item whose
+  `Revisits` names the original once that item is in `## Done` in
+  `LOG.md`. A revision never reopens a `Done` line.
 - **Open inbox count:** inbox files, excluding `README.md`, whose
   `Reviewed` is `never` or older than the last review, plus files with
   `Discuss: yes`.
@@ -138,6 +165,15 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   branch.
 - **Uncommitted PM state:** the paths printed by
   `git -C <main worktree> status --porcelain -- <PM root>`.
+- **Export file:** `<PM root>/planning.json`, written only by `pm-export`.
+  It is **derived**: the Markdown files are the state, and the export is a
+  projection for other tools. Never hand-edit it and never read it as PM
+  state; when the two disagree, the Markdown is correct. It is created on
+  first use and committed like any other PM file.
+- **Export schema:** `<PM root>/planning.schema.json`, the JSON Schema of
+  the **Export file**, refreshed from `pm-export`'s
+  `references/planning.schema.json` on every write. `schemaVersion` in the
+  export and the schema's const change together when the format changes.
 - **Drift:** the PM state disagrees with the work in progress. Either
   `NOW.md` is idle while the current branch matches the `Branch name
   pattern`, or `NOW.md` names another `Session` while this branch is the
@@ -165,7 +201,8 @@ with `Unassigned` last. IDs never change and are never reused when an item
 moves.
 
 The edit skills `pm-board`, `pm-roadmap`, `pm-item`, `pm-review`,
-`pm-strategy`, `pm-checkpoint`, and `pm-next` apply these operations. The
+`pm-strategy`, `pm-checkpoint`, `pm-next`, `pm-bug`, and `pm-revise` apply
+these operations. The
 view skills `pm-status`, `pm-board`, `pm-roadmap`, and `pm-up-next` read
 the same state and render it without changing the order or writing.
 
@@ -198,8 +235,8 @@ the same state and render it without changing the order or writing.
   Move it with `pm-checkpoint` (switch). No board or roadmap edit writes
   `NOW.md`.
 - **Preserve fields:** keep every field the operation does not change,
-  including `Brief`, `Paused checkpoint`, and `Note`. Dependency and cycle
-  checks apply whenever `Depends on` changes.
+  including `Brief`, `Paused checkpoint`, `Note`, and `Revisits`. Dependency
+  and cycle checks apply whenever `Depends on` changes.
 - **Confirm, then commit:** a view writes nothing. An edit shows one line
   (`R-012: Later -> Next top`), asks one choice question when it changes
   order, removes an item from `Next`, or adds an item, then applies it and
@@ -230,11 +267,12 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    questions. If the user wants to discuss the idea, set `Discuss: yes`; it
    is discussed later with `pm-shape`. The read-only exceptions: `pm-help`
    may answer a question about a skill in explain mode, without reading PM
-   state; `pm-rejoin` may run in `locate` mode; and `pm-status`,
-   `pm-board`, `pm-roadmap`, and `pm-up-next` may render their view when
-   the user explicitly asks for it. None of them may add, move, insert,
-   close, or reorder anything during a workflow. In every case the step in
-   progress resumes afterwards.
+   state; `pm-rejoin` may run in `locate` mode; `pm-export` may run in
+   `check` mode; and `pm-status`, `pm-board`, `pm-roadmap`, and `pm-up-next`
+   may render their view when the user explicitly asks for it. None of them
+   may add, move, insert, close, or reorder anything during a workflow. In
+   every case the step in progress resumes afterwards. The single write
+   exception is rule 8 (`pm-revise`).
 4. **If the user names another PM skill mid-workflow**, do not run it. Ask
    one choice question: `<skill> is at <step>. When should <pm-skill> run?`
    with the options `After <skill> finishes (recommended)` and `Pause now
@@ -261,6 +299,13 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    does not match the current session, treat that item and its files as
    read-only. Inbox files are one-file-per-idea so parallel sessions never
    conflict.
+8. **`pm-revise` may interrupt a workflow to correct it.** It is the only
+   edit skill that may run while a workflow is active, and only when the
+   user names the behaviour that is wrong or asks to revise it. The order is
+   fixed: record the scope, then `pm-checkpoint` (`pause`), then correct.
+   The interrupted step is never resumed silently; the user chooses
+   `rewind`, `fix-in-place`, `new item`, or `park` (`pm-revise`). `pm-bug`
+   and every other edit skill still follow rule 4.
 
 ## Challenge protocol (mandatory)
 
@@ -269,7 +314,8 @@ order is challenged before it is accepted. This applies equally to ideas
 from the user and to the agent's own proposals. It applies in `pm-init`,
 `pm-shape`, `pm-discover`, `pm-strategy`, `pm-purview`, `pm-review`,
 `pm-item` (add and edit), `pm-board` and `pm-roadmap` (add),
-and `pm-next` (before claiming). It never applies to `pm-park`
+`pm-next` (before claiming), `pm-bug` (duplicate, severity, and impact),
+and `pm-revise` (the scope of the rework). It never applies to `pm-park`
 capture during a workflow.
 
 1. **Problem:** what problem, for whom, and what evidence shows it exists
@@ -379,6 +425,9 @@ Rules:
 - `pm-park` never commits: it runs mid-workflow and must return in one
   line. Its inbox files are committed by the next skill that commits,
   usually `pm-checkpoint`.
+- The **Export file** and its **Export schema** are ordinary PM files
+  inside the PM root, so the same commit covers them. `pm-export` is the
+  only skill that writes them.
 - A PM commit never pushes, tags, merges, rebases, or creates or deletes
   branches.
 - Report the result as one `Note` line: `<short sha> <subject>`, `PM state

@@ -17,10 +17,18 @@ when a session drifts out of the lifecycle. `pm-park` captures ideas (from
 the user or the agent) without interrupting active work. `pm-shape`
 discusses and challenges one idea into a brief, `pm-discover` analyses the
 existing product for evidence, and `pm-strategy` owns vision, milestones,
-and roadmap generation.
+and roadmap generation. `pm-bug` logs a defect with the facts a fix needs
+and routes it, `pm-revise` corrects built work and is the only skill that
+may interrupt an active workflow, and `pm-export` writes the derived
+`planning.json` and its schema inside the PM root or checks them.
 `pm-purview` matches .NET projects to Purview tools using the dated
 snapshot in `skills/pm-purview/references/catalogue.md`; refresh that
 snapshot from `https://purview.dev/llms.txt` when Purview releases change.
+`pm-export` owns `skills/pm-export/references/planning.schema.json`, the
+contract for the `<PM root>/planning.json` it writes. The export is derived
+output, so the schema, its `schemaVersion`, and
+`skills/pm-export/references/planning.example.json` change together;
+`scripts/validate.ts` fails when they drift.
 `pm-item` edits single roadmap items; `pm-board` and `pm-roadmap` are the
 task-board and full-roadmap views with move, add, and insert operations;
 `pm-status` is a read-only summary or user-queue view; `pm-up-next` is a
@@ -63,7 +71,8 @@ same `bun` commands as the `just` recipes). Markdown is linted with
 - Lint all Markdown and validate skills: `just lint-check` (auto-fix
   Markdown: `just lint-fix`)
 - Validate only (`scripts/validate.ts`: frontmatter, README, managed-section
-  and setup inventory, markers, template placeholders): `just validate`
+  and setup inventory, markers, template placeholders, and the export schema
+  against its example): `just validate`
 - Lint one file: `bunx markdownlint-cli2 skills/pm-next/SKILL.md`
 - Adding a shipped skill: create `skills/<name>/SKILL.md`, then list it in
   the README table, the managed-section table, the `pm-setup` inventory, and

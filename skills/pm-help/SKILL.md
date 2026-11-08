@@ -43,17 +43,20 @@ asked, the skill's own `SKILL.md` steps.
 | `pm-rejoin` | You lost the pm thread, a workflow is running that `NOW.md` does not record, or a session started mid-task | "where am I in the pm lifecycle?", "rejoin", "get back on track" | `NOW.md`, `ROADMAP.md` |
 | `pm-next` | Nothing is active and you want to start the next item | "start R-007", "claim R-007" | `NOW.md`, `ROADMAP.md` |
 | `pm-park` | You or the agent have an idea, bug, question, or inspiration to remember, even mid-task | "park this: ...", "note that ..." | One inbox file |
+| `pm-bug` | A bug to log with the facts a fix needs: symptom, expected and actual, reproduction, severity, evidence | "add a bug", "log a defect" | One inbox file with `Kind: bug`; a roadmap item if routed |
 | `pm-shape` | You want to brainstorm, discuss, or challenge one idea before committing to it | "let's think through dark mode" | A brief; a roadmap item if accepted |
 | `pm-discover` | You want evidence from the code, history, or usage data, or an answer about how the product works today | "what should we fix next?", "is export used?" | A research report; inbox ideas |
 | `pm-strategy` | Setting focus, milestones, bets, or the vision, or rebuilding the roadmap | "re-plan the roadmap" | `STRATEGY.md`, `VISION.md`, `ROADMAP.md` |
 | `pm-purview` | A .NET project wants to know which Purview tools would help, or a new project is choosing its stack | "would Purview help here?" | A research report; roadmap items if accepted |
 | `pm-checkpoint` | Stopping, pausing, switching items, or finishing one | "pause", "R-007 is done" | `NOW.md`, `LOG.md`, `ROADMAP.md` |
+| `pm-revise` | Work that is already built is not what you wanted, or a `Done when` check fails, including mid-workflow | "that's not right", "change what we built for R-007" | `NOW.md`, `ROADMAP.md`, the brief's `## Revisions` |
 | `pm-review` | Weekly, or when `pm-resume` says a review is due | "weekly review" | Inbox, `ROADMAP.md`, `LOG.md`, `config.md` |
 | `pm-item` | Changing one roadmap item: add, edit, drop, block, move or insert at a position, reassign, or mark a task of yours done | "drop R-012", "put R-012 before R-008", "I've done R-009" | `ROADMAP.md`, `LOG.md` |
 | `pm-board` | Seeing the task board, or moving, adding, inserting, or closing one card | "show the board", "move R-012 to Next" | Nothing in view mode; `ROADMAP.md`, `LOG.md` in edit modes |
 | `pm-roadmap` | Seeing the full roadmap by milestone, or moving, adding, or inserting one item | "show the roadmap", "put R-012 at the top of Next" | Nothing in view mode; `ROADMAP.md` in edit modes |
 | `pm-status` | Seeing the one-screen summary or your own queue | "where are we?", "what do I need to do?" | Nothing |
 | `pm-up-next` | Seeing the ordered queue and the one next action without starting anything | "what's next?", "up next" | Nothing |
+| `pm-export` | A tool needs the whole plan as JSON, or you want the export refreshed or validated | "export the plan", "update the status JSON" | `<PM root>/planning.json` and `planning.schema.json` |
 | `pm-help` | Not sure which skill to use | "pm help" | Nothing |
 
 Concepts to explain on request, from the pm-skills section: the PM root,
@@ -64,8 +67,10 @@ Non-interruption rules, PM commits and the `Commits` section in
 `pm-rejoin`, the Handoffs table in `<PM root>/config.md`, the board
 columns, the Roadmap order and edits rules, roadmap positions (`top`,
 `bottom`, `before`, `after`), the up-next queue, the reference legend that
-questions print, and the escape options (`Explain <ID>`, `Show the
-roadmap`, `Show the board`).
+questions print, the escape options (`Explain <ID>`, `Show the
+roadmap`, `Show the board`), bugs and severity, revisions and `Revisits`,
+the export file and its schema, and the one skill that may interrupt a
+workflow (`pm-revise`).
 
 ## Steps (overview)
 
@@ -91,6 +96,8 @@ roadmap`, `Show the board`).
    | 15 | If the repository has substantial code: a `research/` report exists | Roadmap not checked against the existing product | `pm-discover` |
    | 16 | `NOW.md` agrees with the work: when idle, the current branch does not match the `Branch name pattern`; when active, `Session` equals the current branch | Drifted from the lifecycle | `pm-rejoin` |
    | 17 | **Uncommitted PM state** is empty | `<n>` uncommitted PM files | `pm-checkpoint`, which commits them |
+   | 18 | If `<PM root>/planning.json` exists: it parses, its top-level keys match the schema, and its item order and counts match the Markdown | Export is stale or invalid: first difference | `pm-export` |
+   | 19 | No open `Kind: bug` inbox file has `Severity: blocker` | Blocker bug open: title | `pm-revise`, or `pm-next` for its item |
 
    Stop at the first failing check among 1 to 4; later checks depend on
    them.

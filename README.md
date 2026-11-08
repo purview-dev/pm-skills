@@ -11,6 +11,14 @@ next action, an explicit "done when", and fixed templates.
 - **Parking lot:** ideas, bugs, questions, and inspiration are captured in
   one line at any time, even mid-task, by you or the agent, and discussed
   later.
+- **Bugs with the facts a fix needs:** `pm-bug` asks for the symptom,
+  expected and actual, reproduction, severity, and evidence, checks for a
+  duplicate, and routes the defect to a fix or the roadmap.
+- **Corrections, not pretences:** `pm-revise` handles built work that is not
+  what you wanted. It rewinds the active item to an earlier stage, fixes it
+  in place, or opens a revision item that revisits the original. It is the
+  one PM skill allowed to interrupt an active workflow, and it writes the
+  correction down first.
 - **Brainstorming with challenge:** `pm-shape` interviews, challenges, and
   maps the ramifications of an idea before it reaches the roadmap.
   `pm-discover` analyses the existing code, history, and usage for
@@ -21,6 +29,10 @@ next action, an explicit "done when", and fixed templates.
   queue, and `pm-status` the summary and your own queue. Move, add, and
   insert items from the board or roadmap with the shared ordering rules.
   Items are owned by the agent, the user, or both.
+- **The plan as data:** `pm-export` writes every roadmap item, board
+  column, milestone, bug, brief, and log entry to `planning/planning.json`
+  in one fixed shape, with the JSON Schema that describes it, or checks the
+  file without writing. The Markdown stays the source of truth.
 - **Purview fit:** for .NET projects, `pm-purview` recommends
   [Purview](https://purview.dev/) tools only where they remove real work.
   For an empty project it asks first what you are building and at what
@@ -73,6 +85,8 @@ Then, in your agent:
 | [`pm-next`](skills/pm-next/SKILL.md) | Check, claim, and hand off the next item to design | No active item |
 | [`pm-up-next`](skills/pm-up-next/SKILL.md) | Show the ordered queue and the one next action, without claiming | User asks |
 | [`pm-park`](skills/pm-park/SKILL.md) | Capture an idea, bug, question, or inspiration in one line | Any time |
+| [`pm-bug`](skills/pm-bug/SKILL.md) | Log a defect with the facts a fix needs, and route it | Any time |
+| [`pm-revise`](skills/pm-revise/SKILL.md) | Correct built work: rewind a stage, fix in place, or open a revision item | Built work is wrong, even mid-workflow |
 | [`pm-shape`](skills/pm-shape/SKILL.md) | Brainstorm and challenge one idea into a brief and a decision | No active workflow |
 | [`pm-discover`](skills/pm-discover/SKILL.md) | Analyse code, history, and usage for evidence; answer product questions | No active workflow |
 | [`pm-strategy`](skills/pm-strategy/SKILL.md) | Milestones, focus, bets, decisions; generate or re-plan the roadmap | User asks |
@@ -83,6 +97,7 @@ Then, in your agent:
 | [`pm-board`](skills/pm-board/SKILL.md) | Task board; move, add, insert, or close one card | User asks |
 | [`pm-roadmap`](skills/pm-roadmap/SKILL.md) | Full roadmap by milestone; move, add, or insert one item | User asks |
 | [`pm-status`](skills/pm-status/SKILL.md) | Summary or your queue (read-only) | User asks |
+| [`pm-export`](skills/pm-export/SKILL.md) | Write the whole plan as `planning.json` plus its schema, or check them (read-only) | User asks, or a tool needs the plan as JSON |
 | [`pm-help`](skills/pm-help/SKILL.md) | Explain each skill, find what is missing, recommend the next skill (read-only) | Any time you are unsure |
 
 ## The loop
@@ -97,21 +112,31 @@ pm-shape / pm-discover / pm-strategy: think before building, no workflow active.
 pm-item / pm-board / pm-roadmap / pm-status / pm-up-next: on request,
 when no workflow is active (their read-only views also mid-workflow).
 pm-rejoin: any time the position is unclear; it hands back to the stage.
+pm-bug: a defect needs the facts a fix needs; it routes to a fix or the roadmap.
+pm-revise: built work is wrong; it is the only skill that may interrupt.
+pm-export: a tool needs the plan as JSON, or the export needs checking.
 ```
 
-Ideas flow: `pm-park` (or `pm-discover`) -> inbox -> `pm-shape` -> brief
--> roadmap item -> `pm-next`. Strategy flows: `pm-strategy` -> milestones
-and focus -> ordered Next -> `pm-board`.
+Ideas flow: `pm-park` (or `pm-discover`, or `pm-bug` for a defect) -> inbox
+-> `pm-shape` -> brief -> roadmap item -> `pm-next`. A defect can skip the
+brief and become an item directly. Strategy flows: `pm-strategy` ->
+milestones and focus -> ordered Next -> `pm-board`. Corrections flow:
+`pm-revise` -> brief `## Revisions` (open item) or a revision item with
+`Revisits` (done item) -> the stage skill. Data flows: `pm-export` writes
+`planning/planning.json` from all of the above.
 
 ## Non-interruption guarantee
 
 The merged rules make an active workflow own the session. During a
 workflow, only `pm-park` may write, and only to capture; `pm-rejoin` may
-report the position, `pm-help` may explain a skill, and `pm-status`,
-`pm-board`, `pm-roadmap`, and `pm-up-next` may show their read-only view
-when you ask. None of them may move, add, insert, or close anything
-mid-workflow. Any other PM skill waits until the workflow finishes; the
-agent asks whether to run it after the workflow or pause now. PM state
+report the position, `pm-help` may explain a skill, `pm-export` may check
+the export without writing, and `pm-status`, `pm-board`, `pm-roadmap`, and
+`pm-up-next` may show their read-only view when you ask. None of them may
+move, add, insert, or close anything mid-workflow. The one exception is
+`pm-revise`, which may interrupt to correct built work when you say it is
+wrong: it records the scope and pauses the item before anything else runs.
+Any other PM skill waits until the workflow finishes; the agent asks
+whether to run it after the workflow or pause now. PM state
 skills write only to the configured planning directory (default
 `planning/`) in the main worktree, and never touch specs, plans, or code.
 The one git state change they make is the commit of those planning files,
@@ -140,6 +165,10 @@ directory selected during `pm-setup`.
 
 Projects initialised before version 4 keep working. The new files are
 created on first use; run `pm-strategy` to create `STRATEGY.md`.
+
+`planning/planning.json` and `planning/planning.schema.json` are written by
+`pm-export` on first use. They are derived from the files above: never
+hand-edit them, and never treat them as the state.
 
 Version 5 adds the `Commits` section to `config.md`. Without it, a PM
 commit asks before each commit and treats the main worktree's current
@@ -174,6 +203,20 @@ decide it — and carries one escape option, `Explain <ID>`,
 `Show the roadmap`, or `Show the board`, which prints the full block or runs
 the read-only view and then asks the same question again. Neither the legend
 nor the escape option changes state or counts as an answer.
+
+Version 9 adds three skills and a derived state file. `pm-bug` logs a defect with
+the facts a fix needs — symptom, expected and actual, reproduction,
+severity, and evidence — in an inbox file with `Kind: bug`, then routes it
+to a fix, the roadmap, shaping, or the parking lot. `pm-revise` corrects
+work that is already built: it rewinds the active item to an earlier stage,
+fixes it in place, or opens a revision item whose `Revisits` names the
+original. It is the only skill that may interrupt an active workflow, and
+it records the scope and pauses the item first. `pm-export` writes
+`planning/planning.json` with `planning/planning.schema.json` in a fixed,
+validated shape, or checks them without writing. Seed data comes from the
+same files as before; bugs add `Severity`, `Affects`, and a
+`## Reproduction` block to the inbox format, and revisions add an optional
+`## Revisions` heading to a brief.
 
 ## Using a different workflow framework
 
@@ -240,6 +283,7 @@ skills/
   pm-next/SKILL.md
   pm-up-next/SKILL.md
   pm-park/SKILL.md
+  pm-bug/SKILL.md
   pm-shape/SKILL.md
   pm-discover/SKILL.md
   pm-strategy/SKILL.md
@@ -247,11 +291,16 @@ skills/
     SKILL.md
     references/catalogue.md
   pm-checkpoint/SKILL.md
+  pm-revise/SKILL.md
   pm-review/SKILL.md
   pm-item/SKILL.md
   pm-board/SKILL.md
   pm-roadmap/SKILL.md
   pm-status/SKILL.md
+  pm-export/
+    SKILL.md
+    references/planning.schema.json
+    references/planning.example.json
   pm-help/SKILL.md
 scripts/validate.ts
 .github/

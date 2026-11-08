@@ -1,0 +1,346 @@
+{
+  "$schema": "./planning.schema.json",
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-08T14:22:05+00:00",
+  "generator": {
+    "skill": "pm-export",
+    "skillsVersion": 9,
+    "rulesVersion": 9
+  },
+  "project": {
+    "pmRoot": "planning/",
+    "defaultBranch": "main",
+    "branchPattern": "feat/<id>-<slug>"
+  },
+  "source": {
+    "branch": "feat/r-007-tenant-billing",
+    "head": "c32db71ba89f66260d678e5f9f843f557459b7b4"
+  },
+  "vision": {
+    "problem": "Small teams cannot see what they owe without asking us.",
+    "customer": "The owner of a team of 5 to 20 people who pays the invoice.",
+    "outcomes": [
+      {
+        "id": "V1",
+        "text": "A tenant can subscribe and see their own invoices."
+      },
+      {
+        "id": "V2",
+        "text": "A new tenant can start without talking to us."
+      }
+    ],
+    "outOfScope": ["Multi-tenant SSO."],
+    "constraints": {
+      "timeAvailable": "8 hours per week",
+      "budget": "GBP 40 per month",
+      "stack": "Next.js, Postgres, Stripe"
+    }
+  },
+  "strategy": {
+    "focus": {
+      "milestone": "M1",
+      "whyNow": "Billing blocks every paid pilot."
+    },
+    "milestones": [
+      {
+        "id": "M1",
+        "name": "First paying tenant",
+        "serves": ["V1"],
+        "exitCriteria": "A real tenant pays an invoice end to end.",
+        "target": "2026-12-15",
+        "status": "active"
+      },
+      {
+        "id": "M2",
+        "name": "Self-serve signup",
+        "serves": ["V2"],
+        "exitCriteria": "A new tenant signs up without help.",
+        "target": null,
+        "status": "planned"
+      }
+    ],
+    "bets": [
+      {
+        "id": "B1",
+        "statement": "We believe in-app invoicing will stop churn for small teams.",
+        "evidence": "Three pilots asked for invoices last month.",
+        "signal": "A tenant pays a second invoice without asking us.",
+        "status": "open"
+      }
+    ],
+    "assumptions": [
+      {
+        "id": "A1",
+        "statement": "Stripe supports our billing cycle.",
+        "test": "Create a test subscription in the sandbox before R-008.",
+        "status": "holds"
+      }
+    ],
+    "notDoing": [
+      {
+        "thing": "Multi-tenant SSO",
+        "why": "No pilot has asked for it.",
+        "revisit": "When a pilot with 20 or more seats signs up."
+      }
+    ],
+    "decisions": [
+      {
+        "date": "2026-10-29",
+        "decision": "Bill per seat, not per usage.",
+        "why": "Pilots can forecast a seat count.",
+        "rejected": "Usage billing; invoicing outside the app."
+      }
+    ]
+  },
+  "now": {
+    "status": "active",
+    "item": {
+      "id": "R-007",
+      "title": "Tenant billing"
+    },
+    "stage": "execute",
+    "session": "feat/r-007-tenant-billing",
+    "brief": "planning/briefs/R-007-tenant-billing.md",
+    "milestone": "M1",
+    "spec": "docs/superpowers/specs/2026-10-30-tenant-billing.md",
+    "plan": "docs/superpowers/plans/2026-10-31-tenant-billing.md",
+    "started": "2026-11-02",
+    "doneWhen": [
+      "`bun test billing` passes with the invoice fixture.",
+      "A test tenant sees one invoice for the current period."
+    ],
+    "checkpoint": {
+      "at": "2026-11-08 14:10",
+      "stoppedAt": "Step 3 of 7 in the plan",
+      "nextAction": "Add the invoice line items table",
+      "startWith": "docs/superpowers/plans/2026-10-31-tenant-billing.md",
+      "decisions": "The seat count is read from the subscription, not stored.",
+      "context": "Stripe test keys are in .env.local.",
+      "openQuestion": null
+    }
+  },
+  "roadmap": {
+    "next": [
+      {
+        "id": "R-008",
+        "title": "Invoice email",
+        "section": "next",
+        "position": 1,
+        "label": "next",
+        "serves": ["V1"],
+        "milestone": "M1",
+        "owner": "agent",
+        "doneWhen": "A tenant receives one email per issued invoice.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": null,
+        "revisits": null,
+        "claimable": true
+      },
+      {
+        "id": "R-009",
+        "title": "Open a Stripe account",
+        "section": "next",
+        "position": 2,
+        "label": "next",
+        "serves": ["V1"],
+        "milestone": "M1",
+        "owner": "user",
+        "doneWhen": "The production Stripe account is verified and its keys are in the vault.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "Blocks R-008.",
+        "revisits": null,
+        "claimable": false
+      }
+    ],
+    "later": [
+      {
+        "id": "R-012",
+        "title": "Self-serve signup",
+        "section": "later",
+        "position": 1,
+        "label": "later",
+        "serves": ["V2"],
+        "milestone": "M2",
+        "owner": "agent",
+        "doneWhen": "A new visitor creates a tenant without our help.",
+        "size": "M",
+        "dependsOn": ["R-008"],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/R-012-self-serve-signup.md",
+        "note": null,
+        "revisits": null,
+        "claimable": false
+      }
+    ]
+  },
+  "board": {
+    "columns": {
+      "now": [
+        {
+          "id": "R-007",
+          "title": "Tenant billing",
+          "owner": "agent",
+          "size": "M",
+          "detail": "execute, 3/7 plan steps"
+        }
+      ],
+      "next": [
+        {
+          "id": "R-008",
+          "title": "Invoice email",
+          "owner": "agent",
+          "size": "S",
+          "detail": "ready"
+        }
+      ],
+      "foryou": [
+        {
+          "id": "R-009",
+          "title": "Open a Stripe account",
+          "owner": "user",
+          "size": "S",
+          "detail": "blocks R-008"
+        }
+      ],
+      "waiting": [],
+      "done": [
+        {
+          "date": "2026-10-30",
+          "id": "R-006",
+          "title": "Tenant model",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-10-20-tenant-model.md",
+          "result": "PR #41"
+        }
+      ]
+    },
+    "activity": [
+      {
+        "date": "2026-11-05",
+        "kind": "done",
+        "id": "R-006",
+        "title": "Tenant model",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "PR #41"
+      },
+      {
+        "date": "2026-10-29",
+        "kind": "dropped",
+        "id": "R-004",
+        "title": "Usage export",
+        "milestone": null,
+        "owner": null,
+        "result": "Reason: no pilot uses it."
+      },
+      {
+        "date": "2026-10-29",
+        "kind": "review",
+        "id": null,
+        "title": null,
+        "milestone": null,
+        "owner": null,
+        "result": "Inbox 1 to 0. Next reordered. 1 item dropped."
+      }
+    ]
+  },
+  "log": {
+    "done": [
+      {
+        "date": "2026-10-30",
+        "id": "R-006",
+        "title": "Tenant model",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-10-20-tenant-model.md",
+        "result": "PR #41"
+      }
+    ],
+    "dropped": [
+      {
+        "date": "2026-10-29",
+        "id": "R-004",
+        "title": "Usage export",
+        "reason": "No pilot uses it."
+      }
+    ],
+    "reviews": [
+      {
+        "date": "2026-10-29",
+        "summary": "Inbox 1 to 0. Next reordered. 1 item dropped."
+      }
+    ]
+  },
+  "inbox": [
+    {
+      "file": "planning/inbox/2026-11-05-1402-invoice-total-wrong.md",
+      "title": "Invoice total shows zero for paused seats",
+      "captured": "2026-11-05 14:02",
+      "source": "user",
+      "kind": "bug",
+      "severity": "major",
+      "affects": "R-007",
+      "context": "R-007 execute",
+      "discuss": "no",
+      "related": ["R-007"],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Pausing a seat shows a zero total instead of the prorated amount."
+    }
+  ],
+  "briefs": [
+    {
+      "path": "planning/briefs/R-007-tenant-billing.md",
+      "id": "R-007",
+      "title": "Tenant billing",
+      "status": "on roadmap (R-007), active",
+      "origin": "inbox/2026-10-27-0915-tenant-billing.md",
+      "updated": "2026-11-08",
+      "decision": "Added to Next as R-007 on 2026-10-28.",
+      "revisions": [
+        {
+          "date": "2026-11-06",
+          "text": "Seat proration was missing. Must now: prorate the first period by day. Mode: fix-in-place. Supersedes: none."
+        }
+      ]
+    }
+  ],
+  "counts": {
+    "next": 2,
+    "later": 1,
+    "nextMax": 5,
+    "openInbox": 1,
+    "discuss": 0,
+    "shapingBriefs": 0,
+    "done": 1,
+    "dropped": 1,
+    "blockers": 0
+  },
+  "checks": {
+    "reviewDue": false,
+    "lastReview": "2026-10-29",
+    "claimable": ["R-008"],
+    "drift": false
+  }
+}
+
+
