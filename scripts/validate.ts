@@ -17,8 +17,8 @@ const shipped = readdirSync(skillsDir, { withFileTypes: true })
 const repoDir = join(root, ".agents", "skills");
 const repo = existsSync(repoDir)
   ? readdirSync(repoDir, { withFileTypes: true })
-      .filter((d) => d.isDirectory())
-      .map((d) => d.name)
+    .filter((d) => d.isDirectory())
+    .map((d) => d.name)
   : [];
 
 const readme = read("README.md");
@@ -119,7 +119,7 @@ else {
       fail("planning.schema.json: the top level must set additionalProperties: false");
     }
     const schemaVersion = schema.properties?.schemaVersion?.const;
-    if (schemaVersion !== 1) fail(`planning.schema.json: schemaVersion const must be 1 (got ${schemaVersion})`);
+    if (schemaVersion !== 2) fail(`planning.schema.json: schemaVersion const must be 2 (got ${schemaVersion})`);
     if (example.schemaVersion !== schemaVersion) {
       fail("planning.example.json: schemaVersion differs from the schema");
     }
