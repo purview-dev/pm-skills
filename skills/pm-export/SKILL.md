@@ -64,7 +64,7 @@ Top-level keys, in order:
 | Key | Read from | Contents |
 | --- | --- | --- |
 | `$schema` | constant | `"./planning.schema.json"` |
-| `schemaVersion` | constant | `1`; bump it with the schema when the shape changes |
+| `schemaVersion` | constant | `2`; bump it with the schema when the shape changes |
 | `generatedAt` | clock | local ISO 8601 with offset: bash `date +%Y-%m-%dT%H:%M:%S%:z`, PowerShell `Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"` |
 | `generator` | this skill | `skill: "pm-export"`, `skillsVersion` from the marker in `pm-setup`'s reference, `rulesVersion` from `config.md` |
 | `project` | `config.md` | `pmRoot`, `defaultBranch`, `branchPattern` |
@@ -72,6 +72,7 @@ Top-level keys, in order:
 | `vision` | `VISION.md` | `problem`, `customer`, `outcomes[]` as `{id: "V1", text}`, `outOfScope[]`, `constraints{timeAvailable, budget, stack}` |
 | `strategy` | `STRATEGY.md` | `focus{milestone, whyNow}` and the five lists below |
 | `now` | `NOW.md` | `status`, `item{id, title}`, `stage`, `session`, `brief`, `milestone`, `spec`, `plan`, `started`, `doneWhen[]`, `checkpoint` |
+| `plan` | the plan at `now.plan` | `path`, `checked`, `total`, `tasks[]` as `{number, title, checked, total, steps[]}`, each step `{text, checked}`: one task per `### Task N` heading, one step per `- [ ]`/`- [x]` line with its text copied. `null` when `NOW.md` has no plan |
 | `roadmap` | `ROADMAP.md` | `next[]` and `later[]`, each an item object |
 | `board` | derived | `columns{now, next, foryou, waiting, done}` and `activity[]` |
 | `log` | `LOG.md` | `done[]`, `dropped[]`, `reviews[]` |
@@ -128,8 +129,9 @@ Remaining objects:
   `null`, `related` is `[]` for `none`, and `idea` is the verbatim text
   under `## Idea`.
 - `briefs[]` is `{path, id, title, status, origin, updated, decision,
-  revisions[]}`, where `revisions` holds `{date, text}` read from
-  `## Revisions`.
+  problem, doneWhen, revisions[]}`, where `problem` and `doneWhen` are the
+  text under `## Problem` and `## Done when` (first line of each), and
+  `revisions` holds `{date, text}` read from `## Revisions`.
 - `checks.drift` follows the **Drift** definition and `checks.reviewDue`
   follows **Review due**.
 

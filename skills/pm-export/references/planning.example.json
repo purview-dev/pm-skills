@@ -1,6 +1,6 @@
 {
   "$schema": "./planning.schema.json",
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "generatedAt": "2026-11-08T14:22:05+00:00",
   "generator": {
     "skill": "pm-export",
@@ -29,7 +29,9 @@
         "text": "A new tenant can start without talking to us."
       }
     ],
-    "outOfScope": ["Multi-tenant SSO."],
+    "outOfScope": [
+      "Multi-tenant SSO."
+    ],
     "constraints": {
       "timeAvailable": "8 hours per week",
       "budget": "GBP 40 per month",
@@ -45,7 +47,9 @@
       {
         "id": "M1",
         "name": "First paying tenant",
-        "serves": ["V1"],
+        "serves": [
+          "V1"
+        ],
         "exitCriteria": "A real tenant pays an invoice end to end.",
         "target": "2026-12-15",
         "status": "active"
@@ -53,7 +57,9 @@
       {
         "id": "M2",
         "name": "Self-serve signup",
-        "serves": ["V2"],
+        "serves": [
+          "V2"
+        ],
         "exitCriteria": "A new tenant signs up without help.",
         "target": null,
         "status": "planned"
@@ -119,6 +125,29 @@
       "openQuestion": null
     }
   },
+  "plan": {
+    "path": "docs/superpowers/plans/2026-10-31-tenant-billing.md",
+    "checked": 1,
+    "total": 3,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "Invoice line items",
+        "checked": 1,
+        "total": 2,
+        "steps": [
+          {
+            "text": "Write the failing test",
+            "checked": true
+          },
+          {
+            "text": "Implement the table",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -127,7 +156,9 @@
         "section": "next",
         "position": 1,
         "label": "next",
-        "serves": ["V1"],
+        "serves": [
+          "V1"
+        ],
         "milestone": "M1",
         "owner": "agent",
         "doneWhen": "A tenant receives one email per issued invoice.",
@@ -149,7 +180,9 @@
         "section": "next",
         "position": 2,
         "label": "next",
-        "serves": ["V1"],
+        "serves": [
+          "V1"
+        ],
         "milestone": "M1",
         "owner": "user",
         "doneWhen": "The production Stripe account is verified and its keys are in the vault.",
@@ -173,12 +206,16 @@
         "section": "later",
         "position": 1,
         "label": "later",
-        "serves": ["V2"],
+        "serves": [
+          "V2"
+        ],
         "milestone": "M2",
         "owner": "agent",
         "doneWhen": "A new visitor creates a tenant without our help.",
         "size": "M",
-        "dependsOn": ["R-008"],
+        "dependsOn": [
+          "R-008"
+        ],
         "status": {
           "value": "ready",
           "reason": null,
@@ -301,7 +338,9 @@
       "affects": "R-007",
       "context": "R-007 execute",
       "discuss": "no",
-      "related": ["R-007"],
+      "related": [
+        "R-007"
+      ],
       "brief": null,
       "reviewed": "never",
       "idea": "Pausing a seat shows a zero total instead of the prorated amount."
@@ -321,7 +360,9 @@
           "date": "2026-11-06",
           "text": "Seat proration was missing. Must now: prorate the first period by day. Mode: fix-in-place. Supersedes: none."
         }
-      ]
+      ],
+      "problem": "A tenant cannot see what they owe.",
+      "doneWhen": "A tenant sees one invoice for the current period."
     }
   ],
   "counts": {
@@ -338,9 +379,9 @@
   "checks": {
     "reviewDue": false,
     "lastReview": "2026-10-29",
-    "claimable": ["R-008"],
+    "claimable": [
+      "R-008"
+    ],
     "drift": false
   }
 }
-
-
