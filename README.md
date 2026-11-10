@@ -47,8 +47,9 @@ next action, an explicit "done when", and fixed templates.
   `pm-rejoin` puts a session back on the lifecycle after the thread is
   lost.
 - **Commits without the chore:** the skill that writes the planning files
-  commits them, in the main worktree, on the branch you plan on. The
-  default asks first; `config.md` can make it automatic.
+  commits them, on the branch you plan on; a completion record is committed
+  on the item's branch so it rides the item's pull request. The default asks
+  first; `config.md` can make it automatic.
 - **Questions use the agent's question UI:** choices with a recommended
   option and free text. You are never asked to type `yes` or `a`/`b`/`c`.
 
@@ -107,7 +108,7 @@ Then, in your agent:
 | [`pm-discover`](skills/pm-discover/SKILL.md) | Analyse code, history, and usage for evidence; answer product questions | No active workflow |
 | [`pm-strategy`](skills/pm-strategy/SKILL.md) | Milestones, focus, bets, decisions; generate or re-plan the roadmap | User asks |
 | [`pm-purview`](skills/pm-purview/SKILL.md) | Recommend [Purview](https://purview.dev/) .NET tools only where they add value | New project, or a matching .NET need |
-| [`pm-checkpoint`](skills/pm-checkpoint/SKILL.md) | Save state and decisions, record stage changes, close finished items | Session or stage end, before compaction |
+| [`pm-checkpoint`](skills/pm-checkpoint/SKILL.md) | Save state and decisions, record stage changes, suspend or resume an operation, close finished items on their branch | Session or stage end, before compaction, an emergency pause |
 | [`pm-review`](skills/pm-review/SKILL.md) | Triage the inbox, check roadmap health, order Next | Weekly |
 | [`pm-item`](skills/pm-item/SKILL.md) | Add, edit, drop, block, move or insert at a position, reassign, or complete one item | User asks |
 | [`pm-board`](skills/pm-board/SKILL.md) | Task board; move, add, insert, or close one card | User asks |
@@ -120,17 +121,21 @@ Then, in your agent:
 ## The loop
 
 ```text
-pm-resume -> pm-next -> [design -> plan -> execute -> finish] -> pm-checkpoint
-                ^            |            |           |               |
-                |       pm-checkpoint (stage updates)              close
-                +--------------------------------------------------+
+pm-resume -> pm-next -> [design -> plan -> execute -> finish]
+                ^            |            |           |
+                |     pm-checkpoint (stage updates)  pm-checkpoint (done, on the branch)
+                |                                         |
+                +-----------------------------------------+
+                                                          |
+                                          push branch -> one PR -> CI -> merge
 pm-park: any time, capture only.   pm-review: weekly.
+pm-checkpoint push/pop: emergency suspension; the operation resumes at its checkpoint.
 pm-shape / pm-discover / pm-strategy: think before building, no workflow active.
 pm-item / pm-board / pm-roadmap / pm-status / pm-up-next: on request,
 when no workflow is active (their read-only views also mid-workflow).
 pm-rejoin: any time the position is unclear; it hands back to the stage.
 pm-bug: a defect needs the facts a fix needs; it routes to a fix or the roadmap.
-pm-revise: built work is wrong; it is the only skill that may interrupt.
+pm-revise: built work is wrong; it may interrupt to correct.
 pm-export: a tool needs the plan as JSON, or the export needs checking.
 pm-docs-site: plan the site as an item; its build modes run in execute.
 ```
@@ -147,18 +152,23 @@ site renders it.
 ## Non-interruption guarantee
 
 The merged rules make an active workflow own the session. During a
-workflow, only `pm-park` may write, and only to capture; `pm-rejoin` may
+workflow, only `pm-park` may write, and only to capture, and
+`pm-checkpoint` (`push`, `pop`) may write one stack entry to suspend or
+resume the operation when you ask; `pm-rejoin` may
 report the position, `pm-help` may explain a skill, `pm-export` and
 `pm-docs-site` may check without writing, and `pm-status`, `pm-board`, `pm-roadmap`, and
 `pm-up-next` may show their read-only view when you ask. None of them may
-move, add, insert, or close anything mid-workflow. The one exception is
-`pm-revise`, which may interrupt to correct built work when you say it is
-wrong: it records the scope and pauses the item before anything else runs.
+move, add, insert, or close anything mid-workflow. `pm-revise` may
+interrupt to correct built work when you say it is wrong: it records the
+scope and pauses the item before anything else runs.
 Any other PM skill waits until the workflow finishes; the agent asks
 whether to run it after the workflow or pause now. PM state
 skills write only to the configured planning directory (default
-`planning/`) in the main worktree, and never touch specs, plans, or code.
-The one exception is `pm-docs-site`'s build modes: the site is code, so
+`planning/`), and never touch specs, plans, or code. A completion record is
+the one PM write that happens outside the main worktree: the workflow runs
+it at the end of the `execute` stage, and it is committed on the item's
+branch so it rides the item's pull request, before CI runs.
+The other exception is `pm-docs-site`'s build modes: the site is code, so
 they run as a step of the site item's `execute` stage, on
 its branch, and leave committing to the workflow.
 The one git state change they make is the commit of those planning files,
@@ -181,6 +191,7 @@ directory selected during `pm-setup`.
 | `planning/NOW.md` | The one active item, its checkpoint, decisions, and context |
 | `planning/ROADMAP.md` | Next (ordered, maximum 5) and Later, with owner and dependencies |
 | `planning/LOG.md` | Done, Dropped, Reviews |
+| `planning/STACK.md` | Suspended operations, newest first, with their checkpoints |
 | `planning/inbox/` | The parking lot: one file per idea |
 | `planning/briefs/` | One shaped idea per file: challenges, ramifications, decision |
 | `planning/research/` | One `pm-discover` report per run |
@@ -232,8 +243,8 @@ severity, and evidence — in an inbox file with `Kind: bug`, then routes it
 to a fix, the roadmap, shaping, or the parking lot. `pm-revise` corrects
 work that is already built: it rewinds the active item to an earlier stage,
 fixes it in place, or opens a revision item whose `Revisits` names the
-original. It is the only skill that may interrupt an active workflow, and
-it records the scope and pauses the item first. `pm-export` writes
+original. It may interrupt an active workflow to correct it, and it records
+the scope and pauses the item first. `pm-export` writes
 `planning/planning.json` with `planning/planning.schema.json` in a fixed,
 validated shape, or checks them without writing. Seed data comes from the
 same files as before; bugs add `Severity`, `Affects`, and a
@@ -247,6 +258,17 @@ site with the templates and the export, read-only, even mid-workflow; and
 stage. The site reads `planning/planning.json` only. When `pm-export`'s
 `schemaVersion` moves, the site's build fails until `pm-docs-site upgrade`
 runs, and `pm-help` reports the difference.
+
+Version 11 makes completion ride the branch and adds the operation stack.
+`pm-checkpoint` (`done`) writes the Completion record and commits it on the
+item's branch, so the item's pull request carries it before CI runs; it is
+never closed on the planning branch after the merge, and it never gets a
+pull request of its own. When the last open item of a milestone closes, the
+skill asks once and records the milestone as done in the same commit.
+`pm-checkpoint` (`push`, `pop`) suspends and restores an operation through
+`planning/STACK.md`, so an emergency never loses work and the interrupted
+operation resumes at its checkpoint. `pm-rejoin` repairs a `merged-unclosed`
+item whose completion missed its branch.
 
 ## Using a different workflow framework
 

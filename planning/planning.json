@@ -4,8 +4,8 @@
   "generatedAt": "2026-11-10T08:03:25+00:00",
   "generator": {
     "skill": "pm-export",
-    "skillsVersion": 10,
-    "rulesVersion": 10
+    "skillsVersion": 11,
+    "rulesVersion": 11
   },
   "project": {
     "pmRoot": "planning/",

@@ -68,9 +68,15 @@ add `Explain <ID>` to the question (Asking the user).
    yet`. If the check can be verified from the repository, verify it
    instead of asking and state the evidence. Append to `## Done` in
    `LOG.md`:
-   `- <date> <ID> <Title>. Milestone: <M | none>. Owner: <owner>. Result:
-   <evidence>.` Remove the item from `ROADMAP.md`. Name items whose
-   `Depends on` is now met.
+   `- <date> <ID> <Title>. Milestone: <M | none>. Owner: <owner>. Plan:
+   <path | none>. Result: <evidence>.` Remove the item from `ROADMAP.md`.
+   Name items whose `Depends on` is now met. When it was the last open item
+   of its milestone, run the milestone prompt from `pm-checkpoint` (`done`)
+   and record the result in the same commit.
+   The Completion record follows the **Completion rides the branch** rule:
+   commit on the current branch when it is an item's session branch, so it
+   rides that pull request; otherwise commit on the PM branch. Never close
+   an item after its branch has merged (run `pm-rejoin`).
 5. **drop:** apply the Challenge protocol checks 2 and 5 (what serves that
    `V` line instead, and what depends on it). Ask one choice question:
    `Drop <ID> <title>?` with the options `Keep it (recommended)` and `Drop

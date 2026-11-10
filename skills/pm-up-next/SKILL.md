@@ -25,7 +25,8 @@ directory` setting (default `planning/`).
 
 ## Steps
 
-1. Read `NOW.md`, `ROADMAP.md`, `STRATEGY.md`, `LOG.md`, and `config.md`.
+1. Read `NOW.md`, `ROADMAP.md`, `STRATEGY.md`, `LOG.md`, `config.md`, and
+   `STACK.md` (when it exists).
 2. Evaluate **Review due**, **Drift**, and **Uncommitted PM state** (Shared
    definitions).
 3. Build the queue:
@@ -35,11 +36,15 @@ directory` setting (default `planning/`).
      first, then by dependency, then by `Serves` order in `VISION.md`.
    - `For you`: up to 3 `Owner: user` items in `Next`, flagging the ones
      that block agent items, plus any open question in `NOW.md`.
-4. Pick the one next action, in this order: continue the active item;
+4. Pick the one next action, in this order: continue the active item; when
+   no item is active and `STACK.md` has an entry, `pm-checkpoint` (`pop`);
    the first claimable item in `Next`; the user task that unblocks the
    most items; `pm-review` when review is due; `pm-rejoin` when the state
    has drifted.
 5. Render the template. Then ask one choice question:
+   - Idle with a stacked operation: `Resume <stacked ID>?` with the options
+     `Pop it (recommended)` (run `pm-checkpoint` pop) and `Show the board`
+     (run `pm-board`).
    - Idle: `Start <ID> now?` with the options `Start it (recommended)`
      (run `pm-next`) and `Show the board` (run `pm-board`).
    - Active: `Continue <ID>?` with the options `Continue (recommended)`
@@ -78,7 +83,7 @@ directory` setting (default `planning/`).
 
 ## Note
 
-- <review due, drift, uncommitted PM state, or none>
+- <review due, drift, uncommitted PM state, stacked operations, or none>
 ```
 
 The `Next queue` lists every item in `Next`; it is exempt from the 5-bullet

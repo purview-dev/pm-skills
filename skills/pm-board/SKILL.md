@@ -45,8 +45,9 @@ likely modes as options.
 ## Steps
 
 1. Read `NOW.md`, `ROADMAP.md`, `LOG.md`, `STRATEGY.md`, and `config.md`.
-   Count the open inbox and the `Discuss: yes` files (Shared definitions).
-   If `NOW.md` has a plan, count its checkboxes.
+   Read `STACK.md` when it exists and count its entries. Count the open
+   inbox and the `Discuss: yes` files (Shared definitions). If `NOW.md` has
+   a plan, count its checkboxes.
 2. Build the columns:
    - `Now`: the active item in `NOW.md`, with its stage and step count.
    - `Next (agent)`: `## Next` items with `Owner: agent` or `both`, in
@@ -76,7 +77,8 @@ likely modes as options.
      the user gives, or keep it `ready` under an unfinished `Depends on`.
    - `later`: `move <ID> later <position>`. The card leaves the board.
    - `done`: for the active item run `pm-checkpoint` (done); otherwise run
-     `pm-item done <ID>` after the same evidence check.
+     `pm-item done <ID>` after the same evidence check. The completion
+     record is committed on the item's branch and rides its pull request.
 5. Show one change line with the title (`R-012 <title>: For you -> Next top
    (Owner agent)`), ask one choice question when the operation changes
    order, removes an item from `Next`, or adds an item — with `Show the
@@ -113,6 +115,7 @@ likely modes as options.
 ## Note
 
 - <commit result | none>
+- <Stacked: n (ID stage) | none>
 ```
 
 Omit `Changed` in view mode. Omit `Note` when there is nothing to report.
