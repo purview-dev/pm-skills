@@ -1,0 +1,81 @@
+---
+// Done, dropped and reviews, newest first, from planning.json's
+// `board.activity`. A done item's plan links to its page on this site.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+import ExportStamp from '../../components/ExportStamp.astro';
+import { docsHref, loadPlanning } from '../../lib/planning';
+import '../../styles/components.css';
+
+const planning = loadPlanning();
+
+// `activity` carries no plan path; the Done log does.
+const plans = new Map(planning.log.done.filter((entry) => entry.id).map((entry) => [entry.id, entry.plan]));
+---
+
+<StarlightPage frontmatter={{ title: 'Log', description: 'What was done, dropped and reviewed, newest first.' }}>
+	<ExportStamp />
+
+	<table class="log-table">
+		<thead>
+			<tr>
+				<th scope="col">Date</th>
+				<th scope="col">Kind</th>
+				<th scope="col">Item</th>
+				<th scope="col">Result</th>
+			</tr>
+		</thead>
+		<tbody>
+			{
+				planning.board.activity.map((entry) => {
+					const plan = entry.kind === 'done' && entry.id ? docsHref(plans.get(entry.id) ?? null) : null;
+
+					return (
+						<tr>
+							<td>{entry.date}</td>
+							<td>
+								<span class={`log-kind log-kind--${entry.kind}`}>{entry.kind}</span>
+							</td>
+							<td>
+								{entry.id && <strong>{entry.id} </strong>}
+								{entry.title}
+								{plan && (
+									<>
+										{' '}
+										(<a href={plan}>plan</a>)
+									</>
+								)}
+							</td>
+							<td>{entry.result}</td>
+						</tr>
+					);
+				})
+			}
+		</tbody>
+	</table>
+</StarlightPage>
+
+<style>
+	.log-table td:first-child {
+		white-space: nowrap;
+	}
+
+	.log-kind {
+		padding: 0.1rem 0.45rem;
+		border-radius: 4px;
+		font-size: var(--sl-text-xs);
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+		border: 1px solid var(--sl-color-hairline);
+	}
+
+	.log-kind--done {
+		color: #047857;
+		border-color: #10b98166;
+	}
+
+	.log-kind--dropped {
+		color: #b91c1c;
+		border-color: #ef444466;
+	}
+</style>

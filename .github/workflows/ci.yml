@@ -35,6 +35,39 @@ jobs:
       - name: Lint Markdown
         run: bunx markdownlint-cli2 "**/*.md" "#node_modules"
 
+  # Mirrors `just docs-check`: the repository's own pm-docs-site site, built
+  # from planning/planning.json. A template change that breaks a consumer's
+  # site breaks this one first.
+  docs-site:
+    name: Docs site
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: docs-site
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Match the pm-docs-site templates
+        run: bun ../skills/pm-docs-site/scripts/site.ts check .
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Test
+        run: bun run test
+
+      - name: Type-check
+        run: bun run check
+
+      - name: Build
+        run: bun run build
+
   # A skills change ships in a release, so it needs a new package.json
   # version; anything else (docs, CI, scripts, .agents/skills) merges without
   # one. A change to the managed rules must also bump the rules version, or

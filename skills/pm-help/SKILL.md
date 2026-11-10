@@ -57,6 +57,7 @@ asked, the skill's own `SKILL.md` steps.
 | `pm-status` | Seeing the one-screen summary or your own queue | "where are we?", "what do I need to do?" | Nothing |
 | `pm-up-next` | Seeing the ordered queue and the one next action without starting anything | "what's next?", "up next" | Nothing |
 | `pm-export` | A tool needs the whole plan as JSON, or you want the export refreshed or validated | "export the plan", "update the status JSON" | `<PM root>/planning.json` and `planning.schema.json` |
+| `pm-docs-site` | You want the plan as a local web site (Board, Roadmap, Log), a module or page added to it, or to know whether it is current | "add a docs site", "is the docs site current?" | `ROADMAP.md` (plan); the site folder, inside the item's workflow (build modes) |
 | `pm-help` | Not sure which skill to use | "pm help" | Nothing |
 
 Concepts to explain on request, from the pm-skills section: the PM root,
@@ -69,7 +70,8 @@ columns, the Roadmap order and edits rules, roadmap positions (`top`,
 `bottom`, `before`, `after`), the up-next queue, the reference legend that
 questions print, the escape options (`Explain <ID>`, `Show the
 roadmap`, `Show the board`), bugs and severity, revisions and `Revisits`,
-the export file and its schema, and the one skill that may interrupt a
+the export file and its schema, the docs site and why its build modes run
+inside a workflow (rule 9), and the one skill that may interrupt a
 workflow (`pm-revise`).
 
 ## Steps (overview)
@@ -98,6 +100,7 @@ workflow (`pm-revise`).
    | 17 | **Uncommitted PM state** is empty | `<n>` uncommitted PM files | `pm-checkpoint`, which commits them |
    | 18 | If `<PM root>/planning.json` exists: it parses, its top-level keys match the schema, and its item order and counts match the Markdown | Export is stale or invalid: first difference | `pm-export` |
    | 19 | No open `Kind: bug` inbox file has `Severity: blocker` | Blocker bug open: title | `pm-revise`, or `pm-next` for its item |
+   | 20 | If a docs site exists (a `pm-docs-site.json`, or a `src/lib/planning.ts` containing `PlanningExportError`, outside `node_modules/`): the manifest's `schemaVersion` (else `SCHEMA_VERSION`) equals the `schemaVersion` of `<PM root>/planning.json` and of `pm-docs-site`'s templates | `Docs site reads schemaVersion <n>; the export is <m>`, or `Docs site has no manifest` | `pm-docs-site check`, then its upgrade item |
 
    Stop at the first failing check among 1 to 4; later checks depend on
    them.

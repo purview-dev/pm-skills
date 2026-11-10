@@ -1,0 +1,13 @@
+---
+// When the plan on this page was exported, and from which commit, so a stale
+// planning.json is visible. Run the pm-export skill to refresh it.
+import { loadPlanning } from '../lib/planning';
+
+const planning = loadPlanning();
+const exported = planning.generatedAt.replace('T', ' ').slice(0, 16);
+const head = planning.source.head?.slice(0, 7) ?? 'unknown';
+---
+
+<p class="export-stamp">
+	Plan exported {exported} from {planning.source.branch ?? 'a detached HEAD'} at <code>{head}</code> ({{PM_ROOT}}planning.json).
+</p>

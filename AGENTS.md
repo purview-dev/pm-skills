@@ -5,8 +5,16 @@
 This repository packages project-management workflows as reusable agent
 skills. Each `skills/pm-*/SKILL.md` defines a skill's trigger, guardrails,
 steps, and output format. `pm-init` supplies the templates for the state
-those skills manage in a consuming repository; it does not represent live
-project state in this repository.
+those skills manage in a consuming repository.
+
+This repository dogfoods its own skills. `planning/` is its live PM state,
+created by `pm-init` and changed only through the `pm-*` skills (rules
+below, in the managed section); `skills/pm-init/templates/` stays the
+consumer template. The managed section at the end of this file is
+installed by `pm-setup` from `skills/pm-setup/references/AGENTS-section.md`,
+and `docs-site/` is the project site that `pm-docs-site` builds from
+`planning/planning.json`. Run `just setup-skills` once per clone so the
+agents working here load `skills/pm-*` directly.
 
 The skills form a lifecycle: `pm-setup` installs the shared rules,
 `pm-init` creates project state, `pm-resume` reads it, `pm-next` claims an
@@ -29,6 +37,30 @@ contract for the `<PM root>/planning.json` it writes. The export is derived
 output, so the schema, its `schemaVersion`, and
 `skills/pm-export/references/planning.example.json` change together;
 `scripts/validate.ts` fails when they drift.
+`pm-docs-site` plans, builds, and checks a local Astro and Starlight site
+that renders that export. Its spec is
+`skills/pm-docs-site/references/spec.md`, and the site ships as templates
+in `skills/pm-docs-site/templates/` (`site/` for the core, one folder per
+module with a `MODULE.md`). The templates read one `schemaVersion`
+(`SCHEMA_VERSION` in `templates/site/src/lib/planning.ts`, the
+`planning-types.ts` literal, the fixture, and the SKILL.md sentence), and
+`scripts/validate.ts` fails when it differs from the export schema, so a
+schema change ships with the template change that reads it. It also checks
+that every template placeholder is documented in the skill and that the
+copied Astro Components Kit files keep their MIT attribution. The skill is
+the one exception to the PM-root-only boundary: its build modes write the
+site, as a step of the site item's `execute` stage (Non-interruption rule 9
+in the managed section), and never commit.
+`skills/pm-docs-site/scripts/site.ts` renders a site from its manifest
+(`<site root>/pm-docs-site.json`) and the templates, and either writes the
+template-owned files or checks them. `docs-site/` is rendered this way, so
+`just validate` fails when a template changes without
+`bun skills/pm-docs-site/scripts/site.ts write docs-site`. Edit only its
+site-owned files by hand (`package.json`, `src/docs-sources.ts`). A
+template change is verified by `just docs-check` on `docs-site/`, and, for
+a module this site does not use (`architecture`, `aspire`) or the core
+without `repo-docs`, by rendering into a scratch repository and running
+`bun run test`, `bun run check`, and `bun run build` there.
 `pm-item` edits single roadmap items; `pm-board` and `pm-roadmap` are the
 task-board and full-roadmap views with move, add, and insert operations;
 `pm-status` is a read-only summary or user-queue view; `pm-up-next` is a
@@ -54,25 +86,38 @@ because the version of record is `Rules version` in the consumer's
 losing the record. Keep changes to the managed rules in this reference, not
 in generated copies, and bump its marker version when the section changes;
 `scripts/validate.ts` keeps `skills/pm-init/templates/config.md` equal to
-it. The rules and the skills carry the same version, and `pm-resume`,
+it, and keeps the copy installed at the end of this file equal to it (run
+`pm-setup`, or replace the section between the markers with the reference
+minus the marker's `version=`). The rules and the skills carry the same version, and `pm-resume`,
 `pm-rejoin`, and `pm-next` gate work on it: a consumer whose recorded rules
 are older than its installed skills is asked to run `pm-setup` before work
 resumes.
 
 ## Build, test, and lint
 
-There is no build system or automated test suite. Validation and Markdown
-linting run locally and in CI (`.github/workflows/ci.yml`, which runs the
+The skills have no build system; the docs site (`docs-site/`) is the one
+built and unit-tested part. Validation, Markdown linting, and the docs-site
+check run locally and in CI (`.github/workflows/ci.yml`, which runs the
 same `bun` commands as the `just` recipes). Markdown is linted with
 `markdownlint-cli2`, using `.markdownlint-cli2.jsonc` (default rules, with
-`MD013` disabled):
+`MD013` disabled, `node_modules/` ignored at any depth):
 
 - Install git hooks (requires `bun` and `lefthook`): `just install`
+- Link this repository's skills into `.claude/skills/` and
+  `.agents/skills/` (clears the old `pm-*` entries first; the links are
+  gitignored): `just setup-skills`. `just setup-skills --cli` uses
+  `bunx skills add ./ -y` instead, which copies the skills, so edits to
+  `skills/` go stale until it runs again.
+- Serve the project site: `just docs` (<http://localhost:4321>). Check it
+  matches the templates, then test, type-check, and build it:
+  `just docs-check`.
 - Lint all Markdown and validate skills: `just lint-check` (auto-fix
   Markdown: `just lint-fix`)
 - Validate only (`scripts/validate.ts`: frontmatter, README, managed-section
-  and setup inventory, markers, template placeholders, and the export schema
-  against its example): `just validate`
+  and setup inventory, markers, template placeholders, the export schema
+  against its example, the docs-site templates against the schema, the
+  section installed in this file, and `docs-site/` against the templates):
+  `just validate`
 - Lint one file: `bunx markdownlint-cli2 skills/pm-next/SKILL.md`
 - Adding a shipped skill: create `skills/<name>/SKILL.md`, then list it in
   the README table, the managed-section table, the `pm-setup` inventory, and
@@ -128,5 +173,593 @@ Releases are driven by the `version` field in `package.json`:
   main worktree and commit only that PM root, as defined by *Committing PM
   state* in the managed section. They never commit code, specs, plans, or
   agent instruction files, and never push, merge, or create branches.
+  `pm-docs-site`'s build modes are the only skill steps that write code;
+  keep them bounded by Non-interruption rule 9.
 - Markdown follows the repository's configured markdownlint defaults.
   Long lines are allowed (`MD013` is disabled).
+
+<!-- pm-skills:start -->
+<!-- Managed by pm-setup. Edit outside these markers; content inside is replaced on upgrade.
+     Installed copies keep this marker without a version. The version of record is
+     `Rules version` in the PM root config.md, so editing or merging this file cannot lose it. -->
+
+## Project management layer (`pm-*` skills)
+
+This repo uses a thin project-management layer that sits above the
+development workflow skills (currently Superpowers). It decides **which**
+feature is worked on, **why**, and **who** does it. The workflow skills
+decide **how** it is built.
+
+The PM state directory is selected during `pm-setup` (default: `planning/`)
+and recorded here. In these instructions, **PM root** means that
+repository-relative directory. All PM state paths are relative to the
+repository root.
+
+- PM state directory: `planning/`
+
+| Skill | Purpose | When it may run |
+| --- | --- | --- |
+| `pm-setup` | Install or upgrade these skills and this section | User asks |
+| `pm-init` | Create the PM root, write `VISION.md`, seed the roadmap | User asks |
+| `pm-resume` | Show where work stopped and the next action for the agent and the user | Session start, after compaction, or user asks |
+| `pm-rejoin` | Find the true position in the lifecycle from git and PM state, then rejoin at the right stage | Drifted or detached from the lifecycle, NOW.md disagrees with the work, user asks "where am I" |
+| `pm-next` | Pick and claim the next claimable item, hand off to design | No active item, user asks |
+| `pm-park` | Capture an idea, bug, question, or inspiration without derailing | Any time (capture mode only during a workflow) |
+| `pm-bug` | Capture a bug with the facts needed to fix it: symptom, expected and actual, reproduction, severity, and evidence | Any time (capture only during a workflow), user asks |
+| `pm-shape` | Discuss, challenge, and flesh out one idea; decide park, roadmap, build, or drop | No active workflow, user asks |
+| `pm-discover` | Analyse the existing product, its history and usage, or answer a product question | No active workflow, user asks |
+| `pm-strategy` | Set vision, milestones, bets, and decisions; generate or re-plan the roadmap | User asks, or another PM skill recommends it |
+| `pm-purview` | Recommend Purview (purview.dev) .NET tools only where they add value; ask about stack and scale for new projects | User asks, or `pm-init`, `pm-discover`, `pm-shape`, `pm-strategy` find a .NET need it covers |
+| `pm-checkpoint` | Save state at a stopping point; close finished items | Session end, before compaction, stage end, user asks |
+| `pm-revise` | Correct work that is not what the user wanted: rewind the active item, fix it in place, or open a revision item | User asks, or a `Done when` check fails, including mid-workflow |
+| `pm-review` | Weekly triage of inbox and roadmap | User asks, or `pm-resume` says review is due |
+| `pm-item` | Add, edit, drop, block, unblock, move (including position), reassign, or complete one roadmap item | User asks |
+| `pm-board` | Show the task board; move, add, insert, or close one card | User asks |
+| `pm-roadmap` | Show the full roadmap; move, add, or insert one item | User asks |
+| `pm-status` | Show the summary or the user's queue (read-only) | User asks |
+| `pm-export` | Write the machine-readable plan document and its schema, or check them against the schema | User asks, or a tool needs the plan as JSON (check only during a workflow) |
+| `pm-docs-site` | Plan, build, extend, upgrade, or check the local project site that renders the export | User asks (check only during a workflow); its build modes run in the execute stage of a docs-site item (rule 9) |
+| `pm-up-next` | Show the ordered queue and the one next action (read-only) | User asks |
+| `pm-help` | Explain the skills, find what is missing in the setup, recommend the next skill (read-only) | User asks (explain mode only during a workflow) |
+
+State lives in the PM root (see `config.md` there). Handoffs to workflow
+skills are defined in the **Handoffs** table in that `config.md`. To change
+frameworks, edit that table. Do not edit the skills.
+
+## Shared definitions
+
+Every `pm-*` skill uses these definitions. The skills do not redefine them.
+
+- **Rules:** this section. It lives in `AGENTS.md` or `CLAUDE.md`. Where a
+  skill says "the rules", it means this section.
+- **Limits:** read them from the Limits list in `<PM root>/config.md`
+  every time. Never hard-code them. If a limit is missing (older installs),
+  use the default from the `pm-init` template and state it as an
+  `Assumption:`. `NOW.md` holds one item, so only one item is active at a
+  time.
+- **Current session:** the output of `git branch --show-current`. The
+  `Session` field in `NOW.md` starts with a branch name. The session matches
+  when the current branch equals that name. Empty output (detached HEAD)
+  never matches.
+- **Item IDs:** `R-NNN` (at least 3 digits). A new ID is the highest number
+  found in `ROADMAP.md`, `NOW.md`, and `LOG.md`, plus 1. IDs are never
+  reused. Every `LOG.md` line about a roadmap item includes its ID.
+- **Item fields:** `Serves`, `Done when`, `Size`, and `Status` are
+  required. `Milestone`, `Owner`, `Depends on`, `Brief`, `Paused
+  checkpoint`, `Note`, and `Revisits` are optional. A missing `Owner` means
+  `agent`; a missing `Depends on` means `none`; a missing `Revisits` means
+  the item is not a revision.
+- **Owner:** `agent` (the agent builds it through the workflow), `user`
+  (only the user can do it: decisions, accounts, purchases, reviews,
+  content), or `both` (the agent builds it with user input). `agent` and
+  `both` items are claimed with `pm-next`. `user` items are never claimed;
+  the user does them and closes them with `pm-item done`.
+- **Claimable:** an item in `## Next` whose `Status` is `ready` or
+  `paused`, whose `Owner` is `agent` or `both`, and whose every
+  `Depends on` ID appears in `## Done` in `LOG.md`.
+- **Reference legend:** the short list of the IDs a question uses, each with
+  the words needed to decide it: a milestone's name, whether it is the
+  focus, and the items in it; a roadmap item's title, owner, size, and
+  status; a `V` line, bet, or inbox file's one-line text. A question that
+  names IDs prints it (Asking the user).
+- **Optional files:** `STRATEGY.md`, `briefs/`, and `research/` in the PM
+  root may be missing in projects initialised before version 4. Skills that
+  read them treat a missing file as empty. Skills that write them create
+  them.
+- **Inbox file:** one idea per file at
+  `<PM root>/inbox/<YYYY-MM-DD-HHMM>-<slug>.md`, written by `pm-park` and
+  `pm-discover`, in this format:
+
+  ```markdown
+  # <Short title, max 8 words>
+
+  - Captured: <YYYY-MM-DD HH:MM>
+  - Source: user | agent (<skill or item ID and stage>)
+  - Kind: feature | bug | improvement | question | inspiration | tech-debt
+  - Severity: blocker | major | minor | cosmetic
+  - Affects: <R-NNN, component, or path | none>
+  - Context: <active item ID and stage, or none>
+  - Discuss: yes | no
+  - Related: <IDs, inbox files, or briefs | none>
+  - Brief: <path, once pm-shape has started one | none>
+  - Reviewed: <YYYY-MM-DD, set when pm-review keeps it parked | never>
+
+  ## Idea
+
+  <the words as given, verbatim>
+
+  ## Reproduction
+
+  <steps, how often it happens, and the evidence: error text, log,
+  screenshot, or failing test — bugs only>
+
+  ## Links
+
+  - <URLs, file paths, or screenshots given with the idea>
+
+  ## Notes
+
+  - <YYYY-MM-DD> <text appended later, verbatim>
+  ```
+
+  Older inbox files may lack fields; treat missing fields as `none`, `no`,
+  or `never`. `Severity` and `## Reproduction` are written for `Kind: bug`
+  only, by `pm-bug`.
+- **Brief:** the persistent record of shaping one idea, at
+  `<PM root>/briefs/<R-NNN or YYYY-MM-DD>-<slug>.md`, written by
+  `pm-shape`. Headings, in order: `Problem`, `Who and evidence`,
+  `Original idea`, `Proposal`, `Alternatives considered`, `Challenges and
+  answers`, `Ramifications`, `Done when`, `Size and slicing`, `Open
+  questions`, `Decision`. Its header lists `Status` (`shaping`, `parked`,
+  `on roadmap (<ID>)`, `done`, `dropped`), `Origin`, and `Updated`. An
+  optional `## Revisions` heading after `Decision` holds dated corrections
+  written by `pm-revise`; a brief without one is complete.
+- **Bug:** an inbox file with `Kind: bug`, written by `pm-bug`, carrying
+  `Severity`, `Affects`, and a `## Reproduction` block. It is triaged like
+  any other inbox file (`pm-review`), shaped when the fix needs design
+  (`pm-shape`), and closed like any item once its outcome is a roadmap
+  item, at which point the inbox file is deleted. A bug is never a second
+  state system. `Severity` drives the recommendation: `blocker` is fixed
+  before the active item continues, `major` and `minor` are scheduled,
+  `cosmetic` is parked.
+- **Revision:** work that was built and is not what the user wanted.
+  `pm-revise` records it in the brief's `## Revisions` and the `NOW.md`
+  checkpoint while the item is open, or as a new roadmap item whose
+  `Revisits` names the original once that item is in `## Done` in
+  `LOG.md`. A revision never reopens a `Done` line.
+- **Open inbox count:** inbox files, excluding `README.md`, whose
+  `Reviewed` is `never` or older than the last review, plus files with
+  `Discuss: yes`.
+- **Timestamps:** local time. In bash or zsh, run
+  `date "+%Y-%m-%d %H:%M"`. In PowerShell, run
+  `Get-Date -Format "yyyy-MM-dd HH:mm"`. Use the one that matches the shell
+  in use. For a date only, use the first 10 characters.
+- **Review due:** true when the days since `Last review` are at least the
+  review cadence, or the open inbox count is at least the inbox threshold.
+  If `Last review` is `never`, only the inbox threshold applies.
+- **Main worktree:** the first path in `git worktree list`. PM root paths
+  are resolved inside it. Quote the path in commands, because it may
+  contain spaces.
+- **PM branch:** the branch named by `PM branch` in `<PM root>/config.md`.
+  It is where PM state is committed, normally the repository's default
+  branch. Installs without the setting use the main worktree's current
+  branch.
+- **Uncommitted PM state:** the paths printed by
+  `git -C <main worktree> status --porcelain -- <PM root>`.
+- **Export file:** `<PM root>/planning.json`, written only by `pm-export`.
+  It is **derived**: the Markdown files are the state, and the export is a
+  projection for other tools. Never hand-edit it and never read it as PM
+  state; when the two disagree, the Markdown is correct. It is created on
+  first use and committed like any other PM file.
+- **Export schema:** `<PM root>/planning.schema.json`, the JSON Schema of
+  the **Export file**, refreshed from `pm-export`'s
+  `references/planning.schema.json` on every write. `schemaVersion` in the
+  export and the schema's const change together when the format changes.
+- **Docs site:** the optional local Astro site that `pm-docs-site` builds
+  from its templates. It reads the **Export file** only, never writes the
+  PM root, and is code, not PM state: its files are committed by the
+  workflow that builds them. A site whose `SCHEMA_VERSION` is older than
+  the export's `schemaVersion` fails its build until `pm-docs-site upgrade`
+  runs.
+- **Drift:** the PM state disagrees with the work in progress. Either
+  `NOW.md` is idle while the current branch matches the `Branch name
+  pattern`, or `NOW.md` names another `Session` while this branch is the
+  item's own branch. `pm-rejoin` locates drift and repairs it.
+- **Rules version:** the installed version of this section, recorded as
+  `Rules version` in the `Install` section of `<PM root>/config.md`. It is
+  the only version of record, and it survives edits, merges, and rewrites
+  of the agent instructions file.
+- **Skills version:** the `N` in `<!-- pm-skills:start version=N -->` at the
+  top of `references/AGENTS-section.md` in the installed `pm-setup` skill
+  folder (locations: `pm-setup` step 2, item 4). The rules and the skills
+  ship together, so equal numbers mean a current install.
+- **Legacy version:** an install made before version 6 carries `version=N`
+  in its start marker instead. Treat it as the **Rules version** when
+  `config.md` has none; `pm-setup` migrates it and rewrites the marker
+  without a version.
+
+## Roadmap order and edits (mandatory)
+
+`ROADMAP.md` has two sections: `## Next` (ordered, at most the max in
+`config.md`) and `## Later` (grouped by milestone where one is set). An
+item's position is the order of its `### <ID> <Title>` block in its
+section. In `Later`, milestone groups follow the order in `STRATEGY.md`,
+with `Unassigned` last. IDs never change and are never reused when an item
+moves.
+
+The edit skills `pm-board`, `pm-roadmap`, `pm-item`, `pm-review`,
+`pm-strategy`, `pm-checkpoint`, `pm-next`, `pm-bug`, `pm-revise`, and
+`pm-docs-site` (plan) apply these operations. The
+view skills `pm-status`, `pm-board`, `pm-roadmap`, and `pm-up-next` read
+the same state and render it without changing the order or writing.
+
+- **Position:** `top`, `bottom` (the default), `before <ID>`, or
+  `after <ID>`. `before` and `after` name an item in the destination
+  section.
+- **move `<ID>` `<next|later>` [`<position>`]:** change section and
+  position in one step. Keep every field, including `Status`; a plain
+  `move` never unblocks an item or marks it ready. `unblock` is a separate
+  operation, run by the board's `Waiting -> Next` column move. In `Later`,
+  keep the item under its `Milestone` group.
+- **add `<title>` [`<next|later>`] [`<position>`]:** create one item with a
+  new ID, the required fields, and `Status: ready`. The default is the
+  bottom of `Later`, under its milestone. Apply Challenge protocol checks
+  1, 2, and 5.
+- **insert `<ID>` `<before|after>` `<ID>`:** move an existing item within
+  its section. It is a `move` that leaves the section unchanged.
+- **Board columns:** `Next -> Now` is `pm-next` (claim);
+  `Now -> Next` is `pm-checkpoint` (switch); `Next -> For you` and
+  `For you -> Next` change `Owner`; `Next -> Waiting` is `block` or
+  `depends`; `Waiting -> Next` is `unblock`; `-> Done` is `pm-checkpoint`
+  done for the active item or `pm-item done` for a user task. `Done` is
+  history in `LOG.md`: a done item returns only as a new item with a new
+  ID.
+- **Full Next:** when a move, insert, or add would put `Next` over the max,
+  move the bottom item of `Next` to the top of `Later` in the same
+  operation and name it in the output. Never exceed the max and never drop
+  an item.
+- **Active item:** the active item is in `NOW.md`, not in `ROADMAP.md`.
+  Move it with `pm-checkpoint` (switch). No board or roadmap edit writes
+  `NOW.md`.
+- **Preserve fields:** keep every field the operation does not change,
+  including `Brief`, `Paused checkpoint`, `Note`, and `Revisits`. Dependency
+  and cycle checks apply whenever `Depends on` changes.
+- **Confirm, then commit:** a view writes nothing. An edit shows one line
+  (`R-012: Later -> Next top`), asks one choice question when it changes
+  order, removes an item from `Next`, or adds an item, then applies it and
+  makes one PM commit (rules: Committing PM state).
+
+## Non-interruption rules (mandatory)
+
+These rules override any general instruction to invoke skills eagerly,
+including Superpowers' `using-superpowers` rule ("invoke any skill that
+might apply"). That rule does **not** apply to `pm-*` skills, except
+`pm-park` in capture mode.
+
+1. **An active workflow owns the session.** A workflow is active when any
+   skill in the Handoffs table, or `systematic-debugging`,
+   `test-driven-development`, or `verification-before-completion`, has
+   started and not finished. It stays active until it finishes or the user
+   explicitly says "stop" or "pause".
+2. **No PM skill starts automatically during an active workflow.** PM skills
+   run only:
+   - when the user names them or asks for what they do, or
+   - at session start or after compaction (`pm-resume`), or
+   - immediately after a design, plan, or finish handoff skill completes
+     (`pm-checkpoint`, stage update only), or
+   - when the agent parks its own finding (`pm-park`, capture mode).
+3. **Mid-workflow, the only permitted PM write is `pm-park` in capture
+   mode.** Write one inbox file, reply with one line, then resume the exact
+   step that was in progress. No discussion, no evaluation, no follow-up
+   questions. If the user wants to discuss the idea, set `Discuss: yes`; it
+   is discussed later with `pm-shape`. The read-only exceptions: `pm-help`
+   may answer a question about a skill in explain mode, without reading PM
+   state; `pm-rejoin` may run in `locate` mode; `pm-export` and
+   `pm-docs-site` may run in `check` mode; and `pm-status`, `pm-board`, `pm-roadmap`, and `pm-up-next`
+   may render their view when the user explicitly asks for it. None of them
+   may add, move, insert, close, or reorder anything during a workflow. In
+   every case the step in progress resumes afterwards. The single PM write
+   exception is rule 8 (`pm-revise`); rule 9 covers the docs site, which
+   is not PM state.
+4. **If the user names another PM skill mid-workflow**, do not run it. Ask
+   one choice question: `<skill> is at <step>. When should <pm-skill> run?`
+   with the options `After <skill> finishes (recommended)` and `Pause now
+   and run it`. If the user picks pause, run `pm-checkpoint` (pause), then
+   the requested skill. Otherwise continue the step in progress.
+5. **New ideas during a workflow go to `pm-park`, never to `brainstorming`
+   or `pm-shape`.** Discussing an idea starts from `pm-shape`. Designing a
+   feature starts only from `pm-next`.
+6. **PM state skills write only inside the PM root, in the main worktree.**
+   `pm-setup` may also edit only the managed section in the selected agent
+   instructions file, and the `Rules version` line in `<PM root>/config.md`.
+   PM state skills never:
+   - edit source code, spec, or plan files,
+   - create or remove worktrees or branches,
+   - `stash`, `reset`, `merge`, `push`, `rebase`, or `cherry-pick`,
+   - switch branches, except the switch to the PM branch that a PM commit
+     offers,
+   - stage or commit anything outside the PM root.
+
+   The only state-changing git commands a skill runs are the `add` and
+   `commit` of one PM commit (see **Committing PM state**). Read-only git
+   (`status`, `log`, `branch`, `worktree list`, `diff`) is always allowed.
+7. **Other sessions' claims are read-only.** If the `Session` in `NOW.md`
+   does not match the current session, treat that item and its files as
+   read-only. Inbox files are one-file-per-idea so parallel sessions never
+   conflict.
+8. **`pm-revise` may interrupt a workflow to correct it.** It is the only
+   edit skill that may run while a workflow is active, and only when the
+   user names the behaviour that is wrong or asks to revise it. The order is
+   fixed: record the scope, then `pm-checkpoint` (`pause`), then correct.
+   The interrupted step is never resumed silently; the user chooses
+   `rewind`, `fix-in-place`, `new item`, or `park` (`pm-revise`). `pm-bug`
+   and every other edit skill still follow rule 4.
+9. **`pm-docs-site` build modes are a step of the workflow, not a PM
+   skill.** `scaffold`, `extend`, and `upgrade` write the **Docs site**,
+   which is code. They run only in the `execute` stage of the active item
+   whose `Note` names `pm-docs-site`, in the session that owns it, on a
+   branch other than the PM branch, when the plan step or the user names
+   them; rule 4's question does not apply. They write only the site
+   folder, the `Docs` group in the `justfile`, and the AppHost files their
+   `aspire` module lists. They never write the PM root, and never stage,
+   commit, push, or create branches: the workflow commits their files.
+   `pm-docs-site` `plan` and `check` are PM skills and follow rules 2 to 6.
+
+## Challenge protocol (mandatory)
+
+Every idea, feature, roadmap item, vision line, milestone, bet, or priority
+order is challenged before it is accepted. This applies equally to ideas
+from the user and to the agent's own proposals. It applies in `pm-init`,
+`pm-shape`, `pm-discover`, `pm-strategy`, `pm-purview`, `pm-review`,
+`pm-item` (add and edit), `pm-board` and `pm-roadmap` (add),
+`pm-next` (before claiming), `pm-bug` (duplicate, severity, and impact),
+`pm-revise` (the scope of the rework), and `pm-docs-site` (plan). It never
+applies to `pm-park`
+capture during a workflow.
+
+1. **Problem:** what problem, for whom, and what evidence shows it exists
+   (code, data, user reports, `LOG.md`). If there is none, say so.
+2. **Fit:** which `V` line and milestone it serves. Flag any conflict with
+   `Out of scope` in `VISION.md` or `Not doing` in `STRATEGY.md`, and any
+   earlier drop in `LOG.md`.
+3. **Alternatives:** at least two, always including "do nothing" and a
+   smaller version. State which one wins and why.
+4. **Ramifications:** data and migrations, security and privacy,
+   performance, user experience, operations and cost, maintenance,
+   dependencies on and from other items, and reversibility. Name the
+   concrete effect or write `none found`.
+5. **Cost:** size, and which item in Next it delays.
+6. **Assumptions:** what must be true, and the signal that would show it
+   is wrong.
+7. **Agent proposals:** before recommending anything, state the strongest
+   argument against it.
+
+How to challenge:
+
+- Make each challenge a concrete claim with evidence (`src/billing.ts`
+  has no tenant column), not a vague doubt.
+- Scale it: size `S` with a clear problem needs checks 1, 2, and 5 only;
+  size `M`, `L`, and anything strategic needs all of them.
+- Put each material challenge to the user as a choice question. Record the
+  challenge, the answer, and the reason in the file being written.
+- Accept the user's decision once it is made. Do not raise the same
+  challenge again unless new evidence appears; then cite it.
+
+## Persistence (mandatory)
+
+PM files are the only memory that survives compaction and new sessions.
+
+- **Write-through:** write every decision, answer, and status change to
+  its PM file in the same turn it is made, before replying. Never hold PM
+  decisions only in the conversation, and never batch them to the end of a
+  discussion.
+- **Every discussion has a file.** Shaping writes the brief after each
+  answer. Discovery writes the research report as findings arrive.
+  Strategy writes `STRATEGY.md` after each approved section.
+- **Open questions are written down:** in the brief's `## Open questions`,
+  or in the `Open question` line of the `NOW.md` checkpoint.
+- **Files win.** At session start or after compaction, read the PM state
+  (`pm-resume`) before acting on PM matters. If recalled conversation
+  content contradicts the files, the files are correct.
+- Before a session ends, or when context is about to be compacted, with an
+  item active, run `pm-checkpoint` (pause).
+
+## Committing PM state (mandatory)
+
+PM files are the memory, so they are committed as part of the work. No
+skill leaves them loose in the working tree for the user to find, add, and
+commit later. A commit made this way is a **PM commit**.
+
+1. **Read the policy** from the `Commits` section of `<PM root>/config.md`:
+   `PM state commit: always | ask | never` and `PM branch: <branch>`. A
+   missing section (installs before version 5) means `ask`, with the main
+   worktree's current branch as the PM branch.
+2. **Check the changes** in the main worktree: **Uncommitted PM state**
+   (Shared definitions). No output means there is nothing to commit; say
+   nothing about commits. Otherwise continue.
+3. **Check the branch:** `git -C <main worktree> branch --show-current`.
+   If it is empty (detached HEAD) or is not the PM branch, ask one choice
+   question: `The main worktree is on <branch>. How should the PM state be
+   committed?` with the options `Switch to <PM branch> and commit
+   (recommended)`, `Commit on <branch>`, and `Leave it uncommitted`. Offer
+   the switch only when every changed path in that worktree is inside the
+   PM root; otherwise omit that option and say which path blocks it. After
+   the switch, the main worktree stays on the PM branch.
+4. **Stop, print, and commit nothing** when the main worktree has a merge,
+   rebase, cherry-pick, revert, or bisect in progress, or when the commit
+   fails. Show the git output, put the two commands from step 6 in a
+   `Note`, and finish the skill's own output. Repair a failed pre-commit
+   hook only when the repair is inside the PM root, then retry once. Never
+   retry with `--no-verify`, and never `stash` or `reset` to force a
+   commit.
+5. **Ask, unless the policy says otherwise.** On `ask`, ask one choice
+   question: `Commit the <n> changed PM files?` with the options `Commit
+   them (recommended)` and `Leave them uncommitted`; the free-text entry is
+   the commit message. On `always`, commit without asking. On `never`, put
+   the commands in a `Note` and run nothing.
+6. **Run these two commands, in this order:**
+
+   ```bash
+   git -C "<main worktree>" add -A -- "<PM root>"
+   git -C "<main worktree>" commit -m "<message>" -- "<PM root>"
+   ```
+
+   The pathspec keeps another session's staged work out of the commit. Then
+   rerun the check from step 2 and confirm it prints nothing.
+
+7. **Message:** `docs(pm): <verb> <what changed>`, at most 72 characters,
+   for example `docs(pm): close R-007 tenant billing` or `docs(pm): pause
+   R-007 at execute`. Use the repository's own commit convention instead
+   when its agent instructions or contributing guide states one.
+
+Rules:
+
+- One commit per skill run, after the last PM file is written, and none at
+  all for a skill that wrote nothing.
+- Leftovers are swept in: PM files left uncommitted by an earlier session
+  belong in this commit. When `NOW.md` belongs to another session
+  (Non-interruption rule 7), commit only the paths this run changed.
+- Commit the PM root only. Source code, specs, plans, and agent instruction
+  files are never included, even when the same work changed them.
+- `pm-park` never commits: it runs mid-workflow and must return in one
+  line. Its inbox files are committed by the next skill that commits,
+  usually `pm-checkpoint`.
+- The **Export file** and its **Export schema** are ordinary PM files
+  inside the PM root, so the same commit covers them. `pm-export` is the
+  only skill that writes them.
+- A PM commit never pushes, tags, merges, rebases, or creates or deletes
+  branches.
+- Report the result as one `Note` line: `<short sha> <subject>`, `PM state
+  unchanged`, or `PM state left uncommitted: <n> files`.
+
+## Upgrading before work resumes (mandatory)
+
+The rules and the skills carry the same version, and a new behaviour
+usually needs both. The version of the rules installed here is recorded in
+PM state (`Rules version` in `<PM root>/config.md`), not in the agent
+instructions file, so editing, merging, or rewriting that file cannot lose
+it.
+
+`pm-resume`, `pm-rejoin`, and `pm-next` run this check before anything
+else. `pm-help` reports it as a diagnosis. `pm-setup` never runs it,
+because it is the fix.
+
+1. **Read the state** (Shared definitions): the **Rules version** from
+   `<PM root>/config.md`, the **Skills version** from the installed
+   `pm-setup` reference, and whether any agent instructions file still
+   contains `<!-- pm-skills:start`. In bash,
+   `grep -o 'Rules version: [0-9]*' <PM root>/config.md`; in PowerShell,
+   `Select-String -Path '<PM root>/config.md' -Pattern 'Rules version: \d+'`.
+   If `<PM root>/config.md` is missing, skip this check: the skill's own
+   guard reports the missing state. If `pm-setup` is not installed, the
+   skills version is unknown: reply `Skills version unknown: pm-setup is
+   not installed.`, recommend
+   `npx skills add https://github.com/purview-dev/pm-skills -y`, and stop.
+2. **Compare:**
+
+   | Rules version | Start marker in the agent file | Action |
+   | --- | --- | --- |
+   | equal to the skills version | present | continue |
+   | older than the skills version | present | step 3 |
+   | any, including a legacy marker version | absent | step 4 |
+   | not recorded | present | step 4 |
+
+3. **Upgrade.** Ask one choice question: `Rules are v<old>; the skills are
+   v<new>. Upgrade before continuing?` with the options `Run pm-setup now
+   (recommended)` and `Continue on v<old> for this session`. On `Run
+   pm-setup now`, run it, show its output, then continue the skill that
+   asked. On `Continue`, put `Upgrade debt: rules v<old>, skills v<new>.`
+   in the output `Note` and continue.
+4. **Repair, record, or migrate.** Reply `Rules: v<version or not
+   recorded>; skills: v<version>; section: <present | missing>.` Then ask:
+   `Run pm-setup now?` with the options `Run pm-setup now (recommended)`
+   and `Continue`. `pm-setup` records the version, migrates a legacy marker,
+   and re-installs a missing section. On `Continue`, put `Upgrade debt:
+   rules <version or not recorded>, skills v<new>.` in the output `Note`
+   and continue, except when the section is missing: then stop, because the
+   rules the user relies on are not in the agent file.
+5. **Skills older:** reply `Skills are older than the rules (v<old> against
+   v<new>).` and ask: `Update the skills now?` with the options `Update,
+   then run pm-setup (recommended)` and `Continue on v<old>`. Print
+   `npx skills update` for the user to run; never run the skills CLI
+   yourself. Then run `pm-setup` when the user asks.
+6. **A start marker without a version is normal.** It marks the boundaries
+   only. A marker that still carries `version=N` is a legacy install, and
+   `pm-setup` migrates it.
+7. **During a workflow** these questions wait for the workflow to finish
+   (Non-interruption rule 4). `pm-checkpoint` and `pm-park` never run this
+   check: saving the state always comes first.
+
+After an upgrade, check `<PM root>/config.md` for the settings the new
+version adds; version 5 adds the `## Commits` section. Ask one choice
+question: `config.md has no Commits section. Add it with defaults?` with
+the options `Add it (recommended)` and `Leave it`. If the user leaves it,
+PM commits ask before each commit.
+
+## Asking the user (mandatory)
+
+- **Every question uses the agent's interactive question tool** (for
+  example `AskUserQuestion` in Claude Code, or the `question` or
+  `ask_user` tool in other agents). This includes open-ended questions.
+- Offer 2 to 4 options. Put the recommended option first and add
+  `(recommended)` to its label. Label each option with the action or
+  answer it stands for ("Drop R-004", "Add to Next"), not a bare keyword.
+  Rely on the tool's built-in free-text entry for custom answers; if the
+  tool has none, add a `Type something` option.
+- For open-ended questions, draft 2 or 3 likely answers from the
+  repository and PM state and offer them as options. The free-text entry
+  covers anything else.
+- Make each question stand on its own. The dialog may hide earlier text,
+  so include the ID, title, or fact the user needs to decide.
+- **Name what you reference.** Never ask about a milestone, item, bet, `V`
+  line, brief, or inbox file by ID alone. Print a `## For this question`
+  legend (Communication contract) above the question, listing each ID it
+  names with the words needed to decide it (Shared definitions: Reference
+  legend). Keep it to the IDs the question uses; do not print the whole
+  roadmap.
+- **Offer a way to see more.** Add one escape option after the decision
+  options; it does not count towards the 2 to 4 and is never an answer.
+  `Explain <ID>` when the question names IDs, `Show the roadmap` for a
+  milestone, focus, or ordering question, `Show the board` for an owner,
+  column, or "what is in progress" question. On `Explain <ID>`, print that
+  item's or milestone's full block from its file (`ROADMAP.md`,
+  `STRATEGY.md`, `LOG.md`, or the brief) — every field, and for a milestone
+  its exit criteria and its items — then ask the same question again with
+  the same options. On `Show the roadmap` or `Show the board`, run that
+  read-only view (`pm-roadmap`, `pm-board`), then ask the same question
+  again. Neither changes state. Where the tool caps the option count, keep
+  two decision options and the escape option.
+- Ask one decision at a time. Up to 4 independent questions may share one
+  prompt when the tool supports it. A question that depends on an earlier
+  answer waits for it.
+- Use multi-select when the choices are not exclusive, for example which
+  findings to park.
+- **Never** print lettered or numbered choices for the user to type, and
+  never ask the user to reply `yes`, `ok`, `approve`, `a`, or any other
+  keyword to continue. If no question tool exists, ask one plain-language
+  question and accept a free-form answer.
+
+## Communication contract (all `pm-*` output)
+
+Output must be literal, predictable, and immediately actionable.
+
+- Lead with the answer or the action. No preamble, no praise, no recap.
+- Give **one** next action. Offer at most 2 alternatives only when a
+  decision is required, and mark one as recommended.
+- Every task states **Done when** as observable checks (a test passes, an
+  endpoint returns 200, a file exists).
+- Use exact file paths, commands, and IDs. No vague verbs ("look into",
+  "consider", "maybe"). No idioms.
+- Use the skill's fixed template with the same headings in the same order
+  every time. Omit empty optional sections. Do not invent new sections.
+- Before a question that names IDs, print the `## For this question` legend
+  (Asking the user). It is the only section a question adds.
+- At most 5 bullets per section, except boards, tables, and lists that a
+  skill's template defines as complete. At most 3 sentences per paragraph.
+- State any assumption explicitly as `Assumption: ...`.
+- Flag scope changes explicitly as `SCOPE CHANGE: ...`. Never expand scope
+  silently; park the extra work instead.
+- Neutral wording about progress. Report facts (counts, dates), not
+  judgements.
+
+<!-- pm-skills:end -->

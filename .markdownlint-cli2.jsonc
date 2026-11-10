@@ -4,5 +4,6 @@
     "MD013": false
   },
   // LICENSE.md is legal text, not Markdown documentation (MD041 does not apply).
-  "ignores": ["LICENSE.md"]
+  // node_modules anywhere (the docs site has its own) is third-party Markdown.
+  "ignores": ["LICENSE.md", "**/node_modules/**"]
 }

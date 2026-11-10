@@ -1,4 +1,4 @@
-<!-- pm-skills:start version=9 -->
+<!-- pm-skills:start version=10 -->
 <!-- Managed by pm-setup. Edit outside these markers; content inside is replaced on upgrade.
      Installed copies keep this marker without a version. The version of record is
      `Rules version` in the PM root config.md, so editing or merging this file cannot lose it. -->
@@ -38,6 +38,7 @@ repository root.
 | `pm-roadmap` | Show the full roadmap; move, add, or insert one item | User asks |
 | `pm-status` | Show the summary or the user's queue (read-only) | User asks |
 | `pm-export` | Write the machine-readable plan document and its schema, or check them against the schema | User asks, or a tool needs the plan as JSON (check only during a workflow) |
+| `pm-docs-site` | Plan, build, extend, upgrade, or check the local project site that renders the export | User asks (check only during a workflow); its build modes run in the execute stage of a docs-site item (rule 9) |
 | `pm-up-next` | Show the ordered queue and the one next action (read-only) | User asks |
 | `pm-help` | Explain the skills, find what is missing in the setup, recommend the next skill (read-only) | User asks (explain mode only during a workflow) |
 
@@ -174,6 +175,12 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   the **Export file**, refreshed from `pm-export`'s
   `references/planning.schema.json` on every write. `schemaVersion` in the
   export and the schema's const change together when the format changes.
+- **Docs site:** the optional local Astro site that `pm-docs-site` builds
+  from its templates. It reads the **Export file** only, never writes the
+  PM root, and is code, not PM state: its files are committed by the
+  workflow that builds them. A site whose `SCHEMA_VERSION` is older than
+  the export's `schemaVersion` fails its build until `pm-docs-site upgrade`
+  runs.
 - **Drift:** the PM state disagrees with the work in progress. Either
   `NOW.md` is idle while the current branch matches the `Branch name
   pattern`, or `NOW.md` names another `Session` while this branch is the
@@ -201,8 +208,8 @@ with `Unassigned` last. IDs never change and are never reused when an item
 moves.
 
 The edit skills `pm-board`, `pm-roadmap`, `pm-item`, `pm-review`,
-`pm-strategy`, `pm-checkpoint`, `pm-next`, `pm-bug`, and `pm-revise` apply
-these operations. The
+`pm-strategy`, `pm-checkpoint`, `pm-next`, `pm-bug`, `pm-revise`, and
+`pm-docs-site` (plan) apply these operations. The
 view skills `pm-status`, `pm-board`, `pm-roadmap`, and `pm-up-next` read
 the same state and render it without changing the order or writing.
 
@@ -267,12 +274,13 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    questions. If the user wants to discuss the idea, set `Discuss: yes`; it
    is discussed later with `pm-shape`. The read-only exceptions: `pm-help`
    may answer a question about a skill in explain mode, without reading PM
-   state; `pm-rejoin` may run in `locate` mode; `pm-export` may run in
-   `check` mode; and `pm-status`, `pm-board`, `pm-roadmap`, and `pm-up-next`
+   state; `pm-rejoin` may run in `locate` mode; `pm-export` and
+   `pm-docs-site` may run in `check` mode; and `pm-status`, `pm-board`, `pm-roadmap`, and `pm-up-next`
    may render their view when the user explicitly asks for it. None of them
    may add, move, insert, close, or reorder anything during a workflow. In
-   every case the step in progress resumes afterwards. The single write
-   exception is rule 8 (`pm-revise`).
+   every case the step in progress resumes afterwards. The single PM write
+   exception is rule 8 (`pm-revise`); rule 9 covers the docs site, which
+   is not PM state.
 4. **If the user names another PM skill mid-workflow**, do not run it. Ask
    one choice question: `<skill> is at <step>. When should <pm-skill> run?`
    with the options `After <skill> finishes (recommended)` and `Pause now
@@ -306,6 +314,16 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    The interrupted step is never resumed silently; the user chooses
    `rewind`, `fix-in-place`, `new item`, or `park` (`pm-revise`). `pm-bug`
    and every other edit skill still follow rule 4.
+9. **`pm-docs-site` build modes are a step of the workflow, not a PM
+   skill.** `scaffold`, `extend`, and `upgrade` write the **Docs site**,
+   which is code. They run only in the `execute` stage of the active item
+   whose `Note` names `pm-docs-site`, in the session that owns it, on a
+   branch other than the PM branch, when the plan step or the user names
+   them; rule 4's question does not apply. They write only the site
+   folder, the `Docs` group in the `justfile`, and the AppHost files their
+   `aspire` module lists. They never write the PM root, and never stage,
+   commit, push, or create branches: the workflow commits their files.
+   `pm-docs-site` `plan` and `check` are PM skills and follow rules 2 to 6.
 
 ## Challenge protocol (mandatory)
 
@@ -315,7 +333,8 @@ from the user and to the agent's own proposals. It applies in `pm-init`,
 `pm-shape`, `pm-discover`, `pm-strategy`, `pm-purview`, `pm-review`,
 `pm-item` (add and edit), `pm-board` and `pm-roadmap` (add),
 `pm-next` (before claiming), `pm-bug` (duplicate, severity, and impact),
-and `pm-revise` (the scope of the rework). It never applies to `pm-park`
+`pm-revise` (the scope of the rework), and `pm-docs-site` (plan). It never
+applies to `pm-park`
 capture during a workflow.
 
 1. **Problem:** what problem, for whom, and what evidence shows it exists

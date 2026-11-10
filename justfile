@@ -1,5 +1,3 @@
-set windows-shell := ["powershell.exe", "-NoLogo", "-NoProfile", "-Command"]
-
 default:
     @just --list
 
@@ -7,15 +5,14 @@ default:
 install: check-prerequisites
     lefthook install
 
-[unix]
 check-prerequisites:
     @command -v bun >/dev/null || { echo "bun is required: https://bun.sh"; exit 1; }
     @command -v bunx >/dev/null || { echo "bunx is required (ships with bun)"; exit 1; }
     @command -v lefthook >/dev/null || { echo "lefthook is required: https://lefthook.dev/installation"; exit 1; }
 
-[windows]
-check-prerequisites:
-    @foreach ($tool in 'bun','bunx','lefthook') { if (-not (Get-Command $tool -ErrorAction SilentlyContinue)) { Write-Error "$tool is required"; exit 1 } }
+# Clear and re-link this repo's pm-* skills into .claude/ and .agents/ (--cli: use the skills CLI, which copies).
+setup-skills *args:
+    bun scripts/setup-skills.ts {{args}}
 
 # Check skill structure and cross-references.
 validate:
@@ -32,3 +29,20 @@ lint-fix:
 # Bump the release version in package.json (patch, minor, or major).
 bump part:
     bun scripts/bump-version.ts {{part}}
+
+# Serve the project site (plan, README, every skill) at http://localhost:4321. Requires Bun.
+[group('Docs')]
+[working-directory('docs-site')]
+docs:
+    bun install --frozen-lockfile
+    bun run dev
+
+# Check the project site against the pm-docs-site templates, then test, type-check and build it.
+[group('Docs')]
+[working-directory('docs-site')]
+docs-check:
+    bun ../skills/pm-docs-site/scripts/site.ts check .
+    bun install --frozen-lockfile
+    bun run test
+    bun run check
+    bun run build

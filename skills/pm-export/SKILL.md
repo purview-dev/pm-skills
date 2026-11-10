@@ -64,7 +64,7 @@ Top-level keys, in order:
 | Key | Read from | Contents |
 | --- | --- | --- |
 | `$schema` | constant | `"./planning.schema.json"` |
-| `schemaVersion` | constant | `2`; bump it with the schema when the shape changes |
+| `schemaVersion` | constant | `2`; bump it with the schema when the shape changes, together with `pm-docs-site`'s templates |
 | `generatedAt` | clock | local ISO 8601 with offset: bash `date +%Y-%m-%dT%H:%M:%S%:z`, PowerShell `Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"` |
 | `generator` | this skill | `skill: "pm-export"`, `skillsVersion` from the marker in `pm-setup`'s reference, `rulesVersion` from `config.md` |
 | `project` | `config.md` | `pmRoot`, `defaultBranch`, `branchPattern` |
