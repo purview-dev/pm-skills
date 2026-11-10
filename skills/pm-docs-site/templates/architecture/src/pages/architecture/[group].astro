@@ -1,0 +1,42 @@
+---
+// One page per folder of LikeC4 views, rendered through Astroc4 from the
+// `architecture` project ({{LIKEC4_DIR}}, as it is — icons included).
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import LikeC4View from '@purview-dev/astroc4/components/LikeC4View.astro';
+
+import { type ViewGroup, viewGroups } from '../../lib/architecture';
+
+export function getStaticPaths() {
+	const groups = viewGroups();
+
+	return groups.map((group) => ({ params: { group: group.slug }, props: { group, groups } }));
+}
+
+interface Props {
+	group: ViewGroup;
+	groups: ViewGroup[];
+}
+
+const { group, groups } = Astro.props;
+---
+
+<StarlightPage frontmatter={{ title: `Architecture: ${group.title}`, description: `LikeC4 views in ${group.slug}.` }}>
+	<nav aria-label="Architecture pages">
+		<p>
+			{
+				groups.map((other, index) => (
+					<>
+						{index > 0 && ' · '}
+						{other.slug === group.slug ? <strong>{other.title}</strong> : <a href={`/architecture/${other.slug}/`}>{other.title}</a>}
+					</>
+				))
+			}
+		</p>
+	</nav>
+
+	{
+		group.views.map((view) => (
+			<LikeC4View project="architecture" viewId={view.id} title={view.title} description={view.id} height={560} />
+		))
+	}
+</StarlightPage>

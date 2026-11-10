@@ -66,8 +66,8 @@ Collect these facts. Write nothing yet.
 4. **Installed skills:** for each of `pm-init`, `pm-resume`, `pm-rejoin`,
    `pm-next`, `pm-up-next`, `pm-park`, `pm-bug`, `pm-shape`, `pm-discover`,
    `pm-strategy`, `pm-purview`, `pm-checkpoint`, `pm-revise`, `pm-review`,
-   `pm-item`, `pm-board`, `pm-roadmap`, `pm-status`, `pm-export`, and
-   `pm-help`, check that a `SKILL.md` exists.
+   `pm-item`, `pm-board`, `pm-roadmap`, `pm-status`, `pm-export`,
+   `pm-docs-site`, and `pm-help`, check that a `SKILL.md` exists.
    - First run `npx skills list` (or `bunx skills list`), if either runs.
    - Otherwise check `.agents/skills/<name>/`, `.claude/skills/<name>/`,
      and `.github/skills/<name>/` in the repository, then
@@ -79,11 +79,24 @@ Collect these facts. Write nothing yet.
    `briefs/`, and `research/` are missing (created by version 4 skills on
    first use). Also run `git check-ignore -q <directory>`. If the
    directory is ignored by git, record it as a warning.
-6. **Workflow framework:** look for skills named `brainstorming`,
-   `writing-plans`, `executing-plans`, and `subagent-driven-development` in
-   the same folders as step 4, and in `.claude/plugins/` in the user's home
-   folder. Record the result as one of: Superpowers found, other framework
-   found (name it), or none.
+6. **Workflow skills:** the PM skills hand work to these skills, so each
+   must be installed. The list is every skill in the Handoffs table of
+   `<PM state directory>/config.md` when that file exists, otherwise the
+   table in `pm-init`'s `templates/config.md`, plus the three skills that
+   Non-interruption rule 1 names. With the default table that is
+   `brainstorming`, `writing-plans`, `subagent-driven-development`,
+   `executing-plans`, `finishing-a-development-branch`,
+   `systematic-debugging`, `test-driven-development`, and
+   `verification-before-completion`. Strip any `superpowers:` prefix
+   before matching.
+   - Look in the output of `npx skills list` (or `bunx skills list`), the
+     folders in step 4, and the Claude Code plugin folders in the user's
+     home folder: `.claude/plugins/**/skills/<name>/SKILL.md`.
+   - A symlink, a user-level install, and a plugin install all count.
+   - Record each skill as installed or missing, and the framework as one
+     of: Superpowers (every default skill found), other framework (the
+     Handoffs table names non-Superpowers skills; name them), partial
+     (some missing), or none.
 7. **Conflicting instructions:** search the agent files (case-insensitive)
    for `brainstorm`, `using-superpowers`, `always invoke`, `TODO.md`,
    `backlog`, `roadmap`, `task list`, `ideas`, `parking lot`,
@@ -126,9 +139,10 @@ only other question.
 - Mode: install | upgrade v<old> to v<new> | repair (re-wrap the section) | reinstall (section missing, recorded v<n>) | already current (nothing to do)
 - Target: <file> (<append section | replace between markers | wrap the stranded section>)
 - Extra: <@AGENTS.md import added to CLAUDE.md | none>
-- Skills: <n> of 20 installed. Missing: <names | none>
+- Skills: <n> of 22 installed. Missing: <names | none>
 - Rules version: <v<n> recorded | not recorded | legacy v<n> in the marker | PM state not initialised>
-- Workflow framework: <Superpowers | name | none>
+- Workflow framework: <Superpowers | name | partial | none>
+- Workflow skills: <n> of <total> installed. Missing: <names | none>
 - PM state directory: <path>
 
 ## Conflicts in your existing instructions
@@ -154,6 +168,13 @@ Rules for this step:
 - If skills are missing, add this line to the plan:
   `Missing skills: run npx skills add https://github.com/purview-dev/pm-skills -y
   after this merge.`
+  Do not install them yourself.
+- If Superpowers skills are missing (framework "partial" or "none" with
+  the default Handoffs table), add this line to the plan:
+  `Missing workflow skills (<names>): run npx skills add
+  https://github.com/obra/superpowers -y, or in Claude Code run /plugin
+  install superpowers@claude-plugins-official. pm-next cannot hand off
+  until they are installed.`
   Do not install them yourself.
 - If the framework is "none" or "other", add `Assumption: the Handoffs
   table will need editing in <PM state directory>/config.md after pm-init.`
@@ -219,7 +240,8 @@ Rules for this step:
 ## pm-setup done
 
 - Target: <file> (<installed | upgraded to v<n> | repaired>)
-- Skills: <20 of 20 installed | missing: names>
+- Skills: <22 of 22 installed | missing: names>
+- Workflow skills: <n of n installed | missing: names>
 - Rules version: <v<n> recorded in <PM root>/config.md | legacy v<n> migrated | PM state not initialised>
 - Diff check: only the managed section changed, plus the Rules version line
 - PM state: <not initialized | current | missing version 4 files or the Commits section: names>
@@ -229,14 +251,21 @@ Rules for this step:
 
 1. <Only if skills are missing:> Install the missing skills.
    - Start with: `npx skills add https://github.com/purview-dev/pm-skills -y`
-   - Done when: all 20 pm-* skills are listed by `npx skills list`
-2. Commit.
+   - Done when: all 22 pm-* skills are listed by `npx skills list`
+2. <Only if workflow skills are missing:> Install the workflow skills.
+   - Start with: `npx skills add https://github.com/obra/superpowers -y`,
+     or `/plugin install superpowers@claude-plugins-official` in Claude
+     Code (for the default Handoffs table; otherwise the framework the
+     table names)
+   - Done when: every skill in the Handoffs table, and the three named in
+     Non-interruption rule 1, is listed by `npx skills list`
+3. Commit.
    - Start with: `git add <changed paths> && git commit -m "chore: add pm-* skills"`.
      List only paths that exist, taken from: `.agents/skills/pm-*`,
      `.claude/skills/pm-*`, `.github/skills/pm-*`, `AGENTS.md`,
      `CLAUDE.md`, and `<PM state directory>/config.md`.
    - Done when: `git status` is clean
-3. <Run pm-init, if the PM state is not initialized. Run pm-strategy, if
+4. <Run pm-init, if the PM state is not initialized. Run pm-strategy, if
    `STRATEGY.md` is missing after an upgrade. Otherwise run pm-resume, or
    pm-help for an overview of every skill.>
 ```

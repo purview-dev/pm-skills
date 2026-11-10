@@ -1,6 +1,8 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
+import { differences, readManifest } from "../skills/pm-docs-site/scripts/site.ts";
+
 const root = join(import.meta.dir, "..");
 const skillsDir = join(root, "skills");
 const errors: string[] = [];
@@ -135,6 +137,79 @@ else {
     if (!read("skills", "pm-export", "SKILL.md").includes(documented)) {
       fail(`skills/pm-export/SKILL.md: does not document schemaVersion ${schemaVersion}`);
     }
+    checkDocsSite(schemaVersion, required);
+  }
+}
+
+// The docs site reads the export, so its templates must read the schema's
+// version: a schema bump without a template change would ship a site that
+// fails its build on every consumer's next export.
+function checkDocsSite(schemaVersion: number, required: string) {
+  const site = join("skills", "pm-docs-site", "templates", "site");
+  const lib = join(site, "src", "lib");
+  const planning = read(lib, "planning.ts");
+  const siteVersion = /export const SCHEMA_VERSION = (\d+);/.exec(planning)?.[1];
+  if (Number(siteVersion) !== schemaVersion) {
+    fail(`pm-docs-site templates: SCHEMA_VERSION ${siteVersion} != planning.schema.json ${schemaVersion}`);
+  }
+  if (!read(lib, "planning-types.ts").includes(`schemaVersion: ${schemaVersion};`)) {
+    fail(`pm-docs-site templates: planning-types.ts does not type schemaVersion ${schemaVersion}`);
+  }
+  if (!read("skills", "pm-docs-site", "SKILL.md").includes(`This skill reads schemaVersion ${schemaVersion}.`)) {
+    fail(`skills/pm-docs-site/SKILL.md: does not document schemaVersion ${schemaVersion}`);
+  }
+  let fixture: any = null;
+  try {
+    fixture = JSON.parse(read(lib, "__fixtures__", "planning.json"));
+  } catch (error) {
+    fail(`pm-docs-site fixture: invalid JSON (${(error as Error).message})`);
+  }
+  if (fixture) {
+    if (fixture.schemaVersion !== schemaVersion) fail("pm-docs-site fixture: schemaVersion differs from the schema");
+    const present = Object.keys(fixture).sort().join(",");
+    if (present !== required) fail(`pm-docs-site fixture: top-level keys do not match the schema required list`);
+  }
+}
+
+// Placeholders in the docs-site templates must be the ones its SKILL.md
+// documents, and the copied components must keep their MIT attribution.
+const docsSiteTemplates = join(skillsDir, "pm-docs-site", "templates");
+if (existsSync(docsSiteTemplates)) {
+  const docsSiteSkill = read("skills", "pm-docs-site", "SKILL.md");
+  const allowed = new Set([...docsSiteSkill.matchAll(/\{\{([A-Z0-9_]+)\}\}/g)].map((m) => m[1]));
+  for (const f of readdirSync(docsSiteTemplates, { recursive: true, withFileTypes: true })) {
+    if (!f.isFile()) continue;
+    const file = join(f.parentPath, f.name);
+    const text = readFileSync(file, "utf8");
+    for (const p of text.matchAll(/\{\{([A-Z0-9_]+)\}\}/g)) {
+      if (!allowed.has(p[1])) fail(`${file.slice(root.length + 1)}: placeholder {{${p[1]}}} not in pm-docs-site/SKILL.md`);
+    }
+    if (f.parentPath.endsWith(join("components", "lib")) && !/MIT License/.test(text)) {
+      fail(`${file.slice(root.length + 1)}: missing the Astro Components Kit MIT attribution`);
+    }
+  }
+}
+
+// This repository dogfoods its own rules: the section installed in AGENTS.md
+// must be the reference, with the start marker's version removed as pm-setup
+// writes it. Otherwise the agents working here follow stale rules.
+const agents = read("AGENTS.md");
+const installed = /<!-- pm-skills:start -->[\s\S]*?<!-- pm-skills:end -->/.exec(agents)?.[0];
+const expected = section.replace(/<!-- pm-skills:start version=\d+ -->/, "<!-- pm-skills:start -->").trimEnd();
+if (!installed) fail("AGENTS.md: no installed pm-skills section (run pm-setup)");
+else if (installed !== expected) fail("AGENTS.md: the installed pm-skills section differs from AGENTS-section.md (run pm-setup)");
+
+// The repository's own docs site is rendered from the pm-docs-site templates;
+// a template change must be carried to it (bun skills/pm-docs-site/scripts/site.ts write docs-site).
+const siteRoot = join(root, "docs-site");
+if (existsSync(join(siteRoot, "pm-docs-site.json"))) {
+  try {
+    const manifest = readManifest(siteRoot);
+    const schemaVersion = JSON.parse(read("skills", "pm-export", "references", "planning.schema.json")).properties?.schemaVersion?.const;
+    if (manifest.schemaVersion !== schemaVersion) fail(`docs-site/pm-docs-site.json: schemaVersion ${manifest.schemaVersion} != ${schemaVersion}`);
+    for (const file of differences(siteRoot)) fail(`docs-site/${file}: differs from the pm-docs-site templates (run site.ts write docs-site)`);
+  } catch (error) {
+    fail(`docs-site: ${(error as Error).message}`);
   }
 }
 

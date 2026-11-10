@@ -1,0 +1,1271 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://purview.dev/pm-skills/planning.schema.json",
+  "title": "pm-skills planning export",
+  "description": "Machine-readable projection of the pm-skills PM state, written by pm-export. Derived: the Markdown files in the PM root are the source of truth. Every key is always present; empty is null or [].",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "generatedAt",
+    "generator",
+    "project",
+    "source",
+    "vision",
+    "strategy",
+    "now",
+    "plan",
+    "roadmap",
+    "board",
+    "log",
+    "inbox",
+    "briefs",
+    "counts",
+    "checks"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "./planning.schema.json"
+    },
+    "schemaVersion": {
+      "const": 2
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "generator": {
+      "$ref": "#/$defs/generator"
+    },
+    "project": {
+      "$ref": "#/$defs/project"
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "vision": {
+      "$ref": "#/$defs/vision"
+    },
+    "strategy": {
+      "$ref": "#/$defs/strategy"
+    },
+    "now": {
+      "$ref": "#/$defs/now"
+    },
+    "plan": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/plan"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "roadmap": {
+      "$ref": "#/$defs/roadmap"
+    },
+    "board": {
+      "$ref": "#/$defs/board"
+    },
+    "log": {
+      "$ref": "#/$defs/log"
+    },
+    "inbox": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/inboxEntry"
+      }
+    },
+    "briefs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/brief"
+      }
+    },
+    "counts": {
+      "$ref": "#/$defs/counts"
+    },
+    "checks": {
+      "$ref": "#/$defs/checks"
+    }
+  },
+  "$defs": {
+    "inboxEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file",
+        "title",
+        "captured",
+        "source",
+        "kind",
+        "severity",
+        "affects",
+        "context",
+        "discuss",
+        "related",
+        "brief",
+        "reviewed",
+        "idea"
+      ],
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "captured": {
+          "$ref": "#/$defs/text"
+        },
+        "source": {
+          "$ref": "#/$defs/text"
+        },
+        "kind": {
+          "enum": [
+            "feature",
+            "bug",
+            "improvement",
+            "question",
+            "inspiration",
+            "tech-debt",
+            null
+          ]
+        },
+        "severity": {
+          "enum": [
+            "blocker",
+            "major",
+            "minor",
+            "cosmetic",
+            null
+          ]
+        },
+        "affects": {
+          "$ref": "#/$defs/text"
+        },
+        "context": {
+          "$ref": "#/$defs/text"
+        },
+        "discuss": {
+          "enum": [
+            "yes",
+            "no"
+          ]
+        },
+        "related": {
+          "$ref": "#/$defs/textList"
+        },
+        "brief": {
+          "$ref": "#/$defs/text"
+        },
+        "reviewed": {
+          "$ref": "#/$defs/text"
+        },
+        "idea": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "brief": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "id",
+        "title",
+        "status",
+        "origin",
+        "updated",
+        "decision",
+        "doneWhen",
+        "problem",
+        "revisions"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/text"
+        },
+        "origin": {
+          "$ref": "#/$defs/text"
+        },
+        "updated": {
+          "$ref": "#/$defs/text"
+        },
+        "decision": {
+          "$ref": "#/$defs/text"
+        },
+        "problem": {
+          "$ref": "#/$defs/text"
+        },
+        "doneWhen": {
+          "$ref": "#/$defs/text"
+        },
+        "revisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/revision"
+          }
+        }
+      }
+    },
+    "revision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "date",
+        "text"
+      ],
+      "properties": {
+        "date": {
+          "$ref": "#/$defs/text"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "next",
+        "later",
+        "nextMax",
+        "openInbox",
+        "discuss",
+        "shapingBriefs",
+        "done",
+        "dropped",
+        "blockers"
+      ],
+      "properties": {
+        "next": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "later": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "nextMax": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "openInbox": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "discuss": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "shapingBriefs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "done": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dropped": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "blockers": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reviewDue",
+        "lastReview",
+        "claimable",
+        "drift"
+      ],
+      "properties": {
+        "reviewDue": {
+          "type": "boolean"
+        },
+        "lastReview": {
+          "$ref": "#/$defs/text"
+        },
+        "claimable": {
+          "$ref": "#/$defs/idList"
+        },
+        "drift": {
+          "type": "boolean"
+        }
+      }
+    },
+    "board": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "columns",
+        "activity"
+      ],
+      "properties": {
+        "columns": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "now",
+            "next",
+            "foryou",
+            "waiting",
+            "done"
+          ],
+          "properties": {
+            "now": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/card"
+              }
+            },
+            "next": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/card"
+              }
+            },
+            "foryou": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/card"
+              }
+            },
+            "waiting": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/card"
+              }
+            },
+            "done": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/doneEntry"
+              }
+            }
+          }
+        },
+        "activity": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/activity"
+          }
+        }
+      }
+    },
+    "card": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "owner",
+        "size",
+        "detail"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string"
+        },
+        "owner": {
+          "enum": [
+            "agent",
+            "user",
+            "both",
+            null
+          ]
+        },
+        "size": {
+          "enum": [
+            "S",
+            "M",
+            "L",
+            null
+          ]
+        },
+        "detail": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "activity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "date",
+        "kind",
+        "id",
+        "title",
+        "milestone",
+        "owner",
+        "result"
+      ],
+      "properties": {
+        "date": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "done",
+            "dropped",
+            "review"
+          ]
+        },
+        "id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "$ref": "#/$defs/text"
+        },
+        "milestone": {
+          "$ref": "#/$defs/text"
+        },
+        "owner": {
+          "$ref": "#/$defs/text"
+        },
+        "result": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "log": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "done",
+        "dropped",
+        "reviews"
+      ],
+      "properties": {
+        "done": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/doneEntry"
+          }
+        },
+        "dropped": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/droppedEntry"
+          }
+        },
+        "reviews": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/reviewEntry"
+          }
+        }
+      }
+    },
+    "doneEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "date",
+        "id",
+        "title",
+        "milestone",
+        "owner",
+        "plan",
+        "result"
+      ],
+      "properties": {
+        "date": {
+          "type": "string"
+        },
+        "id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "milestone": {
+          "$ref": "#/$defs/text"
+        },
+        "owner": {
+          "$ref": "#/$defs/text"
+        },
+        "plan": {
+          "$ref": "#/$defs/text"
+        },
+        "result": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "droppedEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "date",
+        "id",
+        "title",
+        "reason"
+      ],
+      "properties": {
+        "date": {
+          "type": "string"
+        },
+        "id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "reason": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "reviewEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "date",
+        "summary"
+      ],
+      "properties": {
+        "date": {
+          "type": "string"
+        },
+        "summary": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "now": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "item",
+        "stage",
+        "session",
+        "brief",
+        "milestone",
+        "spec",
+        "plan",
+        "started",
+        "doneWhen",
+        "checkpoint"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "idle",
+            "active"
+          ]
+        },
+        "item": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/itemRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stage": {
+          "enum": [
+            "design",
+            "plan",
+            "execute",
+            "finish",
+            null
+          ]
+        },
+        "session": {
+          "$ref": "#/$defs/text"
+        },
+        "brief": {
+          "$ref": "#/$defs/text"
+        },
+        "milestone": {
+          "$ref": "#/$defs/text"
+        },
+        "spec": {
+          "$ref": "#/$defs/text"
+        },
+        "plan": {
+          "$ref": "#/$defs/text"
+        },
+        "started": {
+          "$ref": "#/$defs/text"
+        },
+        "doneWhen": {
+          "$ref": "#/$defs/textList"
+        },
+        "checkpoint": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/checkpoint"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "itemRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "at",
+        "stoppedAt",
+        "nextAction",
+        "startWith",
+        "decisions",
+        "context",
+        "openQuestion"
+      ],
+      "properties": {
+        "at": {
+          "type": "string"
+        },
+        "stoppedAt": {
+          "$ref": "#/$defs/text"
+        },
+        "nextAction": {
+          "$ref": "#/$defs/text"
+        },
+        "startWith": {
+          "$ref": "#/$defs/text"
+        },
+        "decisions": {
+          "$ref": "#/$defs/text"
+        },
+        "context": {
+          "$ref": "#/$defs/text"
+        },
+        "openQuestion": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "roadmap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "next",
+        "later"
+      ],
+      "properties": {
+        "next": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/item"
+          }
+        },
+        "later": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/item"
+          }
+        }
+      }
+    },
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "section",
+        "position",
+        "label",
+        "serves",
+        "milestone",
+        "owner",
+        "doneWhen",
+        "size",
+        "dependsOn",
+        "status",
+        "brief",
+        "note",
+        "revisits",
+        "claimable"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string"
+        },
+        "section": {
+          "enum": [
+            "next",
+            "later"
+          ]
+        },
+        "position": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "label": {
+          "enum": [
+            "next",
+            "later",
+            "blocked",
+            "waiting"
+          ]
+        },
+        "serves": {
+          "$ref": "#/$defs/textList"
+        },
+        "milestone": {
+          "$ref": "#/$defs/text"
+        },
+        "owner": {
+          "enum": [
+            "agent",
+            "user",
+            "both"
+          ]
+        },
+        "doneWhen": {
+          "type": "string"
+        },
+        "size": {
+          "enum": [
+            "S",
+            "M",
+            "L"
+          ]
+        },
+        "dependsOn": {
+          "$ref": "#/$defs/idList"
+        },
+        "status": {
+          "$ref": "#/$defs/itemStatus"
+        },
+        "brief": {
+          "$ref": "#/$defs/text"
+        },
+        "note": {
+          "$ref": "#/$defs/text"
+        },
+        "revisits": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "claimable": {
+          "type": "boolean"
+        }
+      }
+    },
+    "itemStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "reason",
+        "since"
+      ],
+      "properties": {
+        "value": {
+          "enum": [
+            "ready",
+            "paused",
+            "blocked"
+          ]
+        },
+        "reason": {
+          "$ref": "#/$defs/text"
+        },
+        "since": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "vision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "problem",
+        "customer",
+        "outcomes",
+        "outOfScope",
+        "constraints"
+      ],
+      "properties": {
+        "problem": {
+          "$ref": "#/$defs/text"
+        },
+        "customer": {
+          "$ref": "#/$defs/text"
+        },
+        "outcomes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "text"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^V[0-9]+$"
+              },
+              "text": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "outOfScope": {
+          "$ref": "#/$defs/textList"
+        },
+        "constraints": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "timeAvailable",
+            "budget",
+            "stack"
+          ],
+          "properties": {
+            "timeAvailable": {
+              "$ref": "#/$defs/text"
+            },
+            "budget": {
+              "$ref": "#/$defs/text"
+            },
+            "stack": {
+              "$ref": "#/$defs/text"
+            }
+          }
+        }
+      }
+    },
+    "strategy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "focus",
+        "milestones",
+        "bets",
+        "assumptions",
+        "notDoing",
+        "decisions"
+      ],
+      "properties": {
+        "focus": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "milestone",
+            "whyNow"
+          ],
+          "properties": {
+            "milestone": {
+              "$ref": "#/$defs/text"
+            },
+            "whyNow": {
+              "$ref": "#/$defs/text"
+            }
+          }
+        },
+        "milestones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/milestone"
+          }
+        },
+        "bets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/bet"
+          }
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/assumption"
+          }
+        },
+        "notDoing": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/notDoing"
+          }
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/decision"
+          }
+        }
+      }
+    },
+    "milestone": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "serves",
+        "exitCriteria",
+        "target",
+        "status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^M[0-9]+$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "serves": {
+          "$ref": "#/$defs/textList"
+        },
+        "exitCriteria": {
+          "$ref": "#/$defs/text"
+        },
+        "target": {
+          "$ref": "#/$defs/text"
+        },
+        "status": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "bet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "statement",
+        "evidence",
+        "signal",
+        "status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^B[0-9]+$"
+        },
+        "statement": {
+          "type": "string"
+        },
+        "evidence": {
+          "$ref": "#/$defs/text"
+        },
+        "signal": {
+          "$ref": "#/$defs/text"
+        },
+        "status": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "assumption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "statement",
+        "test",
+        "status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^A[0-9]+$"
+        },
+        "statement": {
+          "type": "string"
+        },
+        "test": {
+          "$ref": "#/$defs/text"
+        },
+        "status": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "notDoing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "thing",
+        "why",
+        "revisit"
+      ],
+      "properties": {
+        "thing": {
+          "type": "string"
+        },
+        "why": {
+          "$ref": "#/$defs/text"
+        },
+        "revisit": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "date",
+        "decision",
+        "why",
+        "rejected"
+      ],
+      "properties": {
+        "date": {
+          "$ref": "#/$defs/text"
+        },
+        "decision": {
+          "type": "string"
+        },
+        "why": {
+          "$ref": "#/$defs/text"
+        },
+        "rejected": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "textList": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "idList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "skill",
+        "skillsVersion",
+        "rulesVersion"
+      ],
+      "properties": {
+        "skill": {
+          "const": "pm-export"
+        },
+        "skillsVersion": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "rulesVersion": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        }
+      }
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pmRoot",
+        "defaultBranch",
+        "branchPattern"
+      ],
+      "properties": {
+        "pmRoot": {
+          "type": "string"
+        },
+        "defaultBranch": {
+          "type": "string"
+        },
+        "branchPattern": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "branch",
+        "head"
+      ],
+      "properties": {
+        "branch": {
+          "$ref": "#/$defs/text"
+        },
+        "head": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^R-[0-9]{3,}$"
+    },
+    "planStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "text",
+        "checked"
+      ],
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "checked": {
+          "type": "boolean"
+        }
+      }
+    },
+    "planTask": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "number",
+        "title",
+        "checked",
+        "total",
+        "steps"
+      ],
+      "properties": {
+        "number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "title": {
+          "type": "string"
+        },
+        "checked": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/planStep"
+          }
+        }
+      }
+    },
+    "plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "checked",
+        "total",
+        "tasks"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "checked": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/planTask"
+          }
+        }
+      }
+    }
+  }
+}

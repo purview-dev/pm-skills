@@ -33,6 +33,11 @@ next action, an explicit "done when", and fixed templates.
   column, milestone, bug, brief, and log entry to `planning/planning.json`
   in one fixed shape, with the JSON Schema that describes it, or checks the
   file without writing. The Markdown stays the source of truth.
+- **The plan as a site:** `pm-docs-site` plans a local Astro and Starlight
+  site that renders `planning.json` as Home, Board, Roadmap, and Log pages,
+  then builds it from shipped templates inside that item's workflow.
+  Optional modules add the repository's `docs/` pages, LikeC4 architecture
+  views, and an Aspire AppHost resource. It reads the export only.
 - **Purview fit:** for .NET projects, `pm-purview` recommends
   [Purview](https://purview.dev/) tools only where they remove real work.
   For an empty project it asks first what you are building and at what
@@ -60,6 +65,17 @@ bunx skills add https://github.com/purview-dev/pm-skills -y
 Skills install at project level by default. Add `-g` for a user-level
 install, or `-a claude-code` to target a single agent. See the
 [skills CLI](https://github.com/vercel-labs/skills) for all options.
+
+The skills hand design, planning, and execution to a workflow skill set,
+by default [Superpowers](https://github.com/obra/superpowers). `pm-setup`
+checks that every workflow skill is installed and prints the command when
+one is missing:
+
+```bash
+npx skills add https://github.com/obra/superpowers -y
+# or, in Claude Code
+/plugin install superpowers@claude-plugins-official
+```
 
 Then, in your agent:
 
@@ -98,6 +114,7 @@ Then, in your agent:
 | [`pm-roadmap`](skills/pm-roadmap/SKILL.md) | Full roadmap by milestone; move, add, or insert one item | User asks |
 | [`pm-status`](skills/pm-status/SKILL.md) | Summary or your queue (read-only) | User asks |
 | [`pm-export`](skills/pm-export/SKILL.md) | Write the whole plan as `planning.json` plus its schema, or check them (read-only) | User asks, or a tool needs the plan as JSON |
+| [`pm-docs-site`](skills/pm-docs-site/SKILL.md) | Plan, build, extend, upgrade, or check the local site that renders `planning.json` | User asks; builds run inside the site item's workflow |
 | [`pm-help`](skills/pm-help/SKILL.md) | Explain each skill, find what is missing, recommend the next skill (read-only) | Any time you are unsure |
 
 ## The loop
@@ -115,6 +132,7 @@ pm-rejoin: any time the position is unclear; it hands back to the stage.
 pm-bug: a defect needs the facts a fix needs; it routes to a fix or the roadmap.
 pm-revise: built work is wrong; it is the only skill that may interrupt.
 pm-export: a tool needs the plan as JSON, or the export needs checking.
+pm-docs-site: plan the site as an item; its build modes run in execute.
 ```
 
 Ideas flow: `pm-park` (or `pm-discover`, or `pm-bug` for a defect) -> inbox
@@ -123,14 +141,15 @@ brief and become an item directly. Strategy flows: `pm-strategy` ->
 milestones and focus -> ordered Next -> `pm-board`. Corrections flow:
 `pm-revise` -> brief `## Revisions` (open item) or a revision item with
 `Revisits` (done item) -> the stage skill. Data flows: `pm-export` writes
-`planning/planning.json` from all of the above.
+`planning/planning.json` from all of the above, and the `pm-docs-site`
+site renders it.
 
 ## Non-interruption guarantee
 
 The merged rules make an active workflow own the session. During a
 workflow, only `pm-park` may write, and only to capture; `pm-rejoin` may
-report the position, `pm-help` may explain a skill, `pm-export` may check
-the export without writing, and `pm-status`, `pm-board`, `pm-roadmap`, and
+report the position, `pm-help` may explain a skill, `pm-export` and
+`pm-docs-site` may check without writing, and `pm-status`, `pm-board`, `pm-roadmap`, and
 `pm-up-next` may show their read-only view when you ask. None of them may
 move, add, insert, or close anything mid-workflow. The one exception is
 `pm-revise`, which may interrupt to correct built work when you say it is
@@ -139,6 +158,9 @@ Any other PM skill waits until the workflow finishes; the agent asks
 whether to run it after the workflow or pause now. PM state
 skills write only to the configured planning directory (default
 `planning/`) in the main worktree, and never touch specs, plans, or code.
+The one exception is `pm-docs-site`'s build modes: the site is code, so
+they run as a step of the site item's `execute` stage, on
+its branch, and leave committing to the workflow.
 The one git state change they make is the commit of those planning files,
 plus the offered switch to the planning branch when the main worktree is on
 another one. `pm-setup` edits only the managed section in the selected
@@ -218,6 +240,14 @@ same files as before; bugs add `Severity`, `Affects`, and a
 `## Reproduction` block to the inbox format, and revisions add an optional
 `## Revisions` heading to a brief.
 
+Version 10 adds `pm-docs-site` and Non-interruption rule 9. `plan` adds the
+site, a module, or a page as a roadmap item; `check` compares an installed
+site with the templates and the export, read-only, even mid-workflow; and
+`scaffold`, `extend`, and `upgrade` build it inside that item's `execute`
+stage. The site reads `planning/planning.json` only. When `pm-export`'s
+`schemaVersion` moves, the site's build fails until `pm-docs-site upgrade`
+runs, and `pm-help` reports the difference.
+
 ## Using a different workflow framework
 
 Edit the Handoffs table in `<PM root>/config.md`. The skills refer to stages
@@ -244,15 +274,28 @@ Requires [`bun`](https://bun.sh) and, for the git hooks,
 [`lefthook`](https://lefthook.dev/installation) and
 [`just`](https://github.com/casey/just).
 
+- `just setup-skills` clears and re-links this repository's `skills/pm-*`
+  into `.claude/skills/` and `.agents/skills/`, so the agents working here
+  use the skills as they are being edited. `just setup-skills --cli` uses
+  `bunx skills add ./ -y` instead, which copies them.
 - `just validate` checks skill frontmatter, the README and managed-section
-  tables, the `pm-setup` inventory, the section markers, and the template
-  placeholders.
+  tables, the `pm-setup` inventory, the section markers, the template
+  placeholders, the export schema, the managed section installed in
+  `AGENTS.md`, and that `docs-site/` still matches the `pm-docs-site`
+  templates.
+- `just docs` serves this repository's own project site (its plan from
+  `planning/planning.json`, the README, and every skill) at
+  <http://localhost:4321>; `just docs-check` tests, type-checks, and builds
+  it.
 - `just lint-check` runs `just validate` and lints all Markdown.
 - `just lint-fix` applies Markdown fixes.
 - `just install` verifies the tools and installs the git hooks (commitlint
   on commit, `just lint-check` on push).
 - `just bump patch|minor|major` writes the next release version to
   `package.json`.
+
+This repository manages itself with these skills: `planning/` is its live
+PM state, and `docs-site/` is the site `pm-docs-site` builds from it.
 
 CI runs the same checks on every push and pull request to `main`. A pull
 request that changes anything under `skills/` must also bump the
@@ -301,8 +344,21 @@ skills/
     SKILL.md
     references/planning.schema.json
     references/planning.example.json
+  pm-docs-site/
+    SKILL.md
+    references/spec.md
+    scripts/site.ts          renders a site from its manifest; write or check
+    templates/site/          the core site (Astro, Starlight, plan pages)
+    templates/repo-docs/     module: the repository's Markdown, read in place
+    templates/architecture/  module: LikeC4 views through Astroc4
+    templates/aspire/        module: the AppHost resource
   pm-help/SKILL.md
-scripts/validate.ts
+planning/                  this repository's own PM state
+docs-site/                 this repository's own project site
+scripts/
+  validate.ts
+  setup-skills.ts
+  bump-version.ts
 .github/
   copilot-instructions.md
   workflows/

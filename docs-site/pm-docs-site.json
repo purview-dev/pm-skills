@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 2,
+  "modules": ["repo-docs"],
+  "values": {
+    "SITE_TITLE": "pm-skills project",
+    "SITE_DESCRIPTION": "The plan for pm-skills, from planning/planning.json, with every skill and its references.",
+    "PACKAGE_NAME": "pm-skills-docs-site",
+    "SITE_ROOT": "docs-site",
+    "SITE_TO_ROOT": "..",
+    "PM_ROOT": "planning/",
+    "SPECS_DIR": "superpowers/specs",
+    "PLANS_DIR": "superpowers/plans"
+  }
+}
