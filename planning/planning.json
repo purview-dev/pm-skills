@@ -1,0 +1,317 @@
+{
+  "$schema": "./planning.schema.json",
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-10T08:03:25+00:00",
+  "generator": {
+    "skill": "pm-export",
+    "skillsVersion": 10,
+    "rulesVersion": 10
+  },
+  "project": {
+    "pmRoot": "planning/",
+    "defaultBranch": "main",
+    "branchPattern": "feat/<id>-<slug>"
+  },
+  "source": {
+    "branch": "main",
+    "head": "28abe2c828afac54ac631a7cc67f1fe3622ea1d5"
+  },
+  "vision": {
+    "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
+    "customer": "A solo developer, or a very small team, who builds with AI coding agents such as Claude Code, Copilot, or Codex, and installs skills into their repositories.",
+    "outcomes": [
+      {
+        "id": "V1",
+        "text": "`npx skills add https://github.com/purview-dev/pm-skills -y` followed by `pm-setup` leaves a repository with the rules merged, and every pm-* skill and every workflow skill reported installed."
+      },
+      {
+        "id": "V2",
+        "text": "After compaction or a new session, `pm-resume` names the active item, its stage, and the next action from `planning/` alone."
+      },
+      {
+        "id": "V3",
+        "text": "During an active workflow only `pm-park` (capture), the read-only views and checks, and `pm-revise` run; every other PM skill waits."
+      },
+      {
+        "id": "V4",
+        "text": "`pm-export` writes a schema-valid `planning.json`, and `pm-docs-site` builds a site from it whose `just docs-check` passes."
+      }
+    ],
+    "outOfScope": [
+      "Teams and shared boards: multi-user assignment, permissions, or a shared hosted board. PM state is files in one repository.",
+      "Non-Bun tooling: npm- or pnpm-only toolchains for validation and the docs site."
+    ],
+    "constraints": {
+      "timeAvailable": "about 4 hours per week",
+      "budget": "GBP 0 per month (no paid services)",
+      "stack": "Markdown skills, Bun scripts, just, markdownlint-cli2, GitHub Actions"
+    }
+  },
+  "strategy": {
+    "focus": {
+      "milestone": null,
+      "whyNow": null
+    },
+    "milestones": [],
+    "bets": [],
+    "assumptions": [],
+    "notDoing": [],
+    "decisions": []
+  },
+  "now": {
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
+    "brief": null,
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
+    "checkpoint": null
+  },
+  "plan": null,
+  "roadmap": {
+    "next": [
+      {
+        "id": "R-001",
+        "title": "Set milestones and focus",
+        "section": "next",
+        "position": 1,
+        "label": "next",
+        "serves": [
+          "V2"
+        ],
+        "milestone": null,
+        "owner": "both",
+        "doneWhen": "`planning/STRATEGY.md` has at least one milestone and a `Current focus`, and `pm-help` check 6 passes.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": null,
+        "revisits": null,
+        "claimable": true
+      },
+      {
+        "id": "R-002",
+        "title": "Check the docs-site Board at three widths",
+        "section": "next",
+        "position": 2,
+        "label": "next",
+        "serves": [
+          "V4"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "a browser test of `docs-site` shows the Board's five columns in one row at 1440, 1024, and 700px.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": null,
+        "revisits": null,
+        "claimable": true
+      },
+      {
+        "id": "R-003",
+        "title": "Fix pm-export's ajv validation command",
+        "section": "next",
+        "position": 3,
+        "label": "next",
+        "serves": [
+          "V4"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "the command in `pm-export`'s guard exits 0 on `planning/planning.json`, instead of failing on the unknown `date-time` format.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": null,
+        "revisits": null,
+        "claimable": true
+      },
+      {
+        "id": "R-004",
+        "title": "Verify the aspire module against a real AppHost",
+        "section": "next",
+        "position": 4,
+        "label": "next",
+        "serves": [
+          "V4"
+        ],
+        "milestone": null,
+        "owner": "both",
+        "doneWhen": "in an Aspire AppHost, `pm-docs-site extend aspire` adds the `docs` resource, it serves the Home page, and both composition tests pass.",
+        "size": "M",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": null,
+        "revisits": null,
+        "claimable": true
+      }
+    ],
+    "later": [
+      {
+        "id": "R-005",
+        "title": "Rehearse a schemaVersion bump through the docs site",
+        "section": "later",
+        "position": 1,
+        "label": "later",
+        "serves": [
+          "V4"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "on a scratch branch, moving `pm-export` to schemaVersion 3 fails `just validate` until the templates follow, and `pm-docs-site upgrade` then passes `just docs-check`.",
+        "size": "M",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": null,
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-006",
+        "title": "Check pm-setup's skill counts in validate",
+        "section": "later",
+        "position": 2,
+        "label": "later",
+        "serves": [
+          "V1"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "`just validate` fails when the `<n> of 22` counts in `pm-setup` differ from the number of shipped skills.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": null,
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-007",
+        "title": "Docs-site extension pages",
+        "section": "later",
+        "position": 3,
+        "label": "later",
+        "serves": [
+          "V4"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "the Now, Inbox, Briefs, and Strategy pages from `pm-docs-site` spec section 12 render from `planning.json` only, each with unit-tested derivations.",
+        "size": "L",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "Size L: split into one item per page with `pm-docs-site plan <extension>` before starting.",
+        "revisits": null,
+        "claimable": false
+      }
+    ]
+  },
+  "board": {
+    "columns": {
+      "now": [],
+      "next": [
+        {
+          "id": "R-001",
+          "title": "Set milestones and focus",
+          "owner": "both",
+          "size": "S",
+          "detail": "ready"
+        },
+        {
+          "id": "R-002",
+          "title": "Check the docs-site Board at three widths",
+          "owner": "agent",
+          "size": "S",
+          "detail": "ready"
+        },
+        {
+          "id": "R-003",
+          "title": "Fix pm-export's ajv validation command",
+          "owner": "agent",
+          "size": "S",
+          "detail": "ready"
+        },
+        {
+          "id": "R-004",
+          "title": "Verify the aspire module against a real AppHost",
+          "owner": "both",
+          "size": "M",
+          "detail": "ready"
+        }
+      ],
+      "foryou": [],
+      "waiting": [],
+      "done": []
+    },
+    "activity": []
+  },
+  "log": {
+    "done": [],
+    "dropped": [],
+    "reviews": []
+  },
+  "inbox": [],
+  "briefs": [],
+  "counts": {
+    "next": 4,
+    "later": 3,
+    "nextMax": 5,
+    "openInbox": 0,
+    "discuss": 0,
+    "shapingBriefs": 0,
+    "done": 0,
+    "dropped": 0,
+    "blockers": 0
+  },
+  "checks": {
+    "reviewDue": false,
+    "lastReview": "never",
+    "claimable": [
+      "R-001",
+      "R-002",
+      "R-003",
+      "R-004"
+    ],
+    "drift": false
+  }
+}
