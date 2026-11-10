@@ -4,8 +4,8 @@
 
 ## Done
 
-<!-- - 2026-10-29 R-007 Tenant billing. Milestone: M1. Plan: <path>. Result: <PR or commit>. -->
-<!-- - 2026-10-30 R-009 Open a Stripe account. Milestone: M1. Owner: user. Result: <evidence>. -->
+<!-- - 2026-10-29 R-007 Tenant billing. Milestone: M1. Owner: agent. Plan: <path>. Result: branch <branch>. -->
+<!-- - 2026-10-30 R-009 Open a Stripe account. Milestone: M1. Owner: user. Plan: none. Result: <evidence>. -->
 
 ## Dropped
 

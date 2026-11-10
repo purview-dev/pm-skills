@@ -1,6 +1,6 @@
 {
 	"name": "pm-skills",
-	"version": "0.7.0",
+	"version": "0.8.0",
 	"description": "Project-management skills for solo developers using AI coding agents - a parking lot, challenged shaping, strategy, roadmap, task board, up-next queue, and session memory, installed above a development workflow skill set such as Superpowers.",
 	"license": "MIT",
 	"author": {

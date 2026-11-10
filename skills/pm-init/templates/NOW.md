@@ -1,7 +1,8 @@
 # Now
 
 <!--
-Edited only by pm-* skills in the main worktree.
+Edited only by pm-* skills. PM state lives in the main worktree; a completion
+record may be written in the worktree that holds the item's branch.
 Fields are fixed. When idle, every field except Status is empty.
 Status: idle | active
 Stage: design | plan | execute | finish

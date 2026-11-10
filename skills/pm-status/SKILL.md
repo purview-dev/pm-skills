@@ -35,8 +35,9 @@ For the ordered queue without starting anything, run `pm-up-next`.
 ## Steps
 
 1. Read `NOW.md`, `ROADMAP.md`, `LOG.md`, `STRATEGY.md`, and `config.md`;
-   count the open inbox and the `Discuss: yes` files (Shared definitions).
-   If `NOW.md` has a plan, count its checkboxes.
+   read `STACK.md` when it exists and count its entries. Count the open
+   inbox and the `Discuss: yes` files (Shared definitions). If `NOW.md` has
+   a plan, count its checkboxes.
 2. Evaluate **Review due** (Shared definitions) and which Next items are
    claimable.
 3. Render the requested view with the matching template below.
@@ -50,6 +51,7 @@ For the ordered queue without starting anything, run `pm-up-next`.
 - Focus: <M Name, done/total | none set>
 - Next (<n>/<max>): <ID Title [owner, size, status]>, ...
 - Later: <n> items
+- Stack: <n suspended | none>
 - Inbox: <n> open, <n> to discuss
 - Review: <due | not due> (last: <date | never>)
 

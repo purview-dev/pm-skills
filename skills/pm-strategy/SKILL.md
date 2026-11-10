@@ -47,6 +47,10 @@ facts:
 
 - Per `V` line: items done, open in Next, open in Later.
 - Per milestone: items done and open; exit criteria met or not.
+- For each milestone whose `Status` is `done (<date>)`, re-check its exit
+  criteria: `pm-checkpoint` (`done`) records the completion when the last
+  item closes, and this run verifies it. If a criterion is not met, set the
+  status back to `active` and append the reversal to `## Decisions`.
 - The milestone legend, one line each (Shared definitions: Reference
   legend): `M1 <Name> (focus): R-002 <title>, R-005 <title>`.
 - Throughput: items done per week over the last 4 weeks (from `LOG.md`).

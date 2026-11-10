@@ -48,7 +48,7 @@ asked, the skill's own `SKILL.md` steps.
 | `pm-discover` | You want evidence from the code, history, or usage data, or an answer about how the product works today | "what should we fix next?", "is export used?" | A research report; inbox ideas |
 | `pm-strategy` | Setting focus, milestones, bets, or the vision, or rebuilding the roadmap | "re-plan the roadmap" | `STRATEGY.md`, `VISION.md`, `ROADMAP.md` |
 | `pm-purview` | A .NET project wants to know which Purview tools would help, or a new project is choosing its stack | "would Purview help here?" | A research report; roadmap items if accepted |
-| `pm-checkpoint` | Stopping, pausing, switching items, or finishing one | "pause", "R-007 is done" | `NOW.md`, `LOG.md`, `ROADMAP.md` |
+| `pm-checkpoint` | Stopping, pausing, switching items, suspending or resuming an operation, or finishing one | "pause", "stack this, I need to fix the build", "pop the stacked work", "R-007 is done" | `NOW.md`, `LOG.md`, `ROADMAP.md`, `STACK.md` |
 | `pm-revise` | Work that is already built is not what you wanted, or a `Done when` check fails, including mid-workflow | "that's not right", "change what we built for R-007" | `NOW.md`, `ROADMAP.md`, the brief's `## Revisions` |
 | `pm-review` | Weekly, or when `pm-resume` says a review is due | "weekly review" | Inbox, `ROADMAP.md`, `LOG.md`, `config.md` |
 | `pm-item` | Changing one roadmap item: add, edit, drop, block, move or insert at a position, reassign, or mark a task of yours done | "drop R-012", "put R-012 before R-008", "I've done R-009" | `ROADMAP.md`, `LOG.md` |
@@ -71,8 +71,11 @@ columns, the Roadmap order and edits rules, roadmap positions (`top`,
 questions print, the escape options (`Explain <ID>`, `Show the
 roadmap`, `Show the board`), bugs and severity, revisions and `Revisits`,
 the export file and its schema, the docs site and why its build modes run
-inside a workflow (rule 9), and the one skill that may interrupt a
-workflow (`pm-revise`).
+inside a workflow (rule 9), completion records and the finish order (the
+completion commit rides the item's branch and its pull request), the
+operation stack and `pm-checkpoint` push/pop, `merged-unclosed` items, and
+the two ways a workflow may be interrupted (`pm-revise` to correct,
+`pm-checkpoint` push/pop to suspend).
 
 ## Steps (overview)
 
@@ -96,11 +99,12 @@ workflow (`pm-revise`).
    | 13 | No `Owner: user` item blocks an agent item | `Your task <ID> blocks <IDs>` | Do it, then `pm-item done <ID>` |
    | 14 | If the repository has `.csproj`, `.slnx`, or `.sln` files: a `research/*purview-fit.md` report exists | Purview fit not assessed | `pm-purview` |
    | 15 | If the repository has substantial code: a `research/` report exists | Roadmap not checked against the existing product | `pm-discover` |
-   | 16 | `NOW.md` agrees with the work: when idle, the current branch does not match the `Branch name pattern`; when active, `Session` equals the current branch | Drifted from the lifecycle | `pm-rejoin` |
+   | 16 | `NOW.md` agrees with the work: when idle, the current branch does not match the `Branch name pattern`; when active, `Session` equals the current branch and that branch is not merged into the PM branch | Drifted from the lifecycle, or `Completion for <ID> did not land` | `pm-rejoin` |
    | 17 | **Uncommitted PM state** is empty | `<n>` uncommitted PM files | `pm-checkpoint`, which commits them |
    | 18 | If `<PM root>/planning.json` exists: it parses, its top-level keys match the schema, and its item order and counts match the Markdown | Export is stale or invalid: first difference | `pm-export` |
    | 19 | No open `Kind: bug` inbox file has `Severity: blocker` | Blocker bug open: title | `pm-revise`, or `pm-next` for its item |
    | 20 | If a docs site exists (a `pm-docs-site.json`, or a `src/lib/planning.ts` containing `PlanningExportError`, outside `node_modules/`): the manifest's `schemaVersion` (else `SCHEMA_VERSION`) equals the `schemaVersion` of `<PM root>/planning.json` and of `pm-docs-site`'s templates | `Docs site reads schemaVersion <n>; the export is <m>`, or `Docs site has no manifest` | `pm-docs-site check`, then its upgrade item |
+   | 21 | `STACK.md` is missing or empty | `<n> stacked operations waiting` | `pm-checkpoint` (`pop`) |
 
    Stop at the first failing check among 1 to 4; later checks depend on
    them.

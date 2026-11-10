@@ -23,6 +23,14 @@ root is its `PM state directory` setting (default `planning/`).
   pm-init.` Stop.
 - If `NOW.md` lacks the schema fields (see pm-resume), say it is malformed
   and stop.
+- If `<PM root>/STACK.md` has an entry, continue: add the Note `Stacked:
+  <ID> (<stage>). It resumes with pm-checkpoint pop.` so the suspended
+  work is not forgotten.
+- If the current branch has an unmerged completion (a `## Done` line in
+  `LOG.md` whose `Result: branch <branch>` matches the current branch, and
+  the branch is not merged), stop. Reply `Branch <branch> has an unmerged
+  completion for <ID>. Run the finish step, then pm-next.` A completion
+  rides its branch, and a new item waits until it has.
 - If a workflow is active, apply Non-interruption rule 4 and stop.
 - If `Status: active`, stop. Ask: `<ID> is active. What should happen to
   it?` with the options `Resume <ID> (recommended)` (run `pm-resume`) and

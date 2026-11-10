@@ -6,7 +6,8 @@ description: Use when work that was already designed, planned, or built is not w
 # pm-revise
 
 Correct work that is already built. A revision is recorded in PM state, not
-only in the conversation, and never reopens a `Done` line.
+only in the conversation, and never reopens a `Done` line, except an
+**Unmerged completion** (rules: Shared definitions).
 
 Follow the Non-interruption rules, Shared definitions, Roadmap order and
 edits, Challenge protocol, Persistence, Asking the user, and Communication
@@ -20,7 +21,7 @@ contract in the pm-skills section of the agent instructions file
 | --- | --- | --- |
 | `inspect` | Always first | Show the item, what was asked, and what exists |
 | `rewind` | The spec or the plan is wrong, size `S` or `M` | Pause, set `Stage` back to `design`, `plan`, or `execute`, hand off |
-| `fix-in-place` | The implementation is wrong, the plan still holds | Pause, keep the stage, hand back with the correction |
+| `fix-in-place` | The implementation is wrong, the plan still holds, or the completion is unmerged | Pause, keep the stage, hand back with the correction |
 | `new item` | The original is in `## Done`, another session owns it, or the change is new scope | New `R-NNN` with `Revisits`, at the top of Next |
 | `queue` | The original is still open in Next or Later | Raise it in Next, add the correction to its `Note:` |
 | `park` | Not now | `pm-park` with `Discuss: yes` |
@@ -91,7 +92,8 @@ only in the conversation, and never resume the interrupted step silently.
    (step 6).
 4. **Choose the mode.** Recommend from the evidence: a wrong spec is
    `rewind` to `design`, a wrong plan is `rewind` to `plan`, a wrong
-   implementation is `fix-in-place` at `execute`, an original in `## Done` or
+   implementation is `fix-in-place` at `execute`, an **Unmerged completion**
+   is `fix-in-place` at `execute`, an original in `## Done` and merged or
    another session's item or new scope is `new item`, an original still open
    in Next or Later is `queue`, and not now is `park`. Ask one choice
    question `How should <ID title> be corrected?` with the recommended
@@ -99,11 +101,18 @@ only in the conversation, and never resume the interrupted step silently.
 5. **`rewind` and `fix-in-place`.** These apply to the active item; for a
    `paused` item in Next, run `pm-next <ID>` first, which restores its
    paused checkpoint, then return here.
-   - Run `pm-checkpoint` (`pause`). It writes and commits the checkpoint.
+   - **Unmerged completion:** the item is in `## Done` and `NOW.md` is idle.
+     Find the completion commit with
+     `git log --oneline --grep "docs(pm): close <ID>"`, restore `NOW.md`
+     from its parent (`git show <sha>^:<PM root>/NOW.md`), and remove the
+     `## Done` line. Keep `Stage: execute` and the branch as `Session`.
+     Skip the `pm-checkpoint` call below.
+   - Otherwise run `pm-checkpoint` (`pause`). It writes and commits the
+     checkpoint.
    - `rewind`: set `Stage` to the chosen earlier stage. Keep `Brief`,
      `Milestone`, `Spec`, `Plan`, and `Started`.
    - `fix-in-place`: keep `Stage`.
-   - In both, replace `## Checkpoint` with a pause block whose `Stopped at`
+   - Replace `## Checkpoint` with a pause block whose `Stopped at`
      names the last step that still holds, whose `Next action` is the first
      step of the corrected work, whose `Start with` is that stage's skill,
      and whose `Context` reads `Revision <date>: <one line>` followed, when

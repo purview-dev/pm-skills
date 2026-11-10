@@ -33,7 +33,8 @@ directory` setting (default `planning/`).
 - During an active workflow only `check` may run (Non-interruption rule 3).
   `write` applies Non-interruption rule 4.
 - Export only what the PM files hold. Never add environment values, tokens,
-  source-code excerpts, or anything not in the PM root.
+  source-code excerpts, or anything not in the PM root. Never export
+  `STACK.md`: it is session memory, not plan.
 - Never edit any other PM file. This skill reads them all and writes two.
 - Anyone can validate the result with
   `bunx ajv-cli@5 validate -s "<PM root>/planning.schema.json" -d "<PM root>/planning.json" --spec=draft2020`.
@@ -138,8 +139,9 @@ Remaining objects:
 ## Steps (write)
 
 1. Read every PM file: `config.md`, `VISION.md`, `STRATEGY.md`, `NOW.md`,
-   `ROADMAP.md`, `LOG.md`, `inbox/`, and `briefs/`. A missing optional file
-   is empty (Shared definitions: Optional files).
+   `ROADMAP.md`, `LOG.md`, `inbox/`, and `briefs/` (`STACK.md` is not
+   exported). A missing optional file is empty (Shared definitions:
+   Optional files).
 2. Build the document in the field-map order, applying the format rules.
    Where a value is not written in the file, use `null`, never a guess; state
    any `Assumption:` in the `Note` of the output.

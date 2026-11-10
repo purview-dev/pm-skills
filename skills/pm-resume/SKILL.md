@@ -35,7 +35,8 @@ directory` setting (default `planning/`).
 ## Steps
 
 1. Read `NOW.md`, `config.md`, `ROADMAP.md`, and `STRATEGY.md` (focus
-   milestone only). If `NOW.md` has a `Brief`, read its `## Decision` and
+   milestone only). Read `STACK.md` when it exists and count its entries.
+   If `NOW.md` has a `Brief`, read its `## Decision` and
    `## Open questions`.
 2. Count the open inbox (Shared definitions) and the inbox files with
    `Discuss: yes`. List briefs with `Status: shaping`. Count the
@@ -44,10 +45,12 @@ directory` setting (default `planning/`).
 4. If `Status: idle`: check for drift first (Shared definitions). The state
    has drifted when the current branch matches the `Branch name pattern` in
    `config.md`, because then the branch names an item that `NOW.md` does not
-   record. The next action is then `pm-rejoin`, not `pm-next`. Otherwise the
-   next action is `pm-next`. If review is due, it is `pm-review` instead. If
-   Next has no claimable item, it is the user task that unblocks the most
-   items, or `pm-review`.
+   record. The next action is then `pm-rejoin`, not `pm-next`. When the
+   stack has an entry, the next action is `pm-checkpoint pop`: suspended
+   work comes back before new work is claimed. Otherwise the next action is
+   `pm-next`. If review is due, it is `pm-review` instead. If Next has no
+   claimable item, it is the user task that unblocks the most items, or
+   `pm-review`.
 5. If `Status: active`:
    - **Session match** (Shared definitions): a mismatch means another
      session owns the item. Report it read-only, unless the current branch
@@ -58,13 +61,17 @@ directory` setting (default `planning/`).
      `wait, or ask the owner of <Session>`.
    - If the `Plan` file exists, count its `- [ ]` (open) and `- [x]`
      (done) checkboxes.
-   - If total > 0 and open = 0, the next action is the finish skill from
-     the Handoffs table. Then check whether the branch is merged: find the
-     default branch with `git symbolic-ref --short refs/remotes/origin/HEAD`
-     (fall back to `main`, then `master`), then run
-     `git branch --merged <default>`. If the session branch is listed, add
-     the Note: `Branch <branch> is merged. Run pm-checkpoint to close <ID>.`
-     and make that the next action.
+   - Check whether the session branch is merged: find the default branch
+     with `git symbolic-ref --short refs/remotes/origin/HEAD` (fall back to
+     `main`, then `master`), then run `git branch --merged <default>`. If
+     the session branch is listed, the item is **Merged-unclosed** (Shared
+     definitions): add the Note `Branch <branch> is merged but <ID> is
+     still active.` and make the next action `pm-rejoin`. Never close it
+     after the merge.
+   - If total > 0 and open = 0, the next action is `pm-checkpoint` (`done`)
+     on this branch, and then the finish skill from the Handoffs table. The
+     completion record must be committed before the finish step opens the
+     pull request.
    - Otherwise the next action is the `Next action` in the checkpoint. If
      there is no checkpoint, it is the skill for the `Stage` in the
      Handoffs table.
@@ -88,6 +95,7 @@ directory` setting (default `planning/`).
 - Stage: <stage | none>
 - Progress: <done>/<total> plan steps | no plan yet
 - Last checkpoint: <date time | none>
+- Stack: <n suspended | none>
 - Focus: <M Name | none set>
 
 ## Decisions so far

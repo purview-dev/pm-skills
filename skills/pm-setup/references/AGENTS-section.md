@@ -1,4 +1,4 @@
-<!-- pm-skills:start version=10 -->
+<!-- pm-skills:start version=11 -->
 <!-- Managed by pm-setup. Edit outside these markers; content inside is replaced on upgrade.
      Installed copies keep this marker without a version. The version of record is
      `Rules version` in the PM root config.md, so editing or merging this file cannot lose it. -->
@@ -30,7 +30,7 @@ repository root.
 | `pm-discover` | Analyse the existing product, its history and usage, or answer a product question | No active workflow, user asks |
 | `pm-strategy` | Set vision, milestones, bets, and decisions; generate or re-plan the roadmap | User asks, or another PM skill recommends it |
 | `pm-purview` | Recommend Purview (purview.dev) .NET tools only where they add value; ask about stack and scale for new projects | User asks, or `pm-init`, `pm-discover`, `pm-shape`, `pm-strategy` find a .NET need it covers |
-| `pm-checkpoint` | Save state at a stopping point; close finished items | Session end, before compaction, stage end, user asks |
+| `pm-checkpoint` | Save state at a stopping point; suspend and resume an operation on the stack; close finished items on their branch | Session end, before compaction, stage end, user asks |
 | `pm-revise` | Correct work that is not what the user wanted: rewind the active item, fix it in place, or open a revision item | User asks, or a `Done when` check fails, including mid-workflow |
 | `pm-review` | Weekly triage of inbox and roadmap | User asks, or `pm-resume` says review is due |
 | `pm-item` | Add, edit, drop, block, unblock, move (including position), reassign, or complete one roadmap item | User asks |
@@ -77,6 +77,17 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
 - **Claimable:** an item in `## Next` whose `Status` is `ready` or
   `paused`, whose `Owner` is `agent` or `both`, and whose every
   `Depends on` ID appears in `## Done` in `LOG.md`.
+- **Completion record:** the PM writes that close an item: its `## Done`
+  line in `LOG.md`, `NOW.md` set to idle, its removal from `ROADMAP.md`, the
+  brief's `Status: done`, and its milestone's `Status: done (<date>)` when
+  it is the last open item of that milestone. `pm-checkpoint` (`done`)
+  writes it for the active item; `pm-item` (`done`) for any other. It is
+  committed on the item's branch, inside the item's pull request, before CI
+  runs (rules: Committing PM state, **Completion rides the branch**).
+- **Unmerged completion:** a **Completion record** whose branch has not been
+  merged. It is reversible: `pm-revise` (`fix-in-place`) removes the
+  `## Done` line and restores `NOW.md` at `execute`, and the fix re-runs the
+  finish order on the same pull request.
 - **Reference legend:** the short list of the IDs a question uses, each with
   the words needed to decide it: a milestone's name, whether it is the
   focus, and the items in it; a roadmap item's title, owner, size, and
@@ -134,6 +145,12 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   `on roadmap (<ID>)`, `done`, `dropped`), `Origin`, and `Updated`. An
   optional `## Revisions` heading after `Decision` holds dated corrections
   written by `pm-revise`; a brief without one is complete.
+- **Stack file:** `<PM root>/STACK.md`, the newest-first list of suspended
+  operations written by `pm-checkpoint` (`push`, `pop`). Optional: a missing
+  file is an empty stack. It is session memory, not a plan, so `pm-export`
+  does not export it. A **stack entry** holds the item, its `Done when`, the
+  branch, the stage, the brief, spec, plan, milestone, started date, the
+  reason it was suspended, and its checkpoint block.
 - **Bug:** an inbox file with `Kind: bug`, written by `pm-bug`, carrying
   `Severity`, `Affects`, and a `## Reproduction` block. It is triaged like
   any other inbox file (`pm-review`), shaped when the fix needs design
@@ -146,7 +163,8 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   `pm-revise` records it in the brief's `## Revisions` and the `NOW.md`
   checkpoint while the item is open, or as a new roadmap item whose
   `Revisits` names the original once that item is in `## Done` in
-  `LOG.md`. A revision never reopens a `Done` line.
+  `LOG.md`. A revision never reopens a `Done` line, except an **Unmerged
+  completion**, whose line is removed so the same pull request can finish.
 - **Open inbox count:** inbox files, excluding `README.md`, whose
   `Reviewed` is `never` or older than the last review, plus files with
   `Discuss: yes`.
@@ -158,14 +176,18 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   review cadence, or the open inbox count is at least the inbox threshold.
   If `Last review` is `never`, only the inbox threshold applies.
 - **Main worktree:** the first path in `git worktree list`. PM root paths
-  are resolved inside it. Quote the path in commands, because it may
-  contain spaces.
+  are resolved inside it, and it holds the PM state when idle. A
+  **Completion record** may instead be written in the worktree that holds
+  the item's branch (rules: **Completion rides the branch**). Quote the
+  path in commands, because it may contain spaces.
 - **PM branch:** the branch named by `PM branch` in `<PM root>/config.md`.
-  It is where PM state is committed, normally the repository's default
-  branch. Installs without the setting use the main worktree's current
+  It is where PM state lands, normally the repository's default branch:
+  by merging an item's branch, or by a PM commit when no item branch
+  applies. Installs without the setting use the main worktree's current
   branch.
 - **Uncommitted PM state:** the paths printed by
-  `git -C <main worktree> status --porcelain -- <PM root>`.
+  `git -C <worktree> status --porcelain -- <PM root>`, with the main
+  worktree as the default `worktree`.
 - **Export file:** `<PM root>/planning.json`, written only by `pm-export`.
   It is **derived**: the Markdown files are the state, and the export is a
   projection for other tools. Never hand-edit it and never read it as PM
@@ -181,10 +203,14 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   workflow that builds them. A site whose `SCHEMA_VERSION` is older than
   the export's `schemaVersion` fails its build until `pm-docs-site upgrade`
   runs.
+- **Merged-unclosed:** an item whose Session branch is merged into the PM
+  branch while `NOW.md` still holds it active. It means the **Completion
+  record** did not ride the branch. `pm-rejoin` finds and repairs it.
 - **Drift:** the PM state disagrees with the work in progress. Either
   `NOW.md` is idle while the current branch matches the `Branch name
-  pattern`, or `NOW.md` names another `Session` while this branch is the
-  item's own branch. `pm-rejoin` locates drift and repairs it.
+  pattern`, `NOW.md` names another `Session` while this branch is the
+  item's own branch, or `NOW.md` is active for a **Merged-unclosed** item.
+  `pm-rejoin` locates drift and repairs it.
 - **Rules version:** the installed version of this section, recorded as
   `Rules version` in the `Install` section of `<PM root>/config.md`. It is
   the only version of record, and it survives edits, merges, and rewrites
@@ -231,7 +257,8 @@ the same state and render it without changing the order or writing.
   `Now -> Next` is `pm-checkpoint` (switch); `Next -> For you` and
   `For you -> Next` change `Owner`; `Next -> Waiting` is `block` or
   `depends`; `Waiting -> Next` is `unblock`; `-> Done` is `pm-checkpoint`
-  done for the active item or `pm-item done` for a user task. `Done` is
+  done for the active item or `pm-item done` for a user task, and its
+  Completion record is committed on the item's branch. `Done` is
   history in `LOG.md`: a done item returns only as a new item with a new
   ID.
 - **Full Next:** when a move, insert, or add would put `Next` over the max,
@@ -265,22 +292,32 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    run only:
    - when the user names them or asks for what they do, or
    - at session start or after compaction (`pm-resume`), or
-   - immediately after a design, plan, or finish handoff skill completes
+   - immediately after a design or plan handoff skill completes
      (`pm-checkpoint`, stage update only), or
+   - as the item's completion step, after the execute stage passes its
+     `Done when` checks and before the finish step pushes the branch
+     (`pm-checkpoint`, `done` only), or
    - when the agent parks its own finding (`pm-park`, capture mode).
-3. **Mid-workflow, the only permitted PM write is `pm-park` in capture
-   mode.** Write one inbox file, reply with one line, then resume the exact
-   step that was in progress. No discussion, no evaluation, no follow-up
-   questions. If the user wants to discuss the idea, set `Discuss: yes`; it
-   is discussed later with `pm-shape`. The read-only exceptions: `pm-help`
-   may answer a question about a skill in explain mode, without reading PM
-   state; `pm-rejoin` may run in `locate` mode; `pm-export` and
-   `pm-docs-site` may run in `check` mode; and `pm-status`, `pm-board`, `pm-roadmap`, and `pm-up-next`
-   may render their view when the user explicitly asks for it. None of them
-   may add, move, insert, close, or reorder anything during a workflow. In
-   every case the step in progress resumes afterwards. The single PM write
-   exception is rule 8 (`pm-revise`); rule 9 covers the docs site, which
-   is not PM state.
+3. **Mid-workflow, the only permitted PM writes are `pm-park` in capture
+   mode and `pm-checkpoint` (`push`, `pop`) when the user asks to suspend or
+   resume an operation.** `pm-park` writes one inbox file, replies with one
+   line, then resumes the exact step that was in progress; `push` writes one
+   stack entry, `pop` restores the top entry, and both reply in one line
+   before the interrupted step resumes. No discussion, no evaluation, no
+   follow-up questions for either. If the user wants to discuss the idea,
+   set `Discuss: yes`; it is discussed later with `pm-shape`. The read-only
+   exceptions: `pm-help` may answer a question about a skill in explain
+   mode, without reading PM state; `pm-rejoin` may run in `locate` mode;
+   `pm-export` and `pm-docs-site` may run in `check` mode; and `pm-status`,
+   `pm-board`, `pm-roadmap`, and `pm-up-next` may render their view when the
+   user explicitly asks for it. None of them may add, move, insert, close,
+   or reorder anything during a workflow. In every case the step in
+   progress resumes afterwards. The PM write exceptions are rule 8
+   (`pm-revise`), rule 10 (`pm-checkpoint` push and pop), the stage update in
+   rule 2 (`pm-checkpoint` after a design or plan handoff), and the
+   completion step in rule 2 (`pm-checkpoint` `done`, on the item's branch
+   before the finish step); rule 9 covers the docs site, which is not PM
+   state.
 4. **If the user names another PM skill mid-workflow**, do not run it. Ask
    one choice question: `<skill> is at <step>. When should <pm-skill> run?`
    with the options `After <skill> finishes (recommended)` and `Pause now
@@ -289,9 +326,12 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
 5. **New ideas during a workflow go to `pm-park`, never to `brainstorming`
    or `pm-shape`.** Discussing an idea starts from `pm-shape`. Designing a
    feature starts only from `pm-next`.
-6. **PM state skills write only inside the PM root, in the main worktree.**
-   `pm-setup` may also edit only the managed section in the selected agent
-   instructions file, and the `Rules version` line in `<PM root>/config.md`.
+6. **PM state skills write only inside the PM root.** They write in the
+   main worktree, except a Completion record, which is written in the
+   worktree that holds the item's branch (rules: **Completion rides the
+   branch**). `pm-setup` may also edit only the managed section in the
+   selected agent instructions file, and the `Rules version` line in
+   `<PM root>/config.md`.
    PM state skills never:
    - edit source code, spec, or plan files,
    - create or remove worktrees or branches,
@@ -302,18 +342,19 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
 
    The only state-changing git commands a skill runs are the `add` and
    `commit` of one PM commit (see **Committing PM state**). Read-only git
-   (`status`, `log`, `branch`, `worktree list`, `diff`) is always allowed.
+   (`status`, `log`, `branch`, `worktree list`, `diff`, `show`) is always
+   allowed.
 7. **Other sessions' claims are read-only.** If the `Session` in `NOW.md`
    does not match the current session, treat that item and its files as
    read-only. Inbox files are one-file-per-idea so parallel sessions never
    conflict.
 8. **`pm-revise` may interrupt a workflow to correct it.** It is the only
-   edit skill that may run while a workflow is active, and only when the
-   user names the behaviour that is wrong or asks to revise it. The order is
-   fixed: record the scope, then `pm-checkpoint` (`pause`), then correct.
-   The interrupted step is never resumed silently; the user chooses
-   `rewind`, `fix-in-place`, `new item`, or `park` (`pm-revise`). `pm-bug`
-   and every other edit skill still follow rule 4.
+   skill that may interrupt a workflow **to correct work**, and only when
+   the user names the behaviour that is wrong or asks to revise it. The
+   order is fixed: record the scope, then `pm-checkpoint` (`pause`), then
+   correct. The interrupted step is never resumed silently; the user
+   chooses `rewind`, `fix-in-place`, `new item`, or `park` (`pm-revise`).
+   `pm-bug` and every other edit skill still follow rule 4.
 9. **`pm-docs-site` build modes are a step of the workflow, not a PM
    skill.** `scaffold`, `extend`, and `upgrade` write the **Docs site**,
    which is code. They run only in the `execute` stage of the active item
@@ -324,6 +365,28 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    `aspire` module lists. They never write the PM root, and never stage,
    commit, push, or create branches: the workflow commits their files.
    `pm-docs-site` `plan` and `check` are PM skills and follow rules 2 to 6.
+10. **`pm-checkpoint` push and pop suspend and restore an operation.** When
+    the user asks to stack, suspend, pause-and-restore, or handle an
+    emergency, `push` writes one stack entry and idles `NOW.md`; it may run
+    mid-workflow. `pop` restores the top entry and hands back to its stage;
+    it runs when the workflow that replaced the suspended operation has
+    finished. Both write PM state and reply in one line. They do not
+    correct work (rule 8) and do not capture ideas (`pm-park`). Only one
+    item is active: `push` is how the session is freed for the emergency
+    without losing the suspended operation.
+
+## Bounded operations (mandatory)
+
+One skill run is one operation. It writes only the files and fields its
+mode names, and it never widens its scope to cover a problem it finds.
+
+When a problem blocks the operation, do not widen it. Use the stack:
+`pm-checkpoint` (`push`) suspends the operation, the problem is handled as
+its own operation (`pm-bug`, `pm-revise`, or a workflow step), then `pop`
+returns to the suspended operation at its checkpoint. Nothing is lost, and
+the original operation finishes under its own scope. An emergency is never
+a reason to skip the `Done when` check, the completion record, or a PM
+commit.
 
 ## Challenge protocol (mandatory)
 
@@ -394,18 +457,23 @@ commit later. A commit made this way is a **PM commit**.
    `PM state commit: always | ask | never` and `PM branch: <branch>`. A
    missing section (installs before version 5) means `ask`, with the main
    worktree's current branch as the PM branch.
-2. **Check the changes** in the main worktree: **Uncommitted PM state**
-   (Shared definitions). No output means there is nothing to commit; say
-   nothing about commits. Otherwise continue.
-3. **Check the branch:** `git -C <main worktree> branch --show-current`.
-   If it is empty (detached HEAD) or is not the PM branch, ask one choice
-   question: `The main worktree is on <branch>. How should the PM state be
+2. **Check the changes** in the **commit worktree**: the main worktree, or
+   the worktree that holds the item's branch for a Completion record.
+   **Uncommitted PM state** (Shared definitions). No output means there is
+   nothing to commit; say nothing about commits. Otherwise continue.
+3. **Choose the branch.** The commit target is the item's session branch
+   when an item is active and that branch is checked out, including a
+   Completion record written in another worktree; otherwise it is the PM
+   branch. Run `git -C "<commit worktree>" branch --show-current`. If it is
+   empty (detached HEAD) or is not the expected branch, ask one choice
+   question: `The worktree is on <branch>. How should the PM state be
    committed?` with the options `Switch to <PM branch> and commit
    (recommended)`, `Commit on <branch>`, and `Leave it uncommitted`. Offer
    the switch only when every changed path in that worktree is inside the
    PM root; otherwise omit that option and say which path blocks it. After
-   the switch, the main worktree stays on the PM branch.
-4. **Stop, print, and commit nothing** when the main worktree has a merge,
+   the switch, the worktree stays on the PM branch. Never open a pull
+   request whose only change is PM state.
+4. **Stop, print, and commit nothing** when the commit worktree has a merge,
    rebase, cherry-pick, revert, or bisect in progress, or when the commit
    fails. Show the git output, put the two commands from step 6 in a
    `Note`, and finish the skill's own output. Repair a failed pre-commit
@@ -420,8 +488,8 @@ commit later. A commit made this way is a **PM commit**.
 6. **Run these two commands, in this order:**
 
    ```bash
-   git -C "<main worktree>" add -A -- "<PM root>"
-   git -C "<main worktree>" commit -m "<message>" -- "<PM root>"
+   git -C "<commit worktree>" add -A -- "<PM root>"
+   git -C "<commit worktree>" commit -m "<message>" -- "<PM root>"
    ```
 
    The pathspec keeps another session's staged work out of the commit. Then
@@ -451,6 +519,43 @@ Rules:
   branches.
 - Report the result as one `Note` line: `<short sha> <subject>`, `PM state
   unchanged`, or `PM state left uncommitted: <n> files`.
+
+### Completion rides the branch
+
+A **Completion record** is committed on the branch that delivers the item,
+inside the item's pull request, before CI runs. It is never committed to
+the PM branch after the merge, and it never gets a pull request of its own.
+
+The finish order is fixed:
+
+1. Every plan checkbox is checked and the `Done when` checks pass on the
+   branch.
+2. `pm-checkpoint` (`done`) writes the Completion record and commits it
+   with `docs(pm): close <ID> <slug>` on the item's session branch.
+3. The workflow's finish step pushes that branch and opens the pull
+   request, so the record is part of it from the first CI run.
+4. If CI fails, the completion is unmerged and reversible: `pm-revise`
+   (`fix-in-place`) removes the `## Done` line and restores `NOW.md`, the
+   fix is applied, and steps 1 to 3 re-run on the same pull request. Never
+   open a new one.
+5. The merge carries the record to the PM branch.
+
+The commit worktree:
+
+- The record starts from the committed PM state on the PM branch. When the
+  item's branch is the PM branch, write the record in place. Otherwise
+  (the normal case) read `LOG.md`, `NOW.md`, `ROADMAP.md`, `STRATEGY.md`, and
+  the brief from the PM branch (`git show <PM branch>:<PM root>/<file>`),
+  apply the record to those contents, then write and commit them in the
+  worktree that holds the item's branch. This keeps the commit from
+  reverting PM state the PM branch gained after the branch was cut.
+- Stop when the PM branch has **Uncommitted PM state**, or when the item's
+  worktree has uncommitted changes under the PM root. The record must start
+  from committed state.
+- A completion that did not ride its branch is **Merged-unclosed**:
+  `pm-rejoin` closes it on the PM branch, with a `Note` that the next
+  branch carries it when the PM branch is protected. Never a pull request
+  of its own.
 
 ## Upgrading before work resumes (mandatory)
 
@@ -515,6 +620,13 @@ version adds; version 5 adds the `## Commits` section. Ask one choice
 question: `config.md has no Commits section. Add it with defaults?` with
 the options `Add it (recommended)` and `Leave it`. If the user leaves it,
 PM commits ask before each commit.
+
+Version 11 adds the **Stack file** and **Completion rides the branch**.
+`pm-init` creates `<PM root>/STACK.md` on a fresh install; on an older
+install a missing file is an empty stack, and `pm-checkpoint` creates it on
+the first `push`. Version 11 also changes when an item is closed: run
+`pm-checkpoint` (`done`) on the item's branch before the finish step opens
+its pull request, and never close it on the PM branch after the merge.
 
 ## Asking the user (mandatory)
 

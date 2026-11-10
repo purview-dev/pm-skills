@@ -1,6 +1,6 @@
 ---
 name: pm-rejoin
-description: Use when the pm-* lifecycle has been lost or left behind - the agent is running a development workflow that NOW.md does not record, NOW.md says idle while work is in progress, the active item belongs to another branch or session, a session started mid-task without pm-resume, or the user asks where they are in the pm lifecycle and how to get back on track. Locates the true position from git and PM state, reports it, and with the user's consent repairs NOW.md so the right stage skill takes over.
+description: Use when the pm-* lifecycle has been lost or left behind - the agent is running a development workflow that NOW.md does not record, NOW.md says idle while work is in progress, the active item belongs to another branch or session, an item's branch is merged but it is still active, a session started mid-task without pm-resume, or the user asks where they are in the pm lifecycle and how to get back on track. Locates the true position from git and PM state, reports it, and with the user's consent repairs NOW.md so the right stage skill takes over.
 ---
 
 # pm-rejoin
@@ -42,13 +42,17 @@ ambiguous, ask which one is true.
 ## Steps (locate)
 
 1. Collect the evidence. Read `NOW.md`, `config.md` (Handoffs, `Branch name
-   pattern`, `PM branch`, `PM state commit`), and `ROADMAP.md`, then:
+   pattern`, `PM branch`, `PM state commit`), `ROADMAP.md`, and `STACK.md`
+   (when it exists), then:
    - `git branch --show-current` (blank output means detached HEAD), `git
      worktree list`, and **Uncommitted PM state** (Shared definitions).
    - For the `Spec` and `Plan` paths in `NOW.md`: whether each exists, and
      the `- [ ]` and `- [x]` counts of the plan.
    - For an ID in the current branch name: its line in `ROADMAP.md` (Next
      or Later) and any brief matching `<PM root>/briefs/<ID>-*.md`.
+   - Whether the session branch is merged: the default branch from
+     `git symbolic-ref --short refs/remotes/origin/HEAD` (fall back to
+     `main`, then `master`), then `git branch --merged <default>`.
    - Recent work that `NOW.md` does not mention: `git status --porcelain`
      plus `git log --since=24.hours --name-only --format=`, checked against
      the output locations in the Handoffs table.
@@ -56,17 +60,23 @@ ambiguous, ask which one is true.
 
    | Evidence | Position |
    | --- | --- |
+   | `Status: active`, and the `Session` branch is merged into the PM branch | `merged-unclosed`: the completion record did not ride the branch |
    | `Status: active`, `Session` equals the current branch | `recorded`: the item at its `Stage` |
    | `Status: active`, `Session` differs, and the current branch is the item's branch under `Branch name pattern` | `moved`: the branch was renamed or re-created |
    | `Status: active`, `Session` differs, no matching branch | `another session's`: read-only |
+   | `Status: idle`, branch matches `Branch name pattern`, the ID is in `## Done` with this branch | `completed`: the record is written and the branch is not merged; only the finish step remains |
+   | `Status: idle`, the current branch matches a stack entry's `Branch` | `stacked`: the operation is suspended; pop it |
    | `Status: idle`, branch matches `Branch name pattern`, the ID is in `ROADMAP.md` | `unclaimed`: the work exists and was never written to `NOW.md` |
    | `Status: idle`, branch matches `Branch name pattern`, the ID is not in `ROADMAP.md` | `unplanned`: work outside the roadmap |
    | `Status: idle`, no branch match, and a plan, spec, or recent change exists | `unrecorded`: a workflow is running with no PM state |
 
 3. Derive the stage from the evidence, in this order: a plan with every
    box checked is `finish`; a plan with any box unchecked is `execute`; a
-   spec with no plan is `plan`; no spec is `design`. State the rule you
-   used when the stage comes from anything other than `NOW.md`.
+   spec with no plan is `plan`; no spec is `design`. A `merged-unclosed`
+   item is at `finish`, a `completed` item is at `finish` with its record
+   already written, and a `stacked` item is at the stage in its stack
+   entry. State the rule you used when the stage comes from anything other
+   than `NOW.md`.
 4. Show the `## Where you are` template below. Write nothing.
 5. Show the item's legend line, `R-NNN <title>` (Shared definitions:
    Reference legend). Ask one choice question with the options for that
@@ -74,36 +84,59 @@ ambiguous, ask which one is true.
    - `moved`, `unclaimed`, `unplanned`, `unrecorded`: `Rejoin <ID> <title>`
      `at <stage>?` with `Rejoin at <stage> (recommended)` (run `repair`),
      `Pick a roadmap item first` (run `pm-next`), and `Explain <ID>`.
+   - `merged-unclosed`: `Close <ID> <title>?` with `Close it on the PM branch
+     (recommended)` (run `repair`), `Leave it active`, and `Explain <ID>`.
+   - `completed`: `Finish <ID> <title>?` with `Run the finish skill
+     (recommended)` (invoke the finish skill, no repair) and `Explain <ID>`.
+   - `stacked`: `Resume <ID> <title>?` with `Pop it (recommended)` (run
+     `pm-checkpoint` pop) and `Explain <ID>`.
    - `recorded`: `Continue <ID> <title> at <stage>?` with
      `Continue (recommended)` (invoke the stage skill, no repair) and
      `Run pm-resume`.
    - `another session's`: `Wait for <Session>?` with `Read only: show the
      board (recommended)` (run `pm-board`) and `Wait`.
-6. On `Pick a roadmap item first`, run `pm-next`. On `Continue`, invoke the
-   stage skill from the Handoffs table. Otherwise run `repair`.
+6. On `Pick a roadmap item first`, run `pm-next`. On `Continue` or `Run the
+   finish skill`, invoke the stage skill from the Handoffs table. On `Pop
+   it`, run `pm-checkpoint` (`pop`). Otherwise run `repair`.
 
 ## Steps (repair)
 
 1. **Item.** Use the ID and title from `NOW.md`, else from the branch name,
-   else the one the user picked. If the ID is missing from `ROADMAP.md`,
-   say so, then ask: `Add "<title>" as an item?` with the options `Add it to
-   Next (recommended)` (run `pm-item add`) and `Pick an existing item`.
-2. **Write `NOW.md`.** Set `Status: active`, `Item` (`<ID Title>`),
+   else the one the user picked. Skip the `ROADMAP.md` check for
+   `merged-unclosed`: the item is active, not listed. Otherwise, if the ID
+   is missing from `ROADMAP.md`, say so, then ask: `Add "<title>" as an
+   item?` with the options `Add it to Next (recommended)` (run `pm-item
+   add`) and `Pick an existing item`.
+2. **`merged-unclosed`.** Write the Completion record, not a claim:
+   - Append to `## Done` in `LOG.md`:
+     `- <date> <ID> <Title>. Milestone: <M | none>. Owner: <owner>. Plan:
+     <path | none>. Result: branch <branch> (merged).`
+   - If the item has a brief, set its `Status: done`.
+   - When this was the last open item of its milestone, apply the milestone
+     prompt from `pm-checkpoint` (`done`) and record it in the same commit.
+   - Set `NOW.md` to idle.
+   - Commit `docs(pm): close <ID> late` (rules: Committing PM state); switch
+     to the PM branch when the commit offers it. The next branch carries the
+     commit when the PM branch is protected, and it never gets a pull
+     request of its own.
+   - Show the output with the `Note` `Completion for <ID> was late; no
+     stage to hand off.` and stop.
+3. **Write `NOW.md`.** Set `Status: active`, `Item` (`<ID Title>`),
    `Session` (the current branch; if HEAD is detached, say so and stop),
    `Stage` (from the evidence), `Brief`, `Milestone` (from the item, or
    empty), `Spec`, and `Plan` (only paths that exist), `Started` (today, or
    the value `NOW.md` already records for this item), and the item's `Done
    when` under `## Done when`.
-3. **Write `## Checkpoint`** in the `pause` format from `pm-checkpoint`:
+4. **Write `## Checkpoint`** in the `pause` format from `pm-checkpoint`:
    `Stopped at` (the last checked plan step, or `nothing built yet`),
    `Next action` (the first unchecked plan step, or the stage skill's first
    step), `Start with` (the exact file, command, or skill name), and
    `Decisions: none` unless the user stated one.
-4. **Roadmap.** Remove the item from `## Next` in `ROADMAP.md`. If it has a
+5. **Roadmap.** Remove the item from `## Next` in `ROADMAP.md`. If it has a
    brief, set the brief's `Status` to `on roadmap (<ID>), active`.
-5. **Commit** the PM state (rules: Committing PM state), with the message
+6. **Commit** the PM state (rules: Committing PM state), with the message
    `docs(pm): rejoin <ID> at <stage>`.
-6. **Hand off.** Invoke the skill for `Stage` from the Handoffs table in
+7. **Hand off.** Invoke the skill for `Stage` from the Handoffs table in
    `config.md`, passing the item title, `Serves`, `Done when`, the brief
    path, and the checkpoint's `Next action`. If that stage has no skill in
    the table, say so and ask the user to edit `config.md`; never name a
@@ -115,9 +148,10 @@ ambiguous, ask which one is true.
 ## Where you are
 
 - Item: <ID Title | none>
-- Position: <recorded | moved | another session's | unclaimed | unplanned | unrecorded>
+- Position: <merged-unclosed | completed | stacked | recorded | moved | another session's | unclaimed | unplanned | unrecorded>
 - Stage: <design | plan | execute | finish | none>
 - Progress: <done>/<total> plan steps | no plan yet
+- Stack: <n suspended | none>
 - Branch: <branch | detached HEAD>
 - Worktree: <current worktree>; PM state in <main worktree>
 - PM state: <n> uncommitted files | unchanged
