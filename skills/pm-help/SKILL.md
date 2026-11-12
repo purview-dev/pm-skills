@@ -44,6 +44,7 @@ asked, the skill's own `SKILL.md` steps.
 | `pm-next` | Nothing is active and you want to start the next item | "start R-007", "claim R-007" | `NOW.md`, `ROADMAP.md` |
 | `pm-park` | You or the agent have an idea, bug, question, or inspiration to remember, even mid-task | "park this: ...", "note that ..." | One inbox file |
 | `pm-bug` | A bug to log with the facts a fix needs: symptom, expected and actual, reproduction, severity, evidence | "add a bug", "log a defect" | One inbox file with `Kind: bug`; a roadmap item if routed |
+| `pm-risk` | A risk to note, even mid-task, or the risk register to see or manage: add, update, re-rate (RAG), review, mitigate, close, or remove one risk | "risk: the API may rate-limit us", "show the risks", "close RK-003" | `RISKS.md`; a roadmap item in `mitigate` |
 | `pm-shape` | You want to brainstorm, discuss, or challenge one idea before committing to it | "let's think through dark mode" | A brief; a roadmap item if accepted |
 | `pm-discover` | You want evidence from the code, history, or usage data, or an answer about how the product works today | "what should we fix next?", "is export used?" | A research report; inbox ideas |
 | `pm-strategy` | Setting focus, milestones, bets, or the vision, or rebuilding the roadmap | "re-plan the roadmap" | `STRATEGY.md`, `VISION.md`, `ROADMAP.md` |
@@ -57,7 +58,7 @@ asked, the skill's own `SKILL.md` steps.
 | `pm-status` | Seeing the one-screen summary or your own queue | "where are we?", "what do I need to do?" | Nothing |
 | `pm-up-next` | Seeing the ordered queue and the one next action without starting anything | "what's next?", "up next" | Nothing |
 | `pm-export` | A tool needs the whole plan as JSON, or you want the export refreshed or validated | "export the plan", "update the status JSON" | `<PM root>/planning.json` and `planning.schema.json` |
-| `pm-docs-site` | You want the plan as a local web site (Board, Roadmap, Log), a module or page added to it, or to know whether it is current | "add a docs site", "is the docs site current?" | `ROADMAP.md` (plan); the site folder, inside the item's workflow (build modes) |
+| `pm-docs-site` | You want the plan as a local web site (Board, Roadmap, Log, Risks), a module or page added to it, or to know whether it is current | "add a docs site", "is the docs site current?" | `ROADMAP.md` (plan); the site folder, inside the item's workflow (build modes) |
 | `pm-help` | Not sure which skill to use | "pm help" | Nothing |
 
 Concepts to explain on request, from the pm-skills section: the PM root,
@@ -69,7 +70,8 @@ Non-interruption rules, PM commits and the `Commits` section in
 columns, the Roadmap order and edits rules, roadmap positions (`top`,
 `bottom`, `before`, `after`), the up-next queue, the reference legend that
 questions print, the escape options (`Explain <ID>`, `Show the
-roadmap`, `Show the board`), bugs and severity, revisions and `Revisits`,
+roadmap`, `Show the board`), bugs and severity, the risk register, risk
+IDs, and how RAG is derived and overridden, revisions and `Revisits`,
 the export file and its schema, the docs site and why its build modes run
 inside a workflow (rule 9), completion records and the finish order (the
 completion commit rides the item's branch and its pull request), the
@@ -105,6 +107,7 @@ the two ways a workflow may be interrupted (`pm-revise` to correct,
    | 19 | No open `Kind: bug` inbox file has `Severity: blocker` | Blocker bug open: title | `pm-revise`, or `pm-next` for its item |
    | 20 | If a docs site exists (a `pm-docs-site.json`, or a `src/lib/planning.ts` containing `PlanningExportError`, outside `node_modules/`): the manifest's `schemaVersion` (else `SCHEMA_VERSION`) equals the `schemaVersion` of `<PM root>/planning.json` and of `pm-docs-site`'s templates | `Docs site reads schemaVersion <n>; the export is <m>`, or `Docs site has no manifest` | `pm-docs-site check`, then its upgrade item |
    | 21 | `STACK.md` is missing or empty | `<n> stacked operations waiting` | `pm-checkpoint` (`pop`) |
+   | 22 | No open risk in `RISKS.md` has `Reviewed: never`, and every red open risk has a `Mitigation` other than `none` | `<n> unreviewed risks`, or `Red risk without a mitigation: RK-NNN <title>` | `pm-risk review`, or `pm-risk mitigate <RK-NNN>` |
 
    Stop at the first failing check among 1 to 4; later checks depend on
    them.

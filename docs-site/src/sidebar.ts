@@ -11,6 +11,7 @@ export function buildSidebar(): SidebarItem[] {
 				{ label: 'Board', link: '/plan/board/' },
 				{ label: 'Roadmap', link: '/plan/roadmap/' },
 				{ label: 'Log', link: '/plan/log/' },
+				{ label: 'Risks', link: '/plan/risks/' },
 			],
 		},
 		...(modules.architecture ? [{ label: 'Architecture', link: '/architecture/overview/' }] : []),

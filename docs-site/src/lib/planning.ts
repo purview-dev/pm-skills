@@ -7,13 +7,13 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import type { Owner, Planning, Size } from './planning-types';
+import type { Level, Owner, Planning, Rag, Risk, Size } from './planning-types';
 
 /** Where the export lives, relative to the site root (`docs-site`). */
 const DEFAULT_PATH = '../planning/planning.json';
 
 /** The pm-export `schemaVersion` this site reads (pm-docs-site keeps it equal to pm-export's schema). */
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 export class PlanningExportError extends Error {
 	constructor(message: string) {
@@ -138,6 +138,39 @@ export function roadmapGroups(planning: Planning): RoadmapGroup[] {
 
 function withProgress(events: TimelineEvent[]): Pick<RoadmapGroup, 'events' | 'progress'> {
 	return { events, progress: { done: events.filter((event) => event.status === 'done').length, total: events.length } };
+}
+
+const LEVELS: Level[] = ['low', 'medium', 'high'];
+
+/**
+ * The RAG the PM rules derive from likelihood and impact (low 1, medium 2,
+ * high 3; a product of 6 or more is red, 3 or 4 amber, otherwise green).
+ * A risk's own `rag` may differ when it carries an override; it colours the
+ * risk, and this colours a matrix cell.
+ */
+export function derivedRag(likelihood: Level, impact: Level): Rag {
+	const score = (LEVELS.indexOf(likelihood) + 1) * (LEVELS.indexOf(impact) + 1);
+
+	return score >= 6 ? 'red' : score >= 3 ? 'amber' : 'green';
+}
+
+export interface MatrixCell {
+	likelihood: Level;
+	impact: Level;
+	rag: Rag;
+	risks: Risk[];
+}
+
+/** The likelihood × impact grid: rows from high impact down, columns from low likelihood up. */
+export function riskMatrix(risks: Risk[]): MatrixCell[][] {
+	return [...LEVELS].reverse().map((impact) =>
+		LEVELS.map((likelihood) => ({
+			likelihood,
+			impact,
+			rag: derivedRag(likelihood, impact),
+			risks: risks.filter((risk) => risk.likelihood === likelihood && risk.impact === impact),
+		})),
+	);
 }
 
 /** The site URL of a docs/ file named in the plan, or `null` when it is not one. */

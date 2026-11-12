@@ -1,8 +1,8 @@
 {
   "$schema": "./planning.schema.json",
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "generatedAt": "2026-11-09T12:50:07+00:00",
-  "generator": { "skill": "pm-export", "skillsVersion": 10, "rulesVersion": 10 },
+  "generator": { "skill": "pm-export", "skillsVersion": 12, "rulesVersion": 12 },
   "project": { "pmRoot": "planning/", "defaultBranch": "main", "branchPattern": "feat/<id>-<slug>" },
   "source": { "branch": "feat/r-012-invoice-export", "head": "ed9fac2a1b2c3d4e5f60718293a4b5c6d7e8f901" },
   "vision": { "problem": null, "customer": null, "outcomes": [], "outOfScope": [], "constraints": { "timeAvailable": null, "budget": null, "stack": null } },
@@ -66,6 +66,17 @@
   },
   "inbox": [],
   "briefs": [],
-  "counts": { "next": 2, "later": 1, "nextMax": 5, "openInbox": 7, "discuss": 6, "shapingBriefs": 1, "done": 3, "dropped": 1, "blockers": 0 },
+  "risks": {
+    "open": [
+      { "id": "RK-002", "title": "Mail provider throttles bulk sends", "likelihood": "high", "impact": "high", "rag": "red", "ragOverride": null, "status": "mitigating", "owner": "agent", "affects": "R-013", "trigger": "More than 1% of sends return 429", "mitigation": "R-014 Retry failed invoice emails", "raised": "2026-11-05 (user)", "reviewed": "2026-11-08", "closed": null },
+      { "id": "RK-004", "title": "CSV opens garbled in spreadsheets", "likelihood": "low", "impact": "medium", "rag": "amber", "ragOverride": "tenants are accountants (derived green, 2026-11-09)", "status": "open", "owner": "user", "affects": "R-012", "trigger": null, "mitigation": null, "raised": "2026-11-09 (agent (R-012 execute))", "reviewed": "2026-11-09", "closed": null },
+      { "id": "RK-005", "title": "Invoice totals round differently", "likelihood": "low", "impact": "low", "rag": "green", "ragOverride": null, "status": "accepted", "owner": "agent", "affects": null, "trigger": null, "mitigation": null, "raised": "2026-11-09 (user)", "reviewed": "never", "closed": null }
+    ],
+    "closed": [
+      { "id": "RK-001", "title": "No tenant signs up in the beta", "likelihood": "medium", "impact": "high", "rag": "red", "ragOverride": null, "status": "closed", "owner": "user", "affects": "M1", "trigger": null, "mitigation": null, "raised": "2026-10-20 (user)", "reviewed": "2026-11-01", "closed": "2026-11-03: twelve tenants signed up" }
+    ],
+    "removed": [{ "date": "2026-11-06", "id": "RK-003", "title": "Mail provider limits", "reason": "duplicate of RK-002" }]
+  },
+  "counts": { "next": 2, "later": 1, "nextMax": 5, "openInbox": 7, "discuss": 6, "shapingBriefs": 1, "done": 3, "dropped": 1, "blockers": 0, "openRisks": 3, "redRisks": 1, "amberRisks": 1, "greenRisks": 1 },
   "checks": { "reviewDue": false, "lastReview": "2026-11-04", "claimable": ["R-013"], "drift": false }
 }

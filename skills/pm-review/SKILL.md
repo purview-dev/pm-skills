@@ -65,9 +65,14 @@ root is its `PM state directory` setting (default `planning/`).
    - `Owner: user` items that block agent items and have not moved since
      the last review.
    - The active item running longer than twice the average from `LOG.md`.
+   - Open risks in `RISKS.md` (Shared definitions: Risk register) with
+     `Reviewed: never` or a date before the last review, and red risks whose
+     `Mitigation` is `none`.
 
    For each, name the item as `R-NNN <title>`, propose one fix, and ask a
-   choice question with the fix first plus `Explain <ID>`.
+   choice question with the fix first plus `Explain <ID>`. Risks are not
+   changed here: name them as `RK-NNN <title> (<RAG>)` and recommend
+   `pm-risk review` in "Do this next".
 5. **Order Next.** Apply the **Roadmap order and edits** rules. If Next is
    above its max, propose which items move to Later. If it has fewer
    claimable items than the max, propose promotions from Later. Order Next
@@ -94,12 +99,13 @@ root is its `PM state directory` setting (default `planning/`).
 - Inbox: <before> to <after> (<n> to shape)
 - Next: <n>/<max>. Later: <n>.
 - Focus: <M Name> <done>/<total>
+- Risks: <n> open (<r> red, <a> amber, <g> green), <n> to review
 - Challenges: <n> raised, <n> applied
 - PM state: <commit result>
 
 ## Do this next
 
-1. <Run pm-shape on <title> | Run pm-strategy: <reason> | Run pm-next>
+1. <Run pm-shape on <title> | Run pm-risk review | Run pm-strategy: <reason> | Run pm-next>
    - Start with: <skill name>
    - Done when: <brief written | STRATEGY.md updated | NOW.md shows the claimed item>
 ```

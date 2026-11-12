@@ -1,6 +1,6 @@
 {
   "$schema": "./planning.schema.json",
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "generatedAt": "2026-11-08T14:22:05+00:00",
   "generator": {
     "skill": "pm-export",
@@ -365,6 +365,68 @@
       "doneWhen": "A tenant sees one invoice for the current period."
     }
   ],
+  "risks": {
+    "open": [
+      {
+        "id": "RK-002",
+        "title": "Payment provider changes its API",
+        "likelihood": "medium",
+        "impact": "high",
+        "rag": "red",
+        "ragOverride": null,
+        "status": "mitigating",
+        "owner": "agent",
+        "affects": "M1",
+        "trigger": "The provider announces a breaking version",
+        "mitigation": "R-009 Wrap the provider behind one adapter",
+        "raised": "2026-11-05 (user)",
+        "reviewed": "2026-11-08",
+        "closed": null
+      },
+      {
+        "id": "RK-003",
+        "title": "Seed data leaks real tenant names",
+        "likelihood": "medium",
+        "impact": "medium",
+        "rag": "amber",
+        "ragOverride": null,
+        "status": "open",
+        "owner": "agent",
+        "affects": null,
+        "trigger": null,
+        "mitigation": null,
+        "raised": "2026-11-09 (agent (R-007 execute))",
+        "reviewed": "never",
+        "closed": null
+      }
+    ],
+    "closed": [
+      {
+        "id": "RK-001",
+        "title": "No one signs the hosting contract",
+        "likelihood": "low",
+        "impact": "medium",
+        "rag": "amber",
+        "ragOverride": "the contract has a 30-day notice period (derived green, 2026-11-01)",
+        "status": "closed",
+        "owner": "user",
+        "affects": null,
+        "trigger": "The contract is not signed by 2026-11-07",
+        "mitigation": null,
+        "raised": "2026-10-30 (user)",
+        "reviewed": "2026-11-01",
+        "closed": "2026-11-06: the contract is signed"
+      }
+    ],
+    "removed": [
+      {
+        "date": "2026-11-02",
+        "id": "RK-004",
+        "title": "Duplicate of RK-002",
+        "reason": "duplicate"
+      }
+    ]
+  },
   "counts": {
     "next": 2,
     "later": 1,
@@ -374,7 +436,11 @@
     "shapingBriefs": 0,
     "done": 1,
     "dropped": 1,
-    "blockers": 0
+    "blockers": 0,
+    "openRisks": 2,
+    "redRisks": 1,
+    "amberRisks": 1,
+    "greenRisks": 0
   },
   "checks": {
     "reviewDue": false,
