@@ -18,7 +18,10 @@ const figures = [
 	{ label: 'Done', value: counts.done },
 	{ label: 'Open ideas', value: counts.openInbox },
 	{ label: 'Blocked', value: counts.blockers },
+	{ label: 'Red risks', value: `${counts.redRisks} of ${counts.openRisks}` },
 ];
+
+const redRisks = planning.risks.open.filter((risk) => risk.rag === 'red');
 ---
 
 <StarlightPage
@@ -76,11 +79,27 @@ const figures = [
 	</section>
 
 	<section>
+		<h2>Red risks</h2>
+		{redRisks.length === 0 && <p class="plan-empty">No open risk is red.</p>}
+		<ul>
+			{
+				redRisks.map((risk) => (
+					<li>
+						<span class="rag rag--red">red</span> <a href={`/plan/risks/#${risk.id.toLowerCase()}`}><strong>{risk.id}</strong></a>{' '}
+						{risk.title} — mitigation: {risk.mitigation ?? 'none'}
+					</li>
+				))
+			}
+		</ul>
+	</section>
+
+	<section>
 		<h2>Read on</h2>
 		<ul>
 			<li><a href="/plan/board/">Board</a> — Now, Next, For you, Waiting and Done</li>
 			<li><a href="/plan/roadmap/">Roadmap</a> — milestones in order</li>
 			<li><a href="/plan/log/">Log</a> — done, dropped and reviews</li>
+			<li><a href="/plan/risks/">Risks</a> — the risk register by RAG status</li>
 			{modules.architecture && <li><a href="/architecture/overview/">Architecture</a> — the LikeC4 views</li>}
 			{modules.repoDocs && <li>Documentation — the repository's Markdown, grouped in the sidebar</li>}
 		</ul>

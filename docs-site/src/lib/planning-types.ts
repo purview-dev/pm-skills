@@ -1,8 +1,10 @@
-// The part of planning/planning.json (pm-export, schemaVersion 2) the site reads.
+// The part of planning/planning.json (pm-export, schemaVersion 3) the site reads.
 // The full shape is planning/planning.schema.json; only what the pages use is typed.
 
 export type Owner = 'agent' | 'user' | 'both';
 export type Size = 'S' | 'M' | 'L';
+export type Level = 'low' | 'medium' | 'high';
+export type Rag = 'red' | 'amber' | 'green';
 
 export interface ItemRef {
 	id: string;
@@ -62,8 +64,32 @@ export interface Activity {
 	result: string | null;
 }
 
+export interface Risk {
+	id: string;
+	title: string;
+	likelihood: Level;
+	impact: Level;
+	rag: Rag;
+	ragOverride: string | null;
+	status: 'open' | 'mitigating' | 'accepted' | 'closed';
+	owner: Owner;
+	affects: string | null;
+	trigger: string | null;
+	mitigation: string | null;
+	raised: string | null;
+	reviewed: string | null;
+	closed: string | null;
+}
+
+export interface RemovedRisk {
+	date: string;
+	id: string;
+	title: string;
+	reason: string | null;
+}
+
 export interface Planning {
-	schemaVersion: 2;
+	schemaVersion: 3;
 	generatedAt: string;
 	source: { branch: string | null; head: string | null };
 	strategy: {
@@ -84,6 +110,7 @@ export interface Planning {
 		activity: Activity[];
 	};
 	log: { done: DoneEntry[] };
+	risks: { open: Risk[]; closed: Risk[]; removed: RemovedRisk[] };
 	counts: {
 		next: number;
 		later: number;
@@ -94,6 +121,10 @@ export interface Planning {
 		done: number;
 		dropped: number;
 		blockers: number;
+		openRisks: number;
+		redRisks: number;
+		amberRisks: number;
+		greenRisks: number;
 	};
 	checks: { reviewDue: boolean; lastReview: string | null; claimable: string[]; drift: boolean };
 }

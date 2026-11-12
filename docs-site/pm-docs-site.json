@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "modules": ["repo-docs"],
   "values": {
     "SITE_TITLE": "pm-skills project",

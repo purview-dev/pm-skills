@@ -1,11 +1,11 @@
 {
   "$schema": "./planning.schema.json",
-  "schemaVersion": 2,
-  "generatedAt": "2026-11-10T08:03:25+00:00",
+  "schemaVersion": 3,
+  "generatedAt": "2026-11-12T10:29:24+00:00",
   "generator": {
     "skill": "pm-export",
-    "skillsVersion": 11,
-    "rulesVersion": 11
+    "skillsVersion": 12,
+    "rulesVersion": 12
   },
   "project": {
     "pmRoot": "planning/",
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "main",
-    "head": "28abe2c828afac54ac631a7cc67f1fe3622ea1d5"
+    "head": "83ba3848cfebc91c9c563fbbeb4531381c2ae04a"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -292,6 +292,11 @@
   },
   "inbox": [],
   "briefs": [],
+  "risks": {
+    "open": [],
+    "closed": [],
+    "removed": []
+  },
   "counts": {
     "next": 4,
     "later": 3,
@@ -301,7 +306,11 @@
     "shapingBriefs": 0,
     "done": 0,
     "dropped": 0,
-    "blockers": 0
+    "blockers": 0,
+    "openRisks": 0,
+    "redRisks": 0,
+    "amberRisks": 0,
+    "greenRisks": 0
   },
   "checks": {
     "reviewDue": false,

@@ -47,8 +47,10 @@ directory` setting (default `planning/`).
 2. Every key is present. Empty is `null`; an empty collection is `[]`.
 3. Arrays are ordered: `roadmap.next` by position, `roadmap.later` by
    milestone order from `STRATEGY.md` with `Unassigned` last and then by
-   position, `inbox` by file name, `briefs` by path, and `log.done`,
-   `log.dropped`, `log.reviews`, and `board.activity` newest first.
+   position, `inbox` by file name, `briefs` by path, `risks.open` in
+   register order (red, amber, green, then ID), and `log.done`,
+   `log.dropped`, `log.reviews`, `board.activity`, `risks.closed`, and
+   `risks.removed` newest first.
 4. Values are copied, not summarised: no prose, no percentages, no
    judgements. Totals live in `counts` only.
 5. Only `generatedAt`, `source.branch`, and `source.head` may differ between
@@ -65,7 +67,7 @@ Top-level keys, in order:
 | Key | Read from | Contents |
 | --- | --- | --- |
 | `$schema` | constant | `"./planning.schema.json"` |
-| `schemaVersion` | constant | `2`; bump it with the schema when the shape changes, together with `pm-docs-site`'s templates |
+| `schemaVersion` | constant | `3`; bump it with the schema when the shape changes, together with `pm-docs-site`'s templates |
 | `generatedAt` | clock | local ISO 8601 with offset: bash `date +%Y-%m-%dT%H:%M:%S%:z`, PowerShell `Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"` |
 | `generator` | this skill | `skill: "pm-export"`, `skillsVersion` from the marker in `pm-setup`'s reference, `rulesVersion` from `config.md` |
 | `project` | `config.md` | `pmRoot`, `defaultBranch`, `branchPattern` |
@@ -79,7 +81,8 @@ Top-level keys, in order:
 | `log` | `LOG.md` | `done[]`, `dropped[]`, `reviews[]` |
 | `inbox` | `inbox/*.md` | One entry per file, `README.md` excluded |
 | `briefs` | `briefs/*.md` | One entry per file, `README.md` excluded |
-| `counts` | derived | `next`, `later`, `nextMax`, `openInbox`, `discuss`, `shapingBriefs`, `done`, `dropped`, `blockers` |
+| `risks` | `RISKS.md` | `open[]` and `closed[]`, each a risk object, and `removed[]` |
+| `counts` | derived | `next`, `later`, `nextMax`, `openInbox`, `discuss`, `shapingBriefs`, `done`, `dropped`, `blockers`, `openRisks`, `redRisks`, `amberRisks`, `greenRisks` |
 | `checks` | derived | `reviewDue`, `lastReview`, `claimable[]`, `drift` |
 
 An **item object** has these keys, in this order:
@@ -133,14 +136,22 @@ Remaining objects:
   problem, doneWhen, revisions[]}`, where `problem` and `doneWhen` are the
   text under `## Problem` and `## Done when` (first line of each), and
   `revisions` holds `{date, text}` read from `## Revisions`.
+- A **risk object** is `{id, title, likelihood, impact, rag, ragOverride,
+  status, owner, affects, trigger, mitigation, raised, reviewed, closed}`,
+  read from one `### RK-NNN <Title>` block (Shared definitions: Risk
+  register). `rag` is the `RAG` value written, never recomputed here;
+  `ragOverride`, `affects`, `trigger`, and `mitigation` are `null` for
+  `none`; `closed` is the `Closed` text, `null` while the risk is open.
+  `risks.removed[]` is `{date, id, title, reason}`. `counts.openRisks` is
+  `risks.open` and the RAG counts split it by `rag`.
 - `checks.drift` follows the **Drift** definition and `checks.reviewDue`
   follows **Review due**.
 
 ## Steps (write)
 
 1. Read every PM file: `config.md`, `VISION.md`, `STRATEGY.md`, `NOW.md`,
-   `ROADMAP.md`, `LOG.md`, `inbox/`, and `briefs/` (`STACK.md` is not
-   exported). A missing optional file is empty (Shared definitions:
+   `ROADMAP.md`, `LOG.md`, `RISKS.md`, `inbox/`, and `briefs/` (`STACK.md`
+   is not exported). A missing optional file is empty (Shared definitions:
    Optional files).
 2. Build the document in the field-map order, applying the format rules.
    Where a value is not written in the file, use `null`, never a guess; state
@@ -168,10 +179,12 @@ Remaining objects:
    nothing.
 2. **Validate** both files: they parse; every `required` key is present at
    the top level; no key outside the schema is present; `schemaVersion`
-   equals the schema const; `section`, `owner`, `size`, `status.value`, and
-   `label` hold values the schema allows.
+   equals the schema const; `section`, `owner`, `size`, `status.value`,
+   `label`, and each risk's `likelihood`, `impact`, `rag`, and `status`
+   hold values the schema allows.
 3. **Compare** with the Markdown and git: `now.item`, `now.status`, the
-   `roadmap.next` and `roadmap.later` ID order, `counts`, `checks`, and
+   `roadmap.next` and `roadmap.later` ID order, the `risks.open` ID order
+   and RAG values, `counts`, `checks`, and
    `source.head` against `git rev-parse HEAD`.
 4. Report the first difference in one line, for example `roadmap.next[2] is
    R-012 in ROADMAP.md and R-009 in the export.`, or `current`.
@@ -184,7 +197,7 @@ Remaining objects:
 ```markdown
 ## Export <YYYY-MM-DD>
 
-- File: <PM root>/planning.json (<n> KB | <n> items, <n> inbox, <n> briefs)
+- File: <PM root>/planning.json (<n> KB | <n> items, <n> inbox, <n> briefs, <n> risks)
 - Schema: <PM root>/planning.schema.json (<n | refreshed | unchanged>)
 - Checked: <keys and counts match | first difference>
 - PM state: <commit result>

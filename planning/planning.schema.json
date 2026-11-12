@@ -21,6 +21,7 @@
     "log",
     "inbox",
     "briefs",
+    "risks",
     "counts",
     "checks"
   ],
@@ -29,7 +30,7 @@
       "const": "./planning.schema.json"
     },
     "schemaVersion": {
-      "const": 2
+      "const": 3
     },
     "generatedAt": {
       "type": "string",
@@ -83,6 +84,9 @@
       "items": {
         "$ref": "#/$defs/brief"
       }
+    },
+    "risks": {
+      "$ref": "#/$defs/risks"
     },
     "counts": {
       "$ref": "#/$defs/counts"
@@ -255,7 +259,11 @@
         "shapingBriefs",
         "done",
         "dropped",
-        "blockers"
+        "blockers",
+        "openRisks",
+        "redRisks",
+        "amberRisks",
+        "greenRisks"
       ],
       "properties": {
         "next": {
@@ -293,8 +301,165 @@
         "blockers": {
           "type": "integer",
           "minimum": 0
+        },
+        "openRisks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "redRisks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "amberRisks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "greenRisks": {
+          "type": "integer",
+          "minimum": 0
         }
       }
+    },
+    "risks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "open",
+        "closed",
+        "removed"
+      ],
+      "properties": {
+        "open": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/risk"
+          }
+        },
+        "closed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/risk"
+          }
+        },
+        "removed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/removedRisk"
+          }
+        }
+      }
+    },
+    "risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "likelihood",
+        "impact",
+        "rag",
+        "ragOverride",
+        "status",
+        "owner",
+        "affects",
+        "trigger",
+        "mitigation",
+        "raised",
+        "reviewed",
+        "closed"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/riskId"
+        },
+        "title": {
+          "type": "string"
+        },
+        "likelihood": {
+          "$ref": "#/$defs/level"
+        },
+        "impact": {
+          "$ref": "#/$defs/level"
+        },
+        "rag": {
+          "enum": [
+            "red",
+            "amber",
+            "green"
+          ]
+        },
+        "ragOverride": {
+          "$ref": "#/$defs/text"
+        },
+        "status": {
+          "enum": [
+            "open",
+            "mitigating",
+            "accepted",
+            "closed"
+          ]
+        },
+        "owner": {
+          "enum": [
+            "agent",
+            "user",
+            "both"
+          ]
+        },
+        "affects": {
+          "$ref": "#/$defs/text"
+        },
+        "trigger": {
+          "$ref": "#/$defs/text"
+        },
+        "mitigation": {
+          "$ref": "#/$defs/text"
+        },
+        "raised": {
+          "$ref": "#/$defs/text"
+        },
+        "reviewed": {
+          "$ref": "#/$defs/text"
+        },
+        "closed": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "removedRisk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "date",
+        "id",
+        "title",
+        "reason"
+      ],
+      "properties": {
+        "date": {
+          "type": "string"
+        },
+        "id": {
+          "$ref": "#/$defs/riskId"
+        },
+        "title": {
+          "type": "string"
+        },
+        "reason": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    },
+    "level": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "riskId": {
+      "type": "string",
+      "pattern": "^RK-[0-9]{3,}$"
     },
     "checks": {
       "type": "object",

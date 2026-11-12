@@ -88,7 +88,8 @@ root. Relative paths are kept in one constant per file.
       plan/board.astro        Board
       plan/roadmap.astro      Roadmap
       plan/log.astro          Log
-    styles/components.css     Token mapping and board layout
+      plan/risks.astro        Risks
+    styles/components.css     Token mapping, board layout, and RAG badges
     modules.ts                Which optional modules (section 9) are installed
     sidebar.ts                The sidebar
     docs-sidebar.ts           The repository Markdown's sidebar groups (none without repo-docs)
@@ -124,7 +125,7 @@ unnoticed: `site.ts check` lists any file that differs.
 a schema change ships with a template change and `pm-docs-site upgrade`
 carries it to an installed site.
 
-### 4.2 Fields the site reads (schemaVersion 2)
+### 4.2 Fields the site reads (schemaVersion 3)
 
 Type only what the pages use (`planning-types.ts`); the full shape is
 `<PM root>/planning.schema.json`.
@@ -140,8 +141,16 @@ Type only what the pages use (`planning-types.ts`); the full shape is
 | `board.columns` `{now, next, foryou, waiting, done}` | Board |
 | `board.activity[]` `{date, kind, id, title, result}` | Log |
 | `log.done[]` `{date, id, title, milestone, owner, plan, result}` | Roadmap (done events), Log (plan links) |
-| `counts` `{next, nextMax, later, done, openInbox, blockers}` | Home figures |
+| `counts` `{next, nextMax, later, done, openInbox, blockers, openRisks, redRisks}` | Home figures |
+| `counts` `{redRisks, amberRisks, greenRisks, openRisks}` | Risks figures |
 | `checks.claimable[]` | Home "Ready to start" |
+| `risks.open[]` (risk objects) | Home "Red risks", Risks (matrix and Open table) |
+| `risks.closed[]` `{id, title, rag, closed}` | Risks (Closed table) |
+| `risks.removed[]` `{date, id, title, reason}` | Risks (Removed list) |
+
+A risk object is `{id, title, likelihood, impact, rag, ragOverride, status,
+owner, affects, trigger, mitigation, raised, reviewed, closed}`. The site
+shows `rag` as written; it never recomputes a risk's RAG.
 
 Column order and membership on the board are the export's
 `board.columns`, which mirror the `pm-board` skill. The site never
@@ -155,6 +164,9 @@ recomputes which item belongs in which column.
 - `item.label`: `next | later | blocked | waiting`.
 - `item.status.value`: `ready | paused | blocked`.
 - `activity.kind`: `done | dropped | review`.
+- `risk.likelihood`, `risk.impact`: `low | medium | high`.
+- `risk.rag`: `red | amber | green`.
+- `risk.status`: `open | mitigating | accepted | closed`.
 
 ## 5. Fixed derivations
 
@@ -168,6 +180,8 @@ These are the only values the site derives. Each is a pure function in
 | `roadmapGroups(planning)` | Groups of timeline events (below) | The Roadmap page |
 | `docsHref(path)` | `docs/<x>.md` → `/<x>/`; anything else → `null` | Links a done item's plan to its page |
 | Board Now progress | `round(plan.checked / plan.total * 100)`, `0` when no plan or `total` is 0 | The task card's progress bar |
+| `derivedRag(likelihood, impact)` | `low` 1, `medium` 2, `high` 3; product 6 or more → `red`, 3 or 4 → `amber`, else `green` | Colours a matrix cell; the same rule `pm-risk` applies |
+| `riskMatrix(risks)` | 3 rows (impact `high`, `medium`, `low`) of 3 cells (likelihood `low`, `medium`, `high`), each `{likelihood, impact, rag, risks[]}` | The Risks matrix |
 
 `roadmapGroups` returns one group per `strategy.milestones[]` entry, in that
 order, then one `No milestone` group only if it has events. An entry belongs to
@@ -239,12 +253,16 @@ Starlight `template: 'splash'`. Sections, in order:
 
 1. **Focus:** `strategy.focus.milestone` (or `No focus set`), `whyNow` when
    present, then `Now: <id> <title> (<stage>)` or `Nothing is in progress.`
-2. **Figures:** a grid of five tiles: `In Next` (`<next> of <nextMax>`),
-   `In Later`, `Done`, `Open ideas` (`openInbox`), `Blocked` (`blockers`).
+2. **Figures:** a grid of six tiles: `In Next` (`<next> of <nextMax>`),
+   `In Later`, `Done`, `Open ideas` (`openInbox`), `Blocked` (`blockers`),
+   `Red risks` (`<redRisks> of <openRisks>`).
 3. **Ready to start:** `checks.claimable` as `<ID> <title>`, the title looked
    up in `roadmap.next`/`later`, or `Nothing in Next can be started.`
-4. **Read on:** links to Board, Roadmap, Log, and any installed modules
-   (`src/modules.ts`).
+4. **Red risks:** each `risks.open` entry whose `rag` is `red`, as a RAG
+   badge, `<id>` linked to its row on the Risks page, the title, and its
+   mitigation (`none` when `null`), or `No open risk is red.`
+5. **Read on:** links to Board, Roadmap, Log, Risks, and any installed
+   modules (`src/modules.ts`).
 
 ### 7.2 Board: `/plan/board/` (`pages/plan/board.astro`)
 
@@ -289,11 +307,33 @@ Item, and Result. `Kind` is a small badge (`done` green, `dropped` red,
 `review` neutral). A `done` row whose `log.done` entry has a `plan` under
 `docs/` links to that plan's page via `docsHref`, as `(plan)`.
 
-### 7.5 Sidebar
+### 7.5 Risks: `/plan/risks/` (`pages/plan/risks.astro`)
+
+The risk register, in this order:
+
+1. **Figures:** `Open risks: <openRisks>`, then four tiles: `Red`, `Amber`,
+   `Green` (the `counts`), and `Closed` (`risks.closed` length).
+2. **Likelihood × impact:** the `riskMatrix(risks.open)` grid, each cell
+   coloured by its `rag` and listing its risk IDs, each linked to the risk's
+   row. An empty cell shows `–`.
+3. **Open:** a table of `risks.open` in export order with the columns RAG,
+   Risk (`<id> <title>`, then `affects`, `trigger`, and `ragOverride` when
+   present), Likelihood, Impact, Status, Owner, Mitigation (`none` when
+   `null`), and Reviewed. Each row's `id` attribute is the lowercase risk
+   ID, the target of the matrix and Home links. Empty: `No open risks.`
+4. **Closed:** a table of `risks.closed` with RAG, Risk, and Closed. Empty:
+   `No closed risks.`
+5. **Removed:** `<date> <id> <title>. Reason: <reason>`, only when
+   `risks.removed` has entries.
+
+RAG is shown as a badge (`.rag`, `.rag--<rag>` in `styles/components.css`)
+that always prints the word, so colour is never the only signal.
+
+### 7.6 Sidebar
 
 Built in `src/sidebar.ts` and passed to Starlight:
 
-1. **Plan:** Board, Roadmap, Log.
+1. **Plan:** Board, Roadmap, Log, Risks.
 2. Each installed module (section 9), as one group or link.
 
 ## 8. Commands
@@ -402,13 +442,16 @@ real project data) cover:
 - `roadmapGroups`: milestone order with `No milestone` last, milestones with
   no items kept, event status (done, active, pending), `progress`, `isFocus`.
 - `docsHref`: a `docs/` path, a non-`docs/` path, `null`.
+- `derivedRag`: all nine likelihood and impact pairs.
+- `riskMatrix`: row and column order, each cell's derived RAG (not a
+  risk's override), and each risk in its cell.
 
 The site is done when:
 
 1. `just docs-check` passes: all tests, `astro check` 0 errors, and the
    build completes.
-2. `just docs` serves Home, Board, Roadmap, and Log with HTTP 200, each
-   showing the export stamp.
+2. `just docs` serves Home, Board, Roadmap, Log, and Risks with HTTP 200,
+   each showing the export stamp.
 3. The Board shows five columns in one row at 1440, 1024, and 700px widths.
 4. Every value on a plan page can be found in `planning.json`, or comes from
    a section 5 derivation.

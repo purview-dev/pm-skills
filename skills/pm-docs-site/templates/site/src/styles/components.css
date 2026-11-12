@@ -53,6 +53,50 @@
 	margin: 0;
 }
 
+/* A risk's RAG status, wherever it is shown: the word is always printed, so
+   the colour is never the only signal. */
+.rag {
+	display: inline-block;
+	padding: 0.1rem 0.45rem;
+	border-radius: 4px;
+	border: 1px solid var(--sl-color-hairline);
+	font-size: var(--sl-text-xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	white-space: nowrap;
+}
+
+.rag--red {
+	color: #b91c1c;
+	background: #ef44441a;
+	border-color: #ef444466;
+}
+
+.rag--amber {
+	color: #b45309;
+	background: #f59e0b1a;
+	border-color: #f59e0b66;
+}
+
+.rag--green {
+	color: #047857;
+	background: #10b9811a;
+	border-color: #10b98166;
+}
+
+:root[data-theme='dark'] .rag--red {
+	color: #fca5a5;
+}
+
+:root[data-theme='dark'] .rag--amber {
+	color: #fcd34d;
+}
+
+:root[data-theme='dark'] .rag--green {
+	color: #6ee7b7;
+}
+
 .export-stamp {
 	color: var(--sl-color-gray-3);
 	font-size: var(--sl-text-xs);

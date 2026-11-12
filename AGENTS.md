@@ -27,7 +27,9 @@ the user or the agent) without interrupting active work. `pm-shape`
 discusses and challenges one idea into a brief, `pm-discover` analyses the
 existing product for evidence, and `pm-strategy` owns vision, milestones,
 and roadmap generation. `pm-bug` logs a defect with the facts a fix needs
-and routes it, `pm-revise` corrects built work, and `pm-checkpoint`
+and routes it, `pm-risk` captures a risk at any time (like `pm-park`) and
+manages the risk register (`RISKS.md`, RAG derived from likelihood and
+impact), `pm-revise` corrects built work, and `pm-checkpoint`
 `push`/`pop` suspends and resumes an operation, so an emergency never loses
 work. `pm-export` writes the derived
 `planning.json` and its schema inside the PM root or checks them.
@@ -209,6 +211,7 @@ repository root.
 | `pm-next` | Pick and claim the next claimable item, hand off to design | No active item, user asks |
 | `pm-park` | Capture an idea, bug, question, or inspiration without derailing | Any time (capture mode only during a workflow) |
 | `pm-bug` | Capture a bug with the facts needed to fix it: symptom, expected and actual, reproduction, severity, and evidence | Any time (capture only during a workflow), user asks |
+| `pm-risk` | Capture, add, update, re-rate, close, or remove one risk in the risk register, with its RAG status; turn a mitigation into a roadmap item | Any time (capture and view only during a workflow), user asks |
 | `pm-shape` | Discuss, challenge, and flesh out one idea; decide park, roadmap, build, or drop | No active workflow, user asks |
 | `pm-discover` | Analyse the existing product, its history and usage, or answer a product question | No active workflow, user asks |
 | `pm-strategy` | Set vision, milestones, bets, and decisions; generate or re-plan the roadmap | User asks, or another PM skill recommends it |
@@ -274,12 +277,12 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
 - **Reference legend:** the short list of the IDs a question uses, each with
   the words needed to decide it: a milestone's name, whether it is the
   focus, and the items in it; a roadmap item's title, owner, size, and
-  status; a `V` line, bet, or inbox file's one-line text. A question that
-  names IDs prints it (Asking the user).
+  status; a risk's title, RAG, and status; a `V` line, bet, or inbox file's
+  one-line text. A question that names IDs prints it (Asking the user).
 - **Optional files:** `STRATEGY.md`, `briefs/`, and `research/` in the PM
-  root may be missing in projects initialised before version 4. Skills that
-  read them treat a missing file as empty. Skills that write them create
-  them.
+  root may be missing in projects initialised before version 4, and
+  `RISKS.md` in projects initialised before version 12. Skills that read
+  them treat a missing file as empty. Skills that write them create them.
 - **Inbox file:** one idea per file at
   `<PM root>/inbox/<YYYY-MM-DD-HHMM>-<slug>.md`, written by `pm-park` and
   `pm-discover`, in this format:
@@ -342,6 +345,42 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   state system. `Severity` drives the recommendation: `blocker` is fixed
   before the active item continues, `major` and `minor` are scheduled,
   `cosmetic` is parked.
+- **Risk register:** `<PM root>/RISKS.md`, written only by `pm-risk`. It
+  has three sections: `## Open` (ordered red, amber, green, then by ID),
+  `## Closed` (newest first), and `## Removed` (one line per risk recorded
+  in error, so its ID is never reused). Optional: a missing file is an
+  empty register. A **risk** is one `### RK-NNN <Title>` block in this
+  format:
+
+  ```markdown
+  ### RK-001 <Title, max 8 words>
+
+  - Likelihood: low | medium | high
+  - Impact: low | medium | high
+  - RAG: red | amber | green
+  - RAG override: <reason | none>
+  - Status: open | mitigating | accepted | closed
+  - Owner: agent | user | both
+  - Affects: <R-NNN, milestone, component, or path | none>
+  - Trigger: <the observable signal that it is happening | none>
+  - Mitigation: <action, or the R-NNN item that carries it | none>
+  - Raised: <YYYY-MM-DD> (<user | agent (<skill or item ID and stage>)>)
+  - Reviewed: <YYYY-MM-DD | never>
+  - Closed: <YYYY-MM-DD>: <reason> (closed risks only)
+  ```
+
+  A removed risk is `- <YYYY-MM-DD> RK-NNN <title>. Reason: <reason>.`
+  under `## Removed`.
+- **Risk IDs:** `RK-NNN` (at least 3 digits), separate from item IDs. A new
+  ID is the highest `RK` number in `RISKS.md` (all three sections), plus 1.
+  IDs are never reused.
+- **RAG:** a risk's red, amber, or green status. It is derived from
+  Likelihood and Impact, scored `low` 1, `medium` 2, `high` 3, by their
+  product: 6 or more is `red`, 3 or 4 is `amber`, 2 or less is `green`. An
+  override sets another value and records why in `RAG override`; without
+  one, `RAG` always equals the derived value, and `pm-risk` recomputes it
+  whenever Likelihood or Impact changes. `Status: accepted` and `closed` keep
+  their RAG for the record.
 - **Revision:** work that was built and is not what the user wanted.
   `pm-revise` records it in the brief's `## Revisions` and the `NOW.md`
   checkpoint while the item is open, or as a new roadmap item whose
@@ -417,8 +456,8 @@ with `Unassigned` last. IDs never change and are never reused when an item
 moves.
 
 The edit skills `pm-board`, `pm-roadmap`, `pm-item`, `pm-review`,
-`pm-strategy`, `pm-checkpoint`, `pm-next`, `pm-bug`, `pm-revise`, and
-`pm-docs-site` (plan) apply these operations. The
+`pm-strategy`, `pm-checkpoint`, `pm-next`, `pm-bug`, `pm-revise`,
+`pm-risk` (mitigate), and `pm-docs-site` (plan) apply these operations. The
 view skills `pm-status`, `pm-board`, `pm-roadmap`, and `pm-up-next` read
 the same state and render it without changing the order or writing.
 
@@ -480,20 +519,23 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    - as the item's completion step, after the execute stage passes its
      `Done when` checks and before the finish step pushes the branch
      (`pm-checkpoint`, `done` only), or
-   - when the agent parks its own finding (`pm-park`, capture mode).
-3. **Mid-workflow, the only permitted PM writes are `pm-park` in capture
-   mode and `pm-checkpoint` (`push`, `pop`) when the user asks to suspend or
-   resume an operation.** `pm-park` writes one inbox file, replies with one
-   line, then resumes the exact step that was in progress; `push` writes one
+   - when the agent parks its own finding (`pm-park`, capture mode), or
+   - when the user or the agent names a risk (`pm-risk`, capture mode).
+3. **Mid-workflow, the only permitted PM writes are `pm-park` and
+   `pm-risk` in capture mode, and `pm-checkpoint` (`push`, `pop`) when the
+   user asks to suspend or resume an operation.** `pm-park` writes one inbox
+   file and `pm-risk` one risk in `RISKS.md`, each replies with one line,
+   then the exact step that was in progress resumes; `push` writes one
    stack entry, `pop` restores the top entry, and both reply in one line
    before the interrupted step resumes. No discussion, no evaluation, no
-   follow-up questions for either. If the user wants to discuss the idea,
-   set `Discuss: yes`; it is discussed later with `pm-shape`. The read-only
-   exceptions: `pm-help` may answer a question about a skill in explain
-   mode, without reading PM state; `pm-rejoin` may run in `locate` mode;
-   `pm-export` and `pm-docs-site` may run in `check` mode; and `pm-status`,
-   `pm-board`, `pm-roadmap`, and `pm-up-next` may render their view when the
-   user explicitly asks for it. None of them may add, move, insert, close,
+   follow-up questions for any of them. If the user wants to discuss the
+   idea, set `Discuss: yes`; it is discussed later with `pm-shape`. A
+   captured risk keeps `Reviewed: never` until `pm-risk` reviews it. The
+   read-only exceptions: `pm-help` may answer a question about a skill in
+   explain mode, without reading PM state; `pm-rejoin` may run in `locate`
+   mode; `pm-export` and `pm-docs-site` may run in `check` mode; and
+   `pm-status`, `pm-board`, `pm-roadmap`, `pm-up-next`, and `pm-risk`
+   (`view`) may render their view when the user explicitly asks for it. None of them may add, move, insert, close,
    or reorder anything during a workflow. In every case the step in
    progress resumes afterwards. The PM write exceptions are rule 8
    (`pm-revise`), rule 10 (`pm-checkpoint` push and pop), the stage update in
@@ -579,9 +621,9 @@ from the user and to the agent's own proposals. It applies in `pm-init`,
 `pm-shape`, `pm-discover`, `pm-strategy`, `pm-purview`, `pm-review`,
 `pm-item` (add and edit), `pm-board` and `pm-roadmap` (add),
 `pm-next` (before claiming), `pm-bug` (duplicate, severity, and impact),
-`pm-revise` (the scope of the rework), and `pm-docs-site` (plan). It never
-applies to `pm-park`
-capture during a workflow.
+`pm-revise` (the scope of the rework), `pm-risk` (add, re-rating, and
+mitigate), and `pm-docs-site` (plan). It never applies to `pm-park` or
+`pm-risk` capture during a workflow.
 
 1. **Problem:** what problem, for whom, and what evidence shows it exists
    (code, data, user reports, `LOG.md`). If there is none, say so.
@@ -692,9 +734,10 @@ Rules:
   (Non-interruption rule 7), commit only the paths this run changed.
 - Commit the PM root only. Source code, specs, plans, and agent instruction
   files are never included, even when the same work changed them.
-- `pm-park` never commits: it runs mid-workflow and must return in one
-  line. Its inbox files are committed by the next skill that commits,
-  usually `pm-checkpoint`.
+- `pm-park` never commits, and `pm-risk` never commits in capture mode:
+  they run mid-workflow and must return in one line. Their inbox files and
+  risks are committed by the next skill that commits, usually
+  `pm-checkpoint`.
 - The **Export file** and its **Export schema** are ordinary PM files
   inside the PM root, so the same commit covers them. `pm-export` is the
   only skill that writes them.
@@ -811,6 +854,12 @@ the first `push`. Version 11 also changes when an item is closed: run
 `pm-checkpoint` (`done`) on the item's branch before the finish step opens
 its pull request, and never close it on the PM branch after the merge.
 
+Version 12 adds the **Risk register** and `pm-risk`. `pm-init` creates
+`<PM root>/RISKS.md` on a fresh install; on an older install a missing file
+is an empty register, and `pm-risk` creates it on the first write. Version
+12 also moves the export to `schemaVersion` 3, which adds `risks`: run
+`pm-export`, and `pm-docs-site upgrade` for an installed docs site.
+
 ## Asking the user (mandatory)
 
 - **Every question uses the agent's interactive question tool** (for
@@ -826,8 +875,8 @@ its pull request, and never close it on the PM branch after the merge.
   covers anything else.
 - Make each question stand on its own. The dialog may hide earlier text,
   so include the ID, title, or fact the user needs to decide.
-- **Name what you reference.** Never ask about a milestone, item, bet, `V`
-  line, brief, or inbox file by ID alone. Print a `## For this question`
+- **Name what you reference.** Never ask about a milestone, item, risk,
+  bet, `V` line, brief, or inbox file by ID alone. Print a `## For this question`
   legend (Communication contract) above the question, listing each ID it
   names with the words needed to decide it (Shared definitions: Reference
   legend). Keep it to the IDs the question uses; do not print the whole
@@ -837,8 +886,8 @@ its pull request, and never close it on the PM branch after the merge.
   `Explain <ID>` when the question names IDs, `Show the roadmap` for a
   milestone, focus, or ordering question, `Show the board` for an owner,
   column, or "what is in progress" question. On `Explain <ID>`, print that
-  item's or milestone's full block from its file (`ROADMAP.md`,
-  `STRATEGY.md`, `LOG.md`, or the brief) — every field, and for a milestone
+  item's, risk's, or milestone's full block from its file (`ROADMAP.md`,
+  `RISKS.md`, `STRATEGY.md`, `LOG.md`, or the brief) — every field, and for a milestone
   its exit criteria and its items — then ask the same question again with
   the same options. On `Show the roadmap` or `Show the board`, run that
   read-only view (`pm-roadmap`, `pm-board`), then ask the same question

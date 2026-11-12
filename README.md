@@ -14,6 +14,11 @@ next action, an explicit "done when", and fixed templates.
 - **Bugs with the facts a fix needs:** `pm-bug` asks for the symptom,
   expected and actual, reproduction, severity, and evidence, checks for a
   duplicate, and routes the defect to a fix or the roadmap.
+- **A risk register with RAG status:** `pm-risk` captures a risk in one
+  line at any time, even mid-task, then adds, updates, re-rates, reviews,
+  closes, or removes it in `planning/RISKS.md`. Each risk's red, amber, or
+  green status is derived from its likelihood and impact, with a recorded
+  override, and a mitigation can become a roadmap item.
 - **Corrections, not pretences:** `pm-revise` handles built work that is not
   what you wanted. It rewinds the active item to an earlier stage, fixes it
   in place, or opens a revision item that revisits the original. It is the
@@ -30,11 +35,11 @@ next action, an explicit "done when", and fixed templates.
   insert items from the board or roadmap with the shared ordering rules.
   Items are owned by the agent, the user, or both.
 - **The plan as data:** `pm-export` writes every roadmap item, board
-  column, milestone, bug, brief, and log entry to `planning/planning.json`
+  column, milestone, bug, brief, risk, and log entry to `planning/planning.json`
   in one fixed shape, with the JSON Schema that describes it, or checks the
   file without writing. The Markdown stays the source of truth.
 - **The plan as a site:** `pm-docs-site` plans a local Astro and Starlight
-  site that renders `planning.json` as Home, Board, Roadmap, and Log pages,
+  site that renders `planning.json` as Home, Board, Roadmap, Log, and Risks pages,
   then builds it from shipped templates inside that item's workflow.
   Optional modules add the repository's `docs/` pages, LikeC4 architecture
   views, and an Aspire AppHost resource. It reads the export only.
@@ -103,6 +108,7 @@ Then, in your agent:
 | [`pm-up-next`](skills/pm-up-next/SKILL.md) | Show the ordered queue and the one next action, without claiming | User asks |
 | [`pm-park`](skills/pm-park/SKILL.md) | Capture an idea, bug, question, or inspiration in one line | Any time |
 | [`pm-bug`](skills/pm-bug/SKILL.md) | Log a defect with the facts a fix needs, and route it | Any time |
+| [`pm-risk`](skills/pm-risk/SKILL.md) | Capture a risk in one line; add, update, re-rate (RAG), review, mitigate, close, or remove risks | Any time (capture and view mid-task) |
 | [`pm-revise`](skills/pm-revise/SKILL.md) | Correct built work: rewind a stage, fix in place, or open a revision item | Built work is wrong, even mid-workflow |
 | [`pm-shape`](skills/pm-shape/SKILL.md) | Brainstorm and challenge one idea into a brief and a decision | No active workflow |
 | [`pm-discover`](skills/pm-discover/SKILL.md) | Analyse code, history, and usage for evidence; answer product questions | No active workflow |
@@ -129,6 +135,7 @@ pm-resume -> pm-next -> [design -> plan -> execute -> finish]
                                                           |
                                           push branch -> one PR -> CI -> merge
 pm-park: any time, capture only.   pm-review: weekly.
+pm-risk: capture a risk any time; manage the register when no workflow is active.
 pm-checkpoint push/pop: emergency suspension; the operation resumes at its checkpoint.
 pm-shape / pm-discover / pm-strategy: think before building, no workflow active.
 pm-item / pm-board / pm-roadmap / pm-status / pm-up-next: on request,
@@ -152,12 +159,12 @@ site renders it.
 ## Non-interruption guarantee
 
 The merged rules make an active workflow own the session. During a
-workflow, only `pm-park` may write, and only to capture, and
+workflow, only `pm-park` and `pm-risk` may write, and only to capture, and
 `pm-checkpoint` (`push`, `pop`) may write one stack entry to suspend or
 resume the operation when you ask; `pm-rejoin` may
 report the position, `pm-help` may explain a skill, `pm-export` and
-`pm-docs-site` may check without writing, and `pm-status`, `pm-board`, `pm-roadmap`, and
-`pm-up-next` may show their read-only view when you ask. None of them may
+`pm-docs-site` may check without writing, and `pm-status`, `pm-board`, `pm-roadmap`,
+`pm-up-next`, and `pm-risk` may show their read-only view when you ask. None of them may
 move, add, insert, or close anything mid-workflow. `pm-revise` may
 interrupt to correct built work when you say it is wrong: it records the
 scope and pauses the item before anything else runs.
@@ -192,6 +199,7 @@ directory selected during `pm-setup`.
 | `planning/ROADMAP.md` | Next (ordered, maximum 5) and Later, with owner and dependencies |
 | `planning/LOG.md` | Done, Dropped, Reviews |
 | `planning/STACK.md` | Suspended operations, newest first, with their checkpoints |
+| `planning/RISKS.md` | The risk register: open, closed, and removed risks with likelihood, impact, and RAG |
 | `planning/inbox/` | The parking lot: one file per idea |
 | `planning/briefs/` | One shaped idea per file: challenges, ramifications, decision |
 | `planning/research/` | One `pm-discover` report per run |
@@ -269,6 +277,15 @@ skill asks once and records the milestone as done in the same commit.
 `planning/STACK.md`, so an emergency never loses work and the interrupted
 operation resumes at its checkpoint. `pm-rejoin` repairs a `merged-unclosed`
 item whose completion missed its branch.
+
+Version 12 adds the risk register and `pm-risk`. `planning/RISKS.md` holds
+one block per risk with likelihood, impact, RAG, status, owner, trigger,
+and mitigation; RAG is derived from likelihood × impact unless an override
+records why. `pm-risk capture` may run mid-workflow like `pm-park`: it
+writes one risk, replies in one line, and never commits. `pm-export` moves
+to `schemaVersion` 3 with a `risks` key, and the docs site gains a Risks
+page with a likelihood × impact matrix, a Red risks tile, and a Home list;
+run `pm-docs-site upgrade` for an installed site.
 
 ## Using a different workflow framework
 
@@ -349,6 +366,7 @@ skills/
   pm-up-next/SKILL.md
   pm-park/SKILL.md
   pm-bug/SKILL.md
+  pm-risk/SKILL.md
   pm-shape/SKILL.md
   pm-discover/SKILL.md
   pm-strategy/SKILL.md

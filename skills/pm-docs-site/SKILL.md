@@ -6,7 +6,7 @@ description: Use when the user asks for a project documentation site, a docs sit
 # pm-docs-site
 
 Build and maintain a local Astro and Starlight site that renders
-`<PM root>/planning.json`: Home, Board, Roadmap, and Log, plus optional
+`<PM root>/planning.json`: Home, Board, Roadmap, Log, and Risks, plus optional
 modules. The site only reads the export. Changing the plan still goes
 through the other `pm-*` skills, and a stale page is fixed with
 `pm-export`.
@@ -19,7 +19,7 @@ directory` setting (default `planning/`).
 
 Spec: `references/spec.md` in this skill's folder. Templates:
 `templates/site/` (the core) and `templates/<module>/` with its
-`MODULE.md`. This skill reads schemaVersion 2.
+`MODULE.md`. This skill reads schemaVersion 3.
 
 ## Modes
 
@@ -75,7 +75,7 @@ Each site records how it was rendered in `<site root>/pm-docs-site.json`:
 
 ```json
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "modules": ["repo-docs"],
   "values": { "SITE_TITLE": "...", "SITE_ROOT": "src/docs-site", "...": "..." }
 }

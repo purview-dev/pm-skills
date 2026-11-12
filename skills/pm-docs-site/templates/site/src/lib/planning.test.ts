@@ -5,7 +5,16 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { docsHref, initials, loadPlanning, PlanningExportError, roadmapGroups, sizeToPriority } from './planning';
+import {
+	derivedRag,
+	docsHref,
+	initials,
+	loadPlanning,
+	PlanningExportError,
+	riskMatrix,
+	roadmapGroups,
+	sizeToPriority,
+} from './planning';
 
 // A synthetic export, never the project's own: the tests must not change when the plan does.
 const FIXTURE = fileURLToPath(new URL('./__fixtures__/planning.json', import.meta.url));
@@ -93,6 +102,48 @@ describe('roadmapGroups', () => {
 
 	it('keeps milestones with no items', () => {
 		expect(groups.find((group) => group.milestone?.id === 'M1')?.events).toEqual([]);
+	});
+});
+
+describe('derivedRag', () => {
+	it('scores likelihood × impact: 6+ red, 3–4 amber, otherwise green', () => {
+		expect(derivedRag('high', 'high')).toBe('red');
+		expect(derivedRag('high', 'medium')).toBe('red');
+		expect(derivedRag('medium', 'high')).toBe('red');
+		expect(derivedRag('medium', 'medium')).toBe('amber');
+		expect(derivedRag('high', 'low')).toBe('amber');
+		expect(derivedRag('low', 'high')).toBe('amber');
+		expect(derivedRag('medium', 'low')).toBe('green');
+		expect(derivedRag('low', 'medium')).toBe('green');
+		expect(derivedRag('low', 'low')).toBe('green');
+	});
+});
+
+describe('riskMatrix', () => {
+	const planning = loadPlanning(FIXTURE);
+	const matrix = riskMatrix(planning.risks.open);
+
+	it('puts high impact first and low likelihood first', () => {
+		expect(matrix.map((row) => row[0]!.impact)).toEqual(['high', 'medium', 'low']);
+		expect(matrix[0]!.map((cell) => cell.likelihood)).toEqual(['low', 'medium', 'high']);
+	});
+
+	it('colours each cell by the derived RAG, not by an override', () => {
+		expect(matrix.map((row) => row.map((cell) => cell.rag))).toEqual([
+			['amber', 'red', 'red'],
+			['green', 'amber', 'red'],
+			['green', 'green', 'amber'],
+		]);
+	});
+
+	it('places each risk in its cell', () => {
+		const placed = matrix.flatMap((row) => row.flatMap((cell) => cell.risks.map((risk) => [risk.id, cell.likelihood, cell.impact])));
+
+		expect(placed).toEqual([
+			['RK-002', 'high', 'high'],
+			['RK-004', 'low', 'medium'],
+			['RK-005', 'low', 'low'],
+		]);
 	});
 });
 

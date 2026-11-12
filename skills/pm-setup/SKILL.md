@@ -64,10 +64,11 @@ Collect these facts. Write nothing yet.
    in `<PM state directory>/config.md`, if that file exists. A legacy
    marker's `version=` counts only when `config.md` records none.
 4. **Installed skills:** for each of `pm-init`, `pm-resume`, `pm-rejoin`,
-   `pm-next`, `pm-up-next`, `pm-park`, `pm-bug`, `pm-shape`, `pm-discover`,
-   `pm-strategy`, `pm-purview`, `pm-checkpoint`, `pm-revise`, `pm-review`,
-   `pm-item`, `pm-board`, `pm-roadmap`, `pm-status`, `pm-export`,
-   `pm-docs-site`, and `pm-help`, check that a `SKILL.md` exists.
+   `pm-next`, `pm-up-next`, `pm-park`, `pm-bug`, `pm-risk`, `pm-shape`,
+   `pm-discover`, `pm-strategy`, `pm-purview`, `pm-checkpoint`,
+   `pm-revise`, `pm-review`, `pm-item`, `pm-board`, `pm-roadmap`,
+   `pm-status`, `pm-export`, `pm-docs-site`, and `pm-help`, check that a
+   `SKILL.md` exists.
    - First run `npx skills list` (or `bunx skills list`), if either runs.
    - Otherwise check `.agents/skills/<name>/`, `.claude/skills/<name>/`,
      and `.github/skills/<name>/` in the repository, then
@@ -76,8 +77,8 @@ Collect these facts. Write nothing yet.
    - A symlink counts. A user-level install counts.
 5. **PM state:** whether the selected directory contains PM state
    (`config.md` and `NOW.md`). If it does, record which of `STRATEGY.md`,
-   `briefs/`, and `research/` are missing (created by version 4 skills on
-   first use). Also run `git check-ignore -q <directory>`. If the
+   `briefs/`, `research/`, and `RISKS.md` are missing (created on first
+   use by version 4 skills, and `RISKS.md` by `pm-risk`). Also run `git check-ignore -q <directory>`. If the
    directory is ignored by git, record it as a warning.
 6. **Workflow skills:** the PM skills hand work to these skills, so each
    must be installed. The list is every skill in the Handoffs table of
@@ -139,7 +140,7 @@ only other question.
 - Mode: install | upgrade v<old> to v<new> | repair (re-wrap the section) | reinstall (section missing, recorded v<n>) | already current (nothing to do)
 - Target: <file> (<append section | replace between markers | wrap the stranded section>)
 - Extra: <@AGENTS.md import added to CLAUDE.md | none>
-- Skills: <n> of 22 installed. Missing: <names | none>
+- Skills: <n> of 23 installed. Missing: <names | none>
 - Rules version: <v<n> recorded | not recorded | legacy v<n> in the marker | PM state not initialised>
 - Workflow framework: <Superpowers | name | partial | none>
 - Workflow skills: <n> of <total> installed. Missing: <names | none>
@@ -240,7 +241,7 @@ Rules for this step:
 ## pm-setup done
 
 - Target: <file> (<installed | upgraded to v<n> | repaired>)
-- Skills: <22 of 22 installed | missing: names>
+- Skills: <23 of 23 installed | missing: names>
 - Workflow skills: <n of n installed | missing: names>
 - Rules version: <v<n> recorded in <PM root>/config.md | legacy v<n> migrated | PM state not initialised>
 - Diff check: only the managed section changed, plus the Rules version line
@@ -251,7 +252,7 @@ Rules for this step:
 
 1. <Only if skills are missing:> Install the missing skills.
    - Start with: `npx skills add https://github.com/purview-dev/pm-skills -y`
-   - Done when: all 22 pm-* skills are listed by `npx skills list`
+   - Done when: all 23 pm-* skills are listed by `npx skills list`
 2. <Only if workflow skills are missing:> Install the workflow skills.
    - Start with: `npx skills add https://github.com/obra/superpowers -y`,
      or `/plugin install superpowers@claude-plugins-official` in Claude
