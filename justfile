@@ -26,9 +26,13 @@ lint-check: validate
 lint-fix:
     bunx markdownlint-cli2 --fix "**/*.md" "#node_modules"
 
-# Bump the release version in package.json (patch, minor, or major).
+# Bump package.json (patch, minor, or major; major also bumps the rules version).
 bump part:
     bun scripts/bump-version.ts {{part}}
+
+# Check the version against main (default: the merge base with origin/main). Used by the lefthook pre-push hook.
+version-check base="":
+    bun scripts/check-version.ts {{base}}
 
 # Serve the project site (plan, README, every skill) at http://localhost:4321. Requires Bun.
 [group('Docs')]

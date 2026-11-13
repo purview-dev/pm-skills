@@ -130,36 +130,43 @@ same `bun` commands as the `just` recipes). Markdown is linted with
   `.agents/skills/<name>/SKILL.md` and sets `metadata.internal: true`, which
   hides it from the `skills` CLI. `just validate` checks its frontmatter and
   requires the flag; it is exempt from the four consumer tables.
-- Bump the release version: `just bump patch|minor|major`
-  (`scripts/bump-version.ts`).
+- Bump the version: `just bump patch|minor|major`
+  (`scripts/bump-version.ts`; `major` is a rules bump).
+- Check the version against main: `just version-check`
+  (`scripts/check-version.ts`).
 
 Hooks are configured in `.config/lefthook.yml`: `commit-msg` runs
 `bunx commitlint --edit {1}` (rules in `commitlint.config.mts`), and
-`pre-push` runs `just lint-check`.
+`pre-push` runs `just lint-check` and `just version-check`.
 
-Releases are driven by the `version` field in `package.json`:
+Releases are driven by the `version` field in `package.json`, and its major
+is the rules/skills version: rules `version=17` ships as `17.x.y`.
 
 - `.github/workflows/release.yml` creates the `v{version}` tag and a GitHub
   release when `package.json` changes on `main`, and skips when the tag
   already exists.
-- `.github/workflows/ci.yml` requires a `package.json` version bump in any
-  pull request that changes `skills/**`, and refuses a version whose
-  `v{version}` tag already exists. A pull request that touches nothing under
-  `skills/` (docs, CI, scripts, this file) merges without a bump.
-- A change to the managed section must also bump its `version=N` marker. CI
-  fails a section change whose marker did not move, because `pm-setup` only
-  replaces the section when the version changes; otherwise the fix never
-  reaches a consumer. `scripts/validate.ts` keeps
-  `skills/pm-init/templates/config.md` equal to the marker, and `pm-setup`
-  writes it to the consumer's `Rules version`.
-- `just bump patch|minor|major` (`scripts/bump-version.ts`) writes the next
-  version and refuses one that is already tagged. The repository-only
-  `release` skill (`.agents/skills/release/SKILL.md`) picks the part from
-  the conventional commits since the last tag, bumps, and commits.
-- The release version and the rules/skills version are independent: the
-  rules/skills version is the `version=N` marker in the managed section
-  (mirrored by `Rules version` in a consumer's `config.md`), bumped by hand
-  when that section changes.
+- `scripts/validate.ts` keeps the versions equal, so the repository runs the
+  release it ships: the `package.json` major,
+  `skills/pm-init/templates/config.md`, `Rules version` in
+  `planning/config.md`, and the section installed in this file all match the
+  `version=N` marker. `pm-setup` writes the last two.
+- `scripts/check-version.ts` compares the branch with the version on `main`
+  (CI: the pull request base; pre-push: the merge base with `origin/main`).
+  A pull request that changes `skills/**` must raise the marker past the one
+  on `main`, so a released version is never merged again, and must use a
+  `package.json` version with no `v{version}` tag. A pull request that
+  touches nothing under `skills/` (docs, CI, scripts, package metadata, this
+  file) keeps the rules version; it may keep `package.json` or raise its
+  minor or patch.
+- `just bump major` raises the marker, the config template, and
+  `package.json` to `<N+1>.0.0`; then run `pm-setup` to install the rules
+  here. `just bump minor|patch` raises `package.json` only, for a release
+  without a skills change. The script refuses a version that is already
+  tagged. The repository-only `release` skill
+  (`.agents/skills/release/SKILL.md`) picks the part, bumps, and commits.
+- Every skills change is a rules bump, so a consumer's `pm-resume` asks it
+  to run `pm-setup` and the change reaches it. Add a `Version N` line to the
+  upgrade notes in the managed section when the rules themselves change.
 
 ## Repository conventions
 
@@ -278,11 +285,17 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   merged. It is reversible: `pm-revise` (`fix-in-place`) removes the
   `## Done` line and restores `NOW.md` at `execute`, and the fix re-runs the
   finish order on the same pull request.
-- **Reference legend:** the short list of the IDs a question uses, each with
-  the words needed to decide it: a milestone's name, whether it is the
-  focus, and the items in it; a roadmap item's title, owner, size, and
-  status; a risk's title, RAG, and status; a `V` line, bet, or inbox file's
-  one-line text. A question that names IDs prints it (Asking the user).
+- **Reference legend:** the short list of the IDs a question or a
+  discussion uses, each with the words needed to decide it: a milestone's
+  name, whether it is the focus, and the items in it; a roadmap item's
+  title, owner, size, status, and section position (`Next 3`, `Later, M2`);
+  a risk's title, RAG, and status; a `V` line, bet, or inbox file's
+  one-line text. It lists every member of a range, not its ends: `M1 to
+  M4` lists M1, M2, M3, and M4, and `R-005 to R-010` lists every item
+  between them in roadmap order. A position (`before R-010`, `after M2`)
+  lists the item or milestone it names and its neighbours on each side, so
+  the user sees where the new position falls. It is printed first, before
+  the text that uses the IDs (Asking the user, Communication contract).
 - **Named reference:** an ID written with the words that identify it, so
   the user never has to look a bare ID up. In a list, board, roadmap, or
   status it is `<ID> <title>`; in a question, choice, or change line it is
@@ -1045,6 +1058,12 @@ search, and hand the write to a non-blocking background task when the
 agent has one, so the step in progress does not wait. `pm-review` runs the
 skipped `Related` search when it triages the file. No setting is added.
 
+Version 17 shows referenced IDs first. Output that discusses `V` lines,
+milestones, bets, or items prints a `## For this discussion` legend before
+the text that names them, and every legend lists each member of a range
+(`M1 to M4`) and the neighbours of a position (`after R-010`). No setting
+is added.
+
 ## Asking the user (mandatory)
 
 - **Every question uses the agent's interactive question tool** (for
@@ -1064,8 +1083,10 @@ skipped `Related` search when it triages the file. No setting is added.
   bet, `V` line, brief, or inbox file by ID alone. Print a `## For this question`
   legend (Communication contract) above the question, listing each ID it
   names with the words needed to decide it (Shared definitions: Reference
-  legend). Keep it to the IDs the question uses; do not print the whole
-  roadmap.
+  legend). A range lists every member and a position lists its neighbours,
+  so `Move R-005 after R-010?` and `Re-plan M1 to M4?` are never asked
+  without them. Keep it to the IDs the question uses; do not print the
+  whole roadmap.
 - **Offer a way to see more.** Add one escape option after the decision
   options; it does not count towards the 2 to 4 and is never an answer.
   `Explain <ID>` when the question names IDs, `Show the roadmap` for a
@@ -1109,6 +1130,13 @@ Output must be literal, predictable, and immediately actionable.
   the plan, brief, or conversation.
 - Before a question that names IDs, print the `## For this question` legend
   (Asking the user). It is the only section a question adds.
+- **Show before discussing.** When output discusses, compares, challenges,
+  or proposes a change to `V` lines, milestones, bets, or items (shaping,
+  strategy, review, reordering, re-planning) and names them by ID, print a
+  `## For this discussion` legend first (Shared definitions: Reference
+  legend), before any sentence that uses the IDs. One legend covers the
+  discussion; print it again only for IDs it does not list. A question in
+  the same output reuses it instead of adding `## For this question`.
 - At most 5 bullets per section, except boards, tables, and lists that a
   skill's template defines as complete. At most 3 sentences per paragraph.
 - State any assumption explicitly as `Assumption: ...`.

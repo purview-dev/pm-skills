@@ -1,4 +1,4 @@
-<!-- pm-skills:start version=16 -->
+<!-- pm-skills:start version=17 -->
 <!-- Managed by pm-setup. Edit outside these markers; content inside is replaced on upgrade.
      Installed copies keep this marker without a version. The version of record is
      `Rules version` in the PM root config.md, so editing or merging this file cannot lose it. -->
@@ -89,11 +89,17 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   merged. It is reversible: `pm-revise` (`fix-in-place`) removes the
   `## Done` line and restores `NOW.md` at `execute`, and the fix re-runs the
   finish order on the same pull request.
-- **Reference legend:** the short list of the IDs a question uses, each with
-  the words needed to decide it: a milestone's name, whether it is the
-  focus, and the items in it; a roadmap item's title, owner, size, and
-  status; a risk's title, RAG, and status; a `V` line, bet, or inbox file's
-  one-line text. A question that names IDs prints it (Asking the user).
+- **Reference legend:** the short list of the IDs a question or a
+  discussion uses, each with the words needed to decide it: a milestone's
+  name, whether it is the focus, and the items in it; a roadmap item's
+  title, owner, size, status, and section position (`Next 3`, `Later, M2`);
+  a risk's title, RAG, and status; a `V` line, bet, or inbox file's
+  one-line text. It lists every member of a range, not its ends: `M1 to
+  M4` lists M1, M2, M3, and M4, and `R-005 to R-010` lists every item
+  between them in roadmap order. A position (`before R-010`, `after M2`)
+  lists the item or milestone it names and its neighbours on each side, so
+  the user sees where the new position falls. It is printed first, before
+  the text that uses the IDs (Asking the user, Communication contract).
 - **Named reference:** an ID written with the words that identify it, so
   the user never has to look a bare ID up. In a list, board, roadmap, or
   status it is `<ID> <title>`; in a question, choice, or change line it is
@@ -856,6 +862,12 @@ search, and hand the write to a non-blocking background task when the
 agent has one, so the step in progress does not wait. `pm-review` runs the
 skipped `Related` search when it triages the file. No setting is added.
 
+Version 17 shows referenced IDs first. Output that discusses `V` lines,
+milestones, bets, or items prints a `## For this discussion` legend before
+the text that names them, and every legend lists each member of a range
+(`M1 to M4`) and the neighbours of a position (`after R-010`). No setting
+is added.
+
 ## Asking the user (mandatory)
 
 - **Every question uses the agent's interactive question tool** (for
@@ -875,8 +887,10 @@ skipped `Related` search when it triages the file. No setting is added.
   bet, `V` line, brief, or inbox file by ID alone. Print a `## For this question`
   legend (Communication contract) above the question, listing each ID it
   names with the words needed to decide it (Shared definitions: Reference
-  legend). Keep it to the IDs the question uses; do not print the whole
-  roadmap.
+  legend). A range lists every member and a position lists its neighbours,
+  so `Move R-005 after R-010?` and `Re-plan M1 to M4?` are never asked
+  without them. Keep it to the IDs the question uses; do not print the
+  whole roadmap.
 - **Offer a way to see more.** Add one escape option after the decision
   options; it does not count towards the 2 to 4 and is never an answer.
   `Explain <ID>` when the question names IDs, `Show the roadmap` for a
@@ -920,6 +934,13 @@ Output must be literal, predictable, and immediately actionable.
   the plan, brief, or conversation.
 - Before a question that names IDs, print the `## For this question` legend
   (Asking the user). It is the only section a question adds.
+- **Show before discussing.** When output discusses, compares, challenges,
+  or proposes a change to `V` lines, milestones, bets, or items (shaping,
+  strategy, review, reordering, re-planning) and names them by ID, print a
+  `## For this discussion` legend first (Shared definitions: Reference
+  legend), before any sentence that uses the IDs. One legend covers the
+  discussion; print it again only for IDs it does not list. A question in
+  the same output reuses it instead of adding `## For this question`.
 - At most 5 bullets per section, except boards, tables, and lists that a
   skill's template defines as complete. At most 3 sentences per paragraph.
 - State any assumption explicitly as `Assumption: ...`.

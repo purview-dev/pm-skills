@@ -74,6 +74,24 @@ if (sectionVersion && templateVersion !== sectionVersion) {
   );
 }
 
+// The release is the rules/skills version: package.json is <N>.<minor>.<patch>
+// with N the marker version, so a release and the rules it ships never differ.
+const pkgVersion = JSON.parse(read("package.json")).version as string;
+const pkgMajor = /^(\d+)\.\d+\.\d+$/.exec(pkgVersion)?.[1];
+if (!pkgMajor) fail(`package.json: version "${pkgVersion}" is not MAJOR.MINOR.PATCH`);
+else if (sectionVersion && pkgMajor !== sectionVersion) {
+  fail(`package.json: version ${pkgVersion} major != rules version ${sectionVersion} (run just bump major)`);
+}
+
+// This repository dogfoods its own release: its PM state must record the rules
+// it ships, which pm-setup writes when it installs them.
+if (existsSync(join(root, "planning", "config.md"))) {
+  const ownVersion = /^- Rules version: (\d+)$/m.exec(read("planning", "config.md"))?.[1];
+  if (sectionVersion && ownVersion !== sectionVersion) {
+    fail(`planning/config.md: Rules version ${ownVersion ?? "missing"} != AGENTS-section version ${sectionVersion} (run pm-setup)`);
+  }
+}
+
 const templates = join(skillsDir, "pm-init", "templates");
 const initText = read("skills", "pm-init", "SKILL.md");
 for (const m of initText.matchAll(/^\| `([^`]+\.md)` \| `<PM root>\/[^`]+` \|$/gm)) {
