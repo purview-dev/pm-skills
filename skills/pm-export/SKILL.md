@@ -21,11 +21,18 @@ directory` setting (default `planning/`).
 | `write` | Default: "export the plan", "update the status JSON" | Regenerate `planning.json` and its schema; one PM commit |
 | `check` | "is the export current?", "validate the export", or during a workflow | Read-only: validate and compare; write nothing |
 
+A PM commit also runs write steps 1 to 5, without the commit or the
+output, when `Export on commit` in `config.md` asks for it (rules:
+Committing PM state, step 6). That refresh is part of the skill that
+commits, so it may run during a workflow and in the worktree that holds a
+Completion record.
+
 ## Guard
 
 - If `<PM root>/config.md` is missing: `No <PM root> state. Run pm-init.`
   Stop.
-- Write in the main worktree, never in a feature worktree.
+- Write in the main worktree, never in a feature worktree, except the
+  refresh for a Completion record, which writes in the commit worktree.
 - The **Export file** is derived (Shared definitions): never hand-edit it,
   never read it as PM state, and never resolve a disagreement in its favour.
   When the JSON and the Markdown differ, the Markdown is correct and the
