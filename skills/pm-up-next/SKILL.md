@@ -42,13 +42,13 @@ directory` setting (default `planning/`).
    most items; `pm-review` when review is due; `pm-rejoin` when the state
    has drifted.
 5. Render the template. Then ask one choice question:
-   - Idle with a stacked operation: `Resume <stacked ID>?` with the options
-     `Pop it (recommended)` (run `pm-checkpoint` pop) and `Show the board`
-     (run `pm-board`).
-   - Idle: `Start <ID> now?` with the options `Start it (recommended)`
-     (run `pm-next`) and `Show the board` (run `pm-board`).
-   - Active: `Continue <ID>?` with the options `Continue (recommended)`
-     (run `pm-resume`) and `Show the board` (run `pm-board`).
+   - Idle with a stacked operation: `Resume <stacked ID> <title>?` with the
+     options `Pop it (recommended)` (run `pm-checkpoint` pop) and
+     `Show the board` (run `pm-board`).
+   - Idle: `Start <ID> <title> now?` with the options `Start it
+     (recommended)` (run `pm-next`) and `Show the board` (run `pm-board`).
+   - Active: `Continue <ID> <title>?` with the options `Continue
+     (recommended)` (run `pm-resume`) and `Show the board` (run `pm-board`).
    - No claimable item: `Run pm-review?` with the options `Run it
      (recommended)` and `Show the roadmap` (run `pm-roadmap`).
 
@@ -73,11 +73,11 @@ directory` setting (default `planning/`).
 
 ## For you
 
-- <ID Title: Done when, Unblocks: IDs | none>
+- <ID> <title>: Done when <check>, unblocks <ID> <title>, ... | nothing
 
 ## Do this next
 
-1. <Run pm-next to start <ID> | Continue <ID> with <stage skill> | Do <user task> | Run pm-review>
+1. <Run pm-next to start <ID> <title> | Continue <ID> <title> with <stage skill> | Do <user task title> | Run pm-review>
    - Start with: <skill name or command>
    - Done when: <observable check>
 

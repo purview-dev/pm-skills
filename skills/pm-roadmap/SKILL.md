@@ -79,7 +79,7 @@ counts under its milestone only when its `LOG.md` line records
 - [now] R-007 Tenant billing
 - [next] R-008 Invoice email (needs R-009)
 - [later] R-012 <title>
-- Done: <R-006, R-003 | none>
+- Done: <R-006 <title>, R-003 <title> | none>
 
 ### M2 <Name>: <done>/<total>, target <date | none>
 
@@ -100,7 +100,7 @@ counts under its milestone only when its `LOG.md` line records
 
 ## Do this next
 
-1. <Run pm-next to start R-012 | Continue R-007 at execute | Run pm-board for the board>
+1. <Run pm-next to start <ID> <title> | Continue <ID> <title> at execute | Run pm-board for the board>
    - Start with: <skill name>
    - Done when: <observable check>
 

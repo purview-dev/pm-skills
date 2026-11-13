@@ -65,8 +65,8 @@ directory` setting (default `planning/`).
      with `git symbolic-ref --short refs/remotes/origin/HEAD` (fall back to
      `main`, then `master`), then run `git branch --merged <default>`. If
      the session branch is listed, the item is **Merged-unclosed** (Shared
-     definitions): add the Note `Branch <branch> is merged but <ID> is
-     still active.` and make the next action `pm-rejoin`. Never close it
+     definitions): add the Note `Branch <branch> is merged but <ID> <title>
+     is still active.` and make the next action `pm-rejoin`. Never close it
      after the merge.
    - If total > 0 and open = 0, the next action is `pm-checkpoint` (`done`)
      on this branch, and then the finish skill from the Handoffs table. The

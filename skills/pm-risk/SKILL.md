@@ -140,7 +140,7 @@ user).
 - RAG: <red | amber | green> (<likelihood> likelihood, <impact> impact<, override: reason>)
 - Status: <status>; owner <owner>
 - Changed: <what changed>
-- Roadmap: <R-NNN at <section> <position> | unchanged>
+- Roadmap: <R-NNN> <title> at <section> <position> | unchanged>
 - PM state: <commit result>
 
 ## Do this next

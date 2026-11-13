@@ -162,7 +162,7 @@ ambiguous, ask which one is true.
 
 ## Do this next
 
-1. <Rejoin <ID> at <stage> | Continue at <stage> | Show the board | Pick a roadmap item>
+1. <Rejoin <ID> <title> at <stage> | Continue at <stage> | Show the board | Pick a roadmap item>
    - Start with: <skill from the Handoffs table, or pm skill>
    - Done when: <observable check>
 ```

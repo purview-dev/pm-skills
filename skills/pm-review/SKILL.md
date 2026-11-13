@@ -49,7 +49,7 @@ root is its `PM state directory` setting (default `planning/`).
      Place it with the **Roadmap order and edits** rules. If it has a
      brief, set `Brief:` and update the brief's `Status`. Recommend `Shape
      it` instead for size `M` or `L`, or an unclear problem.
-   - `Merge into <ID>`: append the idea as a `Note:` line on that item.
+   - `Merge into <ID> <title>`: append the idea as a `Note:` line on that item.
    - `Shape it`: set `Discuss: yes`. It is listed in "Do this next" and
      shaped after the review, not during it.
    - `Keep it parked`: set `Reviewed:` to today. Use for inspiration and

@@ -132,7 +132,7 @@ snapshot of `https://purview.dev/llms.txt`.
 
 ## Do this next
 
-1. <Run pm-next to start <ID> | Run pm-shape on <parked idea> | Continue with <calling skill step>>
+1. <Run pm-next to start <ID> <title> | Run pm-shape on <parked idea> | Continue with <calling skill step>>
    - Start with: <skill name>
    - Done when: <observable check>
 ```

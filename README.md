@@ -287,6 +287,13 @@ to `schemaVersion` 3 with a `risks` key, and the docs site gains a Risks
 page with a likelihood × impact matrix, a Red risks tile, and a Home list;
 run `pm-docs-site upgrade` for an installed site.
 
+Version 13 adds the context budget and named references. Each item is one
+context: `pm-checkpoint` (`done`) tells you to start a new session (`/new`
+or `/clear`) before `pm-next`, and a stage handoff passes the spec or plan
+path instead of the conversation that produced it. Every skill prints an ID
+with its title (`R-007 Tenant billing`) wherever its output names one, not
+just the ID.
+
 ## Using a different workflow framework
 
 Edit the Handoffs table in `<PM root>/config.md`. The skills refer to stages

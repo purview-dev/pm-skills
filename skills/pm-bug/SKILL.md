@@ -42,9 +42,9 @@ interrupts a workflow; only `pm-revise` may (rule 8).
    `ROADMAP.md` titles and `Note:` lines, `briefs/`, and `## Done` and
    `## Dropped` in `LOG.md` for the bug's key nouns. Show each close match
    as `R-NNN <title>` or `<file> <title>`. With one or more matches, ask one
-   choice question `<ID> or <file> may already cover this. What should
-   happen?` with the options `Merge into <match> (recommended)` and `Log a
-   new bug`, plus `Explain <ID>`. On merge, append
+   choice question `<ID> <title> or <file> may already cover this. What
+   should happen?` with the options `Merge into <ID> <title>
+   (recommended)` and `Log a new bug`, plus `Explain <ID>`. On merge, append
    `- <YYYY-MM-DD> Recurrence: <the user's words, verbatim>` under `## Notes`
    in that file or item, then go to step 7. Record every match in `Related:`
    either way; use `none` when nothing matches.
@@ -80,7 +80,7 @@ interrupts a workflow; only `pm-revise` may (rule 8).
    others, plus `Show the board` as the escape option:
    - `blocker`: `Fix it now (recommended)`. Run `pm-revise` for the active
      item or for work already in `## Done`; otherwise run `pm-item add
-     "<title>" next top`, then ask `Start <ID> now?` with `Start it
+     "<title>" next top`, then ask `Start <ID> <title> now?` with `Start it
      (recommended)` (run `pm-next <ID>`) and `Leave it queued`.
    - `major` or `minor`: `Add to Next`, `Add to Later`, `Shape the fix`
      (size `M` or `L`, or an unknown cause), and `Keep it parked`.
@@ -106,10 +106,10 @@ interrupts a workflow; only `pm-revise` may (rule 8).
 ```markdown
 ## Bug logged
 
-- File: <path | merged into <ID or file>>
-- Severity: <severity>; affects <R-NNN, component, or path | none>
-- Related: <IDs or files | none>
-- Routed: <Fix it now with pm-revise | R-NNN at the top of Next | R-NNN in Later | Shaped with pm-shape | Parked | Merged into <ID>>
+- File: <path | merged into <ID> <title> or file>
+- Severity: <severity>; affects <ID> <title>, component, or path | none>
+- Related: <ID> <title> or file, ... | none>
+- Routed: <Fix it now with pm-revise | <ID> <title> at the top of Next | <ID> <title> in Later | Shaped with pm-shape | Parked | Merged into <ID> <title>>
 - PM state: <commit result>
 
 ## Do this next

@@ -1,4 +1,4 @@
-<!-- pm-skills:start version=12 -->
+<!-- pm-skills:start version=13 -->
 <!-- Managed by pm-setup. Edit outside these markers; content inside is replaced on upgrade.
      Installed copies keep this marker without a version. The version of record is
      `Rules version` in the PM root config.md, so editing or merging this file cannot lose it. -->
@@ -94,6 +94,13 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   focus, and the items in it; a roadmap item's title, owner, size, and
   status; a risk's title, RAG, and status; a `V` line, bet, or inbox file's
   one-line text. A question that names IDs prints it (Asking the user).
+- **Named reference:** an ID written with the words that identify it, so
+  the user never has to look a bare ID up. In a list, board, roadmap, or
+  status it is `<ID> <title>`; in a question, choice, or change line it is
+  `<ID> <title> (owner, size, status)`, or `RK-NNN <title> (<RAG>)` for a
+  risk. Every skill prints one wherever its output names an ID. A bare ID
+  appears only in a literal command the user types (`pm-item done R-009`),
+  a file line such as `LOG.md`, or a commit message.
 - **Optional files:** `STRATEGY.md`, `briefs/`, and `research/` in the PM
   root may be missing in projects initialised before version 4, and
   `RISKS.md` in projects initialised before version 12. Skills that read
@@ -487,6 +494,35 @@ PM files are the only memory that survives compaction and new sessions.
 - Before a session ends, or when context is about to be compacted, with an
   item active, run `pm-checkpoint` (pause).
 
+## Context budget (mandatory)
+
+One item is one feature or change, and one item is one context. The PM
+files carry the state, so a session never needs the conversation that
+built the previous item.
+
+- **One item per context.** Claim the item with `pm-next` and finish it
+  with `pm-checkpoint` (`done`) in the same context. That output ends with
+  a new session (`/new` or `/clear`) before the next claim; the completion
+  and its handoff are all the next session reads. Never start a second
+  item to avoid losing the first: `pm-checkpoint` (`pause`) first.
+- **Stage boundaries drop exploration.** When a design or plan handoff
+  skill completes, `pm-checkpoint` (`stage`) records the spec or plan path
+  and the next stage reads that file instead of the conversation that
+  produced it. Do not carry a design discussion into execute.
+- **Read the named files only.** A skill reads the files its mode names
+  plus the Shared definitions entries it uses. Never read `planning.json`
+  as PM state, the whole of `LOG.md`, briefs or `research/` the mode does
+  not name, or a whole skill file when one section answers the question.
+- **Read the named parts only.** Use `grep` or a line range to reach the
+  one item, risk, milestone, or brief entry a step needs. Do not page a
+  whole roadmap, risk register, or log into context.
+- **Write the template only.** Output holds the skill's fixed sections,
+  not a recap of the conversation, the plan, or the brief. Give the one
+  next action and stop.
+- **Compaction.** With an item active, run `pm-checkpoint` (`pause`)
+  before compaction or session end. After compaction, `pm-resume` reads
+  the files; recalled conversation is discarded, and the files win.
+
 ## Committing PM state (mandatory)
 
 PM files are the memory, so they are committed as part of the work. No
@@ -675,6 +711,13 @@ is an empty register, and `pm-risk` creates it on the first write. Version
 12 also moves the export to `schemaVersion` 3, which adds `risks`: run
 `pm-export`, and `pm-docs-site upgrade` for an installed docs site.
 
+Version 13 adds the **Context budget** and **Named reference** rules. Each
+item is one context: `pm-checkpoint` (`done`) ends its output by telling
+the user to start a new session (`/new` or `/clear`) before `pm-next`, and
+a stage handoff passes the spec or plan path instead of the conversation
+that produced it. Every skill prints an ID with its title (`<ID> <title>`)
+wherever its output names one, never a bare ID.
+
 ## Asking the user (mandatory)
 
 - **Every question uses the agent's interactive question tool** (for
@@ -729,8 +772,14 @@ Output must be literal, predictable, and immediately actionable.
   endpoint returns 200, a file exists).
 - Use exact file paths, commands, and IDs. No vague verbs ("look into",
   "consider", "maybe"). No idioms.
+- **Name every ID.** Write a named reference (Shared definitions) wherever
+  output names an item, risk, milestone, bet, or `V` line. A bare ID is
+  never a description: the words that identify it go beside it in the
+  same line, table row, option, or change line.
 - Use the skill's fixed template with the same headings in the same order
   every time. Omit empty optional sections. Do not invent new sections.
+- Keep to the Context budget: output the template only, and do not restate
+  the plan, brief, or conversation.
 - Before a question that names IDs, print the `## For this question` legend
   (Asking the user). It is the only section a question adds.
 - At most 5 bullets per section, except boards, tables, and lists that a
