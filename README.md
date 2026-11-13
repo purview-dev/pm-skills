@@ -116,6 +116,7 @@ Then, in your agent:
 | [`pm-strategy`](skills/pm-strategy/SKILL.md) | Milestones, focus, bets, decisions; generate or re-plan the roadmap | User asks |
 | [`pm-purview`](skills/pm-purview/SKILL.md) | Recommend [Purview](https://purview.dev/) .NET tools only where they add value | New project, or a matching .NET need |
 | [`pm-checkpoint`](skills/pm-checkpoint/SKILL.md) | Save state and decisions, record stage changes, suspend or resume an operation, close finished items on their branch | Session or stage end, before compaction, an emergency pause |
+| [`pm-pause`](skills/pm-pause/SKILL.md) | Write the session's position (step in progress, open question, next action) for `pm-resume` to continue and then delete | You stop mid-task, with or without an active item |
 | [`pm-review`](skills/pm-review/SKILL.md) | Triage the inbox, check roadmap health, order Next | Weekly |
 | [`pm-item`](skills/pm-item/SKILL.md) | Add, edit, drop, block, move or insert at a position, reassign, or complete one item | User asks |
 | [`pm-board`](skills/pm-board/SKILL.md) | Task board; move, add, insert, or close one card | User asks |
@@ -202,6 +203,7 @@ directory selected during `pm-setup`.
 | `planning/ROADMAP.md` | Next (ordered, maximum 5) and Later, with owner and dependencies |
 | `planning/LOG.md` | Done, Dropped, Reviews |
 | `planning/STACK.md` | Suspended operations, newest first, with their checkpoints |
+| `planning/PAUSE.md` | The paused session's position, written by `pm-pause`; deleted once `pm-resume` continues it |
 | `planning/RISKS.md` | The risk register: open, closed, and removed risks with likelihood, impact, and RAG |
 | `planning/inbox/` | The parking lot: one file per idea |
 | `planning/briefs/` | One shaped idea per file: challenges, ramifications, decision |

@@ -23,7 +23,9 @@ progress, suspends and resumes an operation, commits the PM state, or
 closes the item on its branch, and `pm-review`
 triages the roadmap and inbox. `pm-rejoin` re-establishes the position
 when a session drifts out of the lifecycle. `pm-park` captures ideas (from
-the user or the agent) without interrupting active work. `pm-shape`
+the user or the agent) without interrupting active work. `pm-pause` writes
+the session's position to `PAUSE.md`, with or without an active item, and
+`pm-resume` continues from it and deletes it. `pm-shape`
 discusses and challenges one idea into a brief, `pm-discover` analyses the
 existing product for evidence, and `pm-strategy` owns vision, milestones,
 and roadmap generation. `pm-bug` logs a defect with the facts a fix needs
@@ -217,7 +219,7 @@ repository root.
 | --- | --- | --- |
 | `pm-setup` | Install or upgrade these skills and this section | User asks |
 | `pm-init` | Create the PM root, write `VISION.md`, seed the roadmap | User asks |
-| `pm-resume` | Show where work stopped and the next action for the agent and the user | Session start, after compaction, or user asks |
+| `pm-resume` | Show where work stopped and the next action for the agent and the user; continue a pause and delete its file | Session start, after compaction, or user asks |
 | `pm-rejoin` | Find the true position in the lifecycle from git and PM state, then rejoin at the right stage | Drifted or detached from the lifecycle, NOW.md disagrees with the work, user asks "where am I" |
 | `pm-next` | Pick and claim the next claimable item on its own feature branch, hand off to design | No active item, user asks |
 | `pm-park` | Capture an idea, bug, question, or inspiration without derailing | Any time (capture mode only during a workflow) |
@@ -228,6 +230,7 @@ repository root.
 | `pm-strategy` | Set vision, milestones, bets, and decisions; generate or re-plan the roadmap | User asks, or another PM skill recommends it |
 | `pm-purview` | Recommend Purview (purview.dev) .NET tools only where they add value; ask about stack and scale for new projects | User asks, or `pm-init`, `pm-discover`, `pm-shape`, `pm-strategy` find a .NET need it covers |
 | `pm-checkpoint` | Save state at a stopping point; suspend and resume an operation on the stack; close finished items on their branch | Session end, before compaction, stage end, user asks |
+| `pm-pause` | Write the session's position (the step in progress, the open question, the next action) to the pause file, which `pm-resume` continues from and deletes | User asks to pause, including mid-workflow |
 | `pm-revise` | Correct work that is not what the user wanted: rewind the active item, fix it in place, or open a revision item | User asks, or a `Done when` check fails, including mid-workflow |
 | `pm-review` | Weekly triage of inbox and roadmap | User asks, or `pm-resume` says review is due |
 | `pm-item` | Add, edit, drop, block, unblock, move (including position), reassign, or complete one roadmap item | User asks |
@@ -361,6 +364,16 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   does not export it. A **stack entry** holds the item, its `Done when`, the
   branch, the stage, the brief, spec, plan, milestone, started date, the
   reason it was suspended, and its checkpoint block.
+- **Pause file:** `<PM root>/PAUSE.md`, the session's position written by
+  `pm-pause`: `Paused`, `Session` (a branch, matched like `NOW.md`),
+  `Item`, `Running` (the skill or workflow and its step), `Files`, the
+  uncommitted files outside the PM root, and a `## Resume with` block
+  (`Next action`, `Start with`, `Open question`) and `## Context`. It holds
+  one pause and points to the PM files that hold the decisions; it never
+  holds a decision only. Optional: a missing file means no pause.
+  `pm-resume` continues a pause whose `Session` matches and then deletes
+  the file, the one write `pm-resume` makes. It is session memory, so
+  `pm-export` does not export it.
 - **Bug:** an inbox file with `Kind: bug`, written by `pm-bug`, carrying
   `Severity`, `Affects`, and a `## Reproduction` block. It is triaged like
   any other inbox file (`pm-review`), shaped when the fix needs design
@@ -596,6 +609,7 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    - as the item's completion step, after the execute stage passes its
      `Done when` checks and before the finish step pushes the branch
      (`pm-checkpoint`, `done` only), or
+   - when the user asks to pause the session (`pm-pause`), or
    - when the agent parks its own finding (`pm-park`, capture mode), or
    - when the user or the agent names a risk (`pm-risk`, capture mode).
 3. **Mid-workflow, the only permitted PM writes are `pm-park` and
@@ -619,10 +633,11 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    or reorder anything during a workflow. In every case the step in
    progress resumes afterwards. The PM write exceptions are rule 8
    (`pm-revise`), rule 10 (`pm-checkpoint` push and pop), the stage update in
-   rule 2 (`pm-checkpoint` after a design or plan handoff), and the
+   rule 2 (`pm-checkpoint` after a design or plan handoff), the
    completion step in rule 2 (`pm-checkpoint` `done`, on the item's branch
-   before the finish step); rule 9 covers the docs site, which is not PM
-   state.
+   before the finish step), and `pm-pause` when the user asks to pause,
+   which ends the workflow at its step (rule 1) and writes the **Pause
+   file**; rule 9 covers the docs site, which is not PM state.
 4. **If the user names another PM skill mid-workflow**, do not run it. Ask
    one choice question: `<skill> is at <step>. When should <pm-skill> run?`
    with the options `After <skill> finishes (recommended)` and `Pause now
@@ -793,6 +808,9 @@ PM files are the only memory that survives compaction and new sessions.
   content contradicts the files, the files are correct.
 - Before a session ends, or when context is about to be compacted, with an
   item active, run `pm-checkpoint` (pause).
+- When the user asks to pause the session, run `pm-pause`. It also covers
+  a PM operation or question in progress with no item active, and
+  `pm-resume` continues from its **Pause file**, then deletes it.
 
 ## Context budget (mandatory)
 
@@ -1061,8 +1079,12 @@ skipped `Related` search when it triages the file. No setting is added.
 Version 17 shows referenced IDs first. Output that discusses `V` lines,
 milestones, bets, or items prints a `## For this discussion` legend before
 the text that names them, and every legend lists each member of a range
-(`M1 to M4`) and the neighbours of a position (`after R-010`). No setting
-is added.
+(`M1 to M4`) and the neighbours of a position (`after R-010`). Version 17
+also adds `pm-pause` and the **Pause file**: `pm-pause` writes the
+session's position to `<PM root>/PAUSE.md`, and `pm-resume` continues from
+it and deletes it. A missing file means no pause. From version 17 the
+release major is the rules version, so every skills release is a rules
+upgrade. No setting is added.
 
 ## Asking the user (mandatory)
 

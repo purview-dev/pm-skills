@@ -41,7 +41,7 @@ Completion record.
   `write` applies Non-interruption rule 4.
 - Export only what the PM files hold. Never add environment values, tokens,
   source-code excerpts, or anything not in the PM root. Never export
-  `STACK.md`: it is session memory, not plan.
+  `STACK.md` or `PAUSE.md`: they are session memory, not plan.
 - Never edit any other PM file. This skill reads them all and writes two.
 - Anyone can validate the result with
   `bunx ajv-cli@5 validate -s "<PM root>/planning.schema.json" -d "<PM root>/planning.json" --spec=draft2020`.
@@ -158,7 +158,7 @@ Remaining objects:
 
 1. Read every PM file: `config.md`, `VISION.md`, `STRATEGY.md`, `NOW.md`,
    `ROADMAP.md`, `LOG.md`, `RISKS.md`, `inbox/`, and `briefs/` (`STACK.md`
-   is not exported). A missing optional file is empty (Shared definitions:
+   and `PAUSE.md` are not exported). A missing optional file is empty (Shared definitions:
    Optional files).
 2. Build the document in the field-map order, applying the format rules.
    Where a value is not written in the file, use `null`, never a guess; state

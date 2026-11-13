@@ -1,14 +1,15 @@
 ---
 name: pm-resume
-description: Use at the start of a session, after the context has been compacted, or when the user asks where work stopped or what to do next. Reads the PM state and reports the next action for the agent, the user's own queue, and anything waiting for discussion. Read-only.
+description: Use at the start of a session, after the context has been compacted, or when the user asks where work stopped or what to do next. Reads the PM state and any pause left by pm-pause, and reports the next action for the agent, the user's own queue, and anything waiting for discussion. Read-only, except that it deletes the pause file once that pause resumes.
 ---
 
 # pm-resume
 
 Report where work stopped, the one next action, and what is waiting for
-the user. Read-only. After compaction, this is how the session gets its
-memory back: the PM files win over anything recalled from the
-conversation.
+the user. Read-only, except for the **Pause file**: when this session
+resumes a pause, `pm-resume` deletes the file and commits the deletion.
+After compaction, this is how the session gets its memory back: the PM
+files win over anything recalled from the conversation.
 
 Follow the Non-interruption rules, Shared definitions, Persistence, Asking
 the user, and Communication contract in the pm-skills section of the agent
@@ -36,8 +37,8 @@ directory` setting (default `planning/`).
 
 1. Read `NOW.md`, `config.md`, `ROADMAP.md`, and `STRATEGY.md` (focus
    milestone only). Read `STACK.md` when it exists and count its entries.
-   If `NOW.md` has a `Brief`, read its `## Decision` and
-   `## Open questions`.
+   Read `PAUSE.md` when it exists (Shared definitions: Pause file). If
+   `NOW.md` has a `Brief`, read its `## Decision` and `## Open questions`.
 2. Count the open inbox (Shared definitions) and the inbox files with
    `Discuss: yes`. List briefs with `Status: shaping`. Count the
    **Uncommitted PM state** files for the `Note` section.
@@ -88,14 +89,33 @@ directory` setting (default `planning/`).
      Handoffs table.
    - If a Spec, Plan, or Brief path is set but the file does not exist, add
      the Note: `Missing file: <path>.`
-7. **For you:** collect, in this order, up to 5 of: the checkpoint's `Open
-   question`; `Owner: user` items in Next with `Status: ready`, in roadmap
-   order, flagging those that block agent items; `## Open questions` from briefs with `Status:
-   shaping`; the count of inbox files with `Discuss: yes`.
-8. Show the output. Then ask one choice question: `Start "<next action>"
+7. **Pause.** When the pause file exists:
+   - Its `Session` matches the current session: the pause's `Next action`
+     and `Start with` replace the next action from steps 5 and 6, unless
+     those made it `pm-rejoin`, which wins. Its `Open question` goes first
+     in "For you", and its `Context` lines go under "Decisions so far".
+   - Its `Session` is another branch: keep the next action from steps 5
+     and 6 and add the Note `Paused on <Session> at <Paused>. To resume it:
+     git switch <Session>, then pm-resume.` Do not delete it.
+8. **For you:** collect, in this order, up to 5 of: the pause's or the
+   checkpoint's `Open question`; `Owner: user` items in Next with
+   `Status: ready`, in roadmap order, flagging those that block agent
+   items; `## Open questions` from briefs with `Status: shaping`; the count
+   of inbox files with `Discuss: yes`.
+9. Show the output. Then ask one choice question: `Start "<next action>"
    now?` with the options `Start it (recommended)` and `Show the board
-   first` (run `pm-board`). If a "For you" item blocks the next
-   action, put `Do <user item> first` as the recommended option instead.
+   first` (run `pm-board`, then ask again). If a "For you" item blocks the
+   next action, put `Do <user item> first` as the recommended option
+   instead. With a matching pause, the question is `Resume "<next action>"
+   from the pause of <Paused>?` with `Resume it (recommended)` and `Show
+   the board first`.
+10. **Clear the pause.** When the user resumes a matching pause (`Resume
+    it`, or `Do <user item> first`), delete `<PM root>/PAUSE.md`, make one
+    PM commit (rules: Committing PM state) with `docs(pm): resume session
+    on <branch>`, and report it as a Note. Then start the pause's `Start
+    with`. This is the only file `pm-resume` writes. After compaction, the
+    silent resume in the Guard clears a matching pause the same way before
+    it continues the workflow step.
 
 ## Output
 
@@ -107,6 +127,7 @@ directory` setting (default `planning/`).
 - Progress: <done>/<total> plan steps | no plan yet
 - Last checkpoint: <date time | none>
 - Stack: <n suspended | none>
+- Paused: <YYYY-MM-DD HH:MM on <branch>, at <Running> | none>
 - Focus: <M Name | none set>
 
 ## Decisions so far
@@ -125,5 +146,5 @@ directory` setting (default `planning/`).
 
 ## Note
 
-- <only if needed: review due, inbox count, session mismatch, drift, uncommitted PM state, missing file>
+- <only if needed: review due, inbox count, session mismatch, drift, uncommitted PM state, missing file, a pause on another branch, the pause-cleared commit>
 ```
