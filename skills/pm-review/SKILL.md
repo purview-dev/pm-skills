@@ -42,7 +42,11 @@ root is its `PM state directory` setting (default `planning/`).
    the Challenge protocol checks 1, 2, and 5, state the result in one line,
    and ask one choice question: `What should happen to "<title>"?` with
    the proposed action first (recommended) and the next two most plausible
-   actions. Wait for the answer, then apply it before the next file:
+   actions. When the file has `Related: none` and a `Context` other than
+   `none` (a Quick capture skipped the search), grep `ROADMAP.md` and the
+   inbox for its key nouns first, and propose `Merge into <ID> <title>`
+   when one matches. Wait for the answer, then apply it before the next
+   file:
    - `Add to Next` or `Add to Later`: new roadmap item with a new ID
      (Shared definitions), `Serves`, `Milestone`, `Owner`, `Done when`,
      `Size`, `Depends on`, `Status: ready`, and the idea text in `Note:`.

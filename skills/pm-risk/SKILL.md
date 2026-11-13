@@ -62,15 +62,18 @@ Whenever a question or reply names an ID, show `RK-NNN <title> (<RAG>)` or
 `R-NNN <title>` with it and add `Explain <ID>` to the question (Asking the
 user).
 
-1. **capture:** classify without asking.
+1. **capture:** during a workflow this is a **Quick capture** (Shared
+   definitions): hand it to a background task when the agent has one,
+   otherwise run it inline on the fast path. Classify without asking.
    - `Title`: at most 8 words from the user's words; keep their wording.
    - `Likelihood` and `Impact`: the levels the words state ("likely",
      "would lose data"); `medium` when they state none.
    - `RAG`: derived; `RAG override: none`. `Status: open`.
    - `Owner`: `user` when only the user can act on it (a decision, an
      account, a contract), otherwise `agent`.
-   - `Affects`: the active item ID from `NOW.md` when the risk is about it,
-     else the IDs, milestones, or paths the words name, else `none`.
+   - `Affects`: the active item ID when the risk is about it (from the
+     session during a workflow, else from `NOW.md`), else the IDs,
+     milestones, or paths the words name, else `none`.
    - `Trigger` and `Mitigation`: the words given, else `none`.
    - `Raised: <date> (<user | agent (<skill or item ID and stage>)>)`,
      `Reviewed: never`.
@@ -78,6 +81,7 @@ user).
    Give it a new ID (Shared definitions: Risk IDs), insert it in `## Open`
    at its RAG position, and reply with exactly one line:
    - Workflow active: `Risk: RK-NNN <title> (<RAG>). Back to <current step>.`
+   - Handed to a background task: `Recording risk "<title>" (<RAG>). Back to <current step>.`
    - Otherwise: `Risk: RK-NNN <title> (<RAG>), unreviewed. Run pm-risk review RK-NNN to rate it.`
 
    If a workflow is active, resume the step that was in progress. Stop.

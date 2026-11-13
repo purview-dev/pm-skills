@@ -37,7 +37,10 @@ steps of the current plan.
 ## Steps
 
 1. Note whether a workflow is active (Non-interruption rule 1). If one is,
-   this run is capture-only: no questions, no evaluation.
+   this run is a **Quick capture** (Shared definitions): no questions, no
+   evaluation, and no reads beyond the write. Hand it to a background task
+   when the agent has one; otherwise run steps 2 to 5 inline on the fast
+   path.
 2. Classify without asking:
    - `Kind`: from the words used. Use `inspiration` for references,
      examples, or links with no stated feature; `question` for something to
@@ -45,8 +48,10 @@ steps of the current plan.
    - `Discuss`: `yes` if the user asked to discuss, think through, or
      brainstorm it, or if it is a `question`; otherwise `no`.
    - `Related`: roadmap IDs and inbox titles that share the idea's key
-     nouns. Use `none` if nothing clearly matches. Do not ask.
-   - `Context`: the active item ID and stage from `NOW.md`, or `none`.
+     nouns. Use `none` if nothing clearly matches. Do not ask. During a
+     workflow, write `none` without searching (Quick capture).
+   - `Context`: the active item ID and stage, or `none`. During a workflow,
+     take it from the session; otherwise read it from `NOW.md`.
 3. **capture** and **agent:** build the slug (lowercase ASCII letters,
    digits, and hyphens, at most 5 words). Get the timestamp (Shared
    definitions). The filename is
@@ -65,6 +70,7 @@ steps of the current plan.
    matches, use `capture` mode and list the matches in `Related`.
 5. Reply with exactly one line:
    - Workflow active: `Parked: <filename> (<kind><, to discuss>). Back to <current step>.`
+   - Handed to a background task: `Parking "<title>" (<kind><, to discuss>). Back to <current step>.`
    - `agent` mode: `Parked for later: <filename> (<kind>): <title>.`
    - No workflow: `Parked: <filename> (<kind>).`
 6. If a workflow is active, resume the step that was in progress. Stop.
