@@ -53,8 +53,8 @@ have no templates and are only ever planned as items.
   | Condition | Reply |
   | --- | --- |
   | `NOW.md` is active and its `Session` equals the current branch | `No docs-site item is active here. Run pm-docs-site plan.` |
-  | The active item's `Note` names `pm-docs-site` | `<ID> is not a docs-site item. Run pm-docs-site plan.` |
-  | `NOW.md`'s stage is `execute` | `pm-docs-site builds in execute; <ID> is at <stage>.` |
+  | The active item's `Note` names `pm-docs-site` | `<ID> <title> is not a docs-site item. Run pm-docs-site plan.` |
+  | `NOW.md`'s stage is `execute` | `pm-docs-site builds in execute; <ID> <title> is at <stage>.` |
   | The current branch is not the PM branch | `Build modes never write on the PM branch (<branch>).` |
   | `bun --version` succeeds | `Bun is required: https://bun.sh. Install it, then run pm-docs-site <mode> again.` |
 
@@ -255,12 +255,12 @@ module's AppHost files are outside the site and follow its `MODULE.md`.
 
 - Site: <site root> (modules: <list | none>)
 - Export: <PM root>planning.json <present | missing: run pm-export first>
-- Roadmap: <ID> at <section> <position>
+- Roadmap: <ID> <title> at <section> <position>
 - PM state: <commit result>
 
 ## Do this next
 
-1. <Run pm-export | Claim <ID>>
+1. <Run pm-export | Claim <ID> <title>>
    - Start with: <pm-export | pm-next <ID>>
    - Done when: <observable check>
 
@@ -288,7 +288,7 @@ module's AppHost files are outside the site and follow its `MODULE.md`.
 ## Output (scaffold, extend, upgrade)
 
 ```markdown
-## Docs site <scaffolded | extended with <module> | upgraded>: <ID>
+## Docs site <scaffolded | extended with <module> | upgraded>: <ID> <title>
 
 - Site: <site root> (modules: <list | none>)
 - Files: <n> written, <n> kept (<paths>)

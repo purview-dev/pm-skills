@@ -96,8 +96,8 @@ likely modes as options.
 | --- | --- | --- | --- | --- | --- |
 | Now | R-007 | Tenant billing | agent | M | execute, 4/9 steps |
 | Next (agent) | R-008 | Invoice email | agent | S | ready |
-| For you | R-009 | Open a Stripe account | user | S | blocks R-008 |
-| Waiting | R-010 | Usage export | agent | M | needs R-008 |
+| For you | R-009 | Open a Stripe account | user | S | blocks R-008 Invoice email |
+| Waiting | R-010 | Usage export | agent | M | needs R-008 Invoice email |
 | Done | R-006 | Tenant model | agent | M | 2026-10-28 |
 
 - Inbox: <n> open, <n> to discuss. Later: <n>.
@@ -108,7 +108,7 @@ likely modes as options.
 
 ## Do this next
 
-1. <Run pm-next to start R-012 | Continue R-007 at execute | Run pm-roadmap for the full roadmap>
+1. <Run pm-next to start <ID> <title> | Continue <ID> <title> at execute | Run pm-roadmap for the full roadmap>
    - Start with: <skill name>
    - Done when: <observable check>
 

@@ -42,21 +42,22 @@ and `Explain <ID>`.
   pm-checkpoint pop.` when `STACK.md` has an entry, and report the commit.
   Stop.
 - If `Status: active` and the `Session` in `NOW.md` does not match the
-  current session (Shared definitions), stop. Reply: `<ID> belongs to
-  <Session>. Not changed.`
+  current session (Shared definitions), stop. Reply: `<ID> <title> belongs
+  to <Session>. Not changed.`
 - **`done`:** if the item's branch is already merged into the PM branch,
-  stop. Reply `Branch <branch> is merged but <ID> is still active. Run
-  pm-rejoin.` Never close an item after its branch has merged. If a
+  stop. Reply `Branch <branch> is merged but <ID> <title> is still active.
+  Run pm-rejoin.` Never close an item after its branch has merged. If a
   `## Done` line for `<ID>` already names this branch, reply `Completion for
-  <ID> is already written. Run the finish step.` Stop.
+  <ID> <title> is already written. Run the finish step.` Stop.
 - **`pop`:** if `STACK.md` is missing or empty, reply `Nothing stacked.`
   Stop. If a workflow is active, reply `A workflow is active. Finish or
   pause it, then run pop.` Stop. If `NOW.md` is active, ask one choice
-  question: `R-NNN <title> is active. How should <stacked ID> be restored?`
+  question: `R-NNN <title> is active. How should <stacked ID> <title> be
+  restored?`
   with the options `Push the active item, then pop (recommended)` (run
   `push`, then `pop`) and `Cancel pop`. If the current branch differs from
-  the entry's `Branch`, reply `<ID> is stacked on <branch>. Switch to it,
-  then run pop.` Stop.
+  the entry's `Branch`, reply `<ID> <title> is stacked on <branch>. Switch
+  to it, then run pop.` Stop.
 - If a workflow is active and the user did not ask to pause or suspend,
   apply Non-interruption rule 4, except in `stage` mode right after a
   handoff skill finishes, in `pause` mode before compaction, and in `push`
@@ -72,8 +73,9 @@ and `Explain <ID>`.
 3. **stage:** set `Stage` to the next stage in Handoffs order
    (design, plan, execute, finish). Fill `Spec` or `Plan` with the file the
    finished skill wrote. Do not write a checkpoint block. Commit the PM
-   state (step 9), then invoke the next handoff skill. In the output, show
-   the commit as a Note, not under "Do this next".
+   state (step 9), then invoke the next handoff skill with that file path,
+   not the conversation that produced it (rules: Context budget). In the
+   output, show the commit as a Note, not under "Do this next".
 4. **pause:** replace `## Checkpoint` with this block, using real values:
 
    ```markdown
@@ -90,7 +92,8 @@ and `Explain <ID>`.
    Derive `Stopped at` from the plan checkboxes and `git status`. Take
    `Decisions` and `Context` from this session's conversation: anything
    agreed, ruled out, or discovered that would otherwise be lost on
-   compaction. If the item has a brief, also append agreed scope changes
+   compaction. Write only what the next session needs, never a transcript
+   (rules: Context budget). If the item has a brief, also append agreed scope changes
    to its `## Decision` with the date. List changed files outside the PM
    root as a Note, with one command that would commit them; do not run
    it. Step 9 commits the PM root.
@@ -130,6 +133,10 @@ and `Explain <ID>`.
    - The next action is the `finish` skill from the Handoffs table: it
      pushes this branch and opens the pull request, so the completion
      commit is part of it. Say so under "Do this next".
+   - End this item's context here. Add a second numbered action under
+     "Do this next": `Start a new session (/new or /clear) before pm-next
+     for another item.` The completion record and its handoff are all the
+     next session reads (rules: Context budget).
 6. **switch:** write a checkpoint first, as in `pause`. When the user names
    the item to switch to, show `R-NNN <title>`. Copy the active
    item to the top of `## Next` in `ROADMAP.md` with `Status: paused` and
@@ -172,8 +179,8 @@ and `Explain <ID>`.
    `Brief`, `Milestone`, `Spec`, `Plan`, `Started`, its `Done when` under
    `## Done when`, and its checkpoint under `## Checkpoint`. Remove the
    entry from `STACK.md`, leaving the next entry as the top. Step 9
-   commits; show one line (`pop <ID>: <stage> at its checkpoint`), then
-   invoke the skill for `Stage` from
+   commits; show one line (`pop <ID> <title>: <stage> at its checkpoint`),
+   then invoke the skill for `Stage` from
    the Handoffs table in `config.md`, passing the checkpoint's
    `Next action`; when the stack still has entries, name the next one as a
    Note.
@@ -203,8 +210,11 @@ and `Explain <ID>`.
 1. <one action>
    - Start with: <exact command, file, or skill name>
    - Done when: <observable check>
+2. <In done only: start a new session (/new or /clear) before pm-next for another item.>
 
 ## Note
 
 - <commit result, changed files outside the PM root, assumptions, newly claimable items, the next stacked item>
 ```
+
+Omit item 2 in every mode except `done`.

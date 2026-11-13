@@ -29,12 +29,13 @@ root is its `PM state directory` setting (default `planning/`).
 - If the current branch has an unmerged completion (a `## Done` line in
   `LOG.md` whose `Result: branch <branch>` matches the current branch, and
   the branch is not merged), stop. Reply `Branch <branch> has an unmerged
-  completion for <ID>. Run the finish step, then pm-next.` A completion
-  rides its branch, and a new item waits until it has.
+  completion for <ID> <title>. Run the finish step, then pm-next.` A
+  completion rides its branch, and a new item waits until it has.
 - If a workflow is active, apply Non-interruption rule 4 and stop.
-- If `Status: active`, stop. Ask: `<ID> is active. What should happen to
-  it?` with the options `Resume <ID> (recommended)` (run `pm-resume`) and
-  `Pause <ID> and switch` (run `pm-checkpoint` switch, then this skill).
+- If `Status: active`, stop. Ask: `<ID> <title> is active. What should
+  happen to it?` with the options `Resume <ID> <title> (recommended)` (run
+  `pm-resume`) and `Pause <ID> <title> and switch` (run `pm-checkpoint`
+  switch, then this skill).
 - If the user named an ID, it must be in `## Next` or `## Later` and be
   claimable apart from its position; otherwise say which condition fails
   (owner, status, or which `Depends on` ID is not done) and stop. A named
@@ -63,7 +64,7 @@ root is its `PM state directory` setting (default `planning/`).
    recommended fix first:
    `Shape it first` (run `pm-shape` on it), `Split it` (step 3), or
    `Pick <other ID>` (label each candidate `R-NNN <title>`); then
-   `Start <ID> as is`, plus `Explain <ID>`. Record a `Start <ID> as is`
+   `Start it as is`, plus `Explain <ID>`. Record a `Start it as is`
    answer as a `Note:` on the item with the reason.
 3. **Split.** If its `Size` is `L`, or the user chose to split it, propose
    items of size S or M, each with its own `Done when` and new IDs from the
@@ -91,7 +92,9 @@ root is its `PM state directory` setting (default `planning/`).
    `config.md`, passing the item title, `Serves`, `Done when`, and the
    brief path. Tell it the brief already records the problem, the
    alternatives, the challenges, and the ramifications, so it does not ask
-   those again.
+   those again. Start that stage from the item, its brief, and this output
+   only; never carry an earlier item's conversation into it (rules:
+   Context budget).
 
 If the item has a `Paused checkpoint`, copy it under `## Checkpoint` and set
 `Stage` to the stage recorded there. Then invoke that stage's skill instead

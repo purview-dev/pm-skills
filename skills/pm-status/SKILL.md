@@ -72,7 +72,7 @@ For the ordered queue without starting anything, run `pm-up-next`.
 
 1. <ID Title>
    - Done when: <check>
-   - Unblocks: <IDs | nothing>
+   - Unblocks: <ID> <title>, <ID> <title> | nothing
 2. <Open question from NOW.md or a brief, with its file>
 
 ## Do this next

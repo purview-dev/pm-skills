@@ -139,7 +139,7 @@ section of the agent instructions file (`AGENTS.md` or `CLAUDE.md`).
 ## Do this next
 
 1. <If the repository has substantial code:> Run `pm-discover` to check the roadmap against the existing product.
-   <Otherwise:> Run `pm-strategy` to set milestones, or `pm-next` to start <first claimable ID>.
+   <Otherwise:> Run `pm-strategy` to set milestones, or `pm-next` to start <first claimable ID> <title>.
    - Start with: <skill name>
    - Done when: <observable check>
 ```

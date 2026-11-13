@@ -108,8 +108,9 @@ label).
      inbox file, if any. Set the brief `Status: on roadmap (<IDs>)`.
    - **Build it now:** add it to the top of Next as above. If `NOW.md` is
      idle, run `pm-next` for it. If an item is active in this session, ask:
-     `<active ID> is active. Switch to "<title>"?` with the options `Queue
-     it first in Next (recommended)` and `Pause <active ID> and switch`.
+     `<active ID> <active title> is active. Switch to "<title>"?` with the
+     options `Queue it first in Next (recommended)` and `Pause <active ID>
+     <active title> and switch`.
      On switch, run `pm-checkpoint` (switch), move this item back above the
      paused item, then run `pm-next`.
    - **Keep it parked:** keep the inbox file (create one in the Inbox file
@@ -134,7 +135,7 @@ it continues from there.
 ## Shaped: <title>
 
 - Brief: <path>
-- Decision: <Added R-NNN to Next | Added to Later | Building R-NNN | Parked | Dropped | Paused with <n> open questions>
+- Decision: <Added <ID> <title> to Next | Added <ID> <title> to Later | Building <ID> <title> | Parked | Dropped | Paused with <n> open questions>
 - Size: <S | M | L, sliced into n>. Serves: <V lines>. Milestone: <M | none>.
 - Challenges: <n> raised, <n> changed the idea
 

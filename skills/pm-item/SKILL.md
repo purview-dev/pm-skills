@@ -37,7 +37,7 @@ If the user's request fits no mode, ask one choice question with the 2 or
   Stop.
 - If a workflow is active, apply Non-interruption rule 4 and stop. A new
   idea mid-workflow goes to `pm-park` instead of `add`.
-- If the ID is the active item in `NOW.md`, reply: `<ID> is active. Run
+- If the ID is the active item in `NOW.md`, reply: `<ID> <title> is active. Run
   pm-checkpoint (switch or done) first.` Stop.
 - If the ID is not found in `ROADMAP.md`, reply `<ID> not found.` and list
   the open IDs as `R-NNN <title>`. Stop.
@@ -100,5 +100,5 @@ add `Explain <ID>` to the question (Asking the user).
 
 ## Do this next
 
-1. <Run pm-board to see the board | Run pm-up-next to see the queue | Run pm-next: <ID> is now claimable | continue the current task>
+1. <Run pm-board to see the board | Run pm-up-next to see the queue | Run pm-next: <ID> <title> is now claimable | continue the current task>
 ```

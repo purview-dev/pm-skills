@@ -179,7 +179,7 @@ message `docs(pm): update strategy`.
 
 ## Do this next
 
-1. <Run pm-next to start <ID> | Do <user task ID> | Run pm-shape on <idea>>
+1. <Run pm-next to start <ID> <title> | Do <user task title> | Run pm-shape on <idea>>
    - Start with: <skill name or task>
    - Done when: <observable check>
 

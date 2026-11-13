@@ -49,7 +49,7 @@ asked, the skill's own `SKILL.md` steps.
 | `pm-discover` | You want evidence from the code, history, or usage data, or an answer about how the product works today | "what should we fix next?", "is export used?" | A research report; inbox ideas |
 | `pm-strategy` | Setting focus, milestones, bets, or the vision, or rebuilding the roadmap | "re-plan the roadmap" | `STRATEGY.md`, `VISION.md`, `ROADMAP.md` |
 | `pm-purview` | A .NET project wants to know which Purview tools would help, or a new project is choosing its stack | "would Purview help here?" | A research report; roadmap items if accepted |
-| `pm-checkpoint` | Stopping, pausing, switching items, suspending or resuming an operation, or finishing one | "pause", "stack this, I need to fix the build", "pop the stacked work", "R-007 is done" | `NOW.md`, `LOG.md`, `ROADMAP.md`, `STACK.md` |
+| `pm-checkpoint` | Stopping, pausing, switching items, suspending or resuming an operation, or finishing one (a finished item ends its context) | "pause", "stack this, I need to fix the build", "pop the stacked work", "R-007 is done" | `NOW.md`, `LOG.md`, `ROADMAP.md`, `STACK.md` |
 | `pm-revise` | Work that is already built is not what you wanted, or a `Done when` check fails, including mid-workflow | "that's not right", "change what we built for R-007" | `NOW.md`, `ROADMAP.md`, the brief's `## Revisions` |
 | `pm-review` | Weekly, or when `pm-resume` says a review is due | "weekly review" | Inbox, `ROADMAP.md`, `LOG.md`, `config.md` |
 | `pm-item` | Changing one roadmap item: add, edit, drop, block, move or insert at a position, reassign, or mark a task of yours done | "drop R-012", "put R-012 before R-008", "I've done R-009" | `ROADMAP.md`, `LOG.md` |
@@ -75,9 +75,11 @@ IDs, and how RAG is derived and overridden, revisions and `Revisits`,
 the export file and its schema, the docs site and why its build modes run
 inside a workflow (rule 9), completion records and the finish order (the
 completion commit rides the item's branch and its pull request), the
-operation stack and `pm-checkpoint` push/pop, `merged-unclosed` items, and
-the two ways a workflow may be interrupted (`pm-revise` to correct,
-`pm-checkpoint` push/pop to suspend).
+operation stack and `pm-checkpoint` push/pop, `merged-unclosed` items,
+named references (why an ID always carries its title), the Context budget
+(one item per context, a fresh session between items), and the two ways a
+workflow may be interrupted (`pm-revise` to correct, `pm-checkpoint`
+push/pop to suspend).
 
 ## Steps (overview)
 
@@ -98,7 +100,7 @@ the two ways a workflow may be interrupted (`pm-revise` to correct,
    | 10 | Next has a claimable item, or an item is active | Nothing claimable | `pm-review`, or the blocking user task |
    | 11 | Review due is false (Shared definitions) | Review due | `pm-review` |
    | 12 | No inbox file has `Discuss: yes` and no brief has `Status: shaping` | `<n> ideas waiting for discussion` | `pm-shape` |
-   | 13 | No `Owner: user` item blocks an agent item | `Your task <ID> blocks <IDs>` | Do it, then `pm-item done <ID>` |
+   | 13 | No `Owner: user` item blocks an agent item | `Your task <ID> <title> blocks <ID> <title>` | Do it, then `pm-item done <ID>` |
    | 14 | If the repository has `.csproj`, `.slnx`, or `.sln` files: a `research/*purview-fit.md` report exists | Purview fit not assessed | `pm-purview` |
    | 15 | If the repository has substantial code: a `research/` report exists | Roadmap not checked against the existing product | `pm-discover` |
    | 16 | `NOW.md` agrees with the work: when idle, the current branch does not match the `Branch name pattern`; when active, `Session` equals the current branch and that branch is not merged into the PM branch | Drifted from the lifecycle, or `Completion for <ID> did not land` | `pm-rejoin` |
