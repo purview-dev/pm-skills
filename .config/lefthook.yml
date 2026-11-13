@@ -7,3 +7,5 @@ pre-push:
   jobs:
     - name: lint
       run: just lint-check
+    - name: version
+      run: just version-check

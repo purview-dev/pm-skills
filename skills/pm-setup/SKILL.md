@@ -67,7 +67,7 @@ Collect these facts. Write nothing yet.
 4. **Installed skills:** for each of `pm-init`, `pm-resume`, `pm-rejoin`,
    `pm-next`, `pm-up-next`, `pm-park`, `pm-bug`, `pm-risk`, `pm-shape`,
    `pm-discover`, `pm-strategy`, `pm-purview`, `pm-checkpoint`,
-   `pm-revise`, `pm-review`, `pm-item`, `pm-board`, `pm-roadmap`,
+   `pm-pause`, `pm-revise`, `pm-review`, `pm-item`, `pm-board`, `pm-roadmap`,
    `pm-status`, `pm-export`, `pm-docs-site`, and `pm-help`, check that a
    `SKILL.md` exists.
    - First run `npx skills list` (or `bunx skills list`), if either runs.
@@ -142,7 +142,7 @@ questions.
 - Mode: install | upgrade v<old> to v<new> | repair (re-wrap the section) | reinstall (section missing, recorded v<n>) | already current (nothing to do)
 - Target: <file> (<append section | replace between markers | wrap the stranded section>)
 - Extra: <@AGENTS.md import added to CLAUDE.md | none>
-- Skills: <n> of 23 installed. Missing: <names | none>
+- Skills: <n> of 24 installed. Missing: <names | none>
 - Rules version: <v<n> recorded | not recorded | legacy v<n> in the marker | PM state not initialised>
 - Workflow framework: <Superpowers | name | partial | none>
 - Workflow skills: <n> of <total> installed. Missing: <names | none>
@@ -258,7 +258,7 @@ Rules for this step:
 ## pm-setup done
 
 - Target: <file> (<installed | upgraded to v<n> | repaired>)
-- Skills: <23 of 23 installed | missing: names>
+- Skills: <24 of 24 installed | missing: names>
 - Workflow skills: <n of n installed | missing: names>
 - Rules version: <v<n> recorded in <PM root>/config.md | legacy v<n> migrated | PM state not initialised>
 - Diff check: only the managed section changed, plus the Rules version line and any added Commits settings
@@ -270,7 +270,7 @@ Rules for this step:
 
 1. <Only if skills are missing:> Install the missing skills.
    - Start with: `npx skills add https://github.com/purview-dev/pm-skills -y`
-   - Done when: all 23 pm-* skills are listed by `npx skills list`
+   - Done when: all 24 pm-* skills are listed by `npx skills list`
 2. <Only if workflow skills are missing:> Install the workflow skills.
    - Start with: `npx skills add https://github.com/obra/superpowers -y`,
      or `/plugin install superpowers@claude-plugins-official` in Claude

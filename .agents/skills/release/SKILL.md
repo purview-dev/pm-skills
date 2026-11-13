@@ -11,10 +11,14 @@ Cut a release of `pm-skills`. The version of record is the `version` field in
 `package.json`. `.github/workflows/release.yml` creates the `v{version}` tag
 and a GitHub release when `package.json` changes on `main`.
 
-`.github/workflows/ci.yml` requires a version bump in any pull request that
-changes `skills/**`, so a skills change cannot merge while `v{version}`
-already exists. A pull request that touches nothing under `skills/` (docs,
-CI, scripts, `.agents/skills/`) merges without one.
+The major is the rules/skills version: the `version=N` start marker in
+`skills/pm-setup/references/AGENTS-section.md`. `scripts/check-version.ts`
+(CI and pre-push) requires any pull request that changes `skills/**` to
+raise that marker past the one on `main`, so a skills change is always a
+`major` bump. A pull request that touches nothing under `skills/` (docs, CI,
+scripts, package metadata, `.agents/skills/`) keeps the major and may bump
+the minor or patch. `scripts/validate.ts` requires this repository's own
+`planning/config.md` and `AGENTS.md` to carry the marker version.
 
 This skill is repository-only. It lives in `.agents/skills/`, outside the
 shipped `skills/` set, and its frontmatter sets `metadata.internal: true`, so
@@ -27,17 +31,16 @@ inventory, or the `pm-help` guide.
 
 - Work in the repository root. Read the version with
   `node -p 'require("./package.json").version'`.
-- If the working tree has uncommitted changes outside `package.json`, stop:
-  `Commit or stash <paths> first.` A release commit changes only
-  `package.json`.
-- Change nothing else: not the skills, the managed section, the README, or the
-  `Rules version` in `skills/pm-init/templates/config.md`. The release version
-  and the rules/skills version are independent.
-- If the branch changes `skills/pm-setup/references/AGENTS-section.md`, its
-  `version=N` start marker (and `Rules version` in
-  `skills/pm-init/templates/config.md`) must already be bumped, or CI fails
-  the pull request and `pm-setup` would never install the change. The rules
-  version is separate from the release version.
+- If the working tree has uncommitted changes, stop:
+  `Commit or stash <paths> first.` A release commit changes only the files
+  the bump writes, and, for `major`, the files `pm-setup` writes.
+- Change nothing else: not the skills, the README, or the rules text. A
+  `minor` or `patch` bump writes only `package.json`. A `major` bump also
+  writes the `version=N` marker and `Rules version` in
+  `skills/pm-init/templates/config.md`; then `pm-setup` installs the section
+  in `AGENTS.md` and writes `Rules version` in `planning/config.md`.
+- When the branch already raises the marker past `main`, do not bump `major`
+  again: `package.json` is already `<N>.0.0`.
 - Never create or delete tags, and never push or merge: print the command
   instead. The Release workflow owns the tag.
 - `v{version}` already existing is normal: it is the last release. The point of
@@ -50,20 +53,23 @@ inventory, or the `pm-help` guide.
    (`git log --oneline v{version}..HEAD`). If `v{version}` is not a tag yet,
    say so: the current version is unreleased, so this skill is only needed if
    the user wants a different number.
-2. **Recommend a part.** From the conventional commits since `v{version}`:
-   `major` for a breaking change (a `!` after the type or scope, or a
-   `BREAKING CHANGE:` footer); otherwise `minor` when any `feat` is present;
-   otherwise `patch`. State the part, the resulting version, and the commits
-   that decided it.
+2. **Recommend a part.** `major` when `git diff --name-only
+   origin/main...HEAD` lists any path under `skills/` and the marker equals
+   the one on `main`. Otherwise, from the conventional commits since
+   `v{version}`: `minor` when any `feat` is present, else `patch`. Never
+   offer `major` without a skills change. State the part, the resulting
+   version, and the paths or commits that decided it.
 3. **Confirm.** Ask one choice question: `Bump to which version?` with the
-   recommended `v<next> (<part>)` first, then the other two parts, each
-   labelled with its version, and `Keep v<current>`. Do not offer a version
-   that is already tagged.
+   recommended `v<next> (<part>)` first, then the parts `check-version.ts`
+   allows, each labelled with its version, and `Keep v<current>`. Do not
+   offer a version that is already tagged.
 4. **Bump.** Run `bun scripts/bump-version.ts <part>` (or `just bump <part>`).
-   The script rewrites only the `version` field and fails when the target
-   `v<next>` tag already exists.
-5. **Commit.** `git add package.json`, then
-   `git commit -m "chore(release): v<next>"`. Do not amend an existing commit.
+   The script fails when the target `v<next>` tag already exists. After
+   `major`, run `pm-setup` so `AGENTS.md` and `planning/config.md` carry the
+   new rules version, then `just validate` and `just version-check`.
+5. **Commit.** `git add` the files the bump wrote, then
+   `git commit -m "chore(release): v<next>"`. `pm-setup` commits
+   `planning/` itself. Do not amend an existing commit.
 6. **Report.** Print the new version, the commit, and the next command:
    `git push` (or open a pull request). Merging to `main` triggers the Release
    workflow, which creates the tag and the GitHub release.

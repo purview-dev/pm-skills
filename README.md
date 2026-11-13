@@ -116,6 +116,7 @@ Then, in your agent:
 | [`pm-strategy`](skills/pm-strategy/SKILL.md) | Milestones, focus, bets, decisions; generate or re-plan the roadmap | User asks |
 | [`pm-purview`](skills/pm-purview/SKILL.md) | Recommend [Purview](https://purview.dev/) .NET tools only where they add value | New project, or a matching .NET need |
 | [`pm-checkpoint`](skills/pm-checkpoint/SKILL.md) | Save state and decisions, record stage changes, suspend or resume an operation, close finished items on their branch | Session or stage end, before compaction, an emergency pause |
+| [`pm-pause`](skills/pm-pause/SKILL.md) | Write the session's position (step in progress, open question, next action) for `pm-resume` to continue and then delete | You stop mid-task, with or without an active item |
 | [`pm-review`](skills/pm-review/SKILL.md) | Triage the inbox, check roadmap health, order Next | Weekly |
 | [`pm-item`](skills/pm-item/SKILL.md) | Add, edit, drop, block, move or insert at a position, reassign, or complete one item | User asks |
 | [`pm-board`](skills/pm-board/SKILL.md) | Task board; move, add, insert, or close one card | User asks |
@@ -202,6 +203,7 @@ directory selected during `pm-setup`.
 | `planning/ROADMAP.md` | Next (ordered, maximum 5) and Later, with owner and dependencies |
 | `planning/LOG.md` | Done, Dropped, Reviews |
 | `planning/STACK.md` | Suspended operations, newest first, with their checkpoints |
+| `planning/PAUSE.md` | The paused session's position, written by `pm-pause`; deleted once `pm-resume` continues it |
 | `planning/RISKS.md` | The risk register: open, closed, and removed risks with likelihood, impact, and RAG |
 | `planning/inbox/` | The parking lot: one file per idea |
 | `planning/briefs/` | One shaped idea per file: challenges, ramifications, decision |
@@ -343,19 +345,22 @@ Requires [`bun`](https://bun.sh) and, for the git hooks,
 - `just install` verifies the tools and installs the git hooks (commitlint
   on commit, `just lint-check` on push).
 - `just bump patch|minor|major` writes the next release version to
-  `package.json`.
+  `package.json`; `major` also raises the rules version.
+- `just version-check` compares the version with `main` (also run on push).
 
 This repository manages itself with these skills: `planning/` is its live
 PM state, and `docs-site/` is the site `pm-docs-site` builds from it.
 
-CI runs the same checks on every push and pull request to `main`. A pull
-request that changes anything under `skills/` must also bump the
-`package.json` version to one that is not already tagged, and a change to
-the managed rules must bump the rules version too, or `pm-setup` would never
-install it. Pull requests that touch nothing under `skills/` (docs, CI,
-scripts) merge without a bump. The repository-only `release` skill in
-`.agents/skills/release/` picks the bump from the conventional commits since
-the last tag and commits it; it is not installed into consuming projects.
+The `package.json` major is the rules/skills version (rules v17 ship as
+`17.x.y`), and this repository must run what it ships: its own
+`planning/config.md` and `AGENTS.md` carry the same rules version. CI runs
+the same checks on every push and pull request to `main`. A pull request
+that changes anything under `skills/` must raise the rules version past the
+one on `main` (`just bump major`, then `pm-setup`), to a version that is not
+already tagged. Pull requests that touch nothing under `skills/` (docs, CI,
+scripts, package metadata) keep the rules version, and may bump the minor
+or patch. The repository-only `release` skill in `.agents/skills/release/`
+picks the bump and commits it; it is not installed into consuming projects.
 
 Adding a skill means creating `skills/<name>/SKILL.md` and listing it in the
 README table, the managed-section table, the `pm-setup` inventory, and the

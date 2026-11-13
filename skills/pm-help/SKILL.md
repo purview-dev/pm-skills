@@ -39,7 +39,7 @@ asked, the skill's own `SKILL.md` steps.
 | --- | --- | --- | --- |
 | `pm-setup` | Installing or upgrading the skills and the rules in `AGENTS.md` or `CLAUDE.md` | "set up the pm skills" | The managed section only |
 | `pm-init` | Starting project management in a repository, once | "initialise planning" | The PM root, `VISION.md`, a seeded roadmap |
-| `pm-resume` | Starting a session, or after the context was compacted | "where was I?" | Nothing |
+| `pm-resume` | Starting a session, or after the context was compacted | "where was I?" | Nothing, except deleting `PAUSE.md` once its pause resumes |
 | `pm-rejoin` | You lost the pm thread, a workflow is running that `NOW.md` does not record, or a session started mid-task | "where am I in the pm lifecycle?", "rejoin", "get back on track" | `NOW.md`, `ROADMAP.md` |
 | `pm-next` | Nothing is active and you want to start the next item on its own feature branch | "start R-007", "claim R-007" | `NOW.md`, `ROADMAP.md` |
 | `pm-park` | You or the agent have an idea, bug, question, or inspiration to remember, even mid-task | "park this: ...", "note that ..." | One inbox file |
@@ -50,6 +50,7 @@ asked, the skill's own `SKILL.md` steps.
 | `pm-strategy` | Setting focus, milestones, bets, or the vision, or rebuilding the roadmap | "re-plan the roadmap" | `STRATEGY.md`, `VISION.md`, `ROADMAP.md` |
 | `pm-purview` | A .NET project wants to know which Purview tools would help, or a new project is choosing its stack | "would Purview help here?" | A research report; roadmap items if accepted |
 | `pm-checkpoint` | Stopping, pausing, switching items, suspending or resuming an operation, or finishing one (a finished item ends its context) | "pause", "stack this, I need to fix the build", "pop the stacked work", "R-007 is done" | `NOW.md`, `LOG.md`, `ROADMAP.md`, `STACK.md` |
+| `pm-pause` | Stopping mid-task and continuing later from the exact step, with or without an active item (a shaping interview, a review, a question waiting for you) | "pause here", "save where we are, I'll pick this up tomorrow" | `PAUSE.md`; the active item's checkpoint in `NOW.md` |
 | `pm-revise` | Work that is already built is not what you wanted, or a `Done when` check fails, including mid-workflow | "that's not right", "change what we built for R-007" | `NOW.md`, `ROADMAP.md`, the brief's `## Revisions` |
 | `pm-review` | Weekly, or when `pm-resume` says a review is due | "weekly review" | Inbox, `ROADMAP.md`, `LOG.md`, `config.md` |
 | `pm-item` | Changing one roadmap item: add, edit, drop, block, move or insert at a position, reassign, or mark a task of yours done | "drop R-012", "put R-012 before R-008", "I've done R-009" | `ROADMAP.md`, `LOG.md` |
@@ -77,7 +78,8 @@ inside a workflow (rule 9), completion records and the finish order (the
 completion commit rides the item's branch and its pull request), feature
 branches (each item on its own branch, staying put when asked, during an
 interruption, or while a pull request is pending, and pulling before every
-move), the operation stack and `pm-checkpoint` push/pop, `merged-unclosed` items,
+move), the operation stack and `pm-checkpoint` push/pop, the pause file
+(`pm-pause` writes it, `pm-resume` continues and deletes it), `merged-unclosed` items,
 named references (why an ID always carries its title), the Context budget
 (one item per context, a fresh session between items), and the two ways a
 workflow may be interrupted (`pm-revise` to correct, `pm-checkpoint`
@@ -114,6 +116,7 @@ push/pop to suspend).
    | 22 | No open risk in `RISKS.md` has `Reviewed: never`, and every red open risk has a `Mitigation` other than `none` | `<n> unreviewed risks`, or `Red risk without a mitigation: RK-NNN <title>` | `pm-risk review`, or `pm-risk mitigate <RK-NNN>` |
    | 23 | The `Commits` section of `config.md` sets `PM state commit`, `PM branch`, and `Export on commit` | `Commits setting missing: <names>` (PM commits ask, or the export lags) | `pm-setup` |
    | 24 | If an item is active, its `Session` is not the PM branch, and `git rev-list --count HEAD..@{upstream}` is 0 (against the remote refs already fetched) | `<ID> <title> is on the PM branch` (expected only when the user asked to stay there), or `<branch> is <n> commits behind <upstream>` | `pm-rejoin`, or `git pull --ff-only` |
+   | 25 | `PAUSE.md` is missing | `Paused on <Session> at <Paused>: <Running>` | `pm-resume` on `<Session>` |
 
    Stop at the first failing check among 1 to 4; later checks depend on
    them.
