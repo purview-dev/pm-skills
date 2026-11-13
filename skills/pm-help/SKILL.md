@@ -41,7 +41,7 @@ asked, the skill's own `SKILL.md` steps.
 | `pm-init` | Starting project management in a repository, once | "initialise planning" | The PM root, `VISION.md`, a seeded roadmap |
 | `pm-resume` | Starting a session, or after the context was compacted | "where was I?" | Nothing |
 | `pm-rejoin` | You lost the pm thread, a workflow is running that `NOW.md` does not record, or a session started mid-task | "where am I in the pm lifecycle?", "rejoin", "get back on track" | `NOW.md`, `ROADMAP.md` |
-| `pm-next` | Nothing is active and you want to start the next item | "start R-007", "claim R-007" | `NOW.md`, `ROADMAP.md` |
+| `pm-next` | Nothing is active and you want to start the next item on its own feature branch | "start R-007", "claim R-007" | `NOW.md`, `ROADMAP.md` |
 | `pm-park` | You or the agent have an idea, bug, question, or inspiration to remember, even mid-task | "park this: ...", "note that ..." | One inbox file |
 | `pm-bug` | A bug to log with the facts a fix needs: symptom, expected and actual, reproduction, severity, evidence | "add a bug", "log a defect" | One inbox file with `Kind: bug`; a roadmap item if routed |
 | `pm-risk` | A risk to note, even mid-task, or the risk register to see or manage: add, update, re-rate (RAG), review, mitigate, close, or remove one risk | "risk: the API may rate-limit us", "show the risks", "close RK-003" | `RISKS.md`; a roadmap item in `mitigate` |
@@ -74,8 +74,10 @@ roadmap`, `Show the board`), bugs and severity, the risk register, risk
 IDs, and how RAG is derived and overridden, revisions and `Revisits`,
 the export file and its schema, the docs site and why its build modes run
 inside a workflow (rule 9), completion records and the finish order (the
-completion commit rides the item's branch and its pull request), the
-operation stack and `pm-checkpoint` push/pop, `merged-unclosed` items,
+completion commit rides the item's branch and its pull request), feature
+branches (each item on its own branch, staying put when asked, during an
+interruption, or while a pull request is pending, and pulling before every
+move), the operation stack and `pm-checkpoint` push/pop, `merged-unclosed` items,
 named references (why an ID always carries its title), the Context budget
 (one item per context, a fresh session between items), and the two ways a
 workflow may be interrupted (`pm-revise` to correct, `pm-checkpoint`
@@ -103,7 +105,7 @@ push/pop to suspend).
    | 13 | No `Owner: user` item blocks an agent item | `Your task <ID> <title> blocks <ID> <title>` | Do it, then `pm-item done <ID>` |
    | 14 | If the repository has `.csproj`, `.slnx`, or `.sln` files: a `research/*purview-fit.md` report exists | Purview fit not assessed | `pm-purview` |
    | 15 | If the repository has substantial code: a `research/` report exists | Roadmap not checked against the existing product | `pm-discover` |
-   | 16 | `NOW.md` agrees with the work: when idle, the current branch does not match the `Branch name pattern`; when active, `Session` equals the current branch and that branch is not merged into the PM branch | Drifted from the lifecycle, or `Completion for <ID> did not land` | `pm-rejoin` |
+   | 16 | `NOW.md` agrees with the work: when idle, the current branch does not match the `Branch name pattern`, or is a **Pending pull request** whose `## Done` line is written; when active, `Session` equals the current branch and that branch is not merged into the PM branch | Drifted from the lifecycle, or `Completion for <ID> did not land` | `pm-rejoin` |
    | 17 | **Uncommitted PM state** is empty | `<n>` uncommitted PM files | `pm-checkpoint`, which commits them |
    | 18 | If `<PM root>/planning.json` exists: it parses, its top-level keys match the schema, and its item order and counts match the Markdown | Export is stale or invalid: first difference | `pm-export` |
    | 19 | No open `Kind: bug` inbox file has `Severity: blocker` | Blocker bug open: title | `pm-revise`, or `pm-next` for its item |
@@ -111,6 +113,7 @@ push/pop to suspend).
    | 21 | `STACK.md` is missing or empty | `<n> stacked operations waiting` | `pm-checkpoint` (`pop`) |
    | 22 | No open risk in `RISKS.md` has `Reviewed: never`, and every red open risk has a `Mitigation` other than `none` | `<n> unreviewed risks`, or `Red risk without a mitigation: RK-NNN <title>` | `pm-risk review`, or `pm-risk mitigate <RK-NNN>` |
    | 23 | The `Commits` section of `config.md` sets `PM state commit`, `PM branch`, and `Export on commit` | `Commits setting missing: <names>` (PM commits ask, or the export lags) | `pm-setup` |
+   | 24 | If an item is active, its `Session` is not the PM branch, and `git rev-list --count HEAD..@{upstream}` is 0 (against the remote refs already fetched) | `<ID> <title> is on the PM branch` (expected only when the user asked to stay there), or `<branch> is <n> commits behind <upstream>` | `pm-rejoin`, or `git pull --ff-only` |
 
    Stop at the first failing check among 1 to 4; later checks depend on
    them.
