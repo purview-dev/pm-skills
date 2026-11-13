@@ -42,16 +42,27 @@ directory` setting (default `planning/`).
    `Discuss: yes`. List briefs with `Status: shaping`. Count the
    **Uncommitted PM state** files for the `Note` section.
 3. Evaluate **Review due** (Shared definitions).
-4. If `Status: idle`: check for drift first (Shared definitions). The state
-   has drifted when the current branch matches the `Branch name pattern` in
-   `config.md`, because then the branch names an item that `NOW.md` does not
-   record. The next action is then `pm-rejoin`, not `pm-next`. When the
+4. **Remote.** Run `git fetch <remote> --prune` (Shared definitions:
+   Remote); it moves remote refs only and writes no file. When the current
+   branch is behind its upstream, add the Note `<branch> is <n> commits
+   behind <upstream>. Pull: git pull --ff-only`. When the current branch
+   is not the PM branch and the local PM branch is behind `<remote>/<PM
+   branch>`, name the count only; `pm-next` branches from the **PM base**,
+   so the PM branch needs no checkout.
+5. If `Status: idle`: check for drift first (Shared definitions). When the
+   current branch is a **Pending pull request** whose `## Done` line is
+   written, it is not drift: the next action is `pm-next`, which starts
+   from the **PM base**, with the Note `Stay on <branch> until its pull
+   request merges.` Otherwise the state has drifted when the current branch
+   matches the `Branch name pattern` in `config.md`, because then the
+   branch names an item that `NOW.md` does not record. The next action is
+   then `pm-rejoin`, not `pm-next`. When the
    stack has an entry, the next action is `pm-checkpoint pop`: suspended
    work comes back before new work is claimed. Otherwise the next action is
    `pm-next`. If review is due, it is `pm-review` instead. If Next has no
    claimable item, it is the user task that unblocks the most items, or
    `pm-review`.
-5. If `Status: active`:
+6. If `Status: active`:
    - **Session match** (Shared definitions): a mismatch means another
      session owns the item. Report it read-only, unless the current branch
      matches the `Branch name pattern` in `config.md` for this item's ID:
@@ -61,9 +72,9 @@ directory` setting (default `planning/`).
      `wait, or ask the owner of <Session>`.
    - If the `Plan` file exists, count its `- [ ]` (open) and `- [x]`
      (done) checkboxes.
-   - Check whether the session branch is merged: find the default branch
-     with `git symbolic-ref --short refs/remotes/origin/HEAD` (fall back to
-     `main`, then `master`), then run `git branch --merged <default>`. If
+   - Check whether the session branch is merged: run
+     `git branch -a --merged <remote>/<PM branch>`, using the refs fetched
+     in step 4 (a repository with no remote uses the local PM branch). If
      the session branch is listed, the item is **Merged-unclosed** (Shared
      definitions): add the Note `Branch <branch> is merged but <ID> <title>
      is still active.` and make the next action `pm-rejoin`. Never close it
@@ -77,11 +88,11 @@ directory` setting (default `planning/`).
      Handoffs table.
    - If a Spec, Plan, or Brief path is set but the file does not exist, add
      the Note: `Missing file: <path>.`
-6. **For you:** collect, in this order, up to 5 of: the checkpoint's `Open
+7. **For you:** collect, in this order, up to 5 of: the checkpoint's `Open
    question`; `Owner: user` items in Next with `Status: ready`, in roadmap
    order, flagging those that block agent items; `## Open questions` from briefs with `Status:
    shaping`; the count of inbox files with `Discuss: yes`.
-7. Show the output. Then ask one choice question: `Start "<next action>"
+8. Show the output. Then ask one choice question: `Start "<next action>"
    now?` with the options `Start it (recommended)` and `Show the board
    first` (run `pm-board`). If a "For you" item blocks the next
    action, put `Do <user item> first` as the recommended option instead.

@@ -179,9 +179,11 @@ branch so it rides the item's pull request, before CI runs.
 The other exception is `pm-docs-site`'s build modes: the site is code, so
 they run as a step of the site item's `execute` stage, on
 its branch, and leave committing to the workflow.
-The one git state change they make is the commit of those planning files,
-plus the offered switch to the planning branch when the main worktree is on
-another one. `pm-setup` edits only the managed section in the selected
+The git state changes they make are the commit of those planning files and
+the branch moves of the feature-branch rules: `pm-next` pulls the latest
+planning branch and starts each item on its own feature branch, and every
+move pulls first with `--ff-only`. The session stays on its branch when you
+ask, during an interruption, and while its pull request is pending. `pm-setup` edits only the managed section in the selected
 agent instructions file, plus the `Rules version` line in `config.md`. Full
 rules:
 [`skills/pm-setup/references/AGENTS-section.md`](skills/pm-setup/references/AGENTS-section.md).

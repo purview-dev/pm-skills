@@ -50,9 +50,11 @@ ambiguous, ask which one is true.
      the `- [ ]` and `- [x]` counts of the plan.
    - For an ID in the current branch name: its line in `ROADMAP.md` (Next
      or Later) and any brief matching `<PM root>/briefs/<ID>-*.md`.
-   - Whether the session branch is merged: the default branch from
-     `git symbolic-ref --short refs/remotes/origin/HEAD` (fall back to
-     `main`, then `master`), then `git branch --merged <default>`.
+   - Whether the session branch is merged: run `git fetch <remote>
+     --prune` (Shared definitions: Remote; it writes no file), then
+     `git branch -a --merged <remote>/<PM branch>` (a repository with no
+     remote uses the local PM branch). Note whether the current branch is
+     a **Pending pull request**.
    - Recent work that `NOW.md` does not mention: `git status --porcelain`
      plus `git log --since=24.hours --name-only --format=`, checked against
      the output locations in the Handoffs table.
@@ -88,6 +90,10 @@ ambiguous, ask which one is true.
      (recommended)` (run `repair`), `Leave it active`, and `Explain <ID>`.
    - `completed`: `Finish <ID> <title>?` with `Run the finish skill
      (recommended)` (invoke the finish skill, no repair) and `Explain <ID>`.
+     When the branch is already a **Pending pull request**, ask instead
+     `<ID> <title> waits for its pull request. What next?` with `Stay here
+     and run pm-next (recommended)` and `Explain <ID>`; never recommend a
+     switch to the PM branch (rules: Feature branches, rule 5).
    - `stacked`: `Resume <ID> <title>?` with `Pop it (recommended)` (run
      `pm-checkpoint` pop) and `Explain <ID>`.
    - `recorded`: `Continue <ID> <title> at <stage>?` with
@@ -116,7 +122,9 @@ ambiguous, ask which one is true.
      prompt from `pm-checkpoint` (`done`) and record it in the same commit.
    - Set `NOW.md` to idle.
    - Commit `docs(pm): close <ID> late` (rules: Committing PM state); switch
-     to the PM branch when the commit offers it. The next branch carries the
+     to the PM branch when the commit offers it, and run **Pull latest**
+     there before the record is written, so it starts from the merged
+     state. The next branch carries the
      commit when the PM branch is protected, and it never gets a pull
      request of its own.
    - Show the output with the `Note` `Completion for <ID> was late; no

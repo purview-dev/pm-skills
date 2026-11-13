@@ -10,8 +10,9 @@ with no memory of the conversation. Writes only inside the PM root: the
 main worktree, or the worktree that holds the item's branch in `done` mode
 (rules: **Completion rides the branch**).
 
-Follow the Non-interruption rules, Shared definitions, Persistence, Asking
-the user, and Communication contract in the pm-skills section of the agent
+Follow the Non-interruption rules, Shared definitions, Feature branches,
+Persistence, Asking the user, and Communication contract in the pm-skills
+section of the agent
 instructions file (`AGENTS.md` or `CLAUDE.md`). PM root is its `PM state
 directory` setting (default `planning/`).
 
@@ -56,8 +57,11 @@ and `Explain <ID>`.
   restored?`
   with the options `Push the active item, then pop (recommended)` (run
   `push`, then `pop`) and `Cancel pop`. If the current branch differs from
-  the entry's `Branch`, reply `<ID> <title> is stacked on <branch>. Switch
-  to it, then run pop.` Stop.
+  the entry's `Branch`, ask one choice question: `<ID> <title> is stacked
+  on <branch>. Move there to restore it?` with the options `Switch to
+  <branch> and pull (recommended)` and `Cancel pop`. On switch, run
+  `git switch <branch>`, then **Pull latest** (rules: Feature branches,
+  rule 4); a blocked move or a failed pull stops with nothing written.
 - If a workflow is active and the user did not ask to pause or suspend,
   apply Non-interruption rule 4, except in `stage` mode right after a
   handoff skill finishes, in `pause` mode before compaction, and in `push`
@@ -102,14 +106,15 @@ and `Explain <ID>`.
    `pause` and list them. If the plan file has any `- [ ]` box, stay in
    `pause` and name the open steps. Otherwise:
    - **Choose the commit worktree** (rules: **Completion rides the branch**).
-     The record starts from the committed PM state on the PM branch. When
-     the item's branch is the PM branch, write it in place. Otherwise read
-     `LOG.md`, `NOW.md`, `ROADMAP.md`, `STRATEGY.md`, and the brief from the
-     PM branch (`git show <PM branch>:<PM root>/<file>`), apply the record
-     to those contents, and write and commit them in the worktree that
-     holds the item's branch. Stop when the PM branch has **Uncommitted PM
-     state**, or when the item's worktree has uncommitted changes under the
-     PM root.
+     Fetch first: the record starts from the **PM base**. When the item's
+     branch is the PM branch, run **Pull latest** and write it in place.
+     Otherwise read `LOG.md`, `NOW.md`, `ROADMAP.md`, `STRATEGY.md`, and
+     the brief from the **PM base** (`git show <PM base>:<PM
+     root>/<file>`), apply the record to those contents, and write and
+     commit them in the worktree that holds the item's branch. Stop when
+     the PM branch has **Uncommitted PM state**, when the PM branch and its
+     remote have diverged, or when the item's worktree has uncommitted
+     changes under the PM root.
    - Append to `## Done` in `LOG.md`:
      `- <date> <ID> <Title>. Milestone: <the Milestone in NOW.md, or none>.
      Owner: <owner>. Plan: <path | none>. Result: branch <branch>.`
@@ -133,6 +138,10 @@ and `Explain <ID>`.
    - The next action is the `finish` skill from the Handoffs table: it
      pushes this branch and opens the pull request, so the completion
      commit is part of it. Say so under "Do this next".
+   - Stay on this branch while its pull request is pending; do not switch
+     to the PM branch (rules: Feature branches, rule 5). Add the Note
+     `Stay on <branch> until its pull request merges; pm-next starts the
+     next item from the PM base.`
    - End this item's context here. Add a second numbered action under
      "Do this next": `Start a new session (/new or /clear) before pm-next
      for another item.` The completion record and its handoff are all the
@@ -172,7 +181,9 @@ and `Explain <ID>`.
    Use the existing checkpoint, or write one as in `pause` when `NOW.md`
    has none. Then set `NOW.md` to idle as in `done`. The item, its stage,
    and its checkpoint are now on the stack and nowhere else. Step 9
-   commits, then reply in one line and resume the interrupted step.
+   commits, then reply in one line and resume the interrupted step. Never
+   switch or create a branch for the interruption: it runs on the branch
+   that is checked out (rules: Feature branches, rule 3).
 8. **pop:** read the top entry of `STACK.md` (Guard checks the stack,
    branch, and active item). Write its fields back into `NOW.md`:
    `Status: active`, `Item`, `Session` (the entry's `Branch`), `Stage`,
