@@ -1,4 +1,4 @@
-<!-- pm-skills:start version=13 -->
+<!-- pm-skills:start version=14 -->
 <!-- Managed by pm-setup. Edit outside these markers; content inside is replaced on upgrade.
      Installed copies keep this marker without a version. The version of record is
      `Rules version` in the PM root config.md, so editing or merging this file cannot lose it. -->
@@ -232,11 +232,12 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
 - **Uncommitted PM state:** the paths printed by
   `git -C <worktree> status --porcelain -- <PM root>`, with the main
   worktree as the default `worktree`.
-- **Export file:** `<PM root>/planning.json`, written only by `pm-export`.
-  It is **derived**: the Markdown files are the state, and the export is a
-  projection for other tools. Never hand-edit it and never read it as PM
-  state; when the two disagree, the Markdown is correct. It is created on
-  first use and committed like any other PM file.
+- **Export file:** `<PM root>/planning.json`, written only by `pm-export`,
+  either when it runs or as the export refresh of a PM commit (rules:
+  Committing PM state). It is **derived**: the Markdown files are the
+  state, and the export is a projection for other tools. Never hand-edit it
+  and never read it as PM state; when the two disagree, the Markdown is
+  correct. It is created on first use and committed like any other PM file.
 - **Export schema:** `<PM root>/planning.schema.json`, the JSON Schema of
   the **Export file**, refreshed from `pm-export`'s
   `references/planning.schema.json` on every write. `schemaVersion` in the
@@ -530,9 +531,12 @@ skill leaves them loose in the working tree for the user to find, add, and
 commit later. A commit made this way is a **PM commit**.
 
 1. **Read the policy** from the `Commits` section of `<PM root>/config.md`:
-   `PM state commit: always | ask | never` and `PM branch: <branch>`. A
-   missing section (installs before version 5) means `ask`, with the main
-   worktree's current branch as the PM branch.
+   `PM state commit: always | ask | never`, `PM branch: <branch>`, and
+   `Export on commit: always | if present | never`. A missing section
+   (installs before version 5) means `ask`, with the main worktree's
+   current branch as the PM branch. A missing `Export on commit` (installs
+   before version 14) means `if present`. The policy is the user's standing
+   answer: on `always`, never ask whether to commit.
 2. **Check the changes** in the **commit worktree**: the main worktree, or
    the worktree that holds the item's branch for a Completion record.
    **Uncommitted PM state** (Shared definitions). No output means there is
@@ -551,7 +555,7 @@ commit later. A commit made this way is a **PM commit**.
    request whose only change is PM state.
 4. **Stop, print, and commit nothing** when the commit worktree has a merge,
    rebase, cherry-pick, revert, or bisect in progress, or when the commit
-   fails. Show the git output, put the two commands from step 6 in a
+   fails. Show the git output, put the two commands from step 7 in a
    `Note`, and finish the skill's own output. Repair a failed pre-commit
    hook only when the repair is inside the PM root, then retry once. Never
    retry with `--no-verify`, and never `stash` or `reset` to force a
@@ -561,7 +565,18 @@ commit later. A commit made this way is a **PM commit**.
    them (recommended)` and `Leave them uncommitted`; the free-text entry is
    the commit message. On `always`, commit without asking. On `never`, put
    the commands in a `Note` and run nothing.
-6. **Run these two commands, in this order:**
+6. **Refresh the export** after the last PM file is written and before the
+   commands in step 7, or before the `Note` on `never`. It runs when
+   `Export on commit` is `always`, or `if present` and
+   `<PM root>/planning.json` exists in the commit worktree, and the changed
+   paths include a PM file other than the **Export file** and **Export
+   schema**. Run `pm-export` (`write`) steps 1 to 5 in the commit worktree,
+   without its commit or output; reading every PM file is that step's
+   scope. If its verify fails, leave the **Export file** as it was, add
+   `Export not refreshed: <first failure>` to the `Note`, and commit the
+   rest. Skip it when the user chose `Leave them uncommitted` or `Leave it
+   uncommitted`.
+7. **Run these two commands, in this order:**
 
    ```bash
    git -C "<commit worktree>" add -A -- "<PM root>"
@@ -571,7 +586,7 @@ commit later. A commit made this way is a **PM commit**.
    The pathspec keeps another session's staged work out of the commit. Then
    rerun the check from step 2 and confirm it prints nothing.
 
-7. **Message:** `docs(pm): <verb> <what changed>`, at most 72 characters,
+8. **Message:** `docs(pm): <verb> <what changed>`, at most 72 characters,
    for example `docs(pm): close R-007 tenant billing` or `docs(pm): pause
    R-007 at execute`. Use the repository's own commit convention instead
    when its agent instructions or contributing guide states one.
@@ -591,7 +606,8 @@ Rules:
   `pm-checkpoint`.
 - The **Export file** and its **Export schema** are ordinary PM files
   inside the PM root, so the same commit covers them. `pm-export` is the
-  only skill that writes them.
+  only skill that writes them, including the refresh in step 6, so a PM
+  commit never leaves the export behind the Markdown it changed.
 - A PM commit never pushes, tags, merges, rebases, or creates or deletes
   branches.
 - Report the result as one `Note` line: `<short sha> <subject>`, `PM state
@@ -692,11 +708,12 @@ because it is the fix.
    (Non-interruption rule 4). `pm-checkpoint` and `pm-park` never run this
    check: saving the state always comes first.
 
-After an upgrade, check `<PM root>/config.md` for the settings the new
-version adds; version 5 adds the `## Commits` section. Ask one choice
-question: `config.md has no Commits section. Add it with defaults?` with
-the options `Add it (recommended)` and `Leave it`. If the user leaves it,
-PM commits ask before each commit.
+After an upgrade, `pm-setup` checks `<PM root>/config.md` for the settings
+the new version adds; version 5 adds the `## Commits` section. When a
+`Commits` setting is missing it asks one choice question per setting and
+writes the answer, so every skill reads the policy from `config.md`
+instead of asking. If the user leaves `PM state commit` unset, PM commits
+ask before each commit.
 
 Version 11 adds the **Stack file** and **Completion rides the branch**.
 `pm-init` creates `<PM root>/STACK.md` on a fresh install; on an older
@@ -717,6 +734,11 @@ the user to start a new session (`/new` or `/clear`) before `pm-next`, and
 a stage handoff passes the spec or plan path instead of the conversation
 that produced it. Every skill prints an ID with its title (`<ID> <title>`)
 wherever its output names one, never a bare ID.
+
+Version 14 adds `Export on commit` to the `Commits` section: a PM commit
+refreshes `<PM root>/planning.json` before it commits, so the export never
+lags the Markdown. `pm-init` now writes `PM state commit: always` by
+default, and `pm-setup` writes any missing `Commits` setting on upgrade.
 
 ## Asking the user (mandatory)
 

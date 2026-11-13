@@ -21,9 +21,10 @@ installed. Existing content is never rewritten, reordered, or removed.
   `Active: <skill> at <step>. I'll run pm-setup when this finishes.`
 - This skill is the fix for the upgrade check (rules: Upgrading before work
   resumes), so it never runs that check.
-- The only PM state this skill writes is the `Rules version` line in
-  `<PM state directory>/config.md`. It never creates or edits any other PM
-  file.
+- The only PM state this skill writes is the `Rules version` line and the
+  missing `Commits` settings in `<PM state directory>/config.md`. It never
+  creates or edits any other PM file, and never changes a setting that is
+  already written.
 - The current folder must be inside a git repository. Work in the **main
   worktree**: the first path in `git worktree list`.
 - If `AGENTS.md` or `CLAUDE.md` has uncommitted changes, stop. Reply:
@@ -131,8 +132,9 @@ If only `.claude/CLAUDE.md` exists, treat it as `CLAUDE.md`.
 Show this, then ask exactly one question with the agent's question tool
 (never as typed options): `Apply this pm-setup plan to <target>?` with
 the options `Apply (recommended)` and `Do not apply`; the tool's free-text
-entry covers "change something". The folder question in Step 1 is the
-only other question.
+entry covers "change something". The folder question in Step 1 and the
+missing `Commits` settings in Step 5, item 4, are the only other
+questions.
 
 ```markdown
 ## pm-setup plan
@@ -216,10 +218,25 @@ Rules for this step:
    rewritten without it. Change nothing else in the file. If the file does
    not exist, say `PM state not initialised: pm-init records Rules version.`
 4. **PM config check.** If `<PM state directory>/config.md` exists, check
-   that each skill in its Handoffs table exists and that it has a `Commits`
-   section (added in version 5). Report anything missing, including
-   `No Commits section in config.md: PM state commits will ask first.` Do
-   not edit anything else in the file.
+   that each skill in its Handoffs table exists, and report any that is
+   missing. Then check the `Commits` section (added in version 5) for
+   `PM state commit`, `PM branch`, and `Export on commit` (version 14).
+   For each missing setting, ask one choice question and write the answer
+   under `## Commits`, creating the section before `## Last review` when it
+   is missing:
+   - `PM state commit`: `When a skill writes planning files, how should
+     they be committed?` with `Commit automatically (recommended)`, `Ask me
+     each time`, and `Never commit`, written as `always`, `ask`, or
+     `never`.
+   - `PM branch`: `Which branch should PM state land on?` with the
+     repository's default branch (found as in `pm-init` step 2) marked
+     `(recommended)`, and the current branch when it differs.
+   - `Export on commit`: `Should a PM commit refresh planning.json?` with
+     `Refresh it when it exists (recommended)`, `Always write it`, and
+     `Never refresh it`, written as `if present`, `always`, or `never`.
+
+   These questions do not count against the one question in Step 4. Do not
+   edit anything else in the file.
 
 ## Step 6: Verify
 
@@ -230,7 +247,7 @@ Rules for this step:
 2. Check that the start marker and end marker each appear exactly once,
    across all agent files, and that the start marker carries no
    `version=`. Check that `config.md`, if changed, differs only in its
-   `Rules version` line.
+   `Rules version` line and the `Commits` settings added in Step 5, item 4.
 3. If the repository has a markdownlint config, run
    `npx markdownlint-cli2 <files>` (or `bunx markdownlint-cli2 <files>`) on
    the changed files and report the result.
@@ -244,8 +261,9 @@ Rules for this step:
 - Skills: <23 of 23 installed | missing: names>
 - Workflow skills: <n of n installed | missing: names>
 - Rules version: <v<n> recorded in <PM root>/config.md | legacy v<n> migrated | PM state not initialised>
-- Diff check: only the managed section changed, plus the Rules version line
-- PM state: <not initialized | current | missing version 4 files or the Commits section: names>
+- Diff check: only the managed section changed, plus the Rules version line and any added Commits settings
+- Commits: <PM state commit <value>, Export on commit <value> | PM state not initialised>
+- PM state: <not initialized | current | missing version 4 files: names>
 - Upgrade gate: <cleared, rules at v<n> | unchanged>
 
 ## Do this next

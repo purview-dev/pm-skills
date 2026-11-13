@@ -110,6 +110,7 @@ push/pop to suspend).
    | 20 | If a docs site exists (a `pm-docs-site.json`, or a `src/lib/planning.ts` containing `PlanningExportError`, outside `node_modules/`): the manifest's `schemaVersion` (else `SCHEMA_VERSION`) equals the `schemaVersion` of `<PM root>/planning.json` and of `pm-docs-site`'s templates | `Docs site reads schemaVersion <n>; the export is <m>`, or `Docs site has no manifest` | `pm-docs-site check`, then its upgrade item |
    | 21 | `STACK.md` is missing or empty | `<n> stacked operations waiting` | `pm-checkpoint` (`pop`) |
    | 22 | No open risk in `RISKS.md` has `Reviewed: never`, and every red open risk has a `Mitigation` other than `none` | `<n> unreviewed risks`, or `Red risk without a mitigation: RK-NNN <title>` | `pm-risk review`, or `pm-risk mitigate <RK-NNN>` |
+   | 23 | The `Commits` section of `config.md` sets `PM state commit`, `PM branch`, and `Export on commit` | `Commits setting missing: <names>` (PM commits ask, or the export lags) | `pm-setup` |
 
    Stop at the first failing check among 1 to 4; later checks depend on
    them.

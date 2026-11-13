@@ -53,8 +53,9 @@ next action, an explicit "done when", and fixed templates.
   lost.
 - **Commits without the chore:** the skill that writes the planning files
   commits them, on the branch you plan on; a completion record is committed
-  on the item's branch so it rides the item's pull request. The default asks
-  first; `config.md` can make it automatic.
+  on the item's branch so it rides the item's pull request. The default is
+  automatic, set in `config.md` (`ask` or `never` instead), and the same
+  commit refreshes `planning.json` when it exists.
 - **Questions use the agent's question UI:** choices with a recommended
   option and free text. You are never asked to type `yes` or `a`/`b`/`c`.
 
@@ -209,7 +210,9 @@ created on first use; run `pm-strategy` to create `STRATEGY.md`.
 
 `planning/planning.json` and `planning/planning.schema.json` are written by
 `pm-export` on first use. They are derived from the files above: never
-hand-edit them, and never treat them as the state.
+hand-edit them, and never treat them as the state. Once they exist, every
+PM commit refreshes them first (`Export on commit` in `config.md`:
+`if present` by default, or `always` or `never`).
 
 Version 5 adds the `Commits` section to `config.md`. Without it, a PM
 commit asks before each commit and treats the main worktree's current

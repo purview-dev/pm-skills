@@ -61,7 +61,9 @@ section of the agent instructions file (`AGENTS.md` or `CLAUDE.md`).
    Then ask one choice question: `When a skill writes planning files, how
    should they be committed?` with the options `Commit automatically
    (recommended)`, `Ask me each time`, and `Never commit`; set `PM state
-   commit` to `always`, `ask`, or `never` to match.
+   commit` to `always`, `ask`, or `never` to match. Keep the template's
+   `Export on commit: if present`: no export exists yet, and once
+   `pm-export` creates one, every PM commit refreshes it.
 
 3. Read the repository for context before the vision questions: `README*`,
    package or project manifests, top-level folders, and the last 20 lines

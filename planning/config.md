@@ -10,7 +10,7 @@ Read by every `pm-*` skill. Change behaviour here, not in the skills.
 
 ## Install
 
-- Rules version: 12
+- Rules version: 14
 
 ## Handoffs
 
@@ -42,6 +42,7 @@ at the end of `execute`, before the finish step opens the pull request.
 
 - PM state commit: always
 - PM branch: main
+- Export on commit: if present
 
 ## Last review
 
