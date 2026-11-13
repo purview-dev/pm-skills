@@ -392,6 +392,26 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   one, `RAG` always equals the derived value, and `pm-risk` recomputes it
   whenever Likelihood or Impact changes. `Status: accepted` and `closed` keep
   their RAG for the record.
+- **Quick capture:** how `pm-park` (`capture`, `agent`) and `pm-risk`
+  (`capture`) write during an active workflow, so the step in progress
+  keeps its pace and its context. It never asks, never commits, and reads
+  no PM file the write does not need.
+  - **Fast path:** classify from the words alone. Take the active item ID
+    and stage from the session, not from `NOW.md`. Write `Related: none`
+    without searching; `pm-review` searches when it triages the file. A
+    risk reads only `RISKS.md`, for its new ID and RAG position, right
+    before it writes.
+  - **Background:** when the agent can start a subagent or background task
+    that does not block the turn (in Claude Code, the `Agent` tool), hand
+    it the words verbatim, the mode, `Source`, and the active item ID and
+    stage. Reply with the skill's background line and continue the step at
+    once; the task writes on the fast path and reports back only a
+    failure, which the agent prints as `Not saved: <reason>. <the words>`.
+    A subagent that blocks the turn is no faster, so without a non-blocking
+    one the fast path runs inline: one timestamp and one file write. Run
+    one background risk capture at a time, so two never take the same ID.
+  - A skill is never forked as a whole for this (for example `context:
+    fork`), because its other modes ask the user questions.
 - **Revision:** work that was built and is not what the user wanted.
   `pm-revise` records it in the brief's `## Revisions` and the `NOW.md`
   checkpoint while the item is open, or as a new roadmap item whose
@@ -572,7 +592,10 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    then the exact step that was in progress resumes; `push` writes one
    stack entry, `pop` restores the top entry, and both reply in one line
    before the interrupted step resumes. No discussion, no evaluation, no
-   follow-up questions for any of them. If the user wants to discuss the
+   follow-up questions for any of them. `pm-park` and `pm-risk` run as a
+   **Quick capture** (Shared definitions), in the background when the
+   agent can. A capture the user types while the agent works is handled
+   between tool calls and never ends the step in progress. If the user wants to discuss the
    idea, set `Discuss: yes`; it is discussed later with `pm-shape`. A
    captured risk keeps `Reviewed: never` until `pm-risk` reviews it. The
    read-only exceptions: `pm-help` may answer a question about a skill in
@@ -1015,6 +1038,12 @@ the item there, so the claim rides the branch like the Completion
 record. A session stays on its branch when the user asks, during an
 interruption, and while its pull request is pending. Every branch move
 pulls first, with `--ff-only`. No setting is added.
+
+Version 16 adds **Quick capture**. During a workflow, `pm-park` and
+`pm-risk` capture classify from the words alone, skip the `Related`
+search, and hand the write to a non-blocking background task when the
+agent has one, so the step in progress does not wait. `pm-review` runs the
+skipped `Related` search when it triages the file. No setting is added.
 
 ## Asking the user (mandatory)
 
