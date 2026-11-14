@@ -132,6 +132,12 @@ same `bun` commands as the `just` recipes). Markdown is linted with
   `.agents/skills/<name>/SKILL.md` and sets `metadata.internal: true`, which
   hides it from the `skills` CLI. `just validate` checks its frontmatter and
   requires the flag; it is exempt from the four consumer tables.
+- A skill installed from another repository with the `skills` CLI (for
+  example the purview.dev site skills) lives in `.agents/skills/` and is
+  recorded in `skills-lock.json`, which is committed. The CLI never offers
+  a skill listed in the source repository's lock, so it does not reach a
+  consumer; `just validate` exempts it from the flag. Update it with
+  `npx skills update`, never by hand.
 - Bump the version: `just bump patch|minor|major`
   (`scripts/bump-version.ts`; `major` is a rules bump).
 - Check the version against main: `just version-check`

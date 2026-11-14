@@ -1,0 +1,62 @@
+specification {
+  element skill {
+    style {
+      shape rectangle
+    }
+  }
+  element stage {
+    style {
+      shape rectangle
+      color secondary
+    }
+  }
+  element delivery {
+    style {
+      shape rectangle
+      color muted
+    }
+  }
+}
+
+model {
+  resume = skill 'pm-resume' {
+    description 'Reads the planning files and recommends one action'
+  }
+  next = skill 'pm-next' {
+    description 'Claims the first item that is still the right one'
+  }
+  design = stage 'design'
+  plan = stage 'plan'
+  execute = stage 'execute'
+  finish = stage 'finish'
+  checkpoint = skill 'pm-checkpoint' {
+    description 'Writes where work stopped, so a compacted session can resume'
+  }
+  push = delivery 'push branch'
+  pr = delivery 'one PR'
+  ci = delivery 'CI'
+  merge = delivery 'merge'
+
+  resume -> next
+  next -> design 'claims an item'
+  design -> plan
+  plan -> execute
+  execute -> finish
+  design -> checkpoint 'stage updates'
+  plan -> checkpoint 'stage updates'
+  execute -> checkpoint 'stage updates'
+  finish -> checkpoint 'done, on the branch'
+  checkpoint -> next 'next item'
+  checkpoint -> push
+  push -> pr
+  pr -> ci
+  ci -> merge
+}
+
+views {
+  view theLoop {
+    title 'The loop'
+    include *
+    autoLayout LeftRight
+  }
+}
