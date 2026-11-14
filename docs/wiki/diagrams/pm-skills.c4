@@ -1,0 +1,768 @@
+// One model for every pm-skills diagram. Each docs page renders one view;
+// the dynamic views are sequence flows whose steps carry notes.
+
+specification {
+  element actor {
+    style {
+      shape person
+    }
+  }
+  element skill {
+    style {
+      shape rectangle
+    }
+  }
+  element stage {
+    style {
+      shape rectangle
+      color secondary
+    }
+  }
+  element folder {
+    style {
+      shape rectangle
+      color slate
+    }
+  }
+  element files {
+    style {
+      shape storage
+      color amber
+    }
+  }
+  element derived {
+    style {
+      shape storage
+      color muted
+    }
+  }
+  element delivery {
+    style {
+      shape rectangle
+      color muted
+    }
+  }
+  element site {
+    style {
+      shape browser
+      color green
+    }
+  }
+}
+
+model {
+  user = actor 'You' {
+    description 'Starts sessions, has the ideas, answers the choice questions, and reviews the pull request'
+  }
+
+  // Lifecycle skills
+
+  resume = skill 'pm-resume' {
+    technology 'pm skill'
+    description 'Reads the planning files and any pause, checks the rules version, and recommends one action'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-resume/SKILL.md
+  }
+  next = skill 'pm-next' {
+    technology 'pm skill'
+    description 'Challenges the first claimable item, moves to its feature branch, claims it, and hands off to design'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-next/SKILL.md
+  }
+  checkpoint = skill 'pm-checkpoint' {
+    technology 'pm skill'
+    description 'Records each stage, pauses, suspends and restores operations, and closes the item on its branch'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-checkpoint/SKILL.md
+  }
+  rejoin = skill 'pm-rejoin' {
+    technology 'pm skill'
+    description 'Locates the true position from git and PM state, then with consent repairs NOW.md and hands off'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-rejoin/SKILL.md
+  }
+  pause = skill 'pm-pause' {
+    technology 'pm skill'
+    description 'Writes the session position, with or without an active item, and commits it'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-pause/SKILL.md
+  }
+  revise = skill 'pm-revise' {
+    technology 'pm skill'
+    description 'The one PM skill that may interrupt a workflow to correct built work; it writes the correction down first'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-revise/SKILL.md
+  }
+
+  // Capture and thinking skills
+
+  park = skill 'pm-park' {
+    technology 'pm skill'
+    description 'Writes one inbox file and replies in one line, even mid-workflow'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-park/SKILL.md
+  }
+  bug = skill 'pm-bug' {
+    technology 'pm skill'
+    description 'Asks for symptom, expected and actual, reproduction, severity, and evidence, then routes the defect'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-bug/SKILL.md
+  }
+  risk = skill 'pm-risk' {
+    technology 'pm skill'
+    description 'Captures a risk in one line, or manages the register with RAG derived from likelihood and impact'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-risk/SKILL.md
+  }
+  background = skill 'background task' {
+    technology 'subagent'
+    description 'Writes a Quick capture on the fast path and reports back only a failure'
+  }
+  discover = skill 'pm-discover' {
+    technology 'pm skill'
+    description 'Analyses the code, history, and usage, writes a research report, and parks the chosen opportunities'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-discover/SKILL.md
+  }
+  shapeSkill = skill 'pm-shape' {
+    technology 'pm skill'
+    description 'Interviews, challenges, and maps the ramifications of one idea, then decides its outcome'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-shape/SKILL.md
+  }
+  review = skill 'pm-review' {
+    technology 'pm skill'
+    description 'Weekly triage: one inbox file at a time, then roadmap health and the Next order'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-review/SKILL.md
+  }
+  strategy = skill 'pm-strategy' {
+    technology 'pm skill'
+    description 'Owns vision, milestones, focus, bets, and roadmap generation; challenges every change'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-strategy/SKILL.md
+  }
+
+  // Edit, view, and data skills
+
+  init = skill 'pm-init' {
+    technology 'pm skill'
+    description 'Creates the PM root, writes a challenged VISION.md, and seeds the roadmap'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-init/SKILL.md
+  }
+  setup = skill 'pm-setup' {
+    technology 'pm skill'
+    description 'Replaces only the managed section, records Rules version, and writes any setting the new version adds'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-setup/SKILL.md
+  }
+  item = skill 'pm-item' {
+    technology 'pm skill'
+    description 'Adds, edits, drops, blocks, moves, reassigns, or completes one roadmap item'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-item/SKILL.md
+  }
+  board = skill 'pm-board' {
+    technology 'pm skill'
+    description 'The task board from Now to Done; moves, adds, inserts, or closes one card'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-board/SKILL.md
+  }
+  export = skill 'pm-export' {
+    technology 'pm skill'
+    description 'The only writer of planning.json and its schema, on request or as the refresh of a PM commit'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-export/SKILL.md
+  }
+  docsSite = skill 'pm-docs-site' {
+    technology 'pm skill'
+    description 'Plans the site as a roadmap item, builds it from templates in that item execute stage, and checks it'
+    link https://github.com/purview-dev/pm-skills/blob/main/skills/pm-docs-site/SKILL.md
+  }
+
+  // Workflow stages, from the Handoffs table in planning/config.md
+
+  design = stage 'design' {
+    technology 'superpowers:brainstorming'
+    description 'Writes the spec to docs/superpowers/specs/'
+  }
+  plan = stage 'plan' {
+    technology 'superpowers:writing-plans'
+    description 'Writes the plan to docs/superpowers/plans/'
+  }
+  execute = stage 'execute' {
+    technology 'superpowers:subagent-driven-development'
+    description 'Checks off the plan until every Done when check passes; owns the session while it runs'
+  }
+  finish = stage 'finish' {
+    technology 'superpowers:finishing-a-development-branch'
+    description 'Pushes the branch and opens the pull request'
+  }
+
+  // PM state
+
+  pmRoot = folder 'planning/' {
+    description 'The PM root in the main worktree: the state is Markdown, committed by the skill that writes it'
+
+    config = files 'config.md' {
+      description 'Handoffs, limits, commit policy, Rules version, last review'
+    }
+    vision = files 'VISION.md' {
+      description 'v1 outcomes, out of scope, constraints'
+    }
+    strategyFile = files 'STRATEGY.md' {
+      description 'Focus, milestones with exit criteria, bets, assumptions, Not doing, decisions'
+    }
+    now = files 'NOW.md' {
+      description 'The one active item, its checkpoint, decisions, and context'
+    }
+    roadmap = files 'ROADMAP.md' {
+      description 'Next (ordered, at most 5) and Later, grouped by milestone'
+    }
+    log = files 'LOG.md' {
+      description 'Done, Dropped, Reviews'
+    }
+    stack = files 'STACK.md' {
+      description 'Suspended operations, newest first, each with its stage, Done when, and checkpoint; not exported'
+    }
+    pauseFile = files 'PAUSE.md' {
+      description 'The paused session position and a Resume with block; deleted once resumed; not exported'
+    }
+    risks = files 'RISKS.md' {
+      description 'Open, closed, and removed risks with likelihood, impact, and RAG'
+    }
+    inbox = files 'inbox/' {
+      description 'The parking lot: one file per idea, bug, or question'
+    }
+    briefs = files 'briefs/' {
+      description 'One shaped idea per file: evidence, alternatives, challenges, ramifications, decision, revisions'
+    }
+    research = files 'research/' {
+      description 'One pm-discover report per run'
+    }
+    json = derived 'planning.json + schema' {
+      technology 'JSON Schema'
+      description 'Derived: never hand-edited and never read as state; the Markdown wins when they disagree'
+    }
+  }
+
+  // Outside the PM root
+
+  agentFile = files 'AGENTS.md or CLAUDE.md' {
+    technology 'Markdown'
+    description 'The managed rules section between the pm-skills markers, which carry no version'
+  }
+  reference = files 'pm-setup reference' {
+    technology 'AGENTS-section.md'
+    description 'The skills version: N in the pm-skills:start version=N marker'
+  }
+  cli = skill 'skills CLI' {
+    technology 'npx skills'
+    description 'Installs and updates the skill folders; the agent never runs it for you'
+  }
+  branch = delivery 'item branch' {
+    technology 'git'
+    description 'feat/r-nnn-slug, created from the PM base; the claim and the completion record ride it'
+  }
+  pr = delivery 'one PR' {
+    technology 'GitHub'
+    description 'The single pull request for the item; a CI failure is fixed on the same one'
+  }
+  ci = delivery 'CI' {
+    technology 'GitHub Actions'
+    description 'Runs with the completion record already in the pull request'
+  }
+  main = delivery 'PM branch' {
+    technology 'git'
+    description 'main: the merge carries the code and the completion record together'
+  }
+  astro = site 'Docs site' {
+    technology 'Astro + Starlight'
+    description 'Home, Board, Roadmap, Log, and Risks pages, rendered from planning.json only'
+  }
+
+  // The loop
+
+  user -> resume 'starts a session'
+  resume -> pmRoot.now 'reads'
+  resume -> pmRoot.pauseFile 'continues and deletes'
+  resume -> next 'recommends'
+  next -> pmRoot.roadmap 'claims from Next'
+  next -> pmRoot.now 'writes the claim'
+  next -> branch 'creates and switches to'
+  next -> design 'hands off with the brief'
+  design -> checkpoint 'spec written'
+  plan -> checkpoint 'plan written'
+  execute -> checkpoint 'Done when passes'
+  checkpoint -> plan 'spec path'
+  checkpoint -> execute 'plan path'
+  checkpoint -> finish 'hands off'
+  checkpoint -> pmRoot.now 'checkpoints, idles, restores'
+  checkpoint -> pmRoot.log 'writes the Done line'
+  checkpoint -> pmRoot.stack 'push and pop'
+  checkpoint -> branch 'commits the completion record'
+  finish -> pr 'pushes and opens'
+  pr -> ci 'runs'
+  ci -> main 'merge'
+
+  // Ideas and strategy
+
+  user -> park 'idea:'
+  user -> bug 'add a bug'
+  user -> risk 'risk:'
+  park -> background 'hands the capture'
+  risk -> background 'hands the capture'
+  background -> pmRoot.inbox 'writes'
+  park -> pmRoot.inbox 'writes one file'
+  bug -> pmRoot.inbox 'writes Kind: bug'
+  bug -> pmRoot.roadmap 'routes a fix'
+  risk -> pmRoot.risks 'writes'
+  discover -> pmRoot.research 'writes the report'
+  discover -> pmRoot.inbox 'parks opportunities'
+  review -> pmRoot.inbox 'triages'
+  review -> pmRoot.roadmap 'adds and orders'
+  review -> pmRoot.log 'logs the review'
+  shapeSkill -> pmRoot.briefs 'writes after each answer'
+  shapeSkill -> pmRoot.roadmap 'adds one item per slice'
+  strategy -> pmRoot.vision 'revises'
+  strategy -> pmRoot.strategyFile 'writes each approved section'
+  strategy -> pmRoot.roadmap 're-plans'
+  item -> pmRoot.roadmap 'edits one item'
+  board -> pmRoot.roadmap 'renders and edits'
+
+  // Corrections, pauses, and rejoining
+
+  revise -> pmRoot.briefs 'writes Revisions'
+  revise -> pmRoot.log 'removes an unmerged Done line'
+  revise -> checkpoint 'pauses the item'
+  revise -> execute 'hands back with the correction'
+  pause -> pmRoot.pauseFile 'writes'
+  pause -> pmRoot.now 'checkpoints'
+  rejoin -> pmRoot.now 'repairs'
+  rejoin -> execute 'hands off'
+
+  // Setup, data, and the site
+
+  init -> pmRoot.config 'creates'
+  init -> pmRoot.vision 'writes'
+  setup -> agentFile 'replaces the managed section'
+  setup -> pmRoot.config 'records Rules version'
+  user -> cli 'npx skills update'
+  cli -> reference 'installs'
+  export -> pmRoot.json 'writes'
+  docsSite -> astro 'builds and checks'
+  astro -> pmRoot.json 'reads'
+}
+
+views {
+
+  // The default view: LikeC4 opens index first, and it is the first view declared.
+  dynamic view index {
+    title 'The loop: one item from claim to merge'
+    description 'Select a step to read what the skill reads, writes, and commits.'
+    variant sequence
+
+    user -> resume 'starts a session' {
+      notes '
+        Run at session start or after compaction. pm-resume first compares
+        `Rules version` in `planning/config.md` with the installed skills
+        version, and asks to run pm-setup when they differ (see Upgrading).
+      '
+    }
+    resume -> pmRoot.now 'reads NOW.md, ROADMAP.md, PAUSE.md' {
+      notes 'Read-only. The files win over anything recalled from the conversation.'
+    }
+    resume -> user 'one next action: pm-next' {
+      notes 'NOW.md is idle and the first item in Next is claimable, so the action is to claim it.'
+    }
+    user -> next 'start the next item'
+    next -> pmRoot.roadmap 'challenges the first claimable item' {
+      notes '
+        Claimable: in Next, `Status` ready or paused, owner agent or both,
+        and every `Depends on` ID in Done. An item already claimed on
+        another unmerged branch is skipped.
+      '
+    }
+    next -> branch 'pull latest, switch -c feat/r-nnn-slug' {
+      notes '
+        The branch starts from the PM base: the remote PM branch, or the
+        local one when it is ahead. A pull that is not a fast-forward stops.
+      '
+    }
+    next -> pmRoot.now 'claims: NOW.md active, PM commit on the branch'
+    next -> design 'hands off with the brief' {
+      notes 'The handoff skill comes from the Handoffs table in planning/config.md.'
+    }
+    design -> checkpoint 'spec written' {
+      notes 'Stage update only: the next stage reads the spec path, not the design conversation.'
+    }
+    checkpoint -> plan 'hands the spec path to plan'
+    plan -> checkpoint 'plan written'
+    checkpoint -> execute 'hands the plan path to execute'
+    execute -> checkpoint 'every box checked, Done when passes' {
+      notes 'pm-checkpoint `done` is the completion step, run before the finish step pushes.'
+    }
+    checkpoint -> branch 'commits docs(pm): close R-NNN slug' {
+      notes '
+        The completion record: the `## Done` line in LOG.md, NOW.md idle,
+        the item removed from ROADMAP.md, and the brief set to done. It is
+        built from the PM base, so it never reverts newer PM state.
+      '
+    }
+    checkpoint -> finish 'hands off to the finish step'
+    finish -> pr 'pushes the branch, opens one PR'
+    pr -> ci 'runs with the record inside the PR' {
+      notes 'A failure is fixed with pm-revise fix-in-place on the same pull request (view ciFailure).'
+    }
+    ci -> main 'merge carries the record to main'
+    checkpoint -> user 'start a new session before the next pm-next' {
+      notes 'One item per context: the next session reads the files, not this conversation.'
+    }
+  }
+
+  dynamic view ideasFlow {
+    title 'Ideas: from one line to a roadmap item'
+    description 'Capture is cheap and never interrupts; triage and shaping happen later, when no workflow is active.'
+    variant sequence
+
+    user -> park 'idea: export the board as CSV' {
+      notes '
+        Capture only: classified from the words alone, no questions. During
+        a workflow it runs as a Quick capture (view quickCapture).
+      '
+    }
+    park -> pmRoot.inbox 'writes inbox/2026-11-14-0930-board-csv.md'
+    park -> user 'Parked: board CSV export'
+    user -> bug 'add a bug: the board drops paused items' {
+      notes '
+        pm-bug searches the inbox, roadmap, briefs, and log for a duplicate
+        first. Mid-workflow it captures through pm-park with `Kind: bug`, and
+        `pm-bug update` asks the questions later.
+      '
+    }
+    bug -> pmRoot.inbox 'writes Kind: bug with Severity and Reproduction'
+    bug -> pmRoot.roadmap 'blocker or major: adds the fix to Next' {
+      notes '
+        Severity drives the route: blocker is fixed before the active item
+        continues, major and minor are scheduled, cosmetic is parked. The
+        inbox file is deleted once the item carries every fact.
+      '
+    }
+    user -> discover 'what do users struggle with?'
+    discover -> pmRoot.research 'writes the research report as findings arrive'
+    discover -> pmRoot.inbox 'parks the opportunities you chose'
+    user -> review 'weekly review' {
+      notes 'pm-resume reports a review as due after the review cadence (7 days), or when the open inbox reaches its threshold (10).'
+    }
+    review -> pmRoot.inbox 'triages one file at a time, bugs by severity first' {
+      notes '
+        Each file gets Challenge protocol checks 1, 2, and 5 and one
+        question: Add to Next or Later, Merge into an item, Shape it, Keep it
+        parked, or Drop it. A Quick capture skipped the Related search, so
+        it runs here.
+      '
+    }
+    review -> pmRoot.roadmap 'Add to Next: new R-NNN, inbox file deleted'
+    review -> pmRoot.inbox 'Shape it: Discuss: yes'
+    user -> shapeSkill 'shape the board CSV export'
+    shapeSkill -> pmRoot.briefs 'writes the brief after every answer' {
+      notes '
+        Problem, evidence, at least three alternatives (do nothing, smallest,
+        full), the full Challenge protocol, and a ramifications table. An L
+        idea is sliced into S or M parts.
+      '
+    }
+    shapeSkill -> pmRoot.roadmap 'Add to Next: one item per slice, Brief set' {
+      notes 'The other outcomes are Build it now, Keep it parked, and Drop it (logged under Dropped in LOG.md).'
+    }
+    user -> next 'start the next item'
+    next -> pmRoot.roadmap 'claims it and hands the brief to design'
+  }
+
+  dynamic view strategyFlow {
+    title 'Strategy: milestones and focus to an ordered Next'
+    description 'Each section is written to STRATEGY.md as soon as it is approved, so a stopped session loses nothing.'
+    variant sequence
+
+    user -> strategy 'set the milestones and focus'
+    strategy -> pmRoot.log 'reads V lines, throughput, inbox, research' {
+      notes '
+        Facts first: items done and open per V line and milestone, items done
+        per week over 4 weeks, a forecast stated as an Assumption, and drift
+        such as Next items outside the focus.
+      '
+    }
+    strategy -> user 'Use these milestones? Focus on M1?' {
+      notes 'A milestone legend is printed first, so no milestone is asked about by ID alone.'
+    }
+    user -> strategy 'Use them, focus on M1'
+    strategy -> pmRoot.strategyFile 'writes milestones, focus, bets, Not doing' {
+      notes '
+        Each bet reads "We believe a change will produce a result for
+        someone", with the signal that settles it. Every decision is
+        appended to `## Decisions` with its reason and the rejected
+        alternatives.
+      '
+    }
+    strategy -> user 'Re-plan the roadmap for this strategy now?'
+    user -> strategy 'Re-plan it'
+    strategy -> pmRoot.roadmap 'proposes Next: focus, then dependency, then risk' {
+      notes '
+        Every item gets Serves, Milestone, Owner, Done when, Size, and
+        Depends on. L items are split; user tasks that block agent items go
+        first so they run in parallel.
+      '
+    }
+    user -> strategy 'Accept this Next order'
+    strategy -> pmRoot.roadmap 'rewrites ROADMAP.md, PM commit'
+    user -> board 'show the board' {
+      notes 'Read-only in view mode; a move, add, or insert asks one question, then commits.'
+    }
+    board -> pmRoot.roadmap 'renders Now, Next, For you, Waiting, Done'
+    user -> next 'start the next item'
+    next -> pmRoot.roadmap 'claims the first claimable item in Next'
+  }
+
+  dynamic view reviseFlow {
+    title 'Corrections: built work that is not what you wanted'
+    description 'The scope is written down before anything is changed, and the interrupted step never resumes silently.'
+    variant sequence
+
+    user -> revise 'the board should group by milestone, not owner' {
+      notes '
+        Mid-workflow this is the one PM skill allowed to interrupt
+        (Non-interruption rule 8), and only when you name the wrong
+        behaviour. A defect, rather than a change of intent, goes to pm-bug.
+      '
+    }
+    revise -> pmRoot.briefs 'inspects: item, brief, spec, plan, checkbox counts' {
+      notes 'Read-only. The evidence decides whether the mistake was in the spec, the plan, or the code.'
+    }
+    revise -> user 'What is wrong? Spec, plan, or code? How much is affected?'
+    user -> revise 'the plan held, the code grouped by owner'
+    revise -> pmRoot.briefs 'writes Revisions: wrong, Must now, Mode, Supersedes' {
+      notes 'Each answer is written before the next question, so a compaction cannot lose the correction.'
+    }
+    revise -> user 'How should R-NNN be corrected?' {
+      notes '
+        rewind (a wrong spec or plan), fix-in-place (wrong code, the plan
+        still holds), new item with Revisits (the original is done and
+        merged), queue (still open in Next or Later), or park.
+      '
+    }
+    user -> revise 'fix-in-place'
+    revise -> checkpoint 'pause' {
+      notes 'The checkpoint names the last step that still holds and the first step of the corrected work.'
+    }
+    checkpoint -> pmRoot.now 'checkpoint, docs(pm): revise R-NNN in place'
+    revise -> execute 'hands back to execute with the revision' {
+      notes 'The stage skill changes the spec, plan, or code; PM skills never do.'
+    }
+  }
+
+  dynamic view ciFailure {
+    title 'Corrections: CI fails on the item pull request'
+    description 'The completion is unmerged, so it is reversible: fix it on the same pull request, never a new one.'
+    variant sequence
+
+    ci -> user 'CI fails on the pull request' {
+      notes 'The completion record is already in the pull request, so the item is in Done on its branch only.'
+    }
+    user -> revise 'fix the failing build'
+    revise -> pmRoot.log 'finds docs(pm): close R-NNN, removes the Done line' {
+      notes 'An unmerged completion is the one case where a Done line is removed.'
+    }
+    revise -> pmRoot.now 'restores NOW.md from the parent commit, Stage: execute' {
+      notes 'The branch stays the Session; no pm-checkpoint pause is needed here.'
+    }
+    revise -> execute 'hands back to execute with the failure'
+    execute -> checkpoint 'boxes checked, Done when passes again'
+    checkpoint -> branch 'writes the record again, docs(pm): close R-NNN slug'
+    checkpoint -> finish 'hands off to the finish step'
+    finish -> pr 'pushes to the same pull request'
+    pr -> ci 'runs again'
+  }
+
+  dynamic view quickCapture {
+    title 'Interruptions: capture an idea or a risk mid-workflow'
+    description 'The step in progress keeps its pace: one line back, no questions, no commit.'
+    variant sequence
+
+    user -> execute 'execute is running step 4 of the plan'
+    user -> park 'park this: the export needs a dry-run flag' {
+      notes '
+        Handled between tool calls; it never ends the step in progress.
+        `risk: the CI runner may hit its quota` takes the same path through
+        pm-risk capture.
+      '
+    }
+    park -> background 'words verbatim, mode, Source, item and stage' {
+      notes '
+        In Claude Code this is the Agent tool. Without a non-blocking task
+        the fast path runs inline: one timestamp and one file write. One
+        background risk capture runs at a time, so two never take the same ID.
+      '
+    }
+    park -> user 'Parking "export dry-run flag" (feature). Back to step 4.'
+    park -> execute 'step 4 resumes at once'
+    background -> pmRoot.inbox 'writes the file, Related: none, Context: R-NNN execute' {
+      notes 'pm-review runs the skipped Related search when it triages the file. A failure is printed as Not saved.'
+    }
+  }
+
+  dynamic view suspendResume {
+    title 'Interruptions: suspend an item for an emergency'
+    description 'push frees the session without losing the item; pop restores it at its checkpoint on the same branch.'
+    variant sequence
+
+    user -> checkpoint 'production is down: stack R-NNN' {
+      notes 'push may run mid-workflow when you ask (Non-interruption rule 10). No branch is created or switched for the emergency.'
+    }
+    checkpoint -> pmRoot.stack 'writes the entry: branch, stage, Done when, checkpoint, reason'
+    checkpoint -> pmRoot.now 'sets NOW.md idle, docs(pm): stack R-NNN'
+    checkpoint -> user 'Stacked R-NNN at execute. Handle the emergency.'
+    user -> execute 'fix the outage as its own operation' {
+      notes 'Use pm-bug or pm-revise for its PM side; the emergency never skips Done when or a PM commit.'
+    }
+    execute -> user 'the fix is finished'
+    user -> checkpoint 'pop' {
+      notes 'pop runs only when no workflow is active. On another branch it asks before switching and pulling.'
+    }
+    checkpoint -> pmRoot.stack 'removes the top entry'
+    checkpoint -> pmRoot.now 'restores the item, stage, and checkpoint'
+    checkpoint -> execute 'hands off at the stage with its Next action'
+  }
+
+  dynamic view pauseResume {
+    title 'Interruptions: pause the session and pick it up tomorrow'
+    description 'The pause file points to the PM files that hold the decisions; it never holds a decision only.'
+    variant sequence
+
+    user -> pause 'pause here, I will pick this up tomorrow' {
+      notes 'Works with or without an active item, including mid-workflow: the pause ends the workflow at its step.'
+    }
+    pause -> pmRoot.now 'checkpoints the active item' {
+      notes 'Every decision from the session is written through to its brief, report, or STRATEGY.md first.'
+    }
+    pause -> pmRoot.pauseFile 'writes Running, Files, Next action, Open question'
+    pause -> user 'Paused on feat/r-nnn-slug, docs(pm): pause session'
+    user -> resume 'next session: where was I?'
+    resume -> pmRoot.pauseFile 'Session matches: continues from Resume with' {
+      notes 'A pause for another branch is reported, not continued.'
+    }
+    resume -> pmRoot.pauseFile 'deletes PAUSE.md' {
+      notes 'The one write pm-resume makes.'
+    }
+    resume -> user 'Next action and the open question, verbatim'
+  }
+
+  dynamic view rejoinFlow {
+    title 'Rejoin: back on the loop after the thread is lost'
+    description 'locate is read-only and may run mid-workflow; repair runs only after you choose to rejoin.'
+    variant sequence
+
+    user -> rejoin 'where am I? NOW.md says idle' {
+      notes 'The upgrade check runs first, as in pm-resume and pm-next.'
+    }
+    rejoin -> pmRoot.now 'reads NOW.md, ROADMAP.md, STACK.md, config.md'
+    rejoin -> branch 'current branch, merged branches, spec, plan, recent changes' {
+      notes 'git fetch, then git branch -a --merged against the remote PM branch. Nothing is written in locate.'
+    }
+    rejoin -> user 'Where you are: R-NNN unclaimed on feat/r-nnn-slug, at execute' {
+      notes '
+        One position from the evidence: recorded, moved, another session,
+        completed, stacked, unclaimed, unplanned, unrecorded, or
+        merged-unclosed. The stage comes from the plan: all boxes checked is
+        finish, any unchecked is execute, a spec with no plan is plan.
+      '
+    }
+    rejoin -> user 'Rejoin R-NNN at execute?'
+    user -> rejoin 'Rejoin at execute'
+    rejoin -> pmRoot.now 'repair: NOW.md active, checkpoint, docs(pm): rejoin' {
+      notes '
+        The item leaves Next in ROADMAP.md. A merged-unclosed item gets its
+        late completion record on the PM branch instead: docs(pm): close
+        R-NNN late.
+      '
+    }
+    rejoin -> execute 'hands off with Done when and the Next action'
+  }
+
+  dynamic view upgradeCheck {
+    title 'Upgrading: the check before work resumes'
+    description 'The rules and the skills ship together, so a newer skill never runs against older rules without asking.'
+    variant sequence
+
+    user -> cli 'npx skills update' {
+      notes 'Example versions: the skills are now v18, and the rules installed in this repository are still v17.'
+    }
+    cli -> reference 'installs the v18 skills'
+    user -> resume 'start a session'
+    resume -> pmRoot.config 'Rules version: 17'
+    resume -> reference 'skills version: 18'
+    resume -> agentFile 'start marker present' {
+      notes '
+        Equal versions continue. A missing marker or an unrecorded version
+        asks to repair; a missing section stops, because the rules are not
+        in the agent file. Skills older than the rules ask you to update them.
+        pm-rejoin and pm-next run the same check.
+      '
+    }
+    resume -> user 'Rules are v17, the skills are v18. Upgrade before continuing?' {
+      notes 'Mid-workflow this question waits for the workflow to finish. pm-checkpoint and pm-park never run the check.'
+    }
+    user -> resume 'Run pm-setup now'
+    resume -> setup 'runs pm-setup'
+    setup -> agentFile 'replaces the managed section between the markers'
+    setup -> pmRoot.config 'Rules version: 18, plus any new setting' {
+      notes 'Version 5 added the Commits section and version 14 Export on commit; each missing setting is one question.'
+    }
+    resume -> user 'continues with the next action' {
+      notes 'Continue on v17 instead records Upgrade debt: rules v17, skills v18 in the output Note.'
+    }
+  }
+
+  dynamic view exportFlow {
+    title 'Data: from a Markdown edit to the docs site'
+    description 'The Markdown files are the state; every PM commit refreshes the export, so the site never lags them.'
+    variant sequence
+
+    user -> item 'add the board CSV export to Next'
+    item -> pmRoot.roadmap 'writes R-NNN under Next' {
+      notes 'Write-through: the edit is in the file before the reply.'
+    }
+    item -> export 'PM commit: refresh the export' {
+      notes '
+        Runs when `Export on commit` is always, or `if present` and
+        planning.json exists, and a PM file other than the export changed.
+      '
+    }
+    export -> pmRoot.roadmap 'reads every PM file except STACK.md and PAUSE.md'
+    export -> pmRoot.json 'writes planning.json, copies the schema' {
+      notes '
+        Verified before the commit: valid JSON, the required keys in order,
+        schemaVersion equal to the schema const, and NOW and Next matching
+        the Markdown. A failure leaves the export as it was and is noted.
+      '
+    }
+    item -> main 'docs(pm): add R-NNN board CSV export' {
+      notes 'One commit per skill run, scoped to the PM root, on the PM branch, or on the item branch while one is active.'
+    }
+    user -> astro 'just docs'
+    astro -> pmRoot.json 'reads planning.json' {
+      notes 'A site whose SCHEMA_VERSION is older than the export schemaVersion fails its build until pm-docs-site upgrade runs.'
+    }
+    astro -> user 'Board, Roadmap, Log, and Risks pages'
+    user -> docsSite 'is the site current?'
+    docsSite -> astro 'check: templates, schema version, build' {
+      notes 'Read-only. scaffold, extend, and upgrade run only in the execute stage of the site item (Non-interruption rule 9).'
+    }
+  }
+
+  view loopOverview {
+    title 'The loop: who talks to whom'
+    description 'The skills, workflow stages, planning files, and delivery steps of one item.'
+    include
+      user, resume, next, checkpoint,
+      design, plan, execute, finish,
+      pmRoot.now, pmRoot.roadmap, pmRoot.log,
+      branch, pr, ci, main
+    autoLayout LeftRight
+  }
+
+  view planningFiles {
+    title 'Planning files: which skill writes which file'
+    description 'Every file in the PM root, the skills that write it, and the derived export the docs site reads.'
+    include
+      pmRoot,
+      pmRoot.*,
+      * -> pmRoot.*,
+      astro,
+      docsSite
+    exclude user, background
+    autoLayout LeftRight
+  }
+}
