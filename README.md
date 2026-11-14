@@ -5,59 +5,13 @@ They sit above a development workflow skill set, such as
 [Superpowers](https://github.com/obra/superpowers), and decide **which**
 feature is worked on. The workflow skills decide **how** it is built.
 
-The skills are designed for literal, predictable, low-friction output: one
-next action, an explicit "done when", and fixed templates.
+Ideas are captured in one line at any time, shaped and challenged before
+they reach the roadmap, and every decision is written to a planning file
+the moment it is made, so a new or compacted session resumes from the
+files. Output is literal and predictable: one next action, an explicit
+"done when", and fixed templates.
 
-- **Parking lot:** ideas, bugs, questions, and inspiration are captured in
-  one line at any time, even mid-task, by you or the agent, and discussed
-  later.
-- **Bugs with the facts a fix needs:** `pm-bug` asks for the symptom,
-  expected and actual, reproduction, severity, and evidence, checks for a
-  duplicate, and routes the defect to a fix or the roadmap.
-- **A risk register with RAG status:** `pm-risk` captures a risk in one
-  line at any time, even mid-task, then adds, updates, re-rates, reviews,
-  closes, or removes it in `planning/RISKS.md`. Each risk's red, amber, or
-  green status is derived from its likelihood and impact, with a recorded
-  override, and a mitigation can become a roadmap item.
-- **Corrections, not pretences:** `pm-revise` handles built work that is not
-  what you wanted. It rewinds the active item to an earlier stage, fixes it
-  in place, or opens a revision item that revisits the original. It is the
-  one PM skill allowed to interrupt an active workflow, and it writes the
-  correction down first.
-- **Brainstorming with challenge:** `pm-shape` interviews, challenges, and
-  maps the ramifications of an idea before it reaches the roadmap.
-  `pm-discover` analyses the existing code, history, and usage for
-  evidence. Every idea, including the agent's own, is challenged.
-- **Strategy, roadmap, and board:** `pm-strategy` sets milestones, bets,
-  and focus, and generates the roadmap. `pm-roadmap` renders the full
-  milestone roadmap, `pm-board` the task board, `pm-up-next` the ordered
-  queue, and `pm-status` the summary and your own queue. Move, add, and
-  insert items from the board or roadmap with the shared ordering rules.
-  Items are owned by the agent, the user, or both.
-- **The plan as data:** `pm-export` writes every roadmap item, board
-  column, milestone, bug, brief, risk, and log entry to `planning/planning.json`
-  in one fixed shape, with the JSON Schema that describes it, or checks the
-  file without writing. The Markdown stays the source of truth.
-- **The plan as a site:** `pm-docs-site` plans a local Astro and Starlight
-  site that renders `planning.json` as Home, Board, Roadmap, Log, and Risks pages,
-  then builds it from shipped templates inside that item's workflow.
-  Optional modules add the repository's `docs/` pages, LikeC4 architecture
-  views, and an Aspire AppHost resource. It reads the export only.
-- **Purview fit:** for .NET projects, `pm-purview` recommends
-  [Purview](https://purview.dev/) tools only where they remove real work.
-  For an empty project it asks first what you are building and at what
-  scale. Non-.NET projects get no suggestions.
-- **Memory across sessions and compaction:** every decision is written to
-  a file the moment it is made. `pm-resume` restores the state afterwards.
-  `pm-rejoin` puts a session back on the lifecycle after the thread is
-  lost.
-- **Commits without the chore:** the skill that writes the planning files
-  commits them, on the branch you plan on; a completion record is committed
-  on the item's branch so it rides the item's pull request. The default is
-  automatic, set in `config.md` (`ask` or `never` instead), and the same
-  commit refreshes `planning.json` when it exists.
-- **Questions use the agent's question UI:** choices with a recommended
-  option and free text. You are never asked to type `yes` or `a`/`b`/`c`.
+The full documentation starts at [`docs/wiki/Home.md`](docs/wiki/Home.md).
 
 ## Install
 
@@ -65,37 +19,13 @@ Run this from the root of the target repository:
 
 ```bash
 npx skills add https://github.com/purview-dev/pm-skills -y
-# or
-bunx skills add https://github.com/purview-dev/pm-skills -y
 ```
 
-Skills install at project level by default. Add `-g` for a user-level
-install, or `-a claude-code` to target a single agent. See the
-[skills CLI](https://github.com/vercel-labs/skills) for all options.
-
-The skills hand design, planning, and execution to a workflow skill set,
-by default [Superpowers](https://github.com/obra/superpowers). `pm-setup`
-checks that every workflow skill is installed and prints the command when
-one is missing:
-
-```bash
-npx skills add https://github.com/obra/superpowers -y
-# or, in Claude Code
-/plugin install superpowers@claude-plugins-official
-```
-
-Then, in your agent:
-
-1. `run pm-setup` merges the rules into your existing `AGENTS.md` or
-   `CLAUDE.md`, between `<!-- pm-skills:start -->` and
-   `<!-- pm-skills:end -->` markers. Nothing outside the markers changes.
-2. Commit, using the command `pm-setup` prints.
-3. `run pm-init` writes `planning/VISION.md` by default and seeds the
-   roadmap. `pm-setup` asks where to store the planning files before its
-   other setup questions; choose a different repository-relative directory
-   if needed.
-4. Not sure what to run? `pm-help` explains every skill, lists what is
-   missing in your setup, and recommends the next skill.
+Then, in your agent, `run pm-setup` to merge the rules into your
+`AGENTS.md` or `CLAUDE.md`, and `run pm-init` to create the planning files.
+`pm-help` explains every skill and recommends the next one. The workflow
+skill set, other install options, and the first run are in
+[Installation](docs/wiki/guide/Installation.md).
 
 ## Skills
 
@@ -126,304 +56,25 @@ Then, in your agent:
 | [`pm-docs-site`](skills/pm-docs-site/SKILL.md) | Plan, build, extend, upgrade, or check the local site that renders `planning.json` | User asks; builds run inside the site item's workflow |
 | [`pm-help`](skills/pm-help/SKILL.md) | Explain each skill, find what is missing, recommend the next skill (read-only) | Any time you are unsure |
 
-## The loop
+## How it fits together
 
-```text
-pm-resume -> pm-next -> [design -> plan -> execute -> finish]
-                ^            |            |           |
-                |     pm-checkpoint (stage updates)  pm-checkpoint (done, on the branch)
-                |                                         |
-                +-----------------------------------------+
-                                                          |
-                                          push branch -> one PR -> CI -> merge
-pm-park: any time, capture only.   pm-review: weekly.
-pm-risk: capture a risk any time; manage the register when no workflow is active.
-pm-checkpoint push/pop: emergency suspension; the operation resumes at its checkpoint.
-pm-shape / pm-discover / pm-strategy: think before building, no workflow active.
-pm-item / pm-board / pm-roadmap / pm-status / pm-up-next: on request,
-when no workflow is active (their read-only views also mid-workflow).
-pm-rejoin: any time the position is unclear; it hands back to the stage.
-pm-bug: a defect needs the facts a fix needs; it routes to a fix or the roadmap.
-pm-revise: built work is wrong; it may interrupt to correct.
-pm-export: a tool needs the plan as JSON, or the export needs checking.
-pm-docs-site: plan the site as an item; its build modes run in execute.
-```
+`pm-resume` reads where work stopped, `pm-next` claims an item on its own
+branch and hands it to the workflow's design, plan, execute, and finish
+stages, and `pm-checkpoint` records each stage and closes the item on its
+branch before the pull request opens. The diagram and the role of every
+other skill are in [The loop](docs/wiki/guide/The-Loop.md).
 
-Ideas flow: `pm-park` (or `pm-discover`, or `pm-bug` for a defect) -> inbox
--> `pm-shape` -> brief -> roadmap item -> `pm-next`. A defect can skip the
-brief and become an item directly. Strategy flows: `pm-strategy` ->
-milestones and focus -> ordered Next -> `pm-board`. Corrections flow:
-`pm-revise` -> brief `## Revisions` (open item) or a revision item with
-`Revisits` (done item) -> the stage skill. Data flows: `pm-export` writes
-`planning/planning.json` from all of the above, and the `pm-docs-site`
-site renders it.
+## Documentation
 
-## Non-interruption guarantee
-
-The merged rules make an active workflow own the session. During a
-workflow, only `pm-park` and `pm-risk` may write, and only to capture, and
-`pm-checkpoint` (`push`, `pop`) may write one stack entry to suspend or
-resume the operation when you ask; `pm-rejoin` may
-report the position, `pm-help` may explain a skill, `pm-export` and
-`pm-docs-site` may check without writing, and `pm-status`, `pm-board`, `pm-roadmap`,
-`pm-up-next`, and `pm-risk` may show their read-only view when you ask. None of them may
-move, add, insert, or close anything mid-workflow. `pm-revise` may
-interrupt to correct built work when you say it is wrong: it records the
-scope and pauses the item before anything else runs.
-Any other PM skill waits until the workflow finishes; the agent asks
-whether to run it after the workflow or pause now. PM state
-skills write only to the configured planning directory (default
-`planning/`), and never touch specs, plans, or code. A completion record is
-the one PM write that happens outside the main worktree: the workflow runs
-it at the end of the `execute` stage, and it is committed on the item's
-branch so it rides the item's pull request, before CI runs.
-The other exception is `pm-docs-site`'s build modes: the site is code, so
-they run as a step of the site item's `execute` stage, on
-its branch, and leave committing to the workflow.
-The git state changes they make are the commit of those planning files and
-the branch moves of the feature-branch rules: `pm-next` pulls the latest
-planning branch and starts each item on its own feature branch, and every
-move pulls first with `--ff-only`. The session stays on its branch when you
-ask, during an interruption, and while its pull request is pending. `pm-setup` edits only the managed section in the selected
-agent instructions file, plus the `Rules version` line in `config.md`. Full
-rules:
-[`skills/pm-setup/references/AGENTS-section.md`](skills/pm-setup/references/AGENTS-section.md).
-
-## Files created by pm-init
-
-The paths below use the default PM root; replace `planning/` with the
-directory selected during `pm-setup`.
-
-| File | Holds |
-| --- | --- |
-| `planning/config.md` | Handoffs to workflow skills, limits, commit policy, rules version, last review date |
-| `planning/VISION.md` | v1 outcomes, out of scope, constraints |
-| `planning/STRATEGY.md` | Focus, milestones, bets, assumptions, not doing, decisions |
-| `planning/NOW.md` | The one active item, its checkpoint, decisions, and context |
-| `planning/ROADMAP.md` | Next (ordered, maximum 5) and Later, with owner and dependencies |
-| `planning/LOG.md` | Done, Dropped, Reviews |
-| `planning/STACK.md` | Suspended operations, newest first, with their checkpoints |
-| `planning/PAUSE.md` | The paused session's position, written by `pm-pause`; deleted once `pm-resume` continues it |
-| `planning/RISKS.md` | The risk register: open, closed, and removed risks with likelihood, impact, and RAG |
-| `planning/inbox/` | The parking lot: one file per idea |
-| `planning/briefs/` | One shaped idea per file: challenges, ramifications, decision |
-| `planning/research/` | One `pm-discover` report per run |
-
-Projects initialised before version 4 keep working. The new files are
-created on first use; run `pm-strategy` to create `STRATEGY.md`.
-
-`planning/planning.json` and `planning/planning.schema.json` are written by
-`pm-export` on first use. They are derived from the files above: never
-hand-edit them, and never treat them as the state. Once they exist, every
-PM commit refreshes them first (`Export on commit` in `config.md`:
-`if present` by default, or `always` or `never`).
-
-Version 5 adds the `Commits` section to `config.md`. Without it, a PM
-commit asks before each commit and treats the main worktree's current
-branch as the planning branch. Add the section to choose `always`, `ask`,
-or `never`, and to name the branch.
-
-Version 5 also adds the upgrade check. `pm-resume`, `pm-rejoin`, and
-`pm-next` compare the installed rules version with the installed skills
-version and offer `pm-setup` before any work resumes.
-
-Version 6 moves that version of record out of the agent file: it is
-`Rules version` in `planning/config.md`, so a merge, rewrite, or removed
-marker in `AGENTS.md` cannot lose it. Installed markers therefore carry no
-version, and `pm-setup` migrates an older `version=` marker into
-`config.md` the next time it runs. If the section itself is dropped from
-the agent file, the recorded version lets `pm-setup` reinstall or re-wrap
-it instead of appending a second copy.
-
-Version 7 splits the two views out of `pm-status`. `pm-board` owns the
-task board, `pm-roadmap` owns the full milestone roadmap, and `pm-up-next`
-shows the ordered queue without claiming anything. `pm-board`, `pm-roadmap`,
-and `pm-item` can move, add, and insert items; the shared **Roadmap order
-and edits** rules define positions, full-Next demotion, board-column
-mapping, and confirmation. The read-only views may answer mid-workflow.
-Done lines in `LOG.md` now record a `Milestone:` so roadmap progress can be
-counted per milestone.
-
-Version 8 makes every question show what it is about. A question that names
-a milestone, item, bet, `V` line, or inbox file prints a
-`## For this question` legend above it — each ID with the words needed to
-decide it — and carries one escape option, `Explain <ID>`,
-`Show the roadmap`, or `Show the board`, which prints the full block or runs
-the read-only view and then asks the same question again. Neither the legend
-nor the escape option changes state or counts as an answer.
-
-Version 9 adds three skills and a derived state file. `pm-bug` logs a defect with
-the facts a fix needs — symptom, expected and actual, reproduction,
-severity, and evidence — in an inbox file with `Kind: bug`, then routes it
-to a fix, the roadmap, shaping, or the parking lot. `pm-revise` corrects
-work that is already built: it rewinds the active item to an earlier stage,
-fixes it in place, or opens a revision item whose `Revisits` names the
-original. It may interrupt an active workflow to correct it, and it records
-the scope and pauses the item first. `pm-export` writes
-`planning/planning.json` with `planning/planning.schema.json` in a fixed,
-validated shape, or checks them without writing. Seed data comes from the
-same files as before; bugs add `Severity`, `Affects`, and a
-`## Reproduction` block to the inbox format, and revisions add an optional
-`## Revisions` heading to a brief.
-
-Version 10 adds `pm-docs-site` and Non-interruption rule 9. `plan` adds the
-site, a module, or a page as a roadmap item; `check` compares an installed
-site with the templates and the export, read-only, even mid-workflow; and
-`scaffold`, `extend`, and `upgrade` build it inside that item's `execute`
-stage. The site reads `planning/planning.json` only. When `pm-export`'s
-`schemaVersion` moves, the site's build fails until `pm-docs-site upgrade`
-runs, and `pm-help` reports the difference.
-
-Version 11 makes completion ride the branch and adds the operation stack.
-`pm-checkpoint` (`done`) writes the Completion record and commits it on the
-item's branch, so the item's pull request carries it before CI runs; it is
-never closed on the planning branch after the merge, and it never gets a
-pull request of its own. When the last open item of a milestone closes, the
-skill asks once and records the milestone as done in the same commit.
-`pm-checkpoint` (`push`, `pop`) suspends and restores an operation through
-`planning/STACK.md`, so an emergency never loses work and the interrupted
-operation resumes at its checkpoint. `pm-rejoin` repairs a `merged-unclosed`
-item whose completion missed its branch.
-
-Version 12 adds the risk register and `pm-risk`. `planning/RISKS.md` holds
-one block per risk with likelihood, impact, RAG, status, owner, trigger,
-and mitigation; RAG is derived from likelihood × impact unless an override
-records why. `pm-risk capture` may run mid-workflow like `pm-park`: it
-writes one risk, replies in one line, and never commits. `pm-export` moves
-to `schemaVersion` 3 with a `risks` key, and the docs site gains a Risks
-page with a likelihood × impact matrix, a Red risks tile, and a Home list;
-run `pm-docs-site upgrade` for an installed site.
-
-Version 13 adds the context budget and named references. Each item is one
-context: `pm-checkpoint` (`done`) tells you to start a new session (`/new`
-or `/clear`) before `pm-next`, and a stage handoff passes the spec or plan
-path instead of the conversation that produced it. Every skill prints an ID
-with its title (`R-007 Tenant billing`) wherever its output names one, not
-just the ID.
-
-## Using a different workflow framework
-
-Edit the Handoffs table in `<PM root>/config.md`. The skills refer to stages
-(design, plan, execute, finish), not to Superpowers skill names.
-
-## Upgrading
-
-```bash
-npx skills update
-```
-
-Then `run pm-setup` again. It replaces only the section between the
-markers, which now carry no version, and records the new `Rules version` in
-`config.md`; `pm-setup` reports when it is missing. An older marker that
-still carries `version=N` is migrated on that run.
-
-You do not have to remember the order. The next `pm-resume`, `pm-rejoin`,
-or `pm-next` compares the rules version with the installed skills version
-and asks before work resumes; `pm-help` reports the same finding.
-
-## Development
-
-Requires [`bun`](https://bun.sh) and, for the git hooks,
-[`lefthook`](https://lefthook.dev/installation) and
-[`just`](https://github.com/casey/just).
-
-- `just setup-skills` clears and re-links this repository's `skills/pm-*`
-  into `.claude/skills/` and `.agents/skills/`, so the agents working here
-  use the skills as they are being edited. `just setup-skills --cli` uses
-  `bunx skills add ./ -y` instead, which copies them.
-- `just validate` checks skill frontmatter, the README and managed-section
-  tables, the `pm-setup` inventory, the section markers, the template
-  placeholders, the export schema, the managed section installed in
-  `AGENTS.md`, and that `docs-site/` still matches the `pm-docs-site`
-  templates.
-- `just docs` serves this repository's own project site (its plan from
-  `planning/planning.json`, the README, and every skill) at
-  <http://localhost:4321>; `just docs-check` tests, type-checks, and builds
-  it.
-- `just lint-check` runs `just validate` and lints all Markdown.
-- `just lint-fix` applies Markdown fixes.
-- `just install` verifies the tools and installs the git hooks (commitlint
-  on commit, `just lint-check` on push).
-- `just bump patch|minor|major` writes the next release version to
-  `package.json`; `major` also raises the rules version.
-- `just version-check` compares the version with `main` (also run on push).
-
-This repository manages itself with these skills: `planning/` is its live
-PM state, and `docs-site/` is the site `pm-docs-site` builds from it.
-
-The `package.json` major is the rules/skills version (rules v17 ship as
-`17.x.y`), and this repository must run what it ships: its own
-`planning/config.md` and `AGENTS.md` carry the same rules version. CI runs
-the same checks on every push and pull request to `main`. A pull request
-that changes anything under `skills/` must raise the rules version past the
-one on `main` (`just bump major`, then `pm-setup`), to a version that is not
-already tagged. Pull requests that touch nothing under `skills/` (docs, CI,
-scripts, package metadata) keep the rules version, and may bump the minor
-or patch. The repository-only `release` skill in `.agents/skills/release/`
-picks the bump and commits it; it is not installed into consuming projects.
-
-Adding a skill means creating `skills/<name>/SKILL.md` and listing it in the
-README table, the managed-section table, the `pm-setup` inventory, and the
-`pm-help` skill guide; `just validate` fails otherwise. Full conventions are
-in [`AGENTS.md`](AGENTS.md).
-
-## Repository layout
-
-```text
-skills/
-  pm-setup/
-    SKILL.md
-    references/AGENTS-section.md
-  pm-init/
-    SKILL.md
-    templates/
-  pm-resume/SKILL.md
-  pm-rejoin/SKILL.md
-  pm-next/SKILL.md
-  pm-up-next/SKILL.md
-  pm-park/SKILL.md
-  pm-bug/SKILL.md
-  pm-risk/SKILL.md
-  pm-shape/SKILL.md
-  pm-discover/SKILL.md
-  pm-strategy/SKILL.md
-  pm-purview/
-    SKILL.md
-    references/catalogue.md
-  pm-checkpoint/SKILL.md
-  pm-revise/SKILL.md
-  pm-review/SKILL.md
-  pm-item/SKILL.md
-  pm-board/SKILL.md
-  pm-roadmap/SKILL.md
-  pm-status/SKILL.md
-  pm-export/
-    SKILL.md
-    references/planning.schema.json
-    references/planning.example.json
-  pm-docs-site/
-    SKILL.md
-    references/spec.md
-    scripts/site.ts          renders a site from its manifest; write or check
-    templates/site/          the core site (Astro, Starlight, plan pages)
-    templates/repo-docs/     module: the repository's Markdown, read in place
-    templates/architecture/  module: LikeC4 views through Astroc4
-    templates/aspire/        module: the AppHost resource
-  pm-help/SKILL.md
-planning/                  this repository's own PM state
-docs-site/                 this repository's own project site
-scripts/
-  validate.ts
-  setup-skills.ts
-  bump-version.ts
-.github/
-  copilot-instructions.md
-  workflows/
-    ci.yml
-    release.yml
-package.json
-LICENSE.md
-```
+- [Installation](docs/wiki/guide/Installation.md)
+- [The loop](docs/wiki/guide/The-Loop.md)
+- [Non-interruption guarantee](docs/wiki/guide/Non-Interruption.md)
+- [Using a different workflow framework](docs/wiki/guide/Other-Workflow-Frameworks.md)
+- [Upgrading](docs/wiki/guide/Upgrading.md)
+- [Planning files](docs/wiki/reference/Planning-Files.md) and the
+  [version history](docs/wiki/reference/Version-History.md)
+- [Development](docs/wiki/contributing/Development.md) and the
+  [repository layout](docs/wiki/contributing/Repository-Layout.md)
 
 ## License
 
