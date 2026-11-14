@@ -24,6 +24,65 @@ directory selected during `pm-setup`.
 Projects initialised before version 4 keep working. The new files are
 created on first use; run `pm-strategy` to create `STRATEGY.md`.
 
+## Which skill writes which file
+
+<!-- purview:likec4 file="../diagrams/pm-skills.c4" view="planningFiles" title="Planning files" description="Which skill writes which file, and what reads the export" height="760" -->
+```mermaid
+flowchart LR
+  subgraph pmRoot[planning/]
+    config[config.md]
+    vision[VISION.md]
+    strategyFile[STRATEGY.md]
+    now[NOW.md]
+    roadmap[ROADMAP.md]
+    log[LOG.md]
+    stack[STACK.md]
+    pauseFile[PAUSE.md]
+    risks[RISKS.md]
+    inbox[inbox/]
+    briefs[briefs/]
+    research[research/]
+    json[planning.json + schema]
+  end
+  resume[pm-resume] -- reads --> now
+  resume -- continues and deletes --> pauseFile
+  next[pm-next] -- claims from Next --> roadmap
+  next -- writes the claim --> now
+  checkpoint[pm-checkpoint] -- checkpoints, idles, restores --> now
+  checkpoint -- writes the Done line --> log
+  checkpoint -- push and pop --> stack
+  park[pm-park] -- writes one file --> inbox
+  bug[pm-bug] -- writes Kind: bug --> inbox
+  bug -- routes a fix --> roadmap
+  risk[pm-risk] -- writes --> risks
+  discover[pm-discover] -- writes the report --> research
+  discover -- parks opportunities --> inbox
+  review[pm-review] -- triages --> inbox
+  review -- adds and orders --> roadmap
+  review -- logs the review --> log
+  shapeSkill[pm-shape] -- writes after each answer --> briefs
+  shapeSkill -- adds one item per slice --> roadmap
+  strategy[pm-strategy] -- revises --> vision
+  strategy -- writes each approved section --> strategyFile
+  strategy -- re-plans --> roadmap
+  item[pm-item] -- edits one item --> roadmap
+  board[pm-board] -- renders and edits --> roadmap
+  revise[pm-revise] -- writes Revisions --> briefs
+  revise -- removes an unmerged Done line --> log
+  pause[pm-pause] -- writes --> pauseFile
+  pause -- checkpoints --> now
+  rejoin[pm-rejoin] -- repairs --> now
+  init[pm-init] -- creates --> config
+  init -- writes --> vision
+  setup[pm-setup] -- records Rules version --> config
+  export[pm-export] -- writes --> json
+  astro[Docs site] -- reads --> json
+  docsSite[pm-docs-site] -- builds and checks --> astro
+```
+
+[LikeC4 model](../diagrams/pm-skills.c4)
+<!-- /purview:likec4 -->
+
 ## The export
 
 `planning/planning.json` and `planning/planning.schema.json` are written by
@@ -31,5 +90,32 @@ created on first use; run `pm-strategy` to create `STRATEGY.md`.
 hand-edit them, and never treat them as the state. Once they exist, every
 PM commit refreshes them first (`Export on commit` in `config.md`:
 `if present` by default, or `always` or `never`).
+
+<!-- purview:likec4 file="../diagrams/pm-skills.c4" view="exportFlow" title="From a Markdown edit to the docs site" description="Every PM commit refreshes the export, so the site never lags the Markdown" height="600" -->
+```mermaid
+sequenceDiagram
+  actor U as You
+  participant IT as pm-item
+  participant RM as ROADMAP.md
+  participant EX as pm-export
+  participant J as planning.json + schema
+  participant M as PM branch
+  participant DS as Docs site
+  participant PD as pm-docs-site
+  U->>IT: add the board CSV export to Next
+  IT->>RM: writes R-NNN under Next
+  IT->>EX: PM commit: refresh the export
+  EX->>RM: reads every PM file except STACK.md and PAUSE.md
+  EX->>J: writes planning.json, copies the schema
+  IT->>M: docs(pm): add R-NNN board CSV export
+  U->>DS: just docs
+  DS->>J: reads planning.json
+  DS->>U: Board, Roadmap, Log, and Risks pages
+  U->>PD: is the site current?
+  PD->>DS: check: templates, schema version, build
+```
+
+[LikeC4 model](../diagrams/pm-skills.c4)
+<!-- /purview:likec4 -->
 
 What each version added to these files: [Version history](Version-History.md).
