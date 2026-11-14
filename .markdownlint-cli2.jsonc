@@ -3,7 +3,24 @@
     "default": true,
     "MD013": false
   },
+  // Skip what git ignores: .claude/ holds local links to the skills.
+  "gitignore": true,
   // LICENSE.md is legal text, not Markdown documentation (MD041 does not apply).
   // node_modules anywhere (the docs site has its own) is third-party Markdown.
-  "ignores": ["LICENSE.md", "**/node_modules/**"]
+  // The .agents/skills entries below are installed from purview-dev/purview-dev
+  // and recorded in skills-lock.json; they are linted in their own repository.
+  "ignores": [
+    "LICENSE.md",
+    "**/node_modules/**",
+    ".agents/skills/add-catalogue-project/**",
+    ".agents/skills/audit-catalogue-projects/**",
+    ".agents/skills/docs-aggregation-rules/**",
+    ".agents/skills/github-repo-metadata/**",
+    ".agents/skills/project-manifest-reference/**",
+    ".agents/skills/purview-site-assessment/**",
+    ".agents/skills/purview-site-docs/**",
+    ".agents/skills/purview-site-integration/**",
+    ".agents/skills/site-validation-loop/**",
+    ".agents/skills/use-case-authoring/**"
+  ]
 }

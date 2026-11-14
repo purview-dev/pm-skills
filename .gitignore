@@ -666,5 +666,4 @@ sketch
 # Local installs of this repo's own skills, made by `just setup-skills`
 # (symlinks into skills/), and the skills CLI's lockfile for them.
 .agents/skills/pm-*
-.claude/skills/pm-*
-skills-lock.json
+.claude/

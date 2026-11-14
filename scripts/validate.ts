@@ -23,6 +23,15 @@ const repo = existsSync(repoDir)
     .map((d) => d.name)
   : [];
 
+// Skills installed from another repository by the skills CLI are recorded in
+// skills-lock.json. They are not authored here, and editing them would break
+// their lock hash, so they are exempt from the internal flag.
+const locked = new Set<string>(
+  existsSync(join(root, "skills-lock.json"))
+    ? Object.keys(JSON.parse(read("skills-lock.json")).skills ?? {})
+    : [],
+);
+
 const readme = read("README.md");
 const section = read("skills", "pm-setup", "references", "AGENTS-section.md");
 const setup = read("skills", "pm-setup", "SKILL.md");
@@ -53,7 +62,7 @@ for (const name of shipped) {
 
 for (const name of repo) {
   const fm = checkFrontmatter(".agents/skills", name);
-  if (fm === null) continue;
+  if (fm === null || locked.has(name)) continue;
   if (!/(^|\n)\s*internal:\s*true\s*($|\n)/.test(fm)) {
     fail(`.agents/skills/${name}/SKILL.md: repo-local skill must set metadata.internal: true`);
   }

@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "skills": {
+    "add-catalogue-project": {
+      "source": "purview-dev/purview-dev",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/add-catalogue-project/SKILL.md",
+      "computedHash": "2fe4df6ceaabd35932f79b7561422be63f24306616a4955991ff4c041784cc9a"
+    },
+    "audit-catalogue-projects": {
+      "source": "purview-dev/purview-dev",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/audit-catalogue-projects/SKILL.md",
+      "computedHash": "190fc054d30c39557868f151608601b6c2595c8ce90fda9999a29e5a5efeee78"
+    },
+    "docs-aggregation-rules": {
+      "source": "purview-dev/purview-dev",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/docs-aggregation-rules/SKILL.md",
+      "computedHash": "577593e160c957de97cd3c2de001206bde21c71416fd07a59deda3d1b1c81a1d"
+    },
+    "github-repo-metadata": {
+      "source": "purview-dev/purview-dev",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/github-repo-metadata/SKILL.md",
+      "computedHash": "a4bc21f9e0730e1da9905b38846248390fe90a1b9c6b7da4ead86cedcf0591af"
+    },
+    "project-manifest-reference": {
+      "source": "purview-dev/purview-dev",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/project-manifest-reference/SKILL.md",
+      "computedHash": "178256ab833945bad7310c0acb2dd745e511d60152ca134916f0b9dda05ec063"
+    },
+    "purview-site-assessment": {
+      "source": "purview-dev/purview-dev",
+      "sourceType": "github",
+      "skillPath": "skills/purview-site-assessment/SKILL.md",
+      "computedHash": "04db8ca3152b22a5b430d4a32c6aa99b90555591ee91b19ddfd7ee02b3ff4550"
+    },
+    "purview-site-docs": {
+      "source": "purview-dev/purview-dev",
+      "sourceType": "github",
+      "skillPath": "skills/purview-site-docs/SKILL.md",
+      "computedHash": "0674e4f589e1beec4cb5bbae45f43fe8e2d61e8c2937f8b1ec42520ead8614f1"
+    },
+    "purview-site-integration": {
+      "source": "purview-dev/purview-dev",
+      "sourceType": "github",
+      "skillPath": "skills/purview-site-integration/SKILL.md",
+      "computedHash": "74e814729258f9fc77a635696019a68e7af722e15eef539b9916dadec44f5775"
+    },
+    "site-validation-loop": {
+      "source": "purview-dev/purview-dev",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/site-validation-loop/SKILL.md",
+      "computedHash": "d0f870714ae1e9828457a30724950fe0058aa665109ecc93378f00878867a530"
+    },
+    "use-case-authoring": {
+      "source": "purview-dev/purview-dev",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/use-case-authoring/SKILL.md",
+      "computedHash": "a8627158244edb316c352af83a3040a06178fac10aaf5f197e4ddc567d8298c0"
+    }
+  }
+}
