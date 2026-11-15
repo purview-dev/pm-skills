@@ -9,28 +9,21 @@ const errors: string[] = [];
 const fail = (msg: string) => errors.push(msg);
 const read = (...p: string[]) => readFileSync(join(root, ...p), "utf8");
 
-const shipped = readdirSync(skillsDir, { withFileTypes: true })
+const authored = readdirSync(skillsDir, { withFileTypes: true })
   .filter((d) => d.isDirectory())
   .map((d) => d.name);
 
-// Repo-local skills live in .agents/skills/ and are never shipped to a
-// consumer, so they are exempt from the consumer tables. Their frontmatter
-// must set metadata.internal: true, which hides them from the skills CLI.
-const repoDir = join(root, ".agents", "skills");
-const repo = existsSync(repoDir)
-  ? readdirSync(repoDir, { withFileTypes: true })
-    .filter((d) => d.isDirectory())
-    .map((d) => d.name)
-  : [];
+// Two kinds of skill live in skills/, the only folder the skills CLI discovers, and the frontmatter is
+// what separates them. A skill this repository ships to consumers is listed in every consumer table; a
+// repo-local one — guidance for working in *this* repository — sets metadata.internal: true, which
+// hides it from the skills CLI, and is exempt from those tables.
+function frontmatter(name: string): string {
+  return /^---\r?\n([\s\S]*?)\r?\n---/.exec(read("skills", name, "SKILL.md"))?.[1] ?? "";
+}
 
-// Skills installed from another repository by the skills CLI are recorded in
-// skills-lock.json. They are not authored here, and editing them would break
-// their lock hash, so they are exempt from the internal flag.
-const locked = new Set<string>(
-  existsSync(join(root, "skills-lock.json"))
-    ? Object.keys(JSON.parse(read("skills-lock.json")).skills ?? {})
-    : [],
-);
+const isInternal = (name: string) => /(^|\n)\s*internal:\s*true\s*($|\n)/.test(frontmatter(name));
+const repo = authored.filter(isInternal);
+const shipped = authored.filter((name) => !isInternal(name));
 
 const readme = read("README.md");
 const section = read("skills", "pm-setup", "references", "AGENTS-section.md");
@@ -61,10 +54,10 @@ for (const name of shipped) {
 }
 
 for (const name of repo) {
-  const fm = checkFrontmatter(".agents/skills", name);
-  if (fm === null || locked.has(name)) continue;
+  const fm = checkFrontmatter("skills", name);
+  if (fm === null) continue;
   if (!/(^|\n)\s*internal:\s*true\s*($|\n)/.test(fm)) {
-    fail(`.agents/skills/${name}/SKILL.md: repo-local skill must set metadata.internal: true`);
+    fail(`skills/${name}/SKILL.md: a repo-local skill must set metadata.internal: true`);
   }
 }
 

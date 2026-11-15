@@ -660,10 +660,14 @@ sketch
 # Repo-local skills live in .agents/skills/; the build-output rules above
 # would otherwise ignore one named "release".
 !.agents/
-!.agents/skills/
-!.agents/skills/**
 
 # Local installs of this repo's own skills, made by `just setup-skills`
 # (symlinks into skills/), and the skills CLI's lockfile for them.
 .agents/skills/pm-*
+
+# Agent skills are installed into the universal .agents/skills/ folder, which is a local install:
+# gitignored, and reproducible from the committed skills-lock.json with `just skills-install`. The
+# skills this repository authors live in skills/ and are the only ones another repository installs.
+# Per-agent folders (including .claude/) are local too - never commit a copy.
+.agents/skills/
 .claude/
