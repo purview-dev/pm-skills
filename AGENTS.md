@@ -148,7 +148,7 @@ Hooks are configured in `.config/lefthook.yml`: `commit-msg` runs
 `pre-push` runs `just lint-check` and `just version-check`.
 
 Releases are driven by the `version` field in `package.json`, and its major
-is the rules/skills version: rules `version=17` ships as `17.x.y`.
+is the rules/skills version: rules `version=18` ships as `18.x.y`.
 
 - `.github/workflows/release.yml` creates the `v{version}` tag and a GitHub
   release when `package.json` changes on `main`, and skips when the tag

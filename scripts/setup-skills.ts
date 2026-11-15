@@ -2,9 +2,8 @@ import { spawnSync } from "node:child_process";
 import { existsSync, lstatSync, mkdirSync, readdirSync, rmSync, symlinkSync } from "node:fs";
 import { join, relative } from "node:path";
 
-// Make this repository's own pm-* skills usable by the agents working on it:
-// clear every pm-* entry in the skill folders, then link each skills/pm-*
-// folder back in, so an edit to skills/ is live without reinstalling.
+// Make this repository's own skills usable by the agents working on it: clear the skill folders, then
+// link each skills/<name>/ folder back in, so an edit to skills/ is live without reinstalling.
 //
 //   bun scripts/setup-skills.ts        # link each folder (the default)
 //   bun scripts/setup-skills.ts --cli  # install with `bunx skills add ./`
@@ -22,18 +21,21 @@ const targets = [
   { agent: "universal", dir: join(root, ".agents", "skills") },
 ];
 
-const shipped = readdirSync(skillsDir, { withFileTypes: true })
-  .filter((d) => d.isDirectory() && d.name.startsWith("pm-") && existsSync(join(skillsDir, d.name, "SKILL.md")))
+// Every skill this repository authors is linked, not only the shipped pm-* ones: `release` is
+// repo-local (metadata.internal: true), so the CLI would never install it, and an agent working here
+// still has to be able to read it.
+const authored = readdirSync(skillsDir, { withFileTypes: true })
+  .filter((d) => d.isDirectory() && existsSync(join(skillsDir, d.name, "SKILL.md")))
   .map((d) => d.name)
   .sort();
 
-// Only pm-* entries are cleared: .agents/skills/ also holds repo-local skills
-// (release) that are checked in.
+// Both folders are install locations now: gitignored, never committed, and reproducible from
+// skills-lock.json - so everything in them is this script's to replace.
 function clear() {
   for (const { dir } of targets) {
     if (!existsSync(dir)) continue;
     for (const name of readdirSync(dir)) {
-      if (name.startsWith("pm-")) rmSync(join(dir, name), { recursive: true, force: true });
+      rmSync(join(dir, name), { recursive: true, force: true });
     }
   }
 }
@@ -49,7 +51,7 @@ function viaCli(): boolean {
 function viaLinks() {
   for (const { dir } of targets) {
     mkdirSync(dir, { recursive: true });
-    for (const name of shipped) {
+    for (const name of authored) {
       symlinkSync(join(skillsDir, name), join(dir, name), process.platform === "win32" ? "junction" : "dir");
     }
   }
@@ -57,14 +59,14 @@ function viaLinks() {
 
 function missing(): string[] {
   return targets.flatMap(({ dir }) =>
-    shipped
+    authored
       .filter((name) => !existsSync(join(dir, name, "SKILL.md")))
       .map((name) => relative(root, join(dir, name))),
   );
 }
 
 function linked(): boolean {
-  return targets.every(({ dir }) => shipped.every((name) => lstatSync(join(dir, name)).isSymbolicLink()));
+  return targets.every(({ dir }) => authored.every((name) => lstatSync(join(dir, name)).isSymbolicLink()));
 }
 
 clear();
@@ -84,4 +86,4 @@ if (gaps.length) {
   process.exit(1);
 }
 const kind = linked() ? "linked" : "copied";
-console.log(`setup-skills: ${shipped.length} pm-* skills ${kind} into ${targets.map((t) => relative(root, t.dir)).join(", ")}`);
+console.log(`setup-skills: ${authored.length} skills ${kind} into ${targets.map((t) => relative(root, t.dir)).join(", ")}`);
