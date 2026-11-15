@@ -1,4 +1,4 @@
-<!-- pm-skills:start version=17 -->
+<!-- pm-skills:start version=18 -->
 <!-- Managed by pm-setup. Edit outside these markers; content inside is replaced on upgrade.
      Installed copies keep this marker without a version. The version of record is
      `Rules version` in the PM root config.md, so editing or merging this file cannot lose it. -->
