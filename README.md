@@ -13,6 +13,8 @@ files. Output is literal and predictable: one next action, an explicit
 
 The full documentation starts at [`docs/wiki/Home.md`](docs/wiki/Home.md).
 
+**Documentation:** [PM Skills documentation](https://purview.dev/docs/pm-skills/)
+
 ## Install
 
 Run this from the root of the target repository:
