@@ -42,7 +42,7 @@ skills/
     scripts/site.ts          renders a site from its manifest; write or check
     templates/site/          the core site (Astro, Starlight, plan pages)
     templates/repo-docs/     module: the repository's Markdown, read in place
-    templates/architecture/  module: LikeC4 views through Astroc4
+    templates/architecture/  module: LikeC4 views through AstroC4
     templates/aspire/        module: the AppHost resource
   pm-help/SKILL.md
 docs/wiki/                 this documentation, published on purview.dev
