@@ -48,6 +48,16 @@ describe('resolveOptions', () => {
 		expect(() => resolveOptions({}, root)).toThrow('pm-docs-site: title is required');
 	});
 
+	it.each([
+		[{}, 'pm-docs-site: docs.root must be a path'],
+		[{ root: '..' }, 'pm-docs-site: docs.sources must be a list of sources'],
+		[{ root: 1, sources: [] }, 'pm-docs-site: docs.root must be a path'],
+		[{ root: '..', sources: [{ label: 'X' }] }, 'pm-docs-site: docs source "X" needs base and include'],
+	])('rejects a malformed docs option %p', (docs, message) => {
+		// @ts-expect-error malformed on purpose
+		expect(() => resolveOptions({ title: 'T', docs }, root)).toThrow(message);
+	});
+
 	it('rejects an unknown view', () => {
 		// @ts-expect-error an unknown view on purpose
 		expect(() => resolveOptions({ title: 'T', views: ['board'] }, root)).toThrow(

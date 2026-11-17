@@ -38,6 +38,7 @@ describe('an installed package', () => {
 					name: 'consumer',
 					private: true,
 					type: 'module',
+					scripts: { build: 'pm-docs-site build' },
 					dependencies: { '@purview-dev/pm-docs-site': `file:${join(tmp, tarball!).replace(/\\/g, '/')}` },
 				}),
 			);
@@ -52,7 +53,8 @@ describe('an installed package', () => {
 			expect(config).toContain("from '@purview-dev/pm-docs-site'");
 			writeFileSync(join(consumer, 'astro.config.mjs'), config);
 
-			run(['node', join('node_modules', '@purview-dev', 'pm-docs-site', 'cli.mjs'), 'build', '.'], consumer);
+			// Through the package's bin, as a consumer's own build script runs it.
+			run(['bun', 'run', 'build'], consumer);
 
 			expect(htmlPages(join(consumer, 'dist'))).toEqual(expectedPages());
 		},
