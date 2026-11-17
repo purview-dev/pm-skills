@@ -134,6 +134,22 @@ describe('the fixture build', () => {
 
 		expect([...new Set(missing)]).toEqual([]);
 	});
+
+	it('lists in Linked from only pages that do link to that page', () => {
+		const extra = site.pages
+			.filter((page) => TARGET_PAGE.test(urlOf(page)))
+			.flatMap((page) =>
+				[...site.scans[page]!.linkedFrom]
+					.filter((source) => {
+						const scan = site.scans[fileOf(source)];
+
+						return !scan?.links.some((link) => !link.derived && link.href.split('#')[0] === urlOf(page));
+					})
+					.map((source) => `${urlOf(page)} lists ${source}`),
+			);
+
+		expect(extra).toEqual([]);
+	});
 });
 
 describe('a build with views off', () => {

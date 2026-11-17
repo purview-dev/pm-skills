@@ -92,10 +92,14 @@ const figures = [
 									<span class={`rag rag--${risk.rag}`}>{risk.rag}</span>
 								</td>
 								<td>
-									<strong><RefLink ref={risk.id} label="id" /></strong> {risk.title}
+									<strong><RefLink ref={risk.id} label="id" /></strong> <LinkedText text={risk.title} />
 									{risk.affects && <div class="risk-detail">Affects: <LinkedText text={risk.affects} /></div>}
 									{risk.trigger && <div class="risk-detail">Trigger: <LinkedText text={risk.trigger} /></div>}
-									{risk.ragOverride && <div class="risk-detail">RAG override: {risk.ragOverride}</div>}
+									{risk.ragOverride && (
+										<div class="risk-detail">
+											RAG override: <LinkedText text={risk.ragOverride} />
+										</div>
+									)}
 								</td>
 								<td>{risk.likelihood}</td>
 								<td>{risk.impact}</td>
@@ -131,9 +135,11 @@ const figures = [
 									<span class={`rag rag--${risk.rag}`}>{risk.rag}</span>
 								</td>
 								<td>
-									<strong><RefLink ref={risk.id} label="id" /></strong> {risk.title}
+									<strong><RefLink ref={risk.id} label="id" /></strong> <LinkedText text={risk.title} />
 								</td>
-								<td>{risk.closed}</td>
+								<td>
+									<LinkedText text={risk.closed} />
+								</td>
 							</tr>
 						))}
 					</tbody>
@@ -149,7 +155,7 @@ const figures = [
 				<ul>
 					{risks.removed.map((entry) => (
 						<li id={entry.id.toLowerCase()}>
-							{entry.date} <strong><RefLink ref={entry.id} label="id" /></strong> {entry.title}
+							{entry.date} <strong><RefLink ref={entry.id} label="id" /></strong> <LinkedText text={entry.title} />
 							{entry.reason && (
 							<>
 								. Reason: <LinkedText text={entry.reason} />

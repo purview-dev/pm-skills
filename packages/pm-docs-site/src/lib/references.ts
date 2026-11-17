@@ -163,7 +163,11 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 			const brief = briefOf(planning, feature);
 
 			page.link(brief?.path ?? feature.brief, 'brief');
-			for (const risk of [...planning.risks.open, ...planning.risks.closed]) if (risk.affects === feature.id) page.link(risk.id, 'affects');
+			for (const risk of [...planning.risks.open, ...planning.risks.closed]) {
+				if (risk.affects !== feature.id) continue;
+				page.link(risk.id, 'affects');
+				page.prose(risk.title);
+			}
 			for (const text of [...feature.doneWhen, feature.result, feature.reason, feature.note, feature.status?.reason, brief?.status, brief?.problem, brief?.decision]) page.prose(text);
 			for (const entry of planning.inbox) if (entry.affects === feature.id || entry.related.includes(feature.id)) page.prose(entry.title);
 		}
@@ -178,7 +182,13 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 				page.prose(decision(feature));
 			}
 			page.prose(summary.exitCriteria);
-			if (summary.id) for (const risk of [...planning.risks.open, ...planning.risks.closed]) if (risk.affects === summary.id) page.link(risk.id, 'affects');
+			if (summary.id) {
+				for (const risk of [...planning.risks.open, ...planning.risks.closed]) {
+					if (risk.affects !== summary.id) continue;
+					page.link(risk.id, 'affects');
+					page.prose(risk.title);
+				}
+			}
 		}
 	}
 
@@ -227,16 +237,25 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 
 	const risks = source('/plan/risks/', 'Risks');
 
-	for (const risk of [...planning.risks.open, ...planning.risks.closed]) {
+	// Open risks show their detail; closed ones their title and closing reason; removed ones their reason.
+	for (const risk of planning.risks.open) {
 		risks.link(risk.id, 'listed');
+		risks.prose(risk.title);
 		risks.prose(risk.affects, 'affects');
 		risks.prose(risk.trigger);
-		risks.prose(risk.mitigation, 'mitigation');
 		risks.prose(risk.ragOverride);
+		risks.prose(risk.mitigation, 'mitigation');
+	}
+
+	for (const risk of planning.risks.closed) {
+		risks.link(risk.id, 'listed');
+		risks.prose(risk.title);
+		risks.prose(risk.closed);
 	}
 
 	for (const risk of planning.risks.removed) {
 		risks.link(risk.id, 'listed');
+		risks.prose(risk.title);
 		risks.prose(risk.reason);
 	}
 
@@ -266,12 +285,14 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 		page.link(planning.now.item.id, 'listed');
 		page.link(planning.now.brief, 'listed');
 		for (const text of [...planning.now.doneWhen, checkpoint?.stoppedAt, checkpoint?.nextAction, checkpoint?.startWith, checkpoint?.decisions, checkpoint?.context, checkpoint?.openQuestion]) page.prose(text);
+		for (const task of planning.plan?.tasks ?? []) page.prose(task.title);
 	}
 
 	if (views.inbox) {
 		const page = source('/plan/inbox/', 'Inbox');
 
 		for (const entry of planning.inbox) {
+			page.prose(entry.title);
 			page.prose(entry.affects, 'affects');
 			for (const id of entry.related) page.link(id, 'related');
 			page.link(entry.brief, 'brief');
@@ -318,6 +339,7 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 	for (const id of planning.checks.claimable) home.link(id, 'listed');
 	for (const risk of planning.risks.open.filter((candidate) => candidate.rag === 'red')) {
 		home.link(risk.id, 'listed');
+		home.prose(risk.title);
 		home.prose(risk.mitigation, 'mitigation');
 	}
 

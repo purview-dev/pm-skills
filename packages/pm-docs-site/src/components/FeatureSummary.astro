@@ -151,7 +151,7 @@ const facts: { label: string; value: string }[] = [
 						<strong>
 							<RefLink ref={risk.id} label="id" />
 						</strong>{' '}
-						{risk.title} — {risk.status}
+						<LinkedText text={risk.title} /> — {risk.status}
 					</li>
 				))}
 			</ul>

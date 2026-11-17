@@ -42,7 +42,7 @@
     "total": 5,
     "tasks": [
       { "number": 1, "title": "Query the invoices", "checked": 2, "total": 3, "steps": [{ "text": "Write the test", "checked": true }, { "text": "Query", "checked": true }, { "text": "Refactor", "checked": false }] },
-      { "number": 2, "title": "Write the CSV", "checked": 1, "total": 2, "steps": [{ "text": "Write the test", "checked": true }, { "text": "Write the rows", "checked": false }] }
+      { "number": 2, "title": "Write the CSV for R-011", "checked": 1, "total": 2, "steps": [{ "text": "Write the test", "checked": true }, { "text": "Write the rows", "checked": false }] }
     ]
   },
   "roadmap": {
@@ -83,7 +83,7 @@
     "reviews": [{ "date": "2026-11-03", "summary": "Inbox 14 to 5." }]
   },
   "inbox": [
-    { "file": "planning/inbox/2026-11-08-1010-csv-encoding.md", "title": "CSV opens garbled in Excel", "captured": "2026-11-08 10:10", "source": "user", "kind": "bug", "severity": "major", "affects": "R-012", "context": "R-012 execute", "discuss": "no", "related": ["R-012"], "brief": null, "reviewed": "never", "idea": "Accented names show as two characters." },
+    { "file": "planning/inbox/2026-11-08-1010-csv-encoding.md", "title": "CSV from R-012 opens garbled in Excel", "captured": "2026-11-08 10:10", "source": "user", "kind": "bug", "severity": "major", "affects": "R-012", "context": "R-012 execute", "discuss": "no", "related": ["R-012"], "brief": null, "reviewed": "never", "idea": "Accented names show as two characters." },
     { "file": "planning/inbox/2026-11-09-0900-yearly-export.md", "title": "Export a whole year at once", "captured": "2026-11-09 09:00", "source": "agent (R-012 execute)", "kind": "feature", "severity": null, "affects": null, "context": "R-012 execute", "discuss": "yes", "related": [], "brief": null, "reviewed": "never", "idea": "One CSV for the tax year." }
   ],
   "briefs": [
@@ -93,11 +93,11 @@
   "risks": {
     "open": [
       { "id": "RK-002", "title": "Mail provider throttles bulk sends", "likelihood": "high", "impact": "high", "rag": "red", "ragOverride": null, "status": "mitigating", "owner": "agent", "affects": "R-013", "trigger": "More than 1% of sends return 429", "mitigation": "R-014 Retry failed invoice emails", "raised": "2026-11-05 (user)", "reviewed": "2026-11-08", "closed": null },
-      { "id": "RK-004", "title": "CSV opens garbled in spreadsheets", "likelihood": "low", "impact": "medium", "rag": "amber", "ragOverride": "tenants are accountants (derived green, 2026-11-09)", "status": "open", "owner": "user", "affects": "R-012", "trigger": null, "mitigation": null, "raised": "2026-11-09 (agent (R-012 execute))", "reviewed": "2026-11-09", "closed": null },
-      { "id": "RK-005", "title": "Invoice totals round differently", "likelihood": "low", "impact": "low", "rag": "green", "ragOverride": null, "status": "accepted", "owner": "agent", "affects": null, "trigger": null, "mitigation": null, "raised": "2026-11-09 (user)", "reviewed": "never", "closed": null }
+      { "id": "RK-004", "title": "CSV opens garbled in spreadsheets", "likelihood": "low", "impact": "medium", "rag": "amber", "ragOverride": "tenants are accountants, see R-010 (derived green, 2026-11-09)", "status": "open", "owner": "user", "affects": "R-012", "trigger": null, "mitigation": null, "raised": "2026-11-09 (agent (R-012 execute))", "reviewed": "2026-11-09", "closed": null },
+      { "id": "RK-005", "title": "Invoice totals round differently from R-010", "likelihood": "low", "impact": "low", "rag": "green", "ragOverride": null, "status": "accepted", "owner": "agent", "affects": null, "trigger": null, "mitigation": null, "raised": "2026-11-09 (user)", "reviewed": "never", "closed": null }
     ],
     "closed": [
-      { "id": "RK-001", "title": "No tenant signs up in the beta", "likelihood": "medium", "impact": "high", "rag": "red", "ragOverride": null, "status": "closed", "owner": "user", "affects": "M1", "trigger": null, "mitigation": null, "raised": "2026-10-20 (user)", "reviewed": "2026-11-01", "closed": "2026-11-03: twelve tenants signed up" }
+      { "id": "RK-001", "title": "No tenant signs up in the beta", "likelihood": "medium", "impact": "high", "rag": "red", "ragOverride": null, "status": "closed", "owner": "user", "affects": "M1", "trigger": null, "mitigation": null, "raised": "2026-10-20 (user)", "reviewed": "2026-11-01", "closed": "2026-11-03: twelve tenants signed up after R-011" }
     ],
     "removed": [{ "date": "2026-11-06", "id": "RK-003", "title": "Mail provider limits", "reason": "duplicate of RK-002" }]
   },

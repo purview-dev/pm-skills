@@ -6,7 +6,7 @@
  * https://github.com/konstantinWDK/astro-components), MIT License. Copied from its manual-install
  * source; the only changes are that hard-coded dark-theme colours use Starlight theme variables,
  * so the card reads in light and dark themes, and that the task can be a link, for the site's
- * item popup and backlinks (href, itemId).
+ * item popup and backlinks (href, itemId), and a task that is not a link links known IDs.
  *
  * @param {string} task - The description of the task being managed.
  * @param {string} date - Visual date string indicator (e.g. 'Oct 28').
@@ -16,6 +16,8 @@
  * @param {string} href - The task's link: the item's page. Optional.
  * @param {string} itemId - The item's ID, marking the link as the popup trigger. Optional.
  */
+import LinkedText from '../LinkedText.astro';
+
 interface Props {
 	task?: string;
 	date?: string;
@@ -48,7 +50,7 @@ const priorityLabels = { low: 'Low', med: 'Medium', high: 'High' };
 		<span class="task-card__pct">{progress}%</span>
 	</div>
 
-	<p class="task-card__desc">{href ? <a class="plan-item-link" href={href} data-item={itemId}>{task}</a> : task}</p>
+	<p class="task-card__desc">{href ? <a class="plan-item-link" href={href} data-item={itemId}>{task}</a> : <LinkedText text={task} />}</p>
 
 	<div
 		class="task-card__progress-wrap"

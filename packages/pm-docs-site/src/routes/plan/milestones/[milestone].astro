@@ -101,7 +101,7 @@ const risks = summary.id ? [...planning.risks.open, ...planning.risks.closed].fi
 							<strong>
 								<RefLink ref={risk.id} label="id" />
 							</strong>{' '}
-							{risk.title} — {risk.status}
+							<LinkedText text={risk.title} /> — {risk.status}
 						</li>
 					))}
 				</ul>

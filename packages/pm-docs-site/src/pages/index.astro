@@ -106,7 +106,7 @@ const redRisks = planning.risks.open.filter((risk) => risk.rag === 'red');
 				redRisks.map((risk) => (
 					<li>
 						<span class="rag rag--red">red</span> <strong><RefLink ref={risk.id} label="id" /></strong>{' '}
-						{risk.title} — mitigation: {risk.mitigation ? <LinkedText text={risk.mitigation} /> : 'none'}
+						<LinkedText text={risk.title} /> — mitigation: {risk.mitigation ? <LinkedText text={risk.mitigation} /> : 'none'}
 					</li>
 				))
 			}
