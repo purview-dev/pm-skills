@@ -164,7 +164,7 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 
 			page.link(brief?.path ?? feature.brief, 'brief');
 			for (const risk of [...planning.risks.open, ...planning.risks.closed]) if (risk.affects === feature.id) page.link(risk.id, 'affects');
-			for (const text of [...feature.doneWhen, feature.result, feature.reason, feature.note, brief?.problem, brief?.decision]) page.prose(text);
+			for (const text of [...feature.doneWhen, feature.result, feature.reason, feature.note, feature.status?.reason, brief?.status, brief?.problem, brief?.decision]) page.prose(text);
 			for (const entry of planning.inbox) if (entry.affects === feature.id || entry.related.includes(feature.id)) page.prose(entry.title);
 		}
 	}
@@ -188,6 +188,7 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 		page.prose(risk.affects, 'affects');
 		page.prose(risk.trigger);
 		page.prose(risk.mitigation, 'mitigation');
+		for (const text of [risk.ragOverride, risk.raised, risk.reviewed, risk.closed]) page.prose(text);
 	}
 
 	const byId = new Map(all.map((feature) => [feature.id, feature]));
@@ -196,6 +197,7 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 
 	for (const card of [...columns.now, ...columns.next, ...columns.foryou, ...columns.waiting]) {
 		board.link(card.id, 'listed');
+		board.prose(card.detail);
 		if (columns.now.every((now) => now.id !== card.id)) board.link(milestoneKey(byId.get(card.id)?.milestone ?? null), 'listed');
 	}
 
@@ -230,6 +232,12 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 		risks.prose(risk.affects, 'affects');
 		risks.prose(risk.trigger);
 		risks.prose(risk.mitigation, 'mitigation');
+		risks.prose(risk.ragOverride);
+	}
+
+	for (const risk of planning.risks.removed) {
+		risks.link(risk.id, 'listed');
+		risks.prose(risk.reason);
 	}
 
 	if (views.features) {

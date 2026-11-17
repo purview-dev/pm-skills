@@ -150,7 +150,11 @@ const figures = [
 					{risks.removed.map((entry) => (
 						<li id={entry.id.toLowerCase()}>
 							{entry.date} <strong><RefLink ref={entry.id} label="id" /></strong> {entry.title}
-							{entry.reason && <>. Reason: {entry.reason}</>}
+							{entry.reason && (
+							<>
+								. Reason: <LinkedText text={entry.reason} />
+							</>
+						)}
 						</li>
 					))}
 				</ul>

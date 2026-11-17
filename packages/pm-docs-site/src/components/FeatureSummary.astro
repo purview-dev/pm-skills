@@ -54,7 +54,9 @@ const facts: { label: string; value: string }[] = [
 		facts.map((fact) => (
 			<div>
 				<dt>{fact.label}</dt>
-				<dd>{fact.value}</dd>
+				<dd>
+					<LinkedText text={fact.value} />
+				</dd>
 			</div>
 		))
 	}
@@ -112,7 +114,7 @@ const facts: { label: string; value: string }[] = [
 			{brief ? (
 				<>
 					<p>
-						<strong>{brief.title}</strong> — {brief.status ?? 'no status'}
+						<strong>{brief.title}</strong> — {brief.status ? <LinkedText text={brief.status} /> : 'no status'}
 						{brief.updated && <>, updated {brief.updated}</>}
 					</p>
 					{brief.problem && (
