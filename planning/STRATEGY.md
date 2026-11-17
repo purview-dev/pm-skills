@@ -10,8 +10,8 @@ made along the way.
 
 ## Current focus
 
-- Milestone: [M1]
-- Why now: [one sentence, with evidence]
+- Milestone: M1 Reproducible docs site
+- Why now: every item in Next serves it, and the brief `planning/briefs/2026-11-17-docs-site-package.md` records copied templates, unpinned packages, and rules bumps for template changes as current costs.
 
 ## Milestones
 
@@ -26,6 +26,27 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 - Status: active | planned | done (<YYYY-MM-DD>)
 -->
 
+### M1 Reproducible docs site
+
+- Serves: V4
+- Exit criteria: `npm view @purview-dev/pm-docs-site version` returns a version, `docs-site/` holds only `package.json`, `astro.config.mjs`, `bun.lock`, and `.gitignore`, and `just docs-check` passes.
+- Target: none
+- Status: active
+
+### M2 Verified install and upgrade
+
+- Serves: V1
+- Exit criteria: in an empty scratch repository, `npx skills add https://github.com/purview-dev/pm-skills -y` then `pm-setup` reports every pm-* and workflow skill installed, and `just validate` fails when `pm-setup`'s skill count differs from the shipped skills.
+- Target: none
+- Status: planned
+
+### M3 Verified lifecycle guards
+
+- Serves: V2, V3
+- Exit criteria: a rehearsal report in `planning/research/` shows `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea instead of running during an active workflow.
+- Target: none
+- Status: planned
+
 ## Bets
 
 <!--
@@ -34,6 +55,11 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
   Status: open | won | lost (<YYYY-MM-DD>)
 -->
 
+- B1: We believe shipping the docs site as a pinned, independently versioned package will make every consumer's site build the same way and upgrade with one version change, for consumers and for this repository's maintainer.
+  Evidence: `skills/pm-docs-site/SKILL.md` scaffold step 5 and upgrade step 4 install the latest packages; about 40 template files are copied into each site.
+  We will know when: two builds from the same `planning.json` and lockfile give byte-identical HTML, and a package upgrade changes only `package.json` and `bun.lock`.
+  Status: open
+
 ## Assumptions and risks
 
 <!--
@@ -41,11 +67,22 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
   Status: untested | holds | broken (<YYYY-MM-DD>)
 -->
 
+- A1: An Astro integration installed from a package can inject every plan page, so a consumer needs no page files. Test: R-008 Docs-site package: skeleton at parity renders every current page from the package.
+  Status: untested
+- A2: A public `@purview-dev` npm scope and a publish workflow cost GBP 0 per month. Test: R-014 Create the npm @purview-dev scope and token.
+  Status: untested
+- A3: Integration options and Starlight component overrides cover the customisation this repository's `docs-site/` needs. Test: R-013 Docs-site package: publish and migrate moves `docs-site/` onto the package with no copied files.
+  Status: untested
+
 ## Not doing
 
 <!--
 - <thing>. Why: <reason>. Revisit: <condition | never>.
 -->
+
+- New views or modules in `skills/pm-docs-site/templates/`. Why: R-013 Docs-site package: publish and migrate replaces the copied templates; only fixes land there meanwhile. Revisit: never.
+- Hosting the docs site (GitHub Pages or any deploy). Why: the site is a local view of the plan, and M1 is about reproducible builds. Revisit: after M1 is done.
+- Writing PM state from the site (drag and drop, edit actions). Why: PM state changes only through the pm-* skills; the site reads `planning.json` only. Revisit: never.
 
 ## Decisions
 
@@ -54,3 +91,8 @@ Newest first. Nothing in this file changes without a line here.
 
 - <YYYY-MM-DD> <decision>. Why: <reason>. Rejected: <alternatives>.
 -->
+
+- 2026-11-17 Re-planned roadmap. Why: assign every item to M1, M2, or M3, and order Next for the M1 focus (R-014 first as a blocking user task, then R-008, R-003, R-009, R-004); added R-015 and R-016 for the M2 and M3 exit criteria. Rejected: leaving items without milestones.
+- 2026-11-17 Not doing: new template views or modules, hosting the docs site, writing PM state from the site. Why: the package replaces the templates, the site stays local and read-only. Rejected: none.
+- 2026-11-17 Current focus M1 Reproducible docs site, with bet B1 and assumptions A1 to A3. Why: every item in Next serves it. Rejected: focus on M2 Verified install and upgrade.
+- 2026-11-17 Milestones M1 Reproducible docs site, M2 Verified install and upgrade, M3 Verified lifecycle guards, in that order. Why: every Next item and the docs-site package brief serve M1, and it tests the riskiest assumption (an independently versioned, published package). Rejected: install first (M2, M1, M3); guards first (M3, M2, M1).
