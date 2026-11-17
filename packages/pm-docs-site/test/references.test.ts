@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'bun:test';
 
 import { loadPlanning } from '../src/lib/planning';
-import { linkify, targets } from '../src/lib/references';
+import { linkify, references, RELATION_LABELS, targets } from '../src/lib/references';
 
 const FIXTURE = fileURLToPath(new URL('./fixtures/planning.json', import.meta.url));
 const planning = loadPlanning(FIXTURE);
@@ -33,6 +33,54 @@ describe('targets', () => {
 		expect(off.get('M1')?.href).toBeNull();
 		expect(off.get('planning/briefs/2026-11-07-referrals.md')?.href).toBeNull();
 		expect(off.get('RK-002')?.href).toBe('/plan/risks/rk-002/');
+	});
+});
+
+describe('references', () => {
+	const back = references(planning, all);
+	const from = (key: string) => back.get(key)!.map((link) => `${link.relation} ${link.href}`);
+
+	it('lists every page that links an item, by relation', () => {
+		expect(from('R-012')).toContain('listed /plan/board/');
+		expect(from('R-012')).toContain('listed /plan/now/');
+		expect(from('R-013')).toContain('affects /plan/risks/rk-002/');
+		expect(from('R-010')).toContain('depends on /plan/features/r-013/');
+	});
+
+	it('records prose mentions', () => {
+		expect(from('RK-002')).toContain('mentions /plan/features/r-013/');
+		expect(from('M2')).toContain('mentions /plan/features/r-013/');
+		expect(from('R-011')).toContain('mentions /plan/now/');
+	});
+
+	it('labels each source page', () => {
+		expect(back.get('R-012')!.find((link) => link.href === '/plan/board/')?.label).toBe('Board');
+		expect(back.get('R-010')!.find((link) => link.href === '/plan/features/r-013/')?.label).toBe('R-013 Email invoices to tenants');
+	});
+
+	it('never lists a page as linking to itself, and lists each page once per relation', () => {
+		for (const [key, links] of back) {
+			const own = known.get(key)!.href;
+
+			expect(links.map((link) => link.href)).not.toContain(own);
+			expect(new Set(links.map((link) => `${link.relation} ${link.href}`)).size).toBe(links.length);
+		}
+	});
+
+	it('has an entry for every target, empty when nothing links to it', () => {
+		expect([...back.keys()].sort()).toEqual([...known.keys()].sort());
+	});
+
+	it('leaves out source pages of views that are off', () => {
+		const off = references(planning, { ...all, now: false });
+
+		expect(off.get('R-012')!.map((link) => link.href)).not.toContain('/plan/now/');
+	});
+
+	it('names every relation', () => {
+		expect(RELATION_LABELS.listed).toBe('Listed on');
+		expect(RELATION_LABELS.mentions).toBe('Mentioned on');
+		expect(RELATION_LABELS['depends on']).toBe('Depends on');
 	});
 });
 

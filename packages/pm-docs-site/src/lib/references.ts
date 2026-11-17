@@ -4,7 +4,7 @@
 // cannot disagree. All from planning.json.
 
 import type { ViewName } from '../../index';
-import { briefAnchor, featureHref, features, milestoneHref, milestoneSummaries } from './planning';
+import { briefAnchor, briefOf, featureHref, features, milestoneHref, milestoneSummaries, roadmapGroups } from './planning';
 import type { Planning } from './planning-types';
 
 export type Views = Record<ViewName, boolean>;
@@ -94,4 +94,191 @@ export function linkify(text: string, known: Map<string, Target>): Run[] {
 	plain(text.slice(at));
 
 	return runs;
+}
+
+export type Relation = 'depends on' | 'revisits' | 'milestone' | 'affects' | 'mitigation' | 'related' | 'brief' | 'mentions' | 'listed';
+
+/** The order and heading of each relation in a `Linked from` section. */
+export const RELATION_LABELS: Record<Relation, string> = {
+	'depends on': 'Depends on',
+	revisits: 'Revisits',
+	milestone: 'Milestone',
+	affects: 'Affects',
+	mitigation: 'Mitigation',
+	related: 'Related',
+	brief: 'Brief',
+	mentions: 'Mentioned on',
+	listed: 'Listed on',
+};
+
+/** One page that links a target, and how. */
+export interface Backlink {
+	href: string;
+	label: string;
+	relation: Relation;
+}
+
+/**
+ * For every target, the pages that link to it. Each source page below must
+ * render exactly these links (through RefLink and LinkedText); the link test
+ * checks that every rendered link appears in its target's list.
+ */
+export function references(planning: Planning, views: Views): Map<string, Backlink[]> {
+	const known = targets(planning, views);
+	const back = new Map<string, Backlink[]>([...known.keys()].map((key) => [key, []]));
+	const all = features(planning);
+	const summaries = milestoneSummaries(planning, all);
+	const milestoneKey = (id: string | null) => (id ?? (summaries.some((summary) => summary.id === null) ? 'none' : null));
+
+	const source = (href: string, label: string) => {
+		const link = (key: string | null | undefined, relation: Relation) => {
+			const target = key ? known.get(key) : undefined;
+			const list = key ? back.get(key) : undefined;
+
+			if (!target?.href || !list || target.href === href) return;
+			if (!list.some((entry) => entry.href === href && entry.relation === relation)) list.push({ href, label, relation });
+		};
+		const prose = (text: string | null | undefined, relation: Relation = 'mentions') => {
+			for (const run of linkify(text ?? '', known)) if (run.target) link(run.target.key, relation);
+		};
+
+		return { link, prose };
+	};
+
+	if (views.features) {
+		for (const feature of all) {
+			const page = source(featureHref(feature.id), `${feature.id} ${feature.title}`);
+
+			for (const dep of feature.dependsOn) page.link(dep, 'depends on');
+			page.link(feature.revisits, 'revisits');
+			page.link(milestoneKey(feature.milestone), 'milestone');
+			page.link(briefOf(planning, feature)?.path ?? feature.brief, 'brief');
+			for (const risk of [...planning.risks.open, ...planning.risks.closed]) if (risk.affects === feature.id) page.link(risk.id, 'affects');
+			for (const text of [...feature.doneWhen, feature.result, feature.reason, feature.note]) page.prose(text);
+		}
+	}
+
+	if (views.milestones) {
+		for (const summary of summaries) {
+			const page = source(milestoneHref(summary.id), summary.id ? `${summary.id} ${summary.name}` : summary.name);
+
+			for (const feature of summary.features) page.link(feature.id, 'listed');
+			page.prose(summary.exitCriteria);
+		}
+	}
+
+	for (const risk of [...planning.risks.open, ...planning.risks.closed]) {
+		const page = source(riskHref(risk), `${risk.id} ${risk.title}`);
+
+		page.prose(risk.affects, 'affects');
+		page.prose(risk.trigger);
+		page.prose(risk.mitigation, 'mitigation');
+	}
+
+	const byId = new Map(all.map((feature) => [feature.id, feature]));
+	const board = source('/plan/board/', 'Board');
+	const { columns } = planning.board;
+
+	for (const card of [...columns.now, ...columns.next, ...columns.foryou, ...columns.waiting]) {
+		board.link(card.id, 'listed');
+		if (columns.now.every((now) => now.id !== card.id)) board.link(milestoneKey(byId.get(card.id)?.milestone ?? null), 'listed');
+	}
+
+	for (const entry of columns.done) {
+		board.link(entry.id, 'listed');
+		board.link(milestoneKey(byId.get(entry.id ?? '')?.milestone ?? null), 'listed');
+	}
+
+	const roadmap = source('/plan/roadmap/', 'Roadmap');
+
+	for (const group of roadmapGroups(planning)) {
+		roadmap.link(group.milestone?.id ?? milestoneKey(null), 'listed');
+		for (const event of group.events) {
+			roadmap.link(event.id, 'listed');
+			roadmap.prose(event.desc);
+		}
+	}
+
+	const log = source('/plan/log/', 'Log');
+
+	for (const entry of planning.log.done) {
+		log.link(entry.id, 'listed');
+		log.link(milestoneKey(byId.get(entry.id ?? '')?.milestone ?? null), 'listed');
+		log.prose(entry.result);
+	}
+
+	for (const entry of planning.log.dropped) {
+		log.link(entry.id, 'listed');
+		log.prose(entry.reason);
+	}
+
+	const risks = source('/plan/risks/', 'Risks');
+
+	for (const risk of [...planning.risks.open, ...planning.risks.closed]) {
+		risks.link(risk.id, 'listed');
+		risks.prose(risk.affects, 'affects');
+		risks.prose(risk.mitigation, 'mitigation');
+	}
+
+	if (views.features) {
+		const page = source('/plan/features/', 'Features');
+
+		for (const feature of all) {
+			page.link(feature.id, 'listed');
+			page.link(milestoneKey(feature.milestone), 'listed');
+		}
+	}
+
+	if (views.milestones) {
+		const page = source('/plan/milestones/', 'Milestones');
+
+		for (const summary of summaries) page.link(summary.id ?? 'none', 'listed');
+	}
+
+	if (views.now && planning.now.item) {
+		const page = source('/plan/now/', 'Now');
+		const checkpoint = planning.now.checkpoint;
+
+		page.link(planning.now.item.id, 'listed');
+		page.link(milestoneKey(byId.get(planning.now.item.id)?.milestone ?? null), 'listed');
+		page.link(planning.now.brief, 'listed');
+		for (const text of [checkpoint?.stoppedAt, checkpoint?.nextAction, checkpoint?.startWith, checkpoint?.decisions, checkpoint?.context, checkpoint?.openQuestion]) page.prose(text);
+	}
+
+	if (views.inbox) {
+		const page = source('/plan/inbox/', 'Inbox');
+
+		for (const entry of planning.inbox) {
+			page.prose(entry.affects, 'affects');
+			for (const id of entry.related) page.link(id, 'related');
+			page.link(entry.brief, 'brief');
+			page.prose(entry.idea);
+		}
+	}
+
+	if (views.briefs) {
+		const page = source('/plan/briefs/', 'Briefs');
+
+		for (const brief of planning.briefs) {
+			page.link(brief.id, 'listed');
+			for (const text of [brief.problem, brief.decision, brief.doneWhen, ...brief.revisions.map((revision) => revision.text)]) page.prose(text);
+		}
+	}
+
+	if (views.strategy) {
+		const page = source('/plan/strategy/', 'Strategy');
+		const { strategy } = planning;
+
+		page.prose(strategy.focus.milestone, 'listed');
+		for (const milestone of strategy.milestones) page.link(milestone.id, 'listed');
+		for (const text of [
+			strategy.focus.whyNow,
+			...strategy.decisions.flatMap((decision) => [decision.decision, decision.why, decision.rejected]),
+			...strategy.bets.flatMap((bet) => [bet.statement, bet.evidence, bet.signal]),
+			...strategy.assumptions.flatMap((assumption) => [assumption.statement, assumption.test]),
+		])
+			page.prose(text);
+	}
+
+	return back;
 }

@@ -47,6 +47,8 @@ export function initials(owner: Owner | string | null): string {
 }
 
 export interface TimelineEvent {
+	/** The item's ID, or `null` for a log line without one. */
+	id: string | null;
 	title: string;
 	desc: string;
 	time: string;
@@ -78,6 +80,7 @@ export function roadmapGroups(planning: Planning): RoadmapGroup[] {
 		...planning.log.done
 			.filter((entry) => groupOf(entry.milestone) === id)
 			.map((entry) => ({
+				id: entry.id,
 				title: label(entry.id, entry.title),
 				desc: entry.result ?? '',
 				time: entry.date,
@@ -86,6 +89,7 @@ export function roadmapGroups(planning: Planning): RoadmapGroup[] {
 		...(planning.now.item && groupOf(planning.now.milestone) === id
 			? [
 					{
+						id: planning.now.item.id,
 						title: label(planning.now.item.id, planning.now.item.title),
 						desc: planning.now.stage ? `In progress: ${planning.now.stage}` : 'In progress',
 						time: 'Now',
@@ -96,6 +100,7 @@ export function roadmapGroups(planning: Planning): RoadmapGroup[] {
 		...[...planning.roadmap.next, ...planning.roadmap.later]
 			.filter((item) => groupOf(item.milestone) === id)
 			.map((item) => ({
+				id: item.id,
 				title: label(item.id, item.title),
 				desc: item.doneWhen,
 				time: item.section === 'next' ? 'Next' : 'Later',

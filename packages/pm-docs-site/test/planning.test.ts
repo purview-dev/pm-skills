@@ -83,6 +83,13 @@ describe('initials', () => {
 describe('roadmapGroups', () => {
 	const groups = roadmapGroups(loadPlanning(FIXTURE));
 
+	it('gives each event the ID of its item', () => {
+		const events = groups.flatMap((group) => group.events);
+
+		expect(events.find((event) => event.title.startsWith('R-012 '))?.id).toBe('R-012');
+		expect(events.every((event) => event.id === null || event.title.startsWith(`${event.id} `))).toBe(true);
+	});
+
 	it('orders by strategy.milestones and puts no-milestone last', () => {
 		expect(groups.map((group) => group.milestone?.id ?? null)).toEqual(['M1', 'M2', null]);
 	});
@@ -96,9 +103,9 @@ describe('roadmapGroups', () => {
 		const m2 = groups.find((group) => group.milestone?.id === 'M2')!;
 
 		expect(m2.events).toEqual([
-			{ title: 'R-010 Choose the invoice format', desc: 'CSV with one row per line item.', time: '2026-11-04', status: 'done' },
-			{ title: 'R-013 Email invoices to tenants', desc: 'A tenant receives its invoice by email.', time: 'Next', status: 'pending' },
-			{ title: 'R-014 Retry failed invoice emails', desc: 'A failed email is retried three times.', time: 'Next', status: 'pending' },
+			{ id: 'R-010', title: 'R-010 Choose the invoice format', desc: 'CSV with one row per line item.', time: '2026-11-04', status: 'done' },
+			{ id: 'R-013', title: 'R-013 Email invoices to tenants', desc: 'A tenant receives its invoice by email.', time: 'Next', status: 'pending' },
+			{ id: 'R-014', title: 'R-014 Retry failed invoice emails', desc: 'A failed email is retried three times.', time: 'Next', status: 'pending' },
 		]);
 
 		const none = groups.at(-1)!;
