@@ -1,0 +1,4 @@
+/* Every page uses the full width of the window, not Starlight's 45rem prose column. */
+:root {
+	--sl-content-width: 100%;
+}

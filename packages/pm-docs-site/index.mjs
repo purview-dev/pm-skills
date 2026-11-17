@@ -65,6 +65,8 @@ export default function pmDocsSite(options) {
 							title: resolved.title,
 							...(resolved.description ? { description: resolved.description } : {}),
 							sidebar: buildSidebar(resolved),
+							// Every page uses the full width (src/styles/width.css).
+							customCss: [fileURLToPath(new URL('./src/styles/width.css', import.meta.url))],
 						}),
 					],
 					vite: {

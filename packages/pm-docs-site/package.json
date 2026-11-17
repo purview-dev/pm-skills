@@ -29,7 +29,8 @@
 	"files": ["index.mjs", "index.d.ts", "cli.mjs", "lib", "src", "README.md"],
 	"scripts": {
 		"test": "bun test",
-		"check": "astro-check --root ."
+		"check": "astro-check --root .",
+		"test:browser": "playwright test"
 	},
 	"dependencies": {
 		"@astrojs/starlight": "0.42.10",
@@ -37,6 +38,7 @@
 	},
 	"devDependencies": {
 		"@astrojs/check": "0.9.12",
+		"@playwright/test": "1.65.1",
 		"@types/bun": "1.4.4",
 		"typescript": "6.0.3"
 	}
