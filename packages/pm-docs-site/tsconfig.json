@@ -1,0 +1,10 @@
+{
+	"extends": "astro/tsconfigs/strict",
+	"compilerOptions": {
+		"allowJs": true,
+		"checkJs": true,
+		"types": ["bun"]
+	},
+	"include": ["**/*"],
+	"exclude": ["dist", "node_modules", "test/fixtures/**/dist", "test/fixtures/**/.astro"]
+}

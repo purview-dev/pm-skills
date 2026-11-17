@@ -1,0 +1,43 @@
+{
+	"name": "@purview-dev/pm-docs-site",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "A local, searchable project site for pm-skills: the plan from planning.json, rendered by an Astro integration.",
+	"license": "MIT",
+	"author": {
+		"name": "Kieron Lanning",
+		"url": "https://kieronlanning.dev/"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/purview-dev/pm-skills.git",
+		"directory": "packages/pm-docs-site"
+	},
+	"engines": {
+		"node": ">=22"
+	},
+	"bin": {
+		"pm-docs-site": "./cli.mjs"
+	},
+	"exports": {
+		".": {
+			"types": "./index.d.ts",
+			"default": "./index.mjs"
+		}
+	},
+	"files": ["index.mjs", "index.d.ts", "cli.mjs", "lib", "src", "README.md"],
+	"scripts": {
+		"test": "bun test",
+		"check": "astro check --root test/fixtures/site"
+	},
+	"dependencies": {
+		"@astrojs/starlight": "0.42.10",
+		"astro": "7.4.8"
+	},
+	"devDependencies": {
+		"@astrojs/check": "0.9.12",
+		"@types/bun": "1.4.4",
+		"typescript": "6.0.3"
+	}
+}
