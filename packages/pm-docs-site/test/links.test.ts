@@ -78,7 +78,8 @@ describe('popup templates', () => {
 	});
 
 	it('mark each card link as a popup trigger with its template', () => {
-		const board = html('plan/board/index.html');
+		// Astro may inline the client script, whose selectors name these attributes too.
+		const board = html('plan/board/index.html').replace(/<script[\s\S]*?<\/script>/g, '');
 		const triggers = [...board.matchAll(/data-item="([^"]+)"/g)].map((match) => match[1]);
 		const details = [...board.matchAll(/data-item-detail="([^"]+)"/g)].map((match) => match[1]);
 
