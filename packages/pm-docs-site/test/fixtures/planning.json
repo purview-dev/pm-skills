@@ -34,7 +34,7 @@
     "plan": "docs/superpowers/plans/2026-11-09-invoice-export.md",
     "started": "2026-11-09",
     "doneWhen": ["An invoice downloads as CSV"],
-    "checkpoint": { "at": "2026-11-09 12:40", "stoppedAt": "Task 2, step 1", "nextAction": "Write the CSV header", "startWith": "src/export.ts", "decisions": "none", "context": null, "openQuestion": null }
+    "checkpoint": { "at": "2026-11-09 12:40", "stoppedAt": "Task 2, step 1", "nextAction": "Write the CSV header", "startWith": "src/export.ts", "decisions": "none", "context": "Reuses the CSV writer from R-011.", "openQuestion": null }
   },
   "plan": {
     "path": "docs/superpowers/plans/2026-11-09-invoice-export.md",
@@ -47,7 +47,7 @@
   },
   "roadmap": {
     "next": [
-      { "id": "R-013", "title": "Email invoices to tenants", "section": "next", "position": 1, "label": "next", "serves": ["V2"], "milestone": "M2", "owner": "agent", "doneWhen": "A tenant receives its invoice by email.", "size": "M", "dependsOn": ["R-010"], "status": { "value": "ready", "reason": null, "since": null }, "brief": null, "note": null, "revisits": null, "claimable": true },
+      { "id": "R-013", "title": "Email invoices to tenants", "section": "next", "position": 1, "label": "next", "serves": ["V2"], "milestone": "M2", "owner": "agent", "doneWhen": "A tenant receives its invoice by email.", "size": "M", "dependsOn": ["R-010"], "status": { "value": "ready", "reason": null, "since": null }, "brief": null, "note": "Blocked until RK-002 is mitigated; it moves M2, not R-999.", "revisits": null, "claimable": true },
       { "id": "R-014", "title": "Retry failed invoice emails", "section": "next", "position": 2, "label": "waiting", "serves": ["V2", "V1"], "milestone": "M2", "owner": "agent", "doneWhen": "A failed email is retried three times.", "size": "M", "dependsOn": ["R-013"], "status": { "value": "ready", "reason": null, "since": null }, "brief": null, "note": null, "revisits": null, "claimable": false }
     ],
     "later": [
