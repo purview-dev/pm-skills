@@ -14,11 +14,11 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-009 Docs-site package: backlinks everywhere
 - Session: feat/r-009-docs-site-package-backlinks
-- Stage: plan
+- Stage: execute
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 - Milestone: M1
 - Spec: docs/superpowers/specs/2026-11-17-docs-site-package-backlinks-design.md
-- Plan:
+- Plan: docs/superpowers/plans/2026-11-17-docs-site-package-backlinks.md
 - Started: 2026-11-17
 
 ## Done when
