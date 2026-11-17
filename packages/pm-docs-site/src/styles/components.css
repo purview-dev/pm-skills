@@ -17,8 +17,10 @@
 /* A kanban board: always one row of five columns, scrolling sideways when the
    page is narrower than the board, never wrapping a column onto a new line. */
 .plan-columns {
+	--plan-open: minmax(11rem, 1fr);
+	--plan-shut: 3rem;
 	display: grid;
-	grid-template-columns: repeat(5, minmax(11rem, 1fr));
+	grid-template-columns: var(--col-now, var(--plan-open)) var(--col-next, var(--plan-open)) var(--col-foryou, var(--plan-open)) var(--col-waiting, var(--plan-open)) var(--col-done, var(--plan-open));
 	gap: 1rem;
 	align-items: start;
 	overflow-x: auto;
@@ -61,6 +63,56 @@
 .plan-column__toggle:focus-visible {
 	outline: 2px solid var(--sl-color-accent);
 	outline-offset: 2px;
+}
+
+/* A collapsed column (src/scripts/plan.ts, set before paint on the root) is a
+   narrow strip with its name and count written down it. */
+:root[data-board-collapsed~='now'] .plan-columns {
+	--col-now: var(--plan-shut);
+}
+
+:root[data-board-collapsed~='next'] .plan-columns {
+	--col-next: var(--plan-shut);
+}
+
+:root[data-board-collapsed~='foryou'] .plan-columns {
+	--col-foryou: var(--plan-shut);
+}
+
+:root[data-board-collapsed~='waiting'] .plan-columns {
+	--col-waiting: var(--plan-shut);
+}
+
+:root[data-board-collapsed~='done'] .plan-columns {
+	--col-done: var(--plan-shut);
+}
+
+:root[data-board-collapsed~='now'] [data-column='now'],
+:root[data-board-collapsed~='next'] [data-column='next'],
+:root[data-board-collapsed~='foryou'] [data-column='foryou'],
+:root[data-board-collapsed~='waiting'] [data-column='waiting'],
+:root[data-board-collapsed~='done'] [data-column='done'] {
+	padding: 0.75rem 0.25rem;
+	min-width: 0;
+}
+
+:root[data-board-collapsed~='now'] [data-column='now'] .plan-column__cards,
+:root[data-board-collapsed~='next'] [data-column='next'] .plan-column__cards,
+:root[data-board-collapsed~='foryou'] [data-column='foryou'] .plan-column__cards,
+:root[data-board-collapsed~='waiting'] [data-column='waiting'] .plan-column__cards,
+:root[data-board-collapsed~='done'] [data-column='done'] .plan-column__cards {
+	display: none;
+}
+
+:root[data-board-collapsed~='now'] [data-column='now'] .plan-column__toggle,
+:root[data-board-collapsed~='next'] [data-column='next'] .plan-column__toggle,
+:root[data-board-collapsed~='foryou'] [data-column='foryou'] .plan-column__toggle,
+:root[data-board-collapsed~='waiting'] [data-column='waiting'] .plan-column__toggle,
+:root[data-board-collapsed~='done'] [data-column='done'] .plan-column__toggle {
+	writing-mode: vertical-rl;
+	justify-content: start;
+	align-items: center;
+	gap: 0.75rem;
 }
 
 .plan-column__cards {

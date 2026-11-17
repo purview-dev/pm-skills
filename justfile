@@ -67,10 +67,12 @@ docs-check:
     bun run check
     bun run build
 
-# Test and type-check the pm-docs-site package (unpublished until R-013). Its builds need Node 22 or later.
+# Test and type-check the pm-docs-site package (unpublished until R-013), then run its browser tests in Chromium. Its builds need Node 22 or later.
 [group('Docs')]
 [working-directory('packages/pm-docs-site')]
 package-test:
     bun install --frozen-lockfile
     bun test
     bun run check
+    bunx playwright install chromium
+    bun run test:browser

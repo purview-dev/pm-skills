@@ -9,6 +9,7 @@ import ItemDetail from '../../components/ItemDetail.astro';
 import ItemDialog from '../../components/ItemDialog.astro';
 import KanbanItemCard from '../../components/lib/KanbanItemCard.astro';
 import TaskKanbanCard from '../../components/lib/TaskKanbanCard.astro';
+import PlanInteractions from '../../components/PlanInteractions.astro';
 import { features, initials, loadPlanning, planProgress, sizeToPriority } from '../../lib/planning';
 import { siteRefs } from '../../lib/references';
 import type { Card } from '../../lib/planning-types';
@@ -42,6 +43,7 @@ const queued = [
 	frontmatter={{ title: 'Board', description: 'Now, Next, For you, Waiting and Done.', tableOfContents: false }}
 >
 	<ExportStamp />
+	<PlanInteractions />
 
 	<!-- `not-content`: Starlight's prose spacing would push every column after the first down. -->
 	<div class="plan-columns not-content">

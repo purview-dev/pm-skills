@@ -8,6 +8,7 @@ import ItemDetail from '../../components/ItemDetail.astro';
 import ItemDialog from '../../components/ItemDialog.astro';
 import LinkedText from '../../components/LinkedText.astro';
 import StatusTimelineFeed from '../../components/lib/StatusTimelineFeed.astro';
+import PlanInteractions from '../../components/PlanInteractions.astro';
 import RefLink from '../../components/RefLink.astro';
 import { loadPlanning, roadmapGroups } from '../../lib/planning';
 import { siteRefs } from '../../lib/references';
@@ -57,6 +58,7 @@ const groups = roadmapGroups(loadPlanning()).map((group) => ({
 	}
 
 	<ItemDialog />
+	<PlanInteractions />
 </StarlightPage>
 
 <style>
