@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-17T16:30:32+00:00",
+  "generatedAt": "2026-11-17T16:43:23+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-008-docs-site-package-skeleton",
-    "head": "041c38df22b3a00ac1c0ab5ee6f85062cf8e6606"
+    "head": "cf14e0933d4cbe7d5485e316281b2a5ba80ef5da"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -164,11 +164,11 @@
       "id": "R-008",
       "title": "Docs-site package: skeleton at parity"
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-008-docs-site-package-skeleton",
     "brief": "planning/briefs/2026-11-17-docs-site-package.md",
     "milestone": "M1",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-17-docs-site-package-skeleton-design.md",
     "plan": null,
     "started": "2026-11-17",
     "doneWhen": [
@@ -470,7 +470,7 @@
           "title": "Docs-site package: skeleton at parity",
           "owner": null,
           "size": null,
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
@@ -634,6 +634,6 @@
       "R-003",
       "R-004"
     ],
-    "drift": true
+    "drift": false
   }
 }

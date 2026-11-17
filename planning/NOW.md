@@ -14,10 +14,10 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-008 Docs-site package: skeleton at parity
 - Session: feat/r-008-docs-site-package-skeleton
-- Stage: design
+- Stage: plan
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 - Milestone: M1
-- Spec:
+- Spec: docs/superpowers/specs/2026-11-17-docs-site-package-skeleton-design.md
 - Plan:
 - Started: 2026-11-17
 
