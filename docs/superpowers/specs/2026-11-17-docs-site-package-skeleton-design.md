@@ -185,8 +185,8 @@ the working directory.
 
 `package.json` pins `astro`, `@astrojs/starlight`, and `typescript` exactly
 (`7.4.8`, `0.42.10`, and the `typescript@6` version `docs-site/` resolves),
-with no `^` or `~`, and lists `astro` as a peer dependency at the same
-version. The builder pins any other runtime dependency the pages import the
+with no `^` or `~`. `astro` and `@astrojs/starlight` are regular
+dependencies, not peers (see Calls made in design). The builder pins any other runtime dependency the pages import the
 same way.
 
 ### Tests (`bun test`, from `packages/pm-docs-site/`)
