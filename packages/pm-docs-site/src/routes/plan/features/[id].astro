@@ -1,24 +1,14 @@
 ---
 // One roadmap item, wherever the export holds it (Now, Next, Later, Done or
-// Dropped): its fields, what it serves and depends on, what depends on it, its
-// brief, and the inbox entries and risks that name it. All from planning.json.
+// Dropped): its summary, result or plan, reason, what it serves, its note, the
+// inbox entries that name it, and the pages that link to it. All from planning.json.
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
 import ExportStamp from '../../../components/ExportStamp.astro';
-import StateBadge from '../../../components/StateBadge.astro';
-import {
-	briefAnchor,
-	briefOf,
-	dependents,
-	docsHref,
-	FEATURE_STATES,
-	featureHref,
-	features,
-	loadPlanning,
-	milestoneHref,
-	planProgress,
-	type Feature,
-} from '../../../lib/planning';
+import FeatureSummary from '../../../components/FeatureSummary.astro';
+import LinkedFrom from '../../../components/LinkedFrom.astro';
+import LinkedText from '../../../components/LinkedText.astro';
+import { docsHref, FEATURE_STATES, features, loadPlanning } from '../../../lib/planning';
 import config from 'virtual:pm-docs-site/config';
 import '../../../styles/components.css';
 
@@ -28,98 +18,33 @@ export function getStaticPaths() {
 
 const { id } = Astro.props;
 const planning = loadPlanning();
-const all = features(planning);
-const feature = all.find((candidate) => candidate.id === id)!;
-const byId = new Map(all.map((candidate) => [candidate.id, candidate]));
+const feature = features(planning).find((candidate) => candidate.id === id)!;
 const outcomes = new Map(planning.vision.outcomes.map((outcome) => [outcome.id, outcome.text]));
 const milestone = planning.strategy.milestones.find((candidate) => candidate.id === feature.milestone) ?? null;
-const brief = briefOf(planning, feature);
-const blocks = dependents(all, feature.id);
-const revisedBy = all.filter((candidate) => candidate.revisits === feature.id);
 const inbox = planning.inbox.filter((entry) => entry.affects === feature.id || entry.related.includes(feature.id));
-const risks = [...planning.risks.open, ...planning.risks.closed].filter((risk) => risk.affects === feature.id);
-const plan = feature.state === 'now' ? planning.plan : null;
 const planLink = docsHref(feature.plan);
-
-const facts: { label: string; value: string }[] = [
-	{ label: 'Owner', value: feature.owner ?? '–' },
-	{ label: 'Size', value: feature.size ?? '–' },
-	...(feature.state === 'next' || feature.state === 'later' ? [{ label: 'Position', value: `${feature.state === 'next' ? 'Next' : 'Later'} ${feature.position}` }] : []),
-	...(feature.status
-		? [{ label: 'Status', value: [feature.status.value, feature.status.reason, feature.status.since && `since ${feature.status.since}`].filter(Boolean).join(', ') }]
-		: []),
-	...(feature.stage ? [{ label: 'Stage', value: feature.stage }] : []),
-	...(feature.started ? [{ label: 'Started', value: feature.started }] : []),
-	...(plan ? [{ label: 'Plan steps', value: `${plan.checked} of ${plan.total} (${planProgress(plan)}%)` }] : []),
-	...(feature.date ? [{ label: feature.state === 'done' ? 'Done' : 'Dropped', value: feature.date }] : []),
-];
-
-const linkTo = (target: Feature | undefined, targetId: string) => ({ href: target && config.views.features ? featureHref(targetId) : null, text: target ? `${targetId} ${target.title}` : targetId });
-const dependsOn = feature.dependsOn.map((dep) => ({ ...linkTo(byId.get(dep), dep), state: byId.get(dep)?.state ?? null }));
-const revisits = feature.revisits ? linkTo(byId.get(feature.revisits), feature.revisits) : null;
 ---
 
 <StarlightPage
 	frontmatter={{
 		title: `${feature.id} ${feature.title}`,
 		description: feature.doneWhen[0] ?? feature.result ?? feature.reason ?? `${FEATURE_STATES[feature.state]} item ${feature.id}.`,
+		tableOfContents: false,
 	}}
 >
 	<ExportStamp kind="Feature" state={FEATURE_STATES[feature.state]} milestone={milestone ? `${milestone.id} ${milestone.name}` : 'No milestone'} />
 
-	<p>
-		<StateBadge state={feature.state} />
-		{(feature.label === 'blocked' || feature.label === 'waiting') && (
-			<>
-				{' '}
-				<StateBadge label={feature.label} />
-			</>
-		)}
-		{' '}
-		{
-			milestone ? (
-				config.views.milestones ? (
-					<a href={milestoneHref(milestone.id)}>
-						{milestone.id} {milestone.name}
-					</a>
-				) : (
-					`${milestone.id} ${milestone.name}`
-				)
-			) : (
-				'No milestone'
-			)
-		}
-	</p>
-
-	<dl class="plan-facts">
-		{
-			facts.map((fact) => (
-				<div>
-					<dt>{fact.label}</dt>
-					<dd>{fact.value}</dd>
-				</div>
-			))
-		}
-	</dl>
-
-	{
-		feature.doneWhen.length > 0 && (
-			<section>
-				<h2>Done when</h2>
-				<ul>
-					{feature.doneWhen.map((check) => (
-						<li>{check}</li>
-					))}
-				</ul>
-			</section>
-		)
-	}
+	<FeatureSummary id={feature.id} />
 
 	{
 		(feature.result || feature.plan) && (
 			<section>
 				<h2>{feature.state === 'done' ? 'Result' : 'Plan'}</h2>
-				{feature.result && <p>{feature.result}</p>}
+				{feature.result && (
+					<p>
+						<LinkedText text={feature.result} />
+					</p>
+				)}
 				{feature.plan && <p>Plan: {planLink ? <a href={planLink}>{feature.plan}</a> : <code>{feature.plan}</code>}</p>}
 				{feature.state === 'now' && config.views.now && (
 					<p>
@@ -134,7 +59,9 @@ const revisits = feature.revisits ? linkTo(byId.get(feature.revisits), feature.r
 		feature.reason && (
 			<section>
 				<h2>Reason</h2>
-				<p>{feature.reason}</p>
+				<p>
+					<LinkedText text={feature.reason} />
+				</p>
 			</section>
 		)
 	}
@@ -155,61 +82,12 @@ const revisits = feature.revisits ? linkTo(byId.get(feature.revisits), feature.r
 	}
 
 	{
-		(dependsOn.length > 0 || blocks.length > 0 || revisits || revisedBy.length > 0) && (
-			<section>
-				<h2>Related items</h2>
-				<ul>
-					{dependsOn.map((dep) => (
-						<li>
-							Depends on {dep.href ? <a href={dep.href}>{dep.text}</a> : dep.text} {dep.state && <StateBadge state={dep.state} />}
-						</li>
-					))}
-					{blocks.map((other) => (
-						<li>
-							Needed by {config.views.features ? <a href={featureHref(other.id)}>{other.id} {other.title}</a> : `${other.id} ${other.title}`} <StateBadge state={other.state} />
-						</li>
-					))}
-					{revisits && <li>Revisits {revisits.href ? <a href={revisits.href}>{revisits.text}</a> : revisits.text}</li>}
-					{revisedBy.map((other) => (
-						<li>
-							Revised by {config.views.features ? <a href={featureHref(other.id)}>{other.id} {other.title}</a> : `${other.id} ${other.title}`}
-						</li>
-					))}
-				</ul>
-			</section>
-		)
-	}
-
-	{
-		(brief || feature.brief) && (
-			<section>
-				<h2>Brief</h2>
-				{brief ? (
-					<>
-						<p>
-							<strong>{brief.title}</strong> — {brief.status ?? 'no status'}
-							{brief.updated && <>, updated {brief.updated}</>}
-						</p>
-						{brief.problem && <p>Problem: {brief.problem}</p>}
-						{brief.decision && <p>Decision: {brief.decision}</p>}
-						<p>
-							{config.views.briefs ? <a href={`/plan/briefs/#${briefAnchor(brief.path)}`}>{brief.path}</a> : <code>{brief.path}</code>}
-						</p>
-					</>
-				) : (
-					<p>
-						<code>{feature.brief}</code>
-					</p>
-				)}
-			</section>
-		)
-	}
-
-	{
 		feature.note && (
 			<section>
 				<h2>Note</h2>
-				<p>{feature.note}</p>
+				<p>
+					<LinkedText text={feature.note} />
+				</p>
 			</section>
 		)
 	}
@@ -221,7 +99,7 @@ const revisits = feature.revisits ? linkTo(byId.get(feature.revisits), feature.r
 				<ul>
 					{inbox.map((entry) => (
 						<li>
-							{entry.kind && <strong>{entry.kind}</strong>} {entry.title}
+							{entry.kind && <strong>{entry.kind}</strong>} <LinkedText text={entry.title} />
 							{entry.severity && <> ({entry.severity})</>}
 							{entry.captured && <>, captured {entry.captured}</>}
 						</li>
@@ -231,22 +109,5 @@ const revisits = feature.revisits ? linkTo(byId.get(feature.revisits), feature.r
 		)
 	}
 
-	{
-		risks.length > 0 && (
-			<section>
-				<h2>Risks</h2>
-				<ul>
-					{risks.map((risk) => (
-						<li>
-							<span class={`rag rag--${risk.rag}`}>{risk.rag}</span>{' '}
-							<a href={`/plan/risks/#${risk.id.toLowerCase()}`}>
-								<strong>{risk.id}</strong>
-							</a>{' '}
-							{risk.title} — {risk.status}
-						</li>
-					))}
-				</ul>
-			</section>
-		)
-	}
+	<LinkedFrom ref={feature.id} />
 </StarlightPage>

@@ -1,9 +1,10 @@
 ---
 // A table of roadmap items of one state: each row links to the item's page,
 // with its milestone, owner, size, and what decides it (Done when, Result, or Reason).
-import { featureHref, milestoneHref, type Feature, type FeatureState } from '../lib/planning';
+import type { Feature, FeatureState } from '../lib/planning';
 import type { Milestone } from '../lib/planning-types';
-import config from 'virtual:pm-docs-site/config';
+import LinkedText from './LinkedText.astro';
+import RefLink from './RefLink.astro';
 import StateBadge from './StateBadge.astro';
 
 interface Props {
@@ -14,8 +15,8 @@ interface Props {
 	hideMilestone?: boolean;
 }
 
-const { state, items, milestones, hideMilestone = false } = Astro.props;
-const names = new Map(milestones.map((milestone) => [milestone.id, milestone.name]));
+const { state, items, hideMilestone = false } = Astro.props;
+const decision = (feature: Feature) => (state === 'done' ? feature.result : state === 'dropped' ? feature.reason : feature.doneWhen.join(' ')) || null;
 const decides = state === 'done' ? 'Result' : state === 'dropped' ? 'Reason' : 'Done when';
 const when = (feature: Feature) => (state === 'done' || state === 'dropped' ? feature.date : state === 'now' ? feature.stage : `${state === 'next' ? 'Next' : 'Later'} ${feature.position}`);
 ---
@@ -38,15 +39,7 @@ const when = (feature: Feature) => (state === 'done' || state === 'dropped' ? fe
 				{items.map((feature) => (
 					<tr id={feature.id.toLowerCase()}>
 						<td>
-							{config.views.features ? (
-								<a href={featureHref(feature.id)}>
-									<strong>{feature.id}</strong> {feature.title}
-								</a>
-							) : (
-								<>
-									<strong>{feature.id}</strong> {feature.title}
-								</>
-							)}
+							<RefLink ref={feature.id} />
 							{(feature.label === 'blocked' || feature.label === 'waiting') && (
 								<>
 									{' '}
@@ -57,20 +50,12 @@ const when = (feature: Feature) => (state === 'done' || state === 'dropped' ? fe
 						<td class="plan-nowrap">{when(feature) ?? '–'}</td>
 						{!hideMilestone && (
 							<td>
-								{feature.milestone === null ? (
-									'No milestone'
-								) : config.views.milestones ? (
-									<a href={milestoneHref(feature.milestone)}>
-										{feature.milestone} {names.get(feature.milestone)}
-									</a>
-								) : (
-									`${feature.milestone} ${names.get(feature.milestone) ?? ''}`
-								)}
+								<RefLink ref={feature.milestone ?? 'none'} />
 							</td>
 						)}
 						<td>{feature.owner ?? '–'}</td>
 						<td>{feature.size ?? '–'}</td>
-						<td>{(state === 'done' ? feature.result : state === 'dropped' ? feature.reason : feature.doneWhen.join(' ')) ?? '–'}</td>
+						<td>{decision(feature) ? <LinkedText text={decision(feature)} /> : '–'}</td>
 					</tr>
 				))}
 			</tbody>

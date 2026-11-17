@@ -5,6 +5,9 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
 import ExportStamp from '../../../components/ExportStamp.astro';
 import FeatureTable from '../../../components/FeatureTable.astro';
+import LinkedFrom from '../../../components/LinkedFrom.astro';
+import LinkedText from '../../../components/LinkedText.astro';
+import RefLink from '../../../components/RefLink.astro';
 import { FEATURE_STATES, loadPlanning, milestoneSummaries, type FeatureState } from '../../../lib/planning';
 import '../../../styles/components.css';
 
@@ -23,7 +26,7 @@ const groups = (Object.keys(FEATURE_STATES) as FeatureState[])
 const risks = summary.id ? [...planning.risks.open, ...planning.risks.closed].filter((risk) => risk.affects === summary.id) : [];
 ---
 
-<StarlightPage frontmatter={{ title, description: summary.exitCriteria ?? `The items in ${title}.` }}>
+<StarlightPage frontmatter={{ title, description: summary.exitCriteria ?? `The items in ${title}.`, tableOfContents: false }}>
 	<ExportStamp kind="Milestone" milestone={title} />
 
 	<p>
@@ -53,7 +56,9 @@ const risks = summary.id ? [...planning.risks.open, ...planning.risks.closed].fi
 		summary.exitCriteria && (
 			<section>
 				<h2>Exit criteria</h2>
-				<p>{summary.exitCriteria}</p>
+				<p>
+					<LinkedText text={summary.exitCriteria} />
+				</p>
 			</section>
 		)
 	}
@@ -93,9 +98,9 @@ const risks = summary.id ? [...planning.risks.open, ...planning.risks.closed].fi
 					{risks.map((risk) => (
 						<li>
 							<span class={`rag rag--${risk.rag}`}>{risk.rag}</span>{' '}
-							<a href={`/plan/risks/#${risk.id.toLowerCase()}`}>
-								<strong>{risk.id}</strong>
-							</a>{' '}
+							<strong>
+								<RefLink ref={risk.id} label="id" />
+							</strong>{' '}
 							{risk.title} — {risk.status}
 						</li>
 					))}
@@ -103,4 +108,6 @@ const risks = summary.id ? [...planning.risks.open, ...planning.risks.closed].fi
 			</section>
 		)
 	}
+
+	<LinkedFrom ref={summary.id ?? 'none'} />
 </StarlightPage>

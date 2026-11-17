@@ -6,7 +6,7 @@
 import config from 'virtual:pm-docs-site/config';
 
 import type { ViewName } from '../../index';
-import { briefAnchor, briefOf, featureHref, features, loadPlanning, milestoneHref, milestoneSummaries, roadmapGroups } from './planning';
+import { briefAnchor, briefOf, featureHref, features, loadPlanning, milestoneHref, milestoneSummaries, roadmapGroups, type Feature } from './planning';
 import type { Planning } from './planning-types';
 
 export type Views = Record<ViewName, boolean>;
@@ -131,6 +131,8 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 	const all = features(planning);
 	const summaries = milestoneSummaries(planning, all);
 	const milestoneKey = (id: string | null) => (id ?? (summaries.some((summary) => summary.id === null) ? 'none' : null));
+	// What a FeatureTable row shows in its last column.
+	const decision = (feature: Feature) => (feature.state === 'done' ? feature.result : feature.state === 'dropped' ? feature.reason : feature.doneWhen.join(' '));
 
 	const source = (href: string, label: string) => {
 		const link = (key: string | null | undefined, relation: Relation) => {
@@ -154,9 +156,16 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 			for (const dep of feature.dependsOn) page.link(dep, 'depends on');
 			page.link(feature.revisits, 'revisits');
 			page.link(milestoneKey(feature.milestone), 'milestone');
-			page.link(briefOf(planning, feature)?.path ?? feature.brief, 'brief');
+			for (const other of all) {
+				if (other.dependsOn.includes(feature.id) || other.revisits === feature.id) page.link(other.id, 'related');
+			}
+
+			const brief = briefOf(planning, feature);
+
+			page.link(brief?.path ?? feature.brief, 'brief');
 			for (const risk of [...planning.risks.open, ...planning.risks.closed]) if (risk.affects === feature.id) page.link(risk.id, 'affects');
-			for (const text of [...feature.doneWhen, feature.result, feature.reason, feature.note]) page.prose(text);
+			for (const text of [...feature.doneWhen, feature.result, feature.reason, feature.note, brief?.problem, brief?.decision]) page.prose(text);
+			for (const entry of planning.inbox) if (entry.affects === feature.id || entry.related.includes(feature.id)) page.prose(entry.title);
 		}
 	}
 
@@ -164,8 +173,12 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 		for (const summary of summaries) {
 			const page = source(milestoneHref(summary.id), summary.id ? `${summary.id} ${summary.name}` : summary.name);
 
-			for (const feature of summary.features) page.link(feature.id, 'listed');
+			for (const feature of summary.features) {
+				page.link(feature.id, 'listed');
+				page.prose(decision(feature));
+			}
 			page.prose(summary.exitCriteria);
+			if (summary.id) for (const risk of [...planning.risks.open, ...planning.risks.closed]) if (risk.affects === summary.id) page.link(risk.id, 'affects');
 		}
 	}
 
@@ -229,6 +242,7 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 		for (const feature of all) {
 			page.link(feature.id, 'listed');
 			page.link(milestoneKey(feature.milestone), 'listed');
+			page.prose(decision(feature));
 		}
 	}
 
