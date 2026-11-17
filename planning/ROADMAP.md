@@ -25,26 +25,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Status: ready
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 
-### R-003 Fix pm-export's ajv validation command
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: the command in `pm-export`'s guard exits 0 on `planning/planning.json`, instead of failing on the unknown `date-time` format.
-- Size: S
-- Depends on: none
-- Status: ready
-
-### R-004 Verify the aspire module against a real AppHost
-
-- Serves: V4
-- Milestone: M1
-- Owner: both
-- Done when: in an Aspire AppHost, `pm-docs-site extend aspire` adds the `docs` resource, it serves the Home page, and both composition tests pass.
-- Size: M
-- Depends on: none
-- Status: ready
-
 ## Later
 
 <!-- Grouped by milestone where one is set. Same item format. -->
