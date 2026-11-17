@@ -32,6 +32,9 @@ const VIEW_ROUTES = {
 	strategy: [['/plan/strategy', 'plan/strategy.astro']],
 };
 
+const NO_EXTERNAL = ['@astrojs/starlight', '@purview-dev/pm-docs-site'];
+const SERVER_ENVIRONMENTS = ['ssr', 'astro', 'prerender'];
+
 const VIRTUAL_ID = 'virtual:pm-docs-site/config';
 const RESOLVED_ID = `\0${VIRTUAL_ID}`;
 
@@ -65,9 +68,6 @@ export default function pmDocsSite(options) {
 						}),
 					],
 					vite: {
-						// Bundle Starlight in SSR whatever the consumer's package.json lists:
-						// externalised, it cannot import astro:middleware.
-						ssr: { noExternal: ['@astrojs/starlight', '@purview-dev/pm-docs-site'] },
 						plugins: [
 							{
 								name: 'pm-docs-site:config',
@@ -75,6 +75,16 @@ export default function pmDocsSite(options) {
 								resolveId: (id) => (id === VIRTUAL_ID ? RESOLVED_ID : undefined),
 								/** @param {string} id */
 								load: (id) => (id === RESOLVED_ID ? `export default ${JSON.stringify(resolved)};` : undefined),
+							},
+							{
+								// Bundle Starlight and this package in every server environment, whatever
+								// the consumer's package.json lists: externalised, Starlight cannot import
+								// astro:middleware. Astro 7 renders static pages in its own `prerender`
+								// environment, which top-level `vite.ssr` does not reach.
+								name: 'pm-docs-site:no-external',
+								/** @param {string} name */
+								configEnvironment: (name) =>
+									SERVER_ENVIRONMENTS.includes(name) ? { resolve: { noExternal: [...NO_EXTERNAL] } } : undefined,
 							},
 						],
 					},

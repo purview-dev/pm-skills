@@ -5,11 +5,16 @@ import { describe, expect, it } from 'bun:test';
 
 import pmDocsSite from '../index.mjs';
 
-type Plugin = { name: string; resolveId: (id: string) => string | undefined; load: (id: string) => string | undefined };
+type Plugin = {
+	name: string;
+	resolveId: (id: string) => string | undefined;
+	load: (id: string) => string | undefined;
+	configEnvironment?: (name: string) => unknown;
+};
 type Update = {
 	srcDir: URL;
 	integrations: { name: string }[];
-	vite: { ssr: { noExternal: string[] }; plugins: Plugin[] };
+	vite: { plugins: Plugin[] };
 };
 
 type Route = { pattern: string; entrypoint: URL };
@@ -46,7 +51,16 @@ describe('pmDocsSite', () => {
 		expect(updates).toHaveLength(1);
 		expect(updates[0]!.srcDir.href).toEndWith('/packages/pm-docs-site/src/');
 		expect(updates[0]!.integrations.map((integration) => integration.name)).toEqual(['@astrojs/starlight']);
-		expect(updates[0]!.vite.ssr.noExternal).toEqual(['@astrojs/starlight', '@purview-dev/pm-docs-site']);
+	});
+
+	it('bundles Starlight and the package in every server environment, prerender included', () => {
+		const plugin = setup({ title: 'T' })[0]!.vite.plugins.find((entry) => entry.name === 'pm-docs-site:no-external');
+		const noExternal = ['@astrojs/starlight', '@purview-dev/pm-docs-site'];
+
+		for (const name of ['ssr', 'astro', 'prerender']) {
+			expect(plugin!.configEnvironment!(name)).toEqual({ resolve: { noExternal } });
+		}
+		expect(plugin!.configEnvironment!('client')).toBeUndefined();
 	});
 
 	it('serves the resolved options as virtual:pm-docs-site/config', () => {
