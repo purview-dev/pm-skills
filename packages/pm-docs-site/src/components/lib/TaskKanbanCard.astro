@@ -4,14 +4,17 @@
  *
  * From the Astro Components Kit by Konstantin (https://astrocomponents.dev/docs/task-kanban-card/,
  * https://github.com/konstantinWDK/astro-components), MIT License. Copied from its manual-install
- * source; the only change is that hard-coded dark-theme colours use Starlight theme variables,
- * so the card reads in light and dark themes.
+ * source; the only changes are that hard-coded dark-theme colours use Starlight theme variables,
+ * so the card reads in light and dark themes, and that the task can be a link, for the site's
+ * item popup and backlinks (href, itemId).
  *
  * @param {string} task - The description of the task being managed.
  * @param {string} date - Visual date string indicator (e.g. 'Oct 28').
  * @param {string} assigneeInitials - Short initials for the user avatar (e.g. 'MJ').
  * @param {'low'|'med'|'high'} priority - Priority tag variant. Default is 'med'.
  * @param {number} progress - Task completion percentage (0 - 100). Default is 65.
+ * @param {string} href - The task's link: the item's page. Optional.
+ * @param {string} itemId - The item's ID, marking the link as the popup trigger. Optional.
  */
 interface Props {
 	task?: string;
@@ -19,6 +22,8 @@ interface Props {
 	assigneeInitials?: string;
 	priority?: 'low' | 'med' | 'high';
 	progress?: number;
+	href?: string;
+	itemId?: string;
 }
 
 const {
@@ -27,6 +32,8 @@ const {
 	assigneeInitials = 'MJ',
 	priority = 'med',
 	progress = 65,
+	href,
+	itemId,
 } = Astro.props;
 
 const priorityLabels = { low: 'Low', med: 'Medium', high: 'High' };
@@ -41,7 +48,7 @@ const priorityLabels = { low: 'Low', med: 'Medium', high: 'High' };
 		<span class="task-card__pct">{progress}%</span>
 	</div>
 
-	<p class="task-card__desc">{task}</p>
+	<p class="task-card__desc">{href ? <a class="plan-item-link" href={href} data-item={itemId}>{task}</a> : task}</p>
 
 	<div
 		class="task-card__progress-wrap"

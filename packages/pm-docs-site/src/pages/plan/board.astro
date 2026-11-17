@@ -1,29 +1,40 @@
 ---
 // The task board, column by column, from planning.json's `board.columns` —
-// the same columns the pm-board skill renders.
+// the same columns the pm-board skill renders. Each card links to its item's
+// page; a plain click opens the item popup, and each column can collapse.
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
 import ExportStamp from '../../components/ExportStamp.astro';
+import ItemDetail from '../../components/ItemDetail.astro';
+import ItemDialog from '../../components/ItemDialog.astro';
 import KanbanItemCard from '../../components/lib/KanbanItemCard.astro';
 import TaskKanbanCard from '../../components/lib/TaskKanbanCard.astro';
-import { initials, loadPlanning, planProgress, sizeToPriority } from '../../lib/planning';
+import { features, initials, loadPlanning, planProgress, sizeToPriority } from '../../lib/planning';
+import { siteRefs } from '../../lib/references';
 import type { Card } from '../../lib/planning-types';
 import '../../styles/components.css';
 
 const planning = loadPlanning();
 const { columns } = planning.board;
+const { known } = siteRefs();
 
-// The roadmap item behind a card, for its milestone.
-const items = new Map([...planning.roadmap.next, ...planning.roadmap.later].map((item) => [item.id, item]));
-const milestoneOf = (card: Card) => items.get(card.id)?.milestone ?? 'No milestone';
+// The item behind a card, for its milestone and its page.
+const items = new Map(features(planning).map((feature) => [feature.id, feature]));
+const hrefOf = (id: string | null) => (id ? (known.get(id)?.href ?? undefined) : undefined);
+const milestoneKey = (id: string | null) => (id ? (items.get(id)?.milestone ?? 'none') : 'none');
+const tagOf = (id: string | null) => {
+	const key = milestoneKey(id);
+
+	return { tag: key === 'none' ? 'No milestone' : key, tagHref: known.get(key)?.href ?? null };
+};
 
 const progress = planProgress(planning.plan);
 const taskPriority = (size: Card['size']) => ({ low: 'low', medium: 'med', high: 'high' } as const)[sizeToPriority(size)];
 
 const queued = [
-	{ title: 'Next', cards: columns.next },
-	{ title: 'For you', cards: columns.foryou },
-	{ title: 'Waiting', cards: columns.waiting },
+	{ name: 'next', title: 'Next', cards: columns.next },
+	{ name: 'foryou', title: 'For you', cards: columns.foryou },
+	{ name: 'waiting', title: 'Waiting', cards: columns.waiting },
 ];
 ---
 
@@ -34,69 +45,94 @@ const queued = [
 
 	<!-- `not-content`: Starlight's prose spacing would push every column after the first down. -->
 	<div class="plan-columns not-content">
-		<section class="plan-column" aria-labelledby="col-now">
-			<h2 id="col-now">Now <span>{columns.now.length}</span></h2>
-			{columns.now.length === 0 && <p class="plan-empty">Nothing here</p>}
-			{
-				columns.now.map((card) => (
-					<TaskKanbanCard
-						task={`${card.id} ${card.title}`}
-						date={planning.now.started ?? ''}
-						assigneeInitials={initials(card.owner)}
-						priority={taskPriority(card.size)}
-						progress={progress}
-					/>
-				))
-			}
+		<section class="plan-column" data-column="now" aria-labelledby="col-now">
+			<h2 id="col-now">
+				<button type="button" class="plan-column__toggle" aria-expanded="true" aria-controls="col-now-cards">
+					<span class="plan-column__name">Now</span> <span class="plan-column__count">{columns.now.length}</span>
+				</button>
+			</h2>
+			<div class="plan-column__cards" id="col-now-cards">
+				{columns.now.length === 0 && <p class="plan-empty">Nothing here</p>}
+				{
+					columns.now.map((card) => (
+						<>
+							<TaskKanbanCard
+								task={`${card.id} ${card.title}`}
+								date={planning.now.started ?? ''}
+								assigneeInitials={initials(card.owner)}
+								priority={taskPriority(card.size)}
+								progress={progress}
+								href={hrefOf(card.id)}
+								itemId={card.id}
+							/>
+							{hrefOf(card.id) && <ItemDetail id={card.id} />}
+						</>
+					))
+				}
+			</div>
 		</section>
 
 		{
 			queued.map((column) => (
-				<section class="plan-column" aria-label={column.title}>
-					<h2>
-						{column.title} <span>{column.cards.length}</span>
+				<section class="plan-column" data-column={column.name} aria-labelledby={`col-${column.name}`}>
+					<h2 id={`col-${column.name}`}>
+						<button type="button" class="plan-column__toggle" aria-expanded="true" aria-controls={`col-${column.name}-cards`}>
+							<span class="plan-column__name">{column.title}</span> <span class="plan-column__count">{column.cards.length}</span>
+						</button>
 					</h2>
-					{column.cards.length === 0 && <p class="plan-empty">Nothing here</p>}
-					{column.cards.map((card) => (
-						<KanbanItemCard
-							title={`${card.id} ${card.title}`}
-							tag={milestoneOf(card)}
-							assignee={initials(card.owner)}
-							dueDate={card.detail ?? ''}
-							priority={sizeToPriority(card.size)}
-							commentsCount={0}
-							attachmentsCount={0}
-						/>
-					))}
+					<div class="plan-column__cards" id={`col-${column.name}-cards`}>
+						{column.cards.length === 0 && <p class="plan-empty">Nothing here</p>}
+						{column.cards.map((card) => (
+							<>
+								<KanbanItemCard
+									title={`${card.id} ${card.title}`}
+									{...tagOf(card.id)}
+									assignee={initials(card.owner)}
+									dueDate={card.detail ?? ''}
+									priority={sizeToPriority(card.size)}
+									commentsCount={0}
+									attachmentsCount={0}
+									href={hrefOf(card.id)}
+									itemId={card.id}
+								/>
+								{hrefOf(card.id) && <ItemDetail id={card.id} />}
+							</>
+						))}
+					</div>
 				</section>
 			))
 		}
 
-		<section class="plan-column" aria-labelledby="col-done">
-			<h2 id="col-done">Done <span>{columns.done.length}</span></h2>
-			{columns.done.length === 0 && <p class="plan-empty">Nothing here</p>}
-			{
-				columns.done.map((entry) => (
-					// The result can run to a paragraph; it is on the Log page, not squeezed into a tag.
-					<KanbanItemCard
-						title={entry.id ? `${entry.id} ${entry.title}` : entry.title}
-						tag={entry.milestone && entry.milestone !== 'none' ? entry.milestone : 'No milestone'}
-						assignee={initials(entry.owner)}
-						dueDate={entry.date}
-						priority="low"
-						commentsCount={0}
-						attachmentsCount={0}
-					/>
-				))
-			}
+		<section class="plan-column" data-column="done" aria-labelledby="col-done">
+			<h2 id="col-done">
+				<button type="button" class="plan-column__toggle" aria-expanded="true" aria-controls="col-done-cards">
+					<span class="plan-column__name">Done</span> <span class="plan-column__count">{columns.done.length}</span>
+				</button>
+			</h2>
+			<div class="plan-column__cards" id="col-done-cards">
+				{columns.done.length === 0 && <p class="plan-empty">Nothing here</p>}
+				{
+					columns.done.map((entry) => (
+						// The result can run to a paragraph; it is on the Log page, not squeezed into a tag.
+						<>
+							<KanbanItemCard
+								title={entry.id ? `${entry.id} ${entry.title}` : entry.title}
+								{...tagOf(entry.id)}
+								assignee={initials(entry.owner)}
+								dueDate={entry.date}
+								priority="low"
+								commentsCount={0}
+								attachmentsCount={0}
+								href={hrefOf(entry.id)}
+								itemId={entry.id ?? undefined}
+							/>
+							{entry.id && hrefOf(entry.id) && <ItemDetail id={entry.id} />}
+						</>
+					))
+				}
+			</div>
 		</section>
 	</div>
-</StarlightPage>
 
-<style is:global>
-	/* The board uses the full content width, not a prose column. Astro may bundle this with
-	   other pages' styles, so it applies only where a board is on the page. */
-	:root:has(.plan-columns) {
-		--sl-content-width: 100%;
-	}
-</style>
+	<ItemDialog />
+</StarlightPage>

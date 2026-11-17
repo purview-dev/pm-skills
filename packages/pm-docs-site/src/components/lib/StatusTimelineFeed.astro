@@ -5,16 +5,21 @@
  * From the Astro Components Kit by Konstantin (https://astrocomponents.dev/docs/status-timeline-feed/,
  * https://github.com/konstantinWDK/astro-components), MIT License. Copied from its manual-install
  * source; the only changes are that hard-coded dark-theme colours use Starlight theme variables,
- * and the feed fills its column instead of stopping at 440px.
+ * the feed fills its column instead of stopping at 440px, and an event's title can be a link (href,
+ * itemId) and its description links known IDs, for the site's item popup and backlinks.
  *
- * @param {Array<{title: string, desc: string, time: string, status: 'done' | 'active' | 'pending'}>} events - Timeline events.
+ * @param {Array<{title: string, desc: string, time: string, status: 'done' | 'active' | 'pending', href?: string, itemId?: string}>} events - Timeline events.
  */
+import LinkedText from '../LinkedText.astro';
+
 interface Props {
 	events?: Array<{
 		title: string;
 		desc: string;
 		time: string;
 		status: 'done' | 'active' | 'pending';
+		href?: string;
+		itemId?: string;
 	}>;
 }
 
@@ -60,10 +65,12 @@ const {
 				</div>
 				<div class="status-feed__content">
 					<div class="status-feed__header">
-						<h5 class="status-feed__title">{evt.title}</h5>
+						<h5 class="status-feed__title">{evt.href ? <a class="plan-item-link" href={evt.href} data-item={evt.itemId}>{evt.title}</a> : evt.title}</h5>
 						<span class="status-feed__time">{evt.time}</span>
 					</div>
-					<p class="status-feed__desc">{evt.desc}</p>
+					<p class="status-feed__desc">
+						<LinkedText text={evt.desc} />
+					</p>
 				</div>
 			</div>
 		))

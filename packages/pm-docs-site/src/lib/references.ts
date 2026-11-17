@@ -208,6 +208,7 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 
 	for (const group of roadmapGroups(planning)) {
 		roadmap.link(group.milestone?.id ?? milestoneKey(null), 'listed');
+		roadmap.prose(group.milestone?.exitCriteria);
 		for (const event of group.events) {
 			roadmap.link(event.id, 'listed');
 			roadmap.prose(event.desc);
