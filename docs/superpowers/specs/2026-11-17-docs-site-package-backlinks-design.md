@@ -163,8 +163,9 @@ optional `href` prop for the title, and `KanbanItemCard` an optional
 
 Every ID outside a title is linked too, with no exemptions in the link
 test: the milestone tag on each Board card (including Done cards) links to
-its milestone page, as do the Roadmap group headings, the `ExportStamp`
-milestone text on feature pages, and the risk-matrix cells (to risk pages).
+its milestone page, as do the Roadmap group headings and the risk-matrix
+cells (to risk pages). The `ExportStamp` milestone is a hidden Pagefind
+filter attribute, not page text, so it is unchanged.
 Only the title link carries `data-item`, so a click on the tag navigates
 and never opens the popup.
 
