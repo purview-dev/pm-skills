@@ -35,17 +35,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Depends on: none
 - Status: ready
 
-### R-009 Docs-site package: backlinks everywhere
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: the package link test finds no item, milestone, risk, or brief ID on any page of the fixture build without a link and no internal link that 404s, each item, milestone, and risk page lists what links to it, and a browser test shows the Board's five columns in one row at 1440, 1024, and 700px.
-- Size: M
-- Depends on: R-008
-- Status: ready
-- Brief: planning/briefs/2026-11-17-docs-site-package.md
-
 ### R-004 Verify the aspire module against a real AppHost
 
 - Serves: V4
