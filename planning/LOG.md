@@ -4,6 +4,7 @@
 
 ## Done
 
+- 2026-11-17 R-004 Verify the aspire module against a real AppHost. Milestone: M1. Owner: both. Plan: none. Result: branch feat/r-004-verify-the-aspire-module.
 - 2026-11-17 R-009 Docs-site package: backlinks everywhere. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-17-docs-site-package-backlinks.md. Result: branch feat/r-009-docs-site-package-backlinks.
 - 2026-11-17 R-008 Docs-site package: skeleton at parity. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-17-docs-site-package-skeleton.md. Result: branch feat/r-008-docs-site-package-skeleton.
 - 2026-11-17 R-001 Set milestones and focus. Milestone: none. Owner: both. Plan: none. Result: branch feat/r-001-set-milestones-and-focus.

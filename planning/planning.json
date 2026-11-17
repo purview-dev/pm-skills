@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-17T23:31:11+00:00",
+  "generatedAt": "2026-11-17T23:52:52+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-004-verify-the-aspire-module",
-    "head": "02c6d1a56be454c67ae6c2199563c655f6cb1af3"
+    "head": "9c7c6c83d2f521b2e213abc327236de2e0fb7134"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -159,21 +159,16 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-004",
-      "title": "Verify the aspire module against a real AppHost"
-    },
-    "stage": "design",
-    "session": "feat/r-004-verify-the-aspire-module",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
     "brief": null,
-    "milestone": "M1",
+    "milestone": null,
     "spec": null,
     "plan": null,
-    "started": "2026-11-17",
-    "doneWhen": [
-      "in an Aspire AppHost, `pm-docs-site extend aspire` adds the `docs` resource, it serves the Home page, and both composition tests pass."
-    ],
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
   "plan": null,
@@ -390,15 +385,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-004",
-          "title": "Verify the aspire module against a real AppHost",
-          "owner": null,
-          "size": null,
-          "detail": "design"
-        }
-      ],
+      "now": [],
       "next": [],
       "foryou": [
         {
@@ -411,6 +398,15 @@
       ],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-17",
+          "id": "R-004",
+          "title": "Verify the aspire module against a real AppHost",
+          "milestone": "M1",
+          "owner": "both",
+          "plan": null,
+          "result": "branch feat/r-004-verify-the-aspire-module"
+        },
         {
           "date": "2026-11-17",
           "id": "R-009",
@@ -441,6 +437,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-17",
+        "kind": "done",
+        "id": "R-004",
+        "title": "Verify the aspire module against a real AppHost",
+        "milestone": "M1",
+        "owner": "both",
+        "result": "branch feat/r-004-verify-the-aspire-module"
+      },
       {
         "date": "2026-11-17",
         "kind": "done",
@@ -508,6 +513,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-17",
+        "id": "R-004",
+        "title": "Verify the aspire module against a real AppHost",
+        "milestone": "M1",
+        "owner": "both",
+        "plan": null,
+        "result": "branch feat/r-004-verify-the-aspire-module"
+      },
       {
         "date": "2026-11-17",
         "id": "R-009",
@@ -671,6 +685,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "linkify uses \\b boundaries, so an upper-case ID inside a path in prose that is not a known brief path (docs/plans/R-009-x.md) gets a link in the middle of the path. The link test's scanner uses a stricter lookbehind, so the two disagree. Match the scanner's boundaries in linkify."
+    },
+    {
+      "file": "planning/inbox/2026-11-17-2352-aspire-module-tunit-example-helpers.md",
+      "title": "Make the aspire MODULE.md test example self-contained",
+      "captured": "2026-11-17 23:52",
+      "source": "agent (R-004 execute)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "skills/pm-docs-site/templates/aspire/MODULE.md",
+      "context": "R-004 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "The TUnit example in the aspire MODULE.md calls `BuildAsync` and `Named` without defining them, and uses `Resources.DocsSite`, which a test project reaches only when the constant is visible to it. Verifying R-004 needed `using Aspire.Hosting;` for `DistributedApplicationExecutionContext` and the literal `\"docs\"`. Show the two helpers and say when to use the literal."
     }
   ],
   "briefs": [
@@ -696,10 +725,10 @@
     "next": 1,
     "later": 7,
     "nextMax": 5,
-    "openInbox": 7,
+    "openInbox": 8,
     "discuss": 1,
     "shapingBriefs": 0,
-    "done": 3,
+    "done": 4,
     "dropped": 4,
     "blockers": 0,
     "openRisks": 0,

@@ -11,19 +11,17 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: active
-- Item: R-004 Verify the aspire module against a real AppHost
-- Session: feat/r-004-verify-the-aspire-module
-- Stage: design
+- Status: idle
+- Item:
+- Session:
+- Stage:
 - Brief:
-- Milestone: M1
+- Milestone:
 - Spec:
 - Plan:
-- Started: 2026-11-17
+- Started:
 
 ## Done when
-
-- in an Aspire AppHost, `pm-docs-site extend aspire` adds the `docs` resource, it serves the Home page, and both composition tests pass.
 
 ## Checkpoint
 
