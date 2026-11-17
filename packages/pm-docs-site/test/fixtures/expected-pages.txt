@@ -22,5 +22,9 @@ plan/milestones/m2/index.html
 plan/milestones/none/index.html
 plan/now/index.html
 plan/risks/index.html
+plan/risks/rk-001/index.html
+plan/risks/rk-002/index.html
+plan/risks/rk-004/index.html
+plan/risks/rk-005/index.html
 plan/roadmap/index.html
 plan/strategy/index.html

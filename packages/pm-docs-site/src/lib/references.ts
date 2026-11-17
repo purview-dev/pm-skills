@@ -3,8 +3,10 @@
 // each target. Links and `Linked from` lists both come from here, so they
 // cannot disagree. All from planning.json.
 
+import config from 'virtual:pm-docs-site/config';
+
 import type { ViewName } from '../../index';
-import { briefAnchor, briefOf, featureHref, features, milestoneHref, milestoneSummaries, roadmapGroups } from './planning';
+import { briefAnchor, briefOf, featureHref, features, loadPlanning, milestoneHref, milestoneSummaries, roadmapGroups } from './planning';
 import type { Planning } from './planning-types';
 
 export type Views = Record<ViewName, boolean>;
@@ -217,6 +219,7 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 	for (const risk of [...planning.risks.open, ...planning.risks.closed]) {
 		risks.link(risk.id, 'listed');
 		risks.prose(risk.affects, 'affects');
+		risks.prose(risk.trigger);
 		risks.prose(risk.mitigation, 'mitigation');
 	}
 
@@ -281,4 +284,17 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 	}
 
 	return back;
+}
+
+let cache: { known: Map<string, Target>; back: Map<string, Backlink[]> } | null = null;
+
+/** The site's targets and backlinks, computed once per build from the integration's options. */
+export function siteRefs(): { known: Map<string, Target>; back: Map<string, Backlink[]> } {
+	if (!cache) {
+		const planning = loadPlanning();
+
+		cache = { known: targets(planning, config.views), back: references(planning, config.views) };
+	}
+
+	return cache;
 }

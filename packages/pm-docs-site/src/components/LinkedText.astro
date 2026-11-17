@@ -1,0 +1,12 @@
+---
+// Prose with every known ID and brief path linked to its page.
+import { linkify, siteRefs } from '../lib/references';
+
+interface Props {
+	text: string | null | undefined;
+}
+
+const runs = linkify(Astro.props.text ?? '', siteRefs().known);
+---
+
+{runs.map((run) => (run.target?.href ? <a href={run.target.href} title={run.target.label}>{run.text}</a> : run.text))}

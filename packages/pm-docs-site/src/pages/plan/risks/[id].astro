@@ -1,0 +1,70 @@
+---
+// One open or closed risk from planning.json's `risks`: its rating, owner and
+// dates, what it affects, its trigger and mitigation, and what links to it.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+import ExportStamp from '../../../components/ExportStamp.astro';
+import LinkedFrom from '../../../components/LinkedFrom.astro';
+import LinkedText from '../../../components/LinkedText.astro';
+import { loadPlanning } from '../../../lib/planning';
+import type { Risk } from '../../../lib/planning-types';
+import '../../../styles/components.css';
+
+export function getStaticPaths() {
+	const { risks } = loadPlanning();
+
+	return [...risks.open, ...risks.closed].map((risk) => ({ params: { id: risk.id.toLowerCase() }, props: { risk } }));
+}
+
+const { risk } = Astro.props as { risk: Risk };
+
+const facts: { label: string; value: string }[] = [
+	{ label: 'Likelihood', value: risk.likelihood },
+	{ label: 'Impact', value: risk.impact },
+	...(risk.ragOverride ? [{ label: 'RAG override', value: risk.ragOverride }] : []),
+	{ label: 'Status', value: risk.status },
+	{ label: 'Owner', value: risk.owner },
+	...(risk.raised ? [{ label: 'Raised', value: risk.raised }] : []),
+	{ label: 'Reviewed', value: risk.reviewed ?? 'never' },
+	...(risk.closed ? [{ label: 'Closed', value: risk.closed }] : []),
+];
+const prose = [
+	{ label: 'Affects', text: risk.affects },
+	{ label: 'Trigger', text: risk.trigger },
+	{ label: 'Mitigation', text: risk.mitigation },
+];
+---
+
+<StarlightPage
+	frontmatter={{ title: `${risk.id} ${risk.title}`, description: `${risk.rag} risk, ${risk.status}.`, tableOfContents: false }}
+>
+	<ExportStamp kind="Risk" />
+
+	<p>
+		<span class={`rag rag--${risk.rag}`}>{risk.rag}</span>
+		{' '}
+		<a href="/plan/risks/">All risks</a>
+	</p>
+
+	<dl class="plan-facts">
+		{
+			facts.map((fact) => (
+				<div>
+					<dt>{fact.label}</dt>
+					<dd>{fact.value}</dd>
+				</div>
+			))
+		}
+	</dl>
+
+	{
+		prose.map((entry) => (
+			<section>
+				<h2>{entry.label}</h2>
+				<p>{entry.text ? <LinkedText text={entry.text} /> : 'none'}</p>
+			</section>
+		))
+	}
+
+	<LinkedFrom ref={risk.id} />
+</StarlightPage>

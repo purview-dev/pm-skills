@@ -4,6 +4,8 @@
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
 import ExportStamp from '../../components/ExportStamp.astro';
+import LinkedText from '../../components/LinkedText.astro';
+import RefLink from '../../components/RefLink.astro';
 import { loadPlanning, riskMatrix } from '../../lib/planning';
 import '../../styles/components.css';
 
@@ -19,7 +21,7 @@ const figures = [
 ];
 ---
 
-<StarlightPage frontmatter={{ title: 'Risks', description: 'The risk register: open risks by RAG status, then closed and removed risks.' }}>
+<StarlightPage frontmatter={{ title: 'Risks', description: 'The risk register: open risks by RAG status, then closed and removed risks.', tableOfContents: false }}>
 	<ExportStamp />
 
 	<section>
@@ -53,9 +55,7 @@ const figures = [
 									<span class="plan-empty">–</span>
 								) : (
 									cell.risks.map((risk) => (
-										<a href={`#${risk.id.toLowerCase()}`} title={risk.title}>
-											{risk.id}
-										</a>
+										<RefLink ref={risk.id} label="id" />
 									))
 								)}
 							</div>
@@ -92,16 +92,16 @@ const figures = [
 									<span class={`rag rag--${risk.rag}`}>{risk.rag}</span>
 								</td>
 								<td>
-									<strong>{risk.id}</strong> {risk.title}
-									{risk.affects && <div class="risk-detail">Affects: {risk.affects}</div>}
-									{risk.trigger && <div class="risk-detail">Trigger: {risk.trigger}</div>}
+									<strong><RefLink ref={risk.id} label="id" /></strong> {risk.title}
+									{risk.affects && <div class="risk-detail">Affects: <LinkedText text={risk.affects} /></div>}
+									{risk.trigger && <div class="risk-detail">Trigger: <LinkedText text={risk.trigger} /></div>}
 									{risk.ragOverride && <div class="risk-detail">RAG override: {risk.ragOverride}</div>}
 								</td>
 								<td>{risk.likelihood}</td>
 								<td>{risk.impact}</td>
 								<td>{risk.status}</td>
 								<td>{risk.owner}</td>
-								<td>{risk.mitigation ?? 'none'}</td>
+								<td>{risk.mitigation ? <LinkedText text={risk.mitigation} /> : 'none'}</td>
 								<td>{risk.reviewed}</td>
 							</tr>
 						))}
@@ -131,7 +131,7 @@ const figures = [
 									<span class={`rag rag--${risk.rag}`}>{risk.rag}</span>
 								</td>
 								<td>
-									<strong>{risk.id}</strong> {risk.title}
+									<strong><RefLink ref={risk.id} label="id" /></strong> {risk.title}
 								</td>
 								<td>{risk.closed}</td>
 							</tr>
@@ -148,8 +148,8 @@ const figures = [
 				<h2>Removed</h2>
 				<ul>
 					{risks.removed.map((entry) => (
-						<li>
-							{entry.date} <strong>{entry.id}</strong> {entry.title}
+						<li id={entry.id.toLowerCase()}>
+							{entry.date} <strong><RefLink ref={entry.id} label="id" /></strong> {entry.title}
 							{entry.reason && <>. Reason: {entry.reason}</>}
 						</li>
 					))}
