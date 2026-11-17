@@ -1,15 +1,17 @@
 ---
 name: pm-docs-site
-description: Use when the user asks for a project documentation site, a docs site, or a local web page of the plan, board, roadmap, or log; asks to add a module (repository docs, LikeC4 architecture, Aspire resource) or a page to that site; asks whether the site is current; or pm-export's schemaVersion has moved past the site's. Plans the site as a roadmap item, builds or upgrades it from shipped Astro and Starlight templates inside that item's workflow, and checks an existing site against its spec (read-only).
+description: Use when the user asks for a project documentation site, a docs site, or a local, searchable web page of the plan, board, roadmap, milestones, features, or log; asks to add a module (repository docs, LikeC4 architecture, Aspire resource), a view, or a page to that site; asks whether the site is current; or pm-export's schemaVersion has moved past the site's. Plans the site as a roadmap item, builds or upgrades it from shipped Astro and Starlight templates inside that item's workflow, and checks an existing site against its spec (read-only).
 ---
 
 # pm-docs-site
 
 Build and maintain a local Astro and Starlight site that renders
-`<PM root>/planning.json`: Home, Board, Roadmap, Log, and Risks, plus optional
-modules. The site only reads the export. Changing the plan still goes
-through the other `pm-*` skills, and a stale page is fixed with
-`pm-export`.
+`<PM root>/planning.json`: Home, Board, Roadmap, Log, and Risks; by
+default the Milestones and Features views (an index and one page per
+milestone and per item) and the Now, Inbox, Briefs, and Strategy pages;
+site search over all of them; and optional modules. The site only reads
+the export. Changing the plan still goes through the other `pm-*` skills,
+and a stale page is fixed with `pm-export`.
 
 Follow the Non-interruption rules, Shared definitions, Roadmap order and
 edits, Challenge protocol, Persistence, Committing PM state, Asking the
@@ -25,15 +27,17 @@ Spec: `references/spec.md` in this skill's folder. Templates:
 
 | Mode | Kind | When | Effect |
 | --- | --- | --- | --- |
-| `plan [<module or extension>]` | PM | Default when no docs-site item is active: "add a docs site", "put the plan on a web page", "add the architecture views to the site" | Add one roadmap item; one PM commit |
+| `plan [<module, view, or extension>]` | PM | Default when no docs-site item is active: "add a docs site", "put the plan on a web page", "add the architecture views to the site", "add the features page" | Add one roadmap item; one PM commit |
 | `check` | Read-only | "is the docs site current?", after `pm-export` reports a new schema, or during a workflow | Compare the site with the templates and the export; write nothing |
-| `scaffold` | Build | The active docs-site item's plan step says to build the site | Write the core site and the modules named in the item |
-| `extend <module>` | Build | The active item adds `repo-docs`, `architecture`, or `aspire` to an existing site | Add one module |
+| `scaffold` | Build | The active docs-site item's plan step says to build the site | Write the core site, its views, and the modules named in the item |
+| `extend <module or view>` | Build | The active item adds `repo-docs`, `architecture`, or `aspire`, or switches a view on or off | Add one module, or change the `views` list |
 | `upgrade` | Build | `check` reports an older `SCHEMA_VERSION` or template drift, and the active item is the upgrade | Bring the site to the current templates and packages |
 
 Modules: `repo-docs`, `architecture`, `aspire` (spec sections 9 and 10).
-Extensions: `now`, `inbox`, `briefs`, `strategy` (spec section 12); they
-have no templates and are only ever planned as items.
+Views: `now`, `milestones`, `features`, `inbox`, `briefs`, `strategy`
+(spec section 7). Every view is on unless the manifest's `views` list
+leaves it out. Search is part of the core (spec section 8). Extensions
+(spec section 12) have no templates and are only ever planned as items.
 
 ## Guard
 
@@ -77,20 +81,23 @@ Each site records how it was rendered in `<site root>/pm-docs-site.json`:
 {
   "schemaVersion": 3,
   "modules": ["repo-docs"],
+  "views": ["now", "milestones", "features", "inbox", "briefs", "strategy"],
   "values": { "SITE_TITLE": "...", "SITE_ROOT": "src/docs-site", "...": "..." }
 }
 ```
 
-`modules` lists any of `repo-docs`, `architecture`, `aspire`; `values`
-holds every placeholder below except the `MODULE_*` ones. `scripts/site.ts`
-in this skill's folder renders `templates/site/`, then each listed
-module's files over it (a module file with the same path replaces the core
-file; `MODULE.md` and `*.cs` are never rendered):
+`modules` lists any of `repo-docs`, `architecture`, `aspire`. `views` is
+optional and lists the views to render; without it every view is on, so
+write it only to leave one out. `values` holds every placeholder below
+except the `MODULE_*` and `VIEW_*` ones. `scripts/site.ts` in this skill's
+folder renders `templates/site/` without the pages of a view left out,
+then each listed module's files over it (a module file with the same path
+replaces the core file; `MODULE.md` and `*.cs` are never rendered):
 
 | Command | Effect |
 | --- | --- |
-| `bun <skill>/scripts/site.ts check <site root>` | Read-only. Prints `current`, or one `differs: <path>` line per template-owned file that is missing or different, and exits 1 |
-| `bun <skill>/scripts/site.ts write <site root> [--keep <path>]...` | Writes every template-owned file that differs, except the kept ones, and each site-owned file that is missing |
+| `bun <skill>/scripts/site.ts check <site root>` | Read-only. Prints `current`, or one `differs: <path>` line per template-owned file that is missing or different, or that belongs to a view left out, and exits 1 |
+| `bun <skill>/scripts/site.ts write <site root> [--keep <path>]...` | Writes every template-owned file that differs, except the kept ones, and each site-owned file that is missing; removes the pages of a view left out (`removed: <path>`) |
 
 Site-owned files are written once and never compared or overwritten:
 `package.json` (Bun adds the dependencies) and, with `repo-docs`,
@@ -111,6 +118,7 @@ module's AppHost files are outside the site and follow its `MODULE.md`.
 | `{{LIKEC4_DIR}}`, `{{LIKEC4_VERSION}}` | `architecture` module only: see its `MODULE.md` |
 | `{{APPHOST_TO_SITE}}`, `{{RESOURCES_CLASS}}`, `{{KIT_NAMESPACE}}` | `aspire` module only: see its `MODULE.md` |
 | `{{MODULE_REPO_DOCS}}`, `{{MODULE_ARCHITECTURE}}` | Set by `site.ts`: `true` when `modules` lists the module, else `false`. Never in `values` |
+| `{{VIEW_NOW}}`, `{{VIEW_MILESTONES}}`, `{{VIEW_FEATURES}}`, `{{VIEW_INBOX}}`, `{{VIEW_BRIEFS}}`, `{{VIEW_STRATEGY}}` | Set by `site.ts`: `true` when the view is on (`views` lists it, or there is no `views`), else `false`. Never in `values` |
 
 ## Steps (plan)
 
@@ -131,6 +139,10 @@ module's AppHost files are outside the site and follow its `MODULE.md`.
      marked recommended.
    - For the core site, the modules to include: multi-select of the modules
      whose content exists from step 2. Omit the question when none exists.
+   - For the core site, the views: `Every view (recommended)` (Now,
+     Milestones, Features, Inbox, Briefs, Strategy) or `Core pages only`
+     (Home, Board, Roadmap, Log, Risks); the free-text entry names a
+     subset.
    - The position: `Bottom of Later (recommended)`, `Bottom of Next`, with
      the `Show the roadmap` escape option.
 4. **Challenge** the item (Challenge protocol). The core site is size `M`
@@ -139,16 +151,18 @@ module's AppHost files are outside the site and follow its `MODULE.md`.
    the item depends on running `pm-export` first.
 5. **Add the item** (Roadmap order and edits: add), with:
    - Title: `Project docs site`, `Docs site: <module> module`, `Docs site:
-     <extension> page`, or `Docs site: upgrade to schemaVersion <n>`.
+     <view> view`, `Docs site: <extension> page`, or `Docs site: upgrade to
+     schemaVersion <n>`.
    - `Serves` and `Milestone`: ask, offering the `V` lines and milestones
      the item fits, with the reference legend.
    - `Owner: agent`. `Size` from step 4.
    - `Done when`: the spec section 11 acceptance checks that apply, joined
      with `;`. For an extension, add `the page shows only export values`.
-   - `Note: Build with pm-docs-site <scaffold | extend <module> | upgrade>
-     at <site root> (modules: <list | none>). Spec: pm-docs-site
-     references/spec.md.` For an extension: `Build from pm-docs-site
-     references/spec.md section 12 (<extension>); no template exists.`
+   - `Note: Build with pm-docs-site <scaffold | extend <module or view> |
+     upgrade> at <site root> (modules: <list | none>; views: <all | list |
+     none>). Spec: pm-docs-site references/spec.md.` For an extension:
+     `Build from pm-docs-site references/spec.md section 12 (<extension>);
+     no template exists.`
 6. **Commit** the PM state (rules: Committing PM state) with
    `docs(pm): add <ID> docs site`.
 7. Show the output.
@@ -186,8 +200,9 @@ module's AppHost files are outside the site and follow its `MODULE.md`.
    Run pm-docs-site check.` Stop.
 3. **Manifest.** Resolve the core placeholder values (Placeholders) and
    write `<site root>/pm-docs-site.json` with this skill's
-   `schemaVersion`, `"modules": []`, and the values. Modules are added in
-   step 6, after the core installs.
+   `schemaVersion`, `"modules": []`, and the values. Write `views` only
+   when the `Note` names fewer than every view (`views: none` is
+   `"views": []`). Modules are added in step 6, after the core installs.
 4. **Render** with `bun <skill>/scripts/site.ts write <site root>`.
 5. **Install** the latest packages, in the site root:
 
@@ -208,17 +223,26 @@ module's AppHost files are outside the site and follow its `MODULE.md`.
    settings. Otherwise put the commands in
    the output `Note`.
 8. **Verify:** `site.ts check` prints `current`, then in the site root
-   `bun run test`, `bun run check`, and `bun run build`. When
+   `bun run test`, `bun run check`, and `bun run build`. The build writes
+   the search index: confirm `dist/pagefind/pagefind-entry.json` exists and
+   report its `page_count` as `Search: <n> pages indexed`. When
    `planning.json` is missing from this checkout, `check` and `build` fail
    with `No plan export at <path>.` by design: report it as `Build: needs
    <PM root>planning.json in this checkout` and leave the acceptance check
-   open.
+   open. When `bun <pm-export skill>/scripts/export.ts check` reports the
+   export stale, report it in the `Note`: the pages show the plan as last
+   exported, and `pm-export` refreshes it (spec rule 2).
 9. Show the output. The workflow commits the files.
 
 ## Steps (extend)
 
 1. Confirm the build-mode guard and that the site and its manifest exist.
    Otherwise reply `No docs site. Run pm-docs-site plan.` Stop.
+   **A view** (`now`, `milestones`, `features`, `inbox`, `briefs`,
+   `strategy`): set the manifest's `views` to the views the item names
+   (remove `views` when that is every view), run
+   `site.ts write <site root>`, which writes or removes the view's pages,
+   then run the verify step of `scaffold` and show the output. Stop.
 2. Read `templates/<module>/MODULE.md`. If its **Applies when** fails,
    reply `<module>: <the missing content>.` Stop.
 3. Run the module's **Install** (some values, such as the installed
@@ -242,7 +266,11 @@ module's AppHost files are outside the site and follow its `MODULE.md`.
    (recommended)` and `Keep the local file`.
 3. **Write** with `site.ts write <site root>`, passing `--keep <path>` for
    each kept file. Name kept files in the output `Note`; a kept file that
-   no longer type-checks is reported, not fixed.
+   no longer type-checks is reported, not fixed. A manifest without
+   `views` gets every view, including views added since the site was
+   built; to keep the earlier page set, ask first with `Add the new views
+   (recommended)` and `Keep the current pages` (write `views` with the
+   views the site already has).
 4. **Update** the packages to their latest versions, in the site root:
    `bun update --latest`, then `bun add -d typescript@6` to keep the pin
    from `scaffold` step 5.
@@ -275,7 +303,7 @@ module's AppHost files are outside the site and follow its `MODULE.md`.
 ## Docs site check
 
 - Site: <site root>, schemaVersion <n> (templates: <m>, export: <k | none>)
-- Modules: <list | none>
+- Modules: <list | none>. Views: <all | list | none>
 - Result: <current | first difference>
 
 ## Do this next
@@ -288,12 +316,13 @@ module's AppHost files are outside the site and follow its `MODULE.md`.
 ## Output (scaffold, extend, upgrade)
 
 ```markdown
-## Docs site <scaffolded | extended with <module> | upgraded>: <ID> <title>
+## Docs site <scaffolded | extended with <module or view> | upgraded>: <ID> <title>
 
-- Site: <site root> (modules: <list | none>)
-- Files: <n> written, <n> kept (<paths>)
+- Site: <site root> (modules: <list | none>; views: <all | list | none>)
+- Files: <n> written, <n> removed, <n> kept (<paths>)
 - Packages: <name version, one per package installed or updated>
 - Verify: tests <pass | fail>, astro check <0 errors | n errors>, build <pass | fail | needs planning.json>
+- Search: <n pages indexed | not built>
 
 ## Do this next
 

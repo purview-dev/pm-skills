@@ -1,0 +1,189 @@
+---
+// The vision and the strategy from planning.json's `vision` and `strategy`:
+// the problem, the V lines, the focus, bets, assumptions, what is not being
+// done, and the decisions, newest first.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+import ExportStamp from '../../components/ExportStamp.astro';
+import { loadPlanning, milestoneHref, milestoneId } from '../../lib/planning';
+import { views } from '../../views';
+import '../../styles/components.css';
+
+const planning = loadPlanning();
+const { vision, strategy } = planning;
+const focusId = milestoneId(strategy.focus.milestone, strategy.milestones);
+const constraints = [
+	{ label: 'Time available', value: vision.constraints.timeAvailable },
+	{ label: 'Budget', value: vision.constraints.budget },
+	{ label: 'Stack', value: vision.constraints.stack },
+];
+---
+
+<StarlightPage frontmatter={{ title: 'Strategy', description: 'The vision, the focus, bets, assumptions, what is not being done, and the decisions.' }}>
+	<ExportStamp />
+
+	<section>
+		<h2>Vision</h2>
+		<p><strong>Problem:</strong> {vision.problem ?? 'Not set.'}</p>
+		<p><strong>Customer:</strong> {vision.customer ?? 'Not set.'}</p>
+		<h3>v1 is done when</h3>
+		{vision.outcomes.length === 0 && <p class="plan-empty">No V lines.</p>}
+		<ul>
+			{
+				vision.outcomes.map((outcome) => (
+					<li>
+						<strong>{outcome.id}</strong> {outcome.text}
+					</li>
+				))
+			}
+		</ul>
+		{
+			vision.outOfScope.length > 0 && (
+				<>
+					<h3>Out of scope</h3>
+					<ul>
+						{vision.outOfScope.map((line) => (
+							<li>{line}</li>
+						))}
+					</ul>
+				</>
+			)
+		}
+		<dl class="plan-facts">
+			{
+				constraints.map((entry) => (
+					<div>
+						<dt>{entry.label}</dt>
+						<dd>{entry.value ?? '–'}</dd>
+					</div>
+				))
+			}
+		</dl>
+	</section>
+
+	<section>
+		<h2>Focus</h2>
+		<p>
+			<strong>
+				{focusId && views.milestones ? <a href={milestoneHref(focusId)}>{strategy.focus.milestone}</a> : (strategy.focus.milestone ?? 'No focus set')}
+			</strong>
+		</p>
+		{strategy.focus.whyNow && <p>{strategy.focus.whyNow}</p>}
+	</section>
+
+	<section>
+		<h2>Bets</h2>
+		{strategy.bets.length === 0 && <p class="plan-empty">No bets.</p>}
+		{
+			strategy.bets.length > 0 && (
+				<table class="plan-table">
+					<thead>
+						<tr>
+							<th scope="col">Bet</th>
+							<th scope="col">Evidence</th>
+							<th scope="col">We will know when</th>
+							<th scope="col">Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						{strategy.bets.map((bet) => (
+							<tr>
+								<td>
+									<strong>{bet.id}</strong> {bet.statement}
+								</td>
+								<td>{bet.evidence ?? '–'}</td>
+								<td>{bet.signal ?? '–'}</td>
+								<td>{bet.status ?? '–'}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			)
+		}
+	</section>
+
+	<section>
+		<h2>Assumptions</h2>
+		{strategy.assumptions.length === 0 && <p class="plan-empty">No assumptions.</p>}
+		{
+			strategy.assumptions.length > 0 && (
+				<table class="plan-table">
+					<thead>
+						<tr>
+							<th scope="col">Assumption</th>
+							<th scope="col">Test</th>
+							<th scope="col">Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						{strategy.assumptions.map((assumption) => (
+							<tr>
+								<td>
+									<strong>{assumption.id}</strong> {assumption.statement}
+								</td>
+								<td>{assumption.test ?? '–'}</td>
+								<td>{assumption.status ?? '–'}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			)
+		}
+	</section>
+
+	<section>
+		<h2>Not doing</h2>
+		{strategy.notDoing.length === 0 && <p class="plan-empty">Nothing ruled out.</p>}
+		{
+			strategy.notDoing.length > 0 && (
+				<table class="plan-table">
+					<thead>
+						<tr>
+							<th scope="col">Not doing</th>
+							<th scope="col">Why</th>
+							<th scope="col">Revisit</th>
+						</tr>
+					</thead>
+					<tbody>
+						{strategy.notDoing.map((entry) => (
+							<tr>
+								<td>{entry.thing}</td>
+								<td>{entry.why ?? '–'}</td>
+								<td>{entry.revisit ?? '–'}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			)
+		}
+	</section>
+
+	<section>
+		<h2>Decisions</h2>
+		{strategy.decisions.length === 0 && <p class="plan-empty">No decisions recorded.</p>}
+		{
+			strategy.decisions.length > 0 && (
+				<table class="plan-table">
+					<thead>
+						<tr>
+							<th scope="col">Date</th>
+							<th scope="col">Decision</th>
+							<th scope="col">Why</th>
+							<th scope="col">Rejected</th>
+						</tr>
+					</thead>
+					<tbody>
+						{strategy.decisions.map((entry) => (
+							<tr>
+								<td class="plan-nowrap">{entry.date ?? '–'}</td>
+								<td>{entry.decision}</td>
+								<td>{entry.why ?? '–'}</td>
+								<td>{entry.rejected ?? '–'}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			)
+		}
+	</section>
+</StarlightPage>

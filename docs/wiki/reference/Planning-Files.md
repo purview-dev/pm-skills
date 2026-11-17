@@ -110,7 +110,7 @@ sequenceDiagram
   IT->>M: docs(pm): add R-NNN board CSV export
   U->>DS: just docs
   DS->>J: reads planning.json
-  DS->>U: Board, Roadmap, Log, and Risks pages
+  DS->>U: Board, Roadmap, Milestones, Features, Log, and Risks pages
   U->>PD: is the site current?
   PD->>DS: check: templates, schema version, build
 ```

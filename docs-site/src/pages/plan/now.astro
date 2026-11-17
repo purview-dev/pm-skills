@@ -1,0 +1,134 @@
+---
+// The active item from planning.json's `now` and `plan`: its Done when checks,
+// the last checkpoint, and one task card per task in its plan.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+import ExportStamp from '../../components/ExportStamp.astro';
+import TaskKanbanCard from '../../components/lib/TaskKanbanCard.astro';
+import { docsHref, featureHref, initials, loadPlanning, planProgress, sizeToPriority } from '../../lib/planning';
+import { views } from '../../views';
+import '../../styles/components.css';
+
+const planning = loadPlanning();
+const { now, plan } = planning;
+const card = planning.board.columns.now[0];
+const priority = ({ low: 'low', medium: 'med', high: 'high' } as const)[sizeToPriority(card?.size ?? null)];
+
+const paths = [
+	{ label: 'Brief', path: now.brief },
+	{ label: 'Spec', path: now.spec },
+	{ label: 'Plan', path: now.plan },
+].filter((entry): entry is { label: string; path: string } => entry.path !== null);
+
+const checkpoint = now.checkpoint
+	? [
+			{ label: 'Stopped at', value: now.checkpoint.stoppedAt },
+			{ label: 'Next action', value: now.checkpoint.nextAction },
+			{ label: 'Start with', value: now.checkpoint.startWith },
+			{ label: 'Decisions', value: now.checkpoint.decisions },
+			{ label: 'Context', value: now.checkpoint.context },
+			{ label: 'Open question', value: now.checkpoint.openQuestion },
+		].filter((entry) => entry.value !== null)
+	: [];
+---
+
+<StarlightPage frontmatter={{ title: 'Now', description: 'The active item: its Done when checks, the last checkpoint, and its plan.' }}>
+	<ExportStamp />
+
+	{!now.item && <p class="plan-empty">Nothing is in progress.</p>}
+
+	{
+		now.item && (
+			<>
+				<h2>
+					{views.features ? (
+						<a href={featureHref(now.item.id)}>
+							{now.item.id} {now.item.title}
+						</a>
+					) : (
+						`${now.item.id} ${now.item.title}`
+					)}
+				</h2>
+				<dl class="plan-facts">
+					<div>
+						<dt>Stage</dt>
+						<dd>{now.stage ?? '–'}</dd>
+					</div>
+					<div>
+						<dt>Started</dt>
+						<dd>{now.started ?? '–'}</dd>
+					</div>
+					<div>
+						<dt>Session</dt>
+						<dd>{now.session ?? '–'}</dd>
+					</div>
+					<div>
+						<dt>Plan steps</dt>
+						<dd>{plan ? `${plan.checked} of ${plan.total} (${planProgress(plan)}%)` : 'No plan'}</dd>
+					</div>
+				</dl>
+
+				{paths.length > 0 && (
+					<ul>
+						{paths.map((entry) => {
+							const href = docsHref(entry.path);
+							return (
+								<li>
+									{entry.label}: {href ? <a href={href}>{entry.path}</a> : <code>{entry.path}</code>}
+								</li>
+							);
+						})}
+					</ul>
+				)}
+
+				<section>
+					<h2>Done when</h2>
+					{now.doneWhen.length === 0 ? (
+						<p class="plan-empty">No checks recorded.</p>
+					) : (
+						<ul>
+							{now.doneWhen.map((check) => (
+								<li>{check}</li>
+							))}
+						</ul>
+					)}
+				</section>
+
+				<section>
+					<h2>{now.checkpoint ? `Checkpoint ${now.checkpoint.at}` : 'Checkpoint'}</h2>
+					{checkpoint.length === 0 ? (
+						<p class="plan-empty">No checkpoint yet.</p>
+					) : (
+						<dl class="plan-facts">
+							{checkpoint.map((entry) => (
+								<div>
+									<dt>{entry.label}</dt>
+									<dd>{entry.value}</dd>
+								</div>
+							))}
+						</dl>
+					)}
+				</section>
+
+				<section>
+					<h2>Plan tasks</h2>
+					{!plan || plan.tasks.length === 0 ? (
+						<p class="plan-empty">{plan ? 'The plan has no Task headings.' : 'No plan in this export.'}</p>
+					) : (
+						<div class="plan-cards not-content">
+							{plan.tasks.map((task) => (
+								<TaskKanbanCard
+									task={`Task ${task.number}: ${task.title}`}
+									date={`${task.checked}/${task.total} steps`}
+									assigneeInitials={initials(card?.owner ?? null)}
+									priority={priority}
+									progress={planProgress(task)}
+								/>
+							))}
+						</div>
+					)}
+				</section>
+			</>
+		)
+	}
+</StarlightPage>

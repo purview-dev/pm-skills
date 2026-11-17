@@ -101,3 +101,137 @@
 	color: var(--sl-color-gray-3);
 	font-size: var(--sl-text-xs);
 }
+
+/* An item's state or roadmap label: the word is always printed. */
+.state {
+	display: inline-block;
+	padding: 0.1rem 0.45rem;
+	border-radius: 4px;
+	border: 1px solid var(--sl-color-hairline);
+	font-size: var(--sl-text-xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+.state--now {
+	color: var(--sl-color-accent-high);
+	background: var(--sl-color-accent-low);
+}
+
+.state--done {
+	color: #047857;
+	border-color: #10b98166;
+}
+
+.state--dropped,
+.state--blocked {
+	color: #b91c1c;
+	border-color: #ef444466;
+}
+
+.state--waiting {
+	color: #b45309;
+	border-color: #f59e0b66;
+}
+
+:root[data-theme='dark'] .state--done {
+	color: #6ee7b7;
+}
+
+:root[data-theme='dark'] .state--dropped,
+:root[data-theme='dark'] .state--blocked {
+	color: #fca5a5;
+}
+
+:root[data-theme='dark'] .state--waiting {
+	color: #fcd34d;
+}
+
+/* Tables and fact lists on the plan pages. */
+.plan-table td:first-child {
+	min-width: 12rem;
+}
+
+.plan-table td.plan-nowrap {
+	white-space: nowrap;
+}
+
+.plan-count {
+	color: var(--sl-color-gray-3);
+	font-size: var(--sl-text-base);
+	font-weight: 400;
+}
+
+.plan-facts {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+	gap: 0.75rem;
+}
+
+.plan-facts > div {
+	padding: 0.6rem 0.9rem;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: 10px;
+}
+
+.plan-facts dt {
+	color: var(--sl-color-gray-3);
+	font-size: var(--sl-text-xs);
+}
+
+.plan-facts dd {
+	margin: 0;
+	font-weight: 600;
+}
+
+.plan-progress {
+	width: 100%;
+	max-width: 24rem;
+	height: 0.5rem;
+	accent-color: var(--sl-color-accent);
+}
+
+.plan-focus {
+	margin-left: 0.5rem;
+	padding: 0.1rem 0.5rem;
+	border-radius: 999px;
+	background: var(--sl-color-accent-low);
+	color: var(--sl-color-accent-high);
+	font-size: var(--sl-text-xs);
+	vertical-align: middle;
+}
+
+.plan-meta {
+	color: var(--sl-color-gray-2);
+	font-size: var(--sl-text-sm);
+}
+
+/* Cards in a wrapping grid (milestones, inbox ideas, plan tasks). */
+.plan-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+	gap: 1rem;
+	align-items: start;
+}
+
+.plan-cards > * {
+	margin-top: 0 !important;
+}
+
+.plan-card {
+	padding: 1rem;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: 12px;
+}
+
+.plan-card h3 {
+	margin: 0 0 0.35rem;
+	font-size: var(--sl-text-lg);
+}
+
+.plan-card p {
+	margin: 0.35rem 0 0;
+}

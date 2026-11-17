@@ -45,4 +45,9 @@ jobs:
             echo "Tag v${VERSION} already exists; nothing to release."
             exit 0
           fi
-          gh release create "v${VERSION}" --target "${GITHUB_SHA}" --title "v${VERSION}" --generate-notes
+          # A SemVer prerelease (19.0.0-pre.1) is published as a GitHub prerelease, never as the latest release.
+          prerelease=()
+          if [[ "${VERSION}" == *-* ]]; then
+            prerelease=(--prerelease --latest=false)
+          fi
+          gh release create "v${VERSION}" --target "${GITHUB_SHA}" --title "v${VERSION}" --generate-notes "${prerelease[@]}"

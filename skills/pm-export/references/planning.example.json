@@ -355,14 +355,14 @@
       "origin": "inbox/2026-10-27-0915-tenant-billing.md",
       "updated": "2026-11-08",
       "decision": "Added to Next as R-007 on 2026-10-28.",
+      "problem": "A tenant cannot see what they owe.",
+      "doneWhen": "A tenant sees one invoice for the current period.",
       "revisions": [
         {
           "date": "2026-11-06",
           "text": "Seat proration was missing. Must now: prorate the first period by day. Mode: fix-in-place. Supersedes: none."
         }
-      ],
-      "problem": "A tenant cannot see what they owe.",
-      "doneWhen": "A tenant sees one invoice for the current period."
+      ]
     }
   ],
   "risks": {

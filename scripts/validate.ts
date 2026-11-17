@@ -2,6 +2,9 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { differences, readManifest } from "../skills/pm-docs-site/scripts/site.ts";
+import { SCHEMA_VERSION as EXPORTER_SCHEMA_VERSION } from "../skills/pm-export/scripts/planning.ts";
+import { formatErrors, validate as validateSchema } from "../skills/pm-export/scripts/schema.ts";
+import { parse as parseVersion } from "./semver.ts";
 
 const root = join(import.meta.dir, "..");
 const skillsDir = join(root, "skills");
@@ -79,8 +82,9 @@ if (sectionVersion && templateVersion !== sectionVersion) {
 // The release is the rules/skills version: package.json is <N>.<minor>.<patch>
 // with N the marker version, so a release and the rules it ships never differ.
 const pkgVersion = JSON.parse(read("package.json")).version as string;
-const pkgMajor = /^(\d+)\.\d+\.\d+$/.exec(pkgVersion)?.[1];
-if (!pkgMajor) fail(`package.json: version "${pkgVersion}" is not MAJOR.MINOR.PATCH`);
+const pkgParsed = parseVersion(pkgVersion);
+const pkgMajor = pkgParsed ? String(pkgParsed.major) : undefined;
+if (!pkgMajor) fail(`package.json: version "${pkgVersion}" is not SemVer (MAJOR.MINOR.PATCH, optionally -<prerelease>)`);
 else if (sectionVersion && pkgMajor !== sectionVersion) {
   fail(`package.json: version ${pkgVersion} major != rules version ${sectionVersion} (run just bump major)`);
 }
@@ -157,14 +161,23 @@ else {
     if (!read("skills", "pm-export", "SKILL.md").includes(documented)) {
       fail(`skills/pm-export/SKILL.md: does not document schemaVersion ${schemaVersion}`);
     }
-    checkDocsSite(schemaVersion, required);
+    // The exporter writes the schema's version, and the example is a document it accepts.
+    if (EXPORTER_SCHEMA_VERSION !== schemaVersion) {
+      fail(`skills/pm-export/scripts/planning.ts: SCHEMA_VERSION ${EXPORTER_SCHEMA_VERSION} != planning.schema.json ${schemaVersion}`);
+    }
+    try {
+      for (const line of formatErrors(validateSchema(example, schema))) fail(`planning.example.json: ${line}`);
+    } catch (error) {
+      fail(`planning.schema.json: ${(error as Error).message}`);
+    }
+    checkDocsSite(schemaVersion, required, schema);
   }
 }
 
 // The docs site reads the export, so its templates must read the schema's
 // version: a schema bump without a template change would ship a site that
 // fails its build on every consumer's next export.
-function checkDocsSite(schemaVersion: number, required: string) {
+function checkDocsSite(schemaVersion: number, required: string, schema: Record<string, any>) {
   const site = join("skills", "pm-docs-site", "templates", "site");
   const lib = join(site, "src", "lib");
   const planning = read(lib, "planning.ts");
@@ -188,6 +201,8 @@ function checkDocsSite(schemaVersion: number, required: string) {
     if (fixture.schemaVersion !== schemaVersion) fail("pm-docs-site fixture: schemaVersion differs from the schema");
     const present = Object.keys(fixture).sort().join(",");
     if (present !== required) fail(`pm-docs-site fixture: top-level keys do not match the schema required list`);
+    // The site's tests read this fixture as an export, so it must be one pm-export could write.
+    for (const line of formatErrors(validateSchema(fixture, schema))) fail(`pm-docs-site fixture: ${line}`);
   }
 }
 

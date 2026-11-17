@@ -54,8 +54,9 @@ skill set, other install options, and the first run are in
 | [`pm-board`](skills/pm-board/SKILL.md) | Task board; move, add, insert, or close one card | User asks |
 | [`pm-roadmap`](skills/pm-roadmap/SKILL.md) | Full roadmap by milestone; move, add, or insert one item | User asks |
 | [`pm-status`](skills/pm-status/SKILL.md) | Summary or your queue (read-only) | User asks |
-| [`pm-export`](skills/pm-export/SKILL.md) | Write the whole plan as `planning.json` plus its schema, or check them (read-only) | User asks, or a tool needs the plan as JSON |
-| [`pm-docs-site`](skills/pm-docs-site/SKILL.md) | Plan, build, extend, upgrade, or check the local site that renders `planning.json` | User asks; builds run inside the site item's workflow |
+| [`pm-export`](skills/pm-export/SKILL.md) | Write the whole plan as `planning.json` plus its schema with a bundled Bun script, check them, or query one value or ID (read-only) | User asks, or a tool needs the plan as JSON |
+| [`pm-lint`](skills/pm-lint/SKILL.md) | Check every PM file against its format and schema rules, fix the layout ones, or print a pre-commit hook (lefthook, husky, git) | User asks; every PM commit runs it |
+| [`pm-docs-site`](skills/pm-docs-site/SKILL.md) | Plan, build, extend, upgrade, or check the local, searchable site that renders `planning.json`, with milestone and feature pages by default | User asks; builds run inside the site item's workflow |
 | [`pm-help`](skills/pm-help/SKILL.md) | Explain each skill, find what is missing, recommend the next skill (read-only) | Any time you are unsure |
 
 ## How it fits together

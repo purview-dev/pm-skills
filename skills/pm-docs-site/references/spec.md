@@ -78,7 +78,9 @@ root. Relative paths are kept in one constant per file.
       planning.test.ts        Tests against __fixtures__/planning.json
       __fixtures__/planning.json  A synthetic, schema-valid export
     components/
-      ExportStamp.astro       Export time, branch and commit
+      ExportStamp.astro       Export time, branch and commit, and the page's search filters
+      StateBadge.astro        An item's state or roadmap label
+      FeatureTable.astro      A table of items of one state
       lib/                    The copied Astro Components Kit components
         KanbanItemCard.astro
         TaskKanbanCard.astro
@@ -89,8 +91,15 @@ root. Relative paths are kept in one constant per file.
       plan/roadmap.astro      Roadmap
       plan/log.astro          Log
       plan/risks.astro        Risks
-    styles/components.css     Token mapping, board layout, and RAG badges
+      plan/now.astro          Now (view `now`)
+      plan/milestones/        Milestones and one page per milestone (view `milestones`)
+      plan/features/          Features and one page per item (view `features`)
+      plan/inbox.astro        Inbox (view `inbox`)
+      plan/briefs.astro       Briefs (view `briefs`)
+      plan/strategy.astro     Strategy (view `strategy`)
+    styles/components.css     Token mapping, board layout, and RAG and state badges
     modules.ts                Which optional modules (section 9) are installed
+    views.ts                  Which optional views (section 7) are rendered
     sidebar.ts                The sidebar
     docs-sidebar.ts           The repository Markdown's sidebar groups (none without repo-docs)
     content.config.ts         Starlight's docs collection
@@ -147,6 +156,13 @@ Type only what the pages use (`planning-types.ts`); the full shape is
 | `risks.open[]` (risk objects) | Home "Red risks", Risks (matrix and Open table) |
 | `risks.closed[]` `{id, title, rag, closed}` | Risks (Closed table) |
 | `risks.removed[]` `{date, id, title, reason}` | Risks (Removed list) |
+| `now` `{session, brief, spec, plan, doneWhen[], checkpoint}`, `plan.tasks[]` | Now, the active item's Features page |
+| `roadmap.*[]` `{serves, dependsOn, status, brief, note, revisits}`, `log.dropped[]` | Features, Milestones |
+| `strategy.milestones[]` `{serves, target}`, `vision.outcomes[]` | Milestones, Features (Serves) |
+| `inbox[]` | Inbox, Features (entries that name the item) |
+| `briefs[]` | Briefs, Features (the item's brief) |
+| `vision`, `strategy` `{bets, assumptions, notDoing, decisions}` | Strategy |
+| `counts` `{openInbox, discuss, shapingBriefs}`, `checks.lastReview` | Inbox, Briefs |
 
 A risk object is `{id, title, likelihood, impact, rag, ragOverride, status,
 owner, affects, trigger, mitigation, raised, reviewed, closed}`. The site
@@ -182,11 +198,34 @@ These are the only values the site derives. Each is a pure function in
 | Board Now progress | `round(plan.checked / plan.total * 100)`, `0` when no plan or `total` is 0 | The task card's progress bar |
 | `derivedRag(likelihood, impact)` | `low` 1, `medium` 2, `high` 3; product 6 or more → `red`, 3 or 4 → `amber`, else `green` | Colours a matrix cell; the same rule `pm-risk` applies |
 | `riskMatrix(risks)` | 3 rows (impact `high`, `medium`, `low`) of 3 cells (likelihood `low`, `medium`, `high`), each `{likelihood, impact, rag, risks[]}` | The Risks matrix |
+| `milestoneId(value, milestones)` | `M2` or `M2 <name>` → `M2` when M2 is a known milestone; anything else → `null` | Which milestone an item, entry, or focus names |
+| `planProgress(plan)` | `round(checked / total * 100)`, `0` when `null` or `total` is 0 | Board Now card, Now task cards, Features |
+| `severityToPriority(severity)` | `blocker` → `urgent`, `major` → `high`, `minor` → `medium`, else `low` | An inbox card's priority; the inbox has none |
+| `sourceInitials(source)` | `agent (…)` → `AG`, anything else → `YOU` | An inbox card's avatar |
+| `features(planning)` | One `Feature` per item ID (below) | Features, Milestones, cross-links |
+| `dependents(features, id)` | The features whose `dependsOn` has `id` | Features (Needed by) |
+| `briefOf(planning, feature)` | The brief whose `path` is the item's `brief`, else whose `id` is the item's | Features (Brief) |
+| `milestoneSummaries(planning)` | One summary per milestone (below) | Milestones |
+| `featureHref(id)`, `milestoneHref(id)`, `briefAnchor(path)` | `/plan/features/<id>/`, `/plan/milestones/<id or none>/`, the brief's file name, all lower-case | Links between the pages |
+
+`features` lists every item with an ID once, in this order: the `now.item`
+(`state: 'now'`), `roadmap.next[]` and `roadmap.later[]` (`next`, `later`),
+`log.done[]` (`done`), and `log.dropped[]` (`dropped`); entries without an
+ID are left out. Each `Feature` carries the fields its place holds (null
+elsewhere): `milestone` resolved with `milestoneId`, `doneWhen` as a list,
+`label`, `status`, `position`, `brief`, `note`, `revisits`, `stage`,
+`started`, `date`, `result`, `plan`, `reason`.
+
+`milestoneSummaries` returns one summary per `strategy.milestones[]` entry,
+in that order, then `No milestone` (slug `none`) only when a feature has no
+milestone. Each holds the milestone's fields, `isFocus` (as for
+`roadmapGroups`), its features in `features` order, and `progress {done,
+total}`: done features against every feature that is not dropped.
 
 `roadmapGroups` returns one group per `strategy.milestones[]` entry, in that
 order, then one `No milestone` group only if it has events. An entry belongs to
-a milestone group when its `milestone` equals a known milestone ID;
-otherwise it is unassigned. Each group's events, in this order:
+a milestone group when `milestoneId` resolves its `milestone` to that
+milestone; otherwise it is unassigned. Each group's events, in this order:
 
 1. `log.done[]` entries (export order, newest first): `status: 'done'`,
    `title: '<id> <title>'`, `desc: result`, `time: date`.
@@ -206,7 +245,20 @@ with the ID followed by a space (`M2 Billing` for `M2`).
 
 One line, muted, `--sl-text-xs`:
 `Plan exported <YYYY-MM-DD HH:MM> from <branch | a detached HEAD> at <head7> (<PM root>planning.json).`
-It is placed at the top of every plan page.
+It is placed at the top of every plan page, is left out of the search
+index (`data-pagefind-ignore`), and carries the page's search filters as
+hidden `data-pagefind-filter` spans (section 8.1): `Kind` (`Plan`, the
+default; `Feature`; `Milestone`), and for an item `State` and `Milestone`.
+
+### 6.1.1 `StateBadge.astro` and `FeatureTable.astro` (own)
+
+`StateBadge` prints an item's state (`In progress`, `Next`, `Later`,
+`Done`, `Dropped`) or its roadmap label (`blocked`, `waiting`) as a badge
+(`.state`, `.state--<state>` in `styles/components.css`) that always shows
+the word. `FeatureTable` is the table of one state's items on the Features
+and milestone pages: Item (linked to its page), Position, Stage, or Date,
+Milestone (left out on a milestone's page), Owner, Size, and Done when,
+Result, or Reason.
 
 ### 6.2 Astro Components Kit (copied)
 
@@ -261,8 +313,9 @@ Starlight `template: 'splash'`. Sections, in order:
 4. **Red risks:** each `risks.open` entry whose `rag` is `red`, as a RAG
    badge, `<id>` linked to its row on the Risks page, the title, and its
    mitigation (`none` when `null`), or `No open risk is red.`
-5. **Read on:** links to Board, Roadmap, Log, Risks, and any installed
-   modules (`src/modules.ts`).
+5. **Read on:** links to Board, Roadmap, Log, Risks, each view that is on
+   (`src/views.ts`), and any installed modules (`src/modules.ts`), then a
+   line on search (`just docs-preview`).
 
 ### 7.2 Board: `/plan/board/` (`pages/plan/board.astro`)
 
@@ -329,11 +382,90 @@ The risk register, in this order:
 RAG is shown as a badge (`.rag`, `.rag--<rag>` in `styles/components.css`)
 that always prints the word, so colour is never the only signal.
 
-### 7.6 Sidebar
+### 7.6 Views (on by default)
+
+The pages below are the site's views. Each is rendered unless the
+manifest's `views` list leaves it out (`src/views.ts` records which are
+on), and a page links to another view's page only when that view is on.
+
+#### Now: `/plan/now/` (view `now`)
+
+`Nothing is in progress.` when idle. Otherwise: `<id> <title>` (linked to
+its Features page), the Stage, Started, Session, and Plan steps
+(`<checked> of <total> (<planProgress>%)`); the brief, spec, and plan
+paths, each linked with `docsHref` when it is under `docs/`; `## Done
+when` from `now.doneWhen`; `## Checkpoint <at>` with each non-null field of
+`now.checkpoint`; and `## Plan tasks`, one `TaskKanbanCard` per
+`plan.tasks[]` entry: `task` = `Task <number>: <title>`, `date` =
+`<checked>/<total> steps`, `progress` = `planProgress(task)`, `priority`
+and `assigneeInitials` from the Now card.
+
+#### Milestones: `/plan/milestones/` and `/plan/milestones/<id>/` (view `milestones`)
+
+The index is one card per `milestoneSummaries` entry: `<ID> <name>` linked
+to its page, the `Focus` badge, status, target, `<done> of <total> done`
+with a `<progress>` bar, the exit criteria, the V lines it serves, and its
+item count per state. Empty: `No milestones.`
+
+A milestone's page (`none` for the items with no milestone) shows the
+status, target, progress, `## Exit criteria`, `## Serves` (each V line with
+its text from `vision.outcomes`), one `FeatureTable` per state that has
+items, and `## Risks` whose `affects` is the milestone ID.
+
+#### Features: `/plan/features/` and `/plan/features/<id>/` (view `features`)
+
+The index is one section per state, in `FEATURE_STATES` order (In
+progress, Next, Later, Done, Dropped), each with its count and a
+`FeatureTable`.
+
+An item's page shows its state and label badges and its milestone (linked);
+the facts its place holds (Owner, Size, Position, Status with reason and
+date, Stage, Started, Plan steps, Done or Dropped date); `## Done when`;
+`## Result` or `## Plan` (the plan path linked with `docsHref`); `##
+Reason`; `## Serves`; `## Related items` (Depends on, each with its state;
+Needed by, from `dependents`; Revisits; Revised by); `## Brief` from
+`briefOf` (title, status, updated, problem, decision, path); `## Note`;
+`## Inbox` (entries whose `affects` is the ID or whose `related` lists it);
+and `## Risks` (open and closed risks whose `affects` is the ID). A section
+with nothing to show is left out.
+
+#### Inbox: `/plan/inbox/` (view `inbox`)
+
+`<openInbox> open, <discuss> to discuss, <n> in all. Last review:
+<lastReview>.`, then `To discuss` (`discuss: yes`) and `Parked`, each a grid
+of `KanbanItemCard`: `title`; `tag` = `<kind or idea> · <affects>`;
+`assignee` = `sourceInitials(source)`; `dueDate` = `captured`; `priority` =
+`severityToPriority(severity)`; counts `0`; with the `idea` text below.
+
+#### Briefs: `/plan/briefs/` (view `briefs`)
+
+`<n> briefs, <shapingBriefs> still shaping.`, then one section per brief,
+its `id` the `briefAnchor` of its path: `<id> <title>` (linked to the
+item's page when it has one), status, updated, origin, path, then
+Problem, Done when, Decision, and its revisions. Empty: `No briefs.`
+
+#### Strategy: `/plan/strategy/` (view `strategy`)
+
+`## Vision` (problem, customer, the V lines, out of scope, and the three
+constraints), `## Focus` (linked to the milestone's page), then tables of
+`## Bets`, `## Assumptions`, `## Not doing`, and `## Decisions` in export
+order, each with its empty line.
+
+### 7.7 Cross-links
+
+With the `features` view on, Home's Ready to start entries, the Log's item
+IDs, and every table row on the Milestones, Briefs, and Now pages link to
+the item's page. With `milestones` on, the focus on Home and Strategy and
+every milestone name link to its page.
+
+### 7.8 Sidebar
 
 Built in `src/sidebar.ts` and passed to Starlight:
 
-1. **Plan:** Board, Roadmap, Log, Risks.
+1. **Plan:** Now, Board, Roadmap, Milestones, Features, Log, Risks, Inbox,
+   Briefs, Strategy, leaving out each view that is off. One page per item
+   or milestone is reached from the lists, and from search, not the
+   sidebar.
 2. Each installed module (section 9), as one group or link.
 
 ## 8. Commands
@@ -352,6 +484,14 @@ docs:
     bun install --frozen-lockfile
     bun run dev
 
+# Build the project site with its search index, then serve the build at http://localhost:4321. Requires Bun.
+[group('Docs')]
+[working-directory('<site root>')]
+docs-preview:
+    bun install --frozen-lockfile
+    bun run build
+    bun run preview
+
 # Test, type-check and build the project site (local only). Requires Bun.
 [group('Docs')]
 [working-directory('<site root>')]
@@ -362,9 +502,28 @@ docs-check:
     bun run build
 ```
 
-`just docs` serves <http://localhost:4321>. `just docs-check` is the site's
-build check: unit tests, `astro check` with 0 errors, and a full
-`astro build`.
+`just docs` serves <http://localhost:4321> with live reload. `just
+docs-preview` serves the built site, where search works. `just docs-check`
+is the site's build check: unit tests, `astro check` with 0 errors, and a
+full `astro build`, which also writes the search index.
+
+### 8.1 Search
+
+Search is Starlight's built-in Pagefind search; there is nothing to
+install or configure. `astro build` indexes every page into
+`dist/pagefind/`, so search works on the built site (`just
+docs-preview`), not under `astro dev`, where the search box says so.
+
+- Every plan page, every item and milestone page, and with `repo-docs`
+  every Markdown page is indexed. Searching an ID (`R-012`) or words from
+  a title, `Done when`, result, or brief finds the item's page first,
+  because its title is `<id> <title>`.
+- Filters: each plan page sets `Kind` (`Plan`, `Feature`, `Milestone`); an
+  item's page also sets `State` (In progress, Next, Later, Done, Dropped)
+  and `Milestone` (`<ID> <name>` or `No milestone`); a milestone's page
+  sets `Milestone`. The search dialog lists them beside the results.
+- The export stamp is not indexed, so every page does not match its date.
+- Nothing leaves the machine: the index is static files in `dist/`.
 
 ## 9. Optional modules (not plan data)
 
@@ -445,41 +604,46 @@ real project data) cover:
 - `derivedRag`: all nine likelihood and impact pairs.
 - `riskMatrix`: row and column order, each cell's derived RAG (not a
   risk's override), and each risk in its cell.
+- `milestoneId`: an ID, an ID and name, an unknown ID, `none`, `null`.
+- `features`: the order of states, the fields of each place, and
+  `dependents` and `briefOf`.
+- `milestoneSummaries`: strategy order with `No milestone` last, progress
+  without dropped items, and its features.
+- `planProgress`, `severityToPriority`, `sourceInitials`, `featureHref`,
+  `milestoneHref`, `briefAnchor`: every input.
 
 The site is done when:
 
 1. `just docs-check` passes: all tests, `astro check` 0 errors, and the
    build completes.
-2. `just docs` serves Home, Board, Roadmap, Log, and Risks with HTTP 200,
+2. `just docs` serves Home, Board, Roadmap, Log, Risks, and every view that
+   is on (one item page and one milestone page at least) with HTTP 200,
    each showing the export stamp.
 3. The Board shows five columns in one row at 1440, 1024, and 700px widths.
 4. Every value on a plan page can be found in `planning.json`, or comes from
    a section 5 derivation.
 5. Deleting `planning.json` fails the build with `No plan export at <path>.`
-6. With an AppHost: the `docs` resource is running with a working endpoint,
+6. After `just docs-check`, `dist/pagefind/pagefind-entry.json` exists, and
+   on `just docs-preview` searching an item's ID lists its item page first.
+7. With an AppHost: the `docs` resource is running with a working endpoint,
    and both composition tests pass.
 
 ## 12. Extensions (not in the templates)
 
-These fit the rules, but no template renders them yet. Each is built only
-as a roadmap item (`pm-docs-site plan <extension>`), following the rules
-above, with its own derivations unit-tested.
+A page that fits the rules but has no template is an extension. Each is
+built only as a roadmap item (`pm-docs-site plan <extension>`), following
+the rules above, with its own derivations unit-tested, and is specified
+here before it is built. The `now`, `inbox`, `briefs`, and `strategy`
+pages started here and are now views (section 7.6).
 
-- **`now`** (`/plan/now/`): `now.doneWhen[]`, `now.checkpoint`, and the
-  plan's `plan.tasks[]` `{number, title, checked, total, steps[]}`, one
-  `TaskKanbanCard` per task with `progress = round(checked / total * 100)`.
-- **`inbox`** (`/plan/inbox/`): `inbox[]` `{title, kind, severity, captured,
-  discuss}`, one `KanbanItemCard` per idea.
-- **`briefs`** (`/plan/briefs/`): `briefs[]` `{id, title, status, updated,
-  problem}`.
-- **`strategy`** (`/plan/strategy/`): `strategy.bets[]`, `assumptions[]`,
-  `notDoing[]`, `decisions[]`, and `vision`.
+- None at present.
 
 ## 13. Not doing
 
 - No editing of the plan from the site (no forms, no drag and drop):
   changes go through the `pm-*` skills.
-- No deployment, hosting, search engine indexing, or authentication.
+- No deployment, hosting, search engine indexing, or authentication. Site
+  search is the local Pagefind index only (section 8.1).
 - No second data source for plan facts (no Markdown parsing, issue
   trackers, or git history).
 - No runtime API: every page is built from the export at build or dev time.

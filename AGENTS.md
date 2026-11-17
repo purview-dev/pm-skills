@@ -42,12 +42,32 @@ snapshot from `https://purview.dev/llms.txt` when Purview releases change.
 contract for the `<PM root>/planning.json` it writes. The export is derived
 output, so the schema, its `schemaVersion`, and
 `skills/pm-export/references/planning.example.json` change together;
-`scripts/validate.ts` fails when they drift.
+`scripts/validate.ts` fails when they drift, and validates the example and
+the docs-site fixture against the schema. `skills/pm-export/scripts/` is the
+exporter the skill runs: `planning.ts` is the field map as code (Markdown to
+document), `schema.ts` a dependency-free validator for the keywords the
+schema uses, and `export.ts` the CLI (`write`, `check`, `validate`, `get`,
+`find`, `summary`). A format change edits the schema, the example, the
+SKILL.md field map, and `planning.ts` together, and `just test` runs
+`export.test.ts` against the synthetic repository in
+`scripts/__fixtures__/repo/`.
+`pm-lint` owns the **PM file format** (managed section): the rules are in
+`skills/pm-lint/references/rules.md` and their code in
+`skills/pm-lint/scripts/` (`rules.ts` the catalogue, `format.ts` the
+Markdown subset, `structure.ts` the per-file schemas and cross-file
+references, `lint.ts` the CLI). A rule is added to the catalogue, the
+rules file, and a test together; `lint.test.ts` fails when the catalogue
+and `rules.md` differ, and requires a fresh `pm-init` install and the
+`pm-export` fixture to lint clean, so a template or file-format change that
+breaks a rule fails `just test`. When a skill's file format changes, change
+its rule in the same commit.
 `pm-docs-site` plans, builds, and checks a local Astro and Starlight site
 that renders that export. Its spec is
 `skills/pm-docs-site/references/spec.md`, and the site ships as templates
 in `skills/pm-docs-site/templates/` (`site/` for the core, one folder per
-module with a `MODULE.md`). The templates read one `schemaVersion`
+module with a `MODULE.md`). The core's optional views (Now, Milestones,
+Features, Inbox, Briefs, Strategy) are listed in `VIEWS` in
+`scripts/site.ts`, on unless a manifest's `views` leaves them out. The templates read one `schemaVersion`
 (`SCHEMA_VERSION` in `templates/site/src/lib/planning.ts`, the
 `planning-types.ts` literal, the fixture, and the SKILL.md sentence), and
 `scripts/validate.ts` fails when it differs from the export schema, so a
@@ -114,11 +134,15 @@ same `bun` commands as the `just` recipes). Markdown is linted with
   gitignored): `just setup-skills`. `just setup-skills --cli` uses
   `bunx skills add ./ -y` instead, which copies the skills, so edits to
   `skills/` go stale until it runs again.
-- Serve the project site: `just docs` (<http://localhost:4321>). Check it
-  matches the templates, then test, type-check, and build it:
-  `just docs-check`.
-- Lint all Markdown and validate skills: `just lint-check` (auto-fix
-  Markdown: `just lint-fix`)
+- Serve the project site: `just docs` (<http://localhost:4321>). Search
+  works only on a build: `just docs-preview`. Check it matches the
+  templates, then test, type-check, and build it: `just docs-check`.
+- Test the skills' scripts (`pm-export`'s exporter, `pm-lint`):
+  `just test` (part of `just lint-check`).
+- Lint `planning/` against the PM file format: `just pm-lint` (fix the
+  layout findings: `just pm-lint fix`; part of `just lint-check`).
+- Lint all Markdown, validate skills, and test their scripts:
+  `just lint-check` (auto-fix Markdown: `just lint-fix`)
 - Validate only (`scripts/validate.ts`: frontmatter, README, managed-section
   and setup inventory, markers, template placeholders, the export schema
   against its example, the docs-site templates against the schema, the
@@ -138,21 +162,38 @@ same `bun` commands as the `just` recipes). Markdown is linted with
   a skill listed in the source repository's lock, so it does not reach a
   consumer; `just validate` exempts it from the flag. Update it with
   `npx skills update`, never by hand.
-- Bump the version: `just bump patch|minor|major`
-  (`scripts/bump-version.ts`; `major` is a rules bump).
+- Bump the version: `just bump <part>` (`scripts/bump-version.ts`, on the
+  SemVer helpers in `scripts/semver.ts`): `patch`, `minor`, `major`,
+  `prepatch`, `preminor`, `premajor`, `prerelease` (each pre part takes
+  `--preid <id>`, default `pre`), `release`, or `set <version>`. Raising
+  the major (`major`, `premajor`) is a rules bump.
 - Check the version against main: `just version-check`
   (`scripts/check-version.ts`).
 
-Hooks are configured in `.config/lefthook.yml`: `commit-msg` runs
+Hooks are configured in `.config/lefthook.yml`: `pre-commit` runs
+`pm-lint check --staged` on the staged `planning/` files, `commit-msg` runs
 `bunx commitlint --edit {1}` (rules in `commitlint.config.mts`), and
 `pre-push` runs `just lint-check` and `just version-check`.
 
-Releases are driven by the `version` field in `package.json`, and its major
-is the rules/skills version: rules `version=18` ships as `18.x.y`.
+Releases are driven by the `version` field in `package.json`, a SemVer 2.0
+version, and its major is the rules/skills version: rules `version=18` ships
+as `18.x.y`, and a prerelease of rules 19 as `19.0.0-pre.N`.
 
 - `.github/workflows/release.yml` creates the `v{version}` tag and a GitHub
   release when `package.json` changes on `main`, and skips when the tag
-  already exists.
+  already exists. A prerelease version (`19.0.0-pre.1`) becomes a GitHub
+  prerelease, never the latest release. Consumers who install from `main`
+  get whatever `main` holds, prerelease or not.
+- Versions only move forward in SemVer order: `2.4.2` → `2.4.3-pre.1` →
+  `2.4.3-pre.2` → `2.4.3`, or `2.4.2` → `2.5.0-pre.1` or `3.0.0-pre.1`.
+  From a stable version: `patch`, `minor`, `major` give the next stable
+  version, `prepatch`, `preminor`, `premajor` start a prerelease of it.
+  From a prerelease: `prerelease` counts up (`--preid rc` moves `pre` to
+  `rc`), `release` drops the prerelease, `patch`, `minor`, or `major`
+  release it when it is already that part's change (`2.5.0-pre.2` minor is
+  `2.5.0`, as in npm), and a pre part starts a later prerelease line. The
+  script refuses a tagged version, a prerelease of an already released
+  version, and a skipped major.
 - `scripts/validate.ts` keeps the versions equal, so the repository runs the
   release it ships: the `package.json` major,
   `skills/pm-init/templates/config.md`, `Rules version` in
@@ -160,18 +201,21 @@ is the rules/skills version: rules `version=18` ships as `18.x.y`.
   `version=N` marker. `pm-setup` writes the last two.
 - `scripts/check-version.ts` compares the branch with the version on `main`
   (CI: the pull request base; pre-push: the merge base with `origin/main`).
-  A pull request that changes `skills/**` must raise the marker past the one
-  on `main`, so a released version is never merged again, and must use a
-  `package.json` version with no `v{version}` tag. A pull request that
-  touches nothing under `skills/` (docs, CI, scripts, package metadata, this
-  file) keeps the rules version; it may keep `package.json` or raise its
-  minor or patch.
-- `just bump major` raises the marker, the config template, and
-  `package.json` to `<N+1>.0.0`; then run `pm-setup` to install the rules
-  here. `just bump minor|patch` raises `package.json` only, for a release
-  without a skills change. The script refuses a version that is already
-  tagged. The repository-only `release` skill
-  (`.agents/skills/release/SKILL.md`) picks the part, bumps, and commits.
+  The version never goes back, and a bumped version has no `v{version}`
+  tag. A pull request that changes `skills/**` must raise the marker past
+  the one on `main`, so released rules are never changed in place. The one
+  exception is an unreleased prerelease line: while `main` is
+  `N.0.0-<pre>` and `vN.0.0` is not tagged, a skills change may stay on
+  rules N if `package.json` moves forward (`just bump prerelease`, or
+  `just bump release` to ship it). A pull request that touches nothing
+  under `skills/` (docs, CI, scripts, package metadata, this file) keeps
+  the rules version; it may keep `package.json` or move it forward within
+  that major.
+- `just bump major` or `just bump premajor` raises the marker, the config
+  template, and `package.json` to `<N+1>.0.0` or `<N+1>.0.0-pre.1`; then
+  run `pm-setup` to install the rules here. Every other part keeps the
+  major and writes `package.json` only. The repository-only `release`
+  skill (`skills/release/SKILL.md`) picks the part, bumps, and commits.
 - Every skills change is a rules bump, so a consumer's `pm-resume` asks it
   to run `pm-setup` and the change reaches it. Add a `Version N` line to the
   upgrade notes in the managed section when the rules themselves change.
@@ -243,8 +287,9 @@ repository root.
 | `pm-board` | Show the task board; move, add, insert, or close one card | User asks |
 | `pm-roadmap` | Show the full roadmap; move, add, or insert one item | User asks |
 | `pm-status` | Show the summary or the user's queue (read-only) | User asks |
-| `pm-export` | Write the machine-readable plan document and its schema, or check them against the schema | User asks, or a tool needs the plan as JSON (check only during a workflow) |
-| `pm-docs-site` | Plan, build, extend, upgrade, or check the local project site that renders the export | User asks (check only during a workflow); its build modes run in the execute stage of a docs-site item (rule 9) |
+| `pm-export` | Write the machine-readable plan document and its schema with its script, check them against the schema and the Markdown, or query one value or ID | User asks, or a tool needs the plan as JSON (check and query only during a workflow) |
+| `pm-lint` | Check the PM files against the **PM file format** rules, fix the layout ones, or print a pre-commit hook that checks them | User asks (check, rules, and hook only during a workflow); every PM commit runs it (Committing PM state, step 6) |
+| `pm-docs-site` | Plan, build, extend, upgrade, or check the local, searchable project site that renders the export: board, roadmap, milestones, features, and the plan views | User asks (check only during a workflow); its build modes run in the execute stage of a docs-site item (rule 9) |
 | `pm-up-next` | Show the ordered queue and the one next action (read-only) | User asks |
 | `pm-help` | Explain the skills, find what is missing in the setup, recommend the next skill (read-only) | User asks (explain mode only during a workflow) |
 
@@ -503,8 +548,9 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
 - **Uncommitted PM state:** the paths printed by
   `git -C <worktree> status --porcelain -- <PM root>`, with the main
   worktree as the default `worktree`.
-- **Export file:** `<PM root>/planning.json`, written only by `pm-export`,
-  either when it runs or as the export refresh of a PM commit (rules:
+- **Export file:** `<PM root>/planning.json`, written only by `pm-export`
+  (with its script, `scripts/export.ts`, when Bun is installed), either
+  when it runs or as the export refresh of a PM commit (rules:
   Committing PM state). It is **derived**: the Markdown files are the
   state, and the export is a projection for other tools. Never hand-edit it
   and never read it as PM state; when the two disagree, the Markdown is
@@ -513,6 +559,17 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   the **Export file**, refreshed from `pm-export`'s
   `references/planning.schema.json` on every write. `schemaVersion` in the
   export and the schema's const change together when the format changes.
+- **PM file format:** the layout and schema every PM file follows, written
+  as checkable rules in `pm-lint`'s `references/rules.md`. Formatting: one
+  level-1 heading first, blank lines around headings, lists, and code
+  fences, `-` bullets, no trailing spaces or tabs, one final newline. Schema:
+  each file's sections, fields, and values as these Shared definitions and
+  the `pm-init` templates define them, and the references between files
+  (IDs never reused, `Depends on`, `Serves`, `Milestone`, derived RAG).
+  Every skill that writes a PM file writes it to these rules, and a PM
+  commit lints what it commits. `pm-lint fix` changes layout only; any
+  other finding is corrected by the skill that owns the file. A repository
+  may run `pm-lint check --staged` as a pre-commit hook.
 - **Docs site:** the optional local Astro site that `pm-docs-site` builds
   from its templates. It reads the **Export file** only, never writes the
   PM root, and is code, not PM state: its files are committed by the
@@ -633,7 +690,8 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    captured risk keeps `Reviewed: never` until `pm-risk` reviews it. The
    read-only exceptions: `pm-help` may answer a question about a skill in
    explain mode, without reading PM state; `pm-rejoin` may run in `locate`
-   mode; `pm-export` and `pm-docs-site` may run in `check` mode; and
+   mode; `pm-export` may run in `check` or `query` mode, `pm-lint` in
+   `check`, `rules`, or `hook` mode, and `pm-docs-site` in `check` mode; and
    `pm-status`, `pm-board`, `pm-roadmap`, `pm-up-next`, and `pm-risk`
    (`view`) may render their view when the user explicitly asks for it. None of them may add, move, insert, close,
    or reorder anything during a workflow. In every case the step in
@@ -891,17 +949,27 @@ commit later. A commit made this way is a **PM commit**.
    them (recommended)` and `Leave them uncommitted`; the free-text entry is
    the commit message. On `always`, commit without asking. On `never`, put
    the commands in a `Note` and run nothing.
-6. **Refresh the export** after the last PM file is written and before the
-   commands in step 7, or before the `Note` on `never`. It runs when
-   `Export on commit` is `always`, or `if present` and
-   `<PM root>/planning.json` exists in the commit worktree, and the changed
-   paths include a PM file other than the **Export file** and **Export
-   schema**. Run `pm-export` (`write`) steps 1 to 5 in the commit worktree,
-   without its commit or output; reading every PM file is that step's
-   scope. If its verify fails, leave the **Export file** as it was, add
-   `Export not refreshed: <first failure>` to the `Note`, and commit the
-   rest. Skip it when the user chose `Leave them uncommitted` or `Leave it
+6. **Lint, then refresh the export**, after the last PM file is written and
+   before the commands in step 7, or before the `Note` on `never`. Skip
+   both when the user chose `Leave them uncommitted` or `Leave it
    uncommitted`.
+   - **Lint** (**PM file format**). When Bun and `pm-lint` are installed,
+     run `bun <pm-lint skill>/scripts/lint.ts fix <changed PM paths> --root
+     "<commit worktree>"`, which fixes layout only and then checks. Correct
+     each remaining error in content this run wrote, and run it again. An
+     error in a file this run did not write goes in the `Note` as `Lint:
+     <n> errors (<file>:<line> <rule>)` for the skill that owns it. When a
+     pre-commit hook runs `pm-lint` and the commit then fails, step 4
+     applies. Without Bun or `pm-lint`, add `PM files not linted: <Bun |
+     pm-lint> is not installed.` to the `Note`.
+   - **Refresh the export.** It runs when `Export on commit` is `always`, or
+     `if present` and `<PM root>/planning.json` exists in the commit
+     worktree, and the changed paths include a PM file other than the
+     **Export file** and **Export schema**. Run `pm-export` (`write`) steps
+     1 to 5 in the commit worktree, without its commit or output; reading
+     every PM file is that step's scope. If its verify fails, leave the
+     **Export file** as it was, add `Export not refreshed: <first failure>`
+     to the `Note`, and commit the rest.
 7. **Run these two commands, in this order:**
 
    ```bash
@@ -928,7 +996,7 @@ Rules:
   files are never included, even when the same work changed them.
 - `pm-park` never commits, and `pm-risk` never commits in capture mode:
   they run mid-workflow and must return in one line. Their inbox files and
-  risks are committed by the next skill that commits, usually
+  risks are linted and committed by the next skill that commits, usually
   `pm-checkpoint`.
 - The **Export file** and its **Export schema** are ordinary PM files
   inside the PM root, so the same commit covers them. `pm-export` is the
@@ -1091,6 +1159,21 @@ session's position to `<PM root>/PAUSE.md`, and `pm-resume` continues from
 it and deletes it. A missing file means no pause. From version 17 the
 release major is the rules version, so every skills release is a rules
 upgrade. No setting is added.
+
+Version 19 gives `pm-export` a script, `scripts/export.ts`, that builds
+`<PM root>/planning.json` from the Markdown the same way on every run,
+validates it against the schema without a package, checks it for
+staleness, and answers queries (`get`, `find`, `summary`). The export
+format stays at `schemaVersion` 3: run `pm-export` once so the export
+records the new skills version. Version 19 also adds the docs site's
+default views — Milestones and Features with one page per milestone and
+item, Now, Inbox, Briefs, and Strategy — and documents its search: run
+`pm-docs-site upgrade` for an installed site. Version 19 also adds
+`pm-lint` and the **PM file format**: every PM commit fixes the PM files'
+layout and checks their schema before it commits, and `pm-lint hook`
+prints a pre-commit hook (lefthook, husky, or git) that runs `pm-lint
+check --staged`. Run `pm-lint check` once after upgrading; older files may
+need `pm-lint fix` and the owning skill. No setting is added.
 
 ## Asking the user (mandatory)
 

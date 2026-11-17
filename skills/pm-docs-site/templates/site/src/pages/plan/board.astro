@@ -6,7 +6,7 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import ExportStamp from '../../components/ExportStamp.astro';
 import KanbanItemCard from '../../components/lib/KanbanItemCard.astro';
 import TaskKanbanCard from '../../components/lib/TaskKanbanCard.astro';
-import { initials, loadPlanning, sizeToPriority } from '../../lib/planning';
+import { initials, loadPlanning, planProgress, sizeToPriority } from '../../lib/planning';
 import type { Card } from '../../lib/planning-types';
 import '../../styles/components.css';
 
@@ -17,7 +17,7 @@ const { columns } = planning.board;
 const items = new Map([...planning.roadmap.next, ...planning.roadmap.later].map((item) => [item.id, item]));
 const milestoneOf = (card: Card) => items.get(card.id)?.milestone ?? 'No milestone';
 
-const progress = planning.plan && planning.plan.total > 0 ? Math.round((planning.plan.checked / planning.plan.total) * 100) : 0;
+const progress = planProgress(planning.plan);
 const taskPriority = (size: Card['size']) => ({ low: 'low', medium: 'med', high: 'high' } as const)[sizeToPriority(size)];
 
 const queued = [

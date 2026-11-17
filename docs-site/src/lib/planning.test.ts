@@ -6,14 +6,25 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 import {
+	briefAnchor,
+	briefOf,
+	dependents,
 	derivedRag,
 	docsHref,
+	featureHref,
+	features,
 	initials,
 	loadPlanning,
+	milestoneHref,
+	milestoneId,
+	milestoneSummaries,
 	PlanningExportError,
+	planProgress,
 	riskMatrix,
 	roadmapGroups,
+	severityToPriority,
 	sizeToPriority,
+	sourceInitials,
 } from './planning';
 
 // A synthetic export, never the project's own: the tests must not change when the plan does.
@@ -144,6 +155,100 @@ describe('riskMatrix', () => {
 			['RK-004', 'low', 'medium'],
 			['RK-005', 'low', 'low'],
 		]);
+	});
+});
+
+describe('milestoneId', () => {
+	const milestones = [{ id: 'M1' }, { id: 'M2' }, { id: 'M12' }];
+
+	it('accepts an ID or an ID and name, and nothing else', () => {
+		expect(milestoneId('M2', milestones)).toBe('M2');
+		expect(milestoneId('M2 Billing', milestones)).toBe('M2');
+		expect(milestoneId('M12', milestones)).toBe('M12');
+		expect(milestoneId('M3', milestones)).toBeNull();
+		expect(milestoneId('none', milestones)).toBeNull();
+		expect(milestoneId(null, milestones)).toBeNull();
+	});
+});
+
+describe('features', () => {
+	const planning = loadPlanning(FIXTURE);
+	const all = features(planning);
+
+	it('lists every item with an ID: Now, Next, Later, Done, then Dropped', () => {
+		expect(all.map((feature) => [feature.id, feature.state])).toEqual([
+			['R-012', 'now'],
+			['R-013', 'next'],
+			['R-014', 'next'],
+			['R-020', 'later'],
+			['R-011', 'done'],
+			['R-010', 'done'],
+			['R-003', 'done'],
+			['R-009', 'dropped'],
+		]);
+	});
+
+	it('keeps the fields each place holds, with a known milestone or none', () => {
+		const byId = new Map(all.map((feature) => [feature.id, feature]));
+
+		expect(byId.get('R-012')).toMatchObject({ stage: 'execute', doneWhen: ['An invoice downloads as CSV'], milestone: null });
+		expect(byId.get('R-014')).toMatchObject({ label: 'waiting', dependsOn: ['R-013'], position: 2, milestone: 'M2' });
+		expect(byId.get('R-011')).toMatchObject({ milestone: null, date: '2026-11-09', result: 'planning.json validates.' });
+		expect(byId.get('R-009')).toMatchObject({ reason: 'CSV covers it.' });
+	});
+
+	it('finds what depends on an item and the brief it links to', () => {
+		expect(dependents(all, 'R-013').map((feature) => feature.id)).toEqual(['R-014']);
+		expect(dependents(all, 'R-020')).toEqual([]);
+		expect(briefOf(planning, all[0]!)?.path).toBe('planning/briefs/2026-11-09-invoice-export.md');
+		expect(briefOf(planning, { id: 'R-013', brief: null })).toBeNull();
+	});
+});
+
+describe('milestoneSummaries', () => {
+	const summaries = milestoneSummaries(loadPlanning(FIXTURE));
+
+	it('follows strategy order and adds No milestone last', () => {
+		expect(summaries.map((summary) => [summary.slug, summary.name, summary.isFocus])).toEqual([
+			['m1', 'First release', false],
+			['m2', 'Billing', true],
+			['none', 'No milestone', false],
+		]);
+	});
+
+	it('counts done items against every item that is not dropped', () => {
+		expect(summaries.map((summary) => summary.progress)).toEqual([
+			{ done: 0, total: 0 },
+			{ done: 1, total: 3 },
+			{ done: 2, total: 4 },
+		]);
+		expect(summaries[2]!.features.map((feature) => feature.id)).toEqual(['R-012', 'R-020', 'R-011', 'R-003', 'R-009']);
+	});
+});
+
+describe('page derivations', () => {
+	it('computes plan progress', () => {
+		expect(planProgress({ checked: 3, total: 5 })).toBe(60);
+		expect(planProgress({ checked: 0, total: 0 })).toBe(0);
+		expect(planProgress(null)).toBe(0);
+	});
+
+	it('maps inbox severity and source', () => {
+		expect([severityToPriority('blocker'), severityToPriority('major'), severityToPriority('minor'), severityToPriority('cosmetic'), severityToPriority(null)]).toEqual([
+			'urgent',
+			'high',
+			'medium',
+			'low',
+			'low',
+		]);
+		expect([sourceInitials('agent (R-012 execute)'), sourceInitials('user'), sourceInitials(null)]).toEqual(['AG', 'YOU', 'YOU']);
+	});
+
+	it('builds the item, milestone and brief links', () => {
+		expect(featureHref('R-012')).toBe('/plan/features/r-012/');
+		expect(milestoneHref('M2')).toBe('/plan/milestones/m2/');
+		expect(milestoneHref(null)).toBe('/plan/milestones/none/');
+		expect(briefAnchor('planning/briefs/R-007-Tenant-billing.md')).toBe('r-007-tenant-billing');
 	});
 });
 

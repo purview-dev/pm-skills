@@ -1,6 +1,6 @@
 ---
 name: pm-export
-description: Use when the user asks for the plan, roadmap, board, or project status as JSON, asks to export or update the current status, or a tool, script, or dashboard needs the plan in a machine-readable form. Writes planning.json and its schema inside the PM root in one fixed, schema-validated format, or checks them against the schema without writing.
+description: Use when the user asks for the plan, roadmap, board, or project status as JSON, asks to export or update the current status, or a tool, script, or dashboard needs the plan in a machine-readable form. Writes planning.json and its schema inside the PM root in one fixed, schema-validated format with its bundled script, checks them against the schema and the Markdown without writing, or answers a query for one value or ID.
 ---
 
 # pm-export
@@ -20,12 +20,45 @@ directory` setting (default `planning/`).
 | --- | --- | --- |
 | `write` | Default: "export the plan", "update the status JSON" | Regenerate `planning.json` and its schema; one PM commit |
 | `check` | "is the export current?", "validate the export", or during a workflow | Read-only: validate and compare; write nothing |
+| `query <path or ID>` | "what does the export say about R-012?", a script or tool needs one value | Read-only: print one value, the entries for one ID, or a summary |
 
 A PM commit also runs write steps 1 to 5, without the commit or the
 output, when `Export on commit` in `config.md` asks for it (rules:
 Committing PM state, step 6). That refresh is part of the skill that
 commits, so it may run during a workflow and in the worktree that holds a
 Completion record.
+
+## Script
+
+`scripts/export.ts` in this skill's folder is the exporter: it reads the PM
+files, builds the document exactly as the field map below says, and
+validates it against `references/planning.schema.json` with its own
+validator (no package, no network). Every project gets the same export
+from the same Markdown, so never build or patch `planning.json` by hand
+when Bun is available. It needs Bun (`bun --version`).
+
+| Command | Effect |
+| --- | --- |
+| `bun <skill>/scripts/export.ts write [--root <worktree>]` | Build, validate, and write `planning.json`, and copy the schema when it differs. Prints `wrote:`, `schema:`, and one `assumption:` line per fact it could not read. Writes nothing and exits 1 with `invalid:` lines when the document would not match the schema |
+| `bun <skill>/scripts/export.ts write --dry-run` | Print the document instead of writing it |
+| `bun <skill>/scripts/export.ts check [--root <worktree>]` | Read-only. Validate the export and its schema copy, rebuild from the Markdown as of the export's `generatedAt` and branch, and print `current` or the first difference; exit 1 on a difference |
+| `bun <skill>/scripts/export.ts validate [<file>] [--schema <file>]` | Read-only. Validate one file (default: the export) and print `valid:` or one `invalid: <path>: <reason>` line per error |
+| `bun <skill>/scripts/export.ts get [<path>] [--fresh]` | Read-only. Print the value at a path (`counts`, `roadmap.next[0].title`, `checks.claimable`) |
+| `bun <skill>/scripts/export.ts find <ID> [--fresh]` | Read-only. Print every entry with that ID (`R-012`, `M2`, `RK-003`, `B1`, `A1`, `V1`) and its path |
+| `bun <skill>/scripts/export.ts summary [--fresh]` | Read-only. Print the export time, Now, focus, counts, claimable items, Review due, and drift |
+
+`--root` is the repository or worktree root (default: the current
+directory); `--pm-root` overrides the PM root it reads from the agent
+instructions file. `get`, `find`, and `summary` read `planning.json`, the
+way a tool would; `--fresh` builds from the Markdown in memory instead and
+writes nothing, which is the form an agent uses when it needs current
+values. The script never commits, never reads `STACK.md` or `PAUSE.md`,
+and writes only the two export files.
+
+The script and the field map change together: a change to the format is a
+change to the schema, `references/planning.example.json`,
+`scripts/planning.ts`, and its test (`bun test skills/pm-export` in the
+pm-skills repository).
 
 ## Guard
 
@@ -44,8 +77,12 @@ Completion record.
   `STACK.md` or `PAUSE.md`: they are session memory, not plan.
 - Never edit any other PM file. This skill reads them all and writes two.
 - Anyone can validate the result with
-  `bunx ajv-cli@5 validate -s "<PM root>/planning.schema.json" -d "<PM root>/planning.json" --spec=draft2020`.
-  A warning that the `date-time` format is unknown is expected and harmless.
+  `bun <skill>/scripts/export.ts validate`, which needs no package and
+  checks the `date-time` format. The schema is plain JSON Schema draft
+  2020-12, so any validator for that draft also reads it.
+- During a workflow, `query` and `check` may run (Non-interruption rule 3:
+  read-only). `query` without `--fresh` reads the export, which may be
+  stale; an agent deciding PM matters uses `--fresh` or the Markdown.
 
 ## Format rules (identical on every run)
 
@@ -64,8 +101,18 @@ Completion record.
    two runs over unchanged PM state. Everything else is a bug.
 6. UTF-8, LF line endings, two-space indent, one trailing newline. `$schema`
    is the first key, with the value `"./planning.schema.json"`.
-7. `position` is 1-based inside its roadmap section. `schemaVersion`, the
-   versions, and the counts are integers.
+7. `position` is 1-based inside its roadmap section, the order of the
+   item's block in `ROADMAP.md`. `schemaVersion`, the versions, and the
+   counts are integers.
+8. Text inside HTML comments is never read: the templates keep their
+   examples there. A template placeholder (`[M1]`, `<path>`) or an empty
+   value is `null`, and so is `none` in an optional field (`Milestone`,
+   `Brief`, `Note`, `Target`, a risk's `Affects`, `Trigger`, `Mitigation`,
+   `RAG override`, an inbox file's `Affects`, `Context`, `Brief`). A
+   multi-line field joins its lines with one space.
+9. In a `LOG.md` line, a full stop and a space separate the fields, so a
+   field's final `.` is dropped (`Result: PR #41.` is `"PR #41"`). Strategy lines keep their
+   words, including the final `.`, except `notDoing[].thing`.
 
 ## Field map
 
@@ -114,12 +161,16 @@ context, openQuestion}` or `null`. `now.doneWhen` is the list under
 The `board` mirrors `pm-board`:
 
 - `columns.now` holds the active item as `{id, title, owner, size, detail}`,
-  with `detail` = `<stage>, <done>/<total> plan steps`.
+  with `detail` = `<stage>, <done>/<total> plan steps` (`<stage>` alone
+  without a plan). `owner` and `size` are `null`: `NOW.md` holds neither.
 - `columns.next` holds `Owner: agent` or `both` items in Next, including
-  `paused`; `columns.foryou` holds `Owner: user` items in Next;
-  `columns.waiting` holds blocked and dependency-blocked items with the
-  reason as `detail`; `columns.done` holds the `## Done` lines inside the
-  board window in `config.md`.
+  `paused`, with the `Status` value as `detail`; `columns.foryou` holds
+  `Owner: user` items in Next, with `blocks <ID> <title>` as `detail` when
+  another item depends on it; `columns.waiting` holds the Next items
+  labelled `blocked` (`blocked: <reason>, since <date>`) or `waiting`
+  (`needs <ID> <title>`); `columns.done` holds the `## Done` lines dated
+  within the board window in `config.md`, counted back from the export
+  date.
 - `activity` is the union of `## Done`, `## Dropped`, and `## Reviews`,
   newest first, as `{date, kind: "done" | "dropped" | "review", id, title,
   milestone, owner, result}`, with `null` where the line has no such field.
@@ -151,62 +202,89 @@ Remaining objects:
   `none`; `closed` is the `Closed` text, `null` while the risk is open.
   `risks.removed[]` is `{date, id, title, reason}`. `counts.openRisks` is
   `risks.open` and the RAG counts split it by `rag`.
+- `counts.blockers` is the items in Next and Later whose `Status` is
+  `blocked`; `counts.openInbox` follows **Open inbox count**;
+  `counts.shapingBriefs` is the briefs whose `Status` starts `shaping`.
+- `plan` reads the plan file from the checkout the script runs in. A plan
+  that is not there (the item's branch is checked out elsewhere) is
+  `null`, with an `assumption:` line.
 - `checks.drift` follows the **Drift** definition and `checks.reviewDue`
   follows **Review due**.
 
 ## Steps (write)
 
-1. Read every PM file: `config.md`, `VISION.md`, `STRATEGY.md`, `NOW.md`,
-   `ROADMAP.md`, `LOG.md`, `RISKS.md`, `inbox/`, and `briefs/` (`STACK.md`
-   and `PAUSE.md` are not exported). A missing optional file is empty (Shared definitions:
-   Optional files).
-2. Build the document in the field-map order, applying the format rules.
-   Where a value is not written in the file, use `null`, never a guess; state
-   any `Assumption:` in the `Note` of the output.
-3. Copy `references/planning.schema.json` to `<PM root>/planning.schema.json`
-   when that file is missing or differs.
-4. Write `<PM root>/planning.json`.
-5. **Verify before reporting.**
-   - Parse the file and confirm it is valid JSON.
-   - Confirm the top-level keys equal the schema's `required` list, in order.
-   - Confirm `schemaVersion` equals the schema's const.
-   - Confirm `now.item` and the `roadmap.next` IDs match the Markdown.
-   - Confirm `counts` recompute from the files.
+1. **Run the script** in the commit worktree (the main worktree, or the
+   one that holds a Completion record):
+   `bun <skill>/scripts/export.ts write --root "<worktree>"`. It reads
+   `config.md`, `VISION.md`, `STRATEGY.md`, `NOW.md`, `ROADMAP.md`,
+   `LOG.md`, `RISKS.md`, `inbox/`, `briefs/`, and the plan that `NOW.md`
+   names (never `STACK.md` or `PAUSE.md`), treats a missing optional file
+   as empty (Shared definitions: Optional files), and builds the document
+   in the field-map order with the format rules.
+2. **Read its result.** It validates the document against the schema
+   before it writes. On exit 1 it has written nothing: show the first
+   `invalid:` line and stop without committing. The fix is in the Markdown
+   (an item with `Size: XL` is fixed with `pm-item edit`), never in the
+   export or the schema.
+3. It copies `references/planning.schema.json` to
+   `<PM root>/planning.schema.json` when that file is missing or differs,
+   and prints `schema: <written | refreshed | unchanged>`.
+4. It writes `<PM root>/planning.json` and prints `wrote:` with the counts.
+   Each `assumption:` line is a fact it could not read; copy it to the
+   output `Note` as `Assumption: ...`.
+5. **Verify** with `bun <skill>/scripts/export.ts check --root "<worktree>"`:
+   it prints `current`.
 
-   Fix the document, never the schema. If a check still fails, show the first
-   failure and stop without committing.
+   **Without Bun** (`bun --version` fails): build the document by hand
+   from the field map and the format rules, where a value not written in
+   the file is `null`, never a guess, then confirm it parses, its top-level
+   keys equal the schema's `required` list in order, `schemaVersion` equals
+   the schema's const, and `counts` recompute from the files. Add
+   `Validated by hand: Bun is not installed.` to the `Note`.
 6. **Commit** the PM state (rules: Committing PM state), with the message
    `docs(pm): export <YYYY-MM-DD>`.
 7. Show the output.
 
 ## Steps (check)
 
-1. Read `<PM root>/planning.json` and `<PM root>/planning.schema.json`. If
-   either is missing, reply `No export at <path>. Run pm-export.` Stop. Write
-   nothing.
-2. **Validate** both files: they parse; every `required` key is present at
-   the top level; no key outside the schema is present; `schemaVersion`
-   equals the schema const; `section`, `owner`, `size`, `status.value`,
-   `label`, and each risk's `likelihood`, `impact`, `rag`, and `status`
-   hold values the schema allows.
-3. **Compare** with the Markdown and git: `now.item`, `now.status`, the
-   `roadmap.next` and `roadmap.later` ID order, the `risks.open` ID order
-   and RAG values, `counts`, `checks`, and
-   `source.head` against `git rev-parse HEAD`.
-4. Report the first difference in one line, for example `roadmap.next[2] is
-   R-012 in ROADMAP.md and R-009 in the export.`, or `current`.
+1. **Run** `bun <skill>/scripts/export.ts check`. It writes nothing. A
+   missing export or schema prints `No export at <path>. Run pm-export.`;
+   stop.
+2. It **validates** both files: the schema copy equals this skill's
+   reference, and the export matches the schema (every key, type, enum,
+   ID pattern, and `date-time`), printing one `invalid:` line per error.
+3. It **compares** the export with a fresh build from the Markdown, as of
+   the export's own `generatedAt` and `source.branch`, so the board window,
+   **Review due**, and drift compare like for like. Only `generatedAt` and
+   `source` are ignored (format rule 5).
+4. Report its first line: `current`, or the first difference, for example
+   `roadmap.next[0].title is Invoice emails from the Markdown and Invoice
+   email in planning/planning.json.` A `note:` that `source.head` is older
+   than `HEAD` is expected: the PM commit that carried the export comes
+   after it. Without Bun, compare `now.item`, the `roadmap.next` and
+   `roadmap.later` ID order, `risks.open`, `counts`, and `checks` by hand.
 5. If the export is stale and no workflow is active, ask one choice question
    `Regenerate the export?` with `Regenerate it (recommended)` (run `write`)
    and `Leave it`. During a workflow, report and resume the step in progress.
 
-## Output
+## Steps (query)
+
+1. Pick the command from the request: one value is `get <path>`, one ID is
+   `find <ID>`, a status line is `summary`. Add `--fresh` when the answer
+   must reflect the Markdown now rather than the last export.
+2. Run it and print its output in a fenced `json` or `text` block. It
+   writes nothing, so there is no commit.
+3. If it prints `No export at <path>.`, recommend `pm-export` (`write`), or
+   rerun with `--fresh`.
+
+## Output (write, check)
 
 ```markdown
 ## Export <YYYY-MM-DD>
 
-- File: <PM root>/planning.json (<n> KB | <n> items, <n> inbox, <n> briefs, <n> risks)
-- Schema: <PM root>/planning.schema.json (<n | refreshed | unchanged>)
-- Checked: <keys and counts match | first difference>
+- File: <PM root>/planning.json (<n> items, <n> inbox, <n> briefs, <n> risks)
+- Schema: <PM root>/planning.schema.json (<written | refreshed | unchanged>)
+- Checked: <current | first difference | validated by hand>
 - PM state: <commit result>
 
 ## Do this next

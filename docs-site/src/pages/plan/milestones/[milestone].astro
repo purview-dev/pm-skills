@@ -1,0 +1,106 @@
+---
+// One milestone (or the items with none): its status, target, exit criteria,
+// the V lines it serves, its items by state, and the risks that name it.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+import ExportStamp from '../../../components/ExportStamp.astro';
+import FeatureTable from '../../../components/FeatureTable.astro';
+import { FEATURE_STATES, loadPlanning, milestoneSummaries, type FeatureState } from '../../../lib/planning';
+import '../../../styles/components.css';
+
+export function getStaticPaths() {
+	return milestoneSummaries(loadPlanning()).map((summary) => ({ params: { milestone: summary.slug }, props: { slug: summary.slug } }));
+}
+
+const { slug } = Astro.props;
+const planning = loadPlanning();
+const summary = milestoneSummaries(planning).find((candidate) => candidate.slug === slug)!;
+const outcomes = new Map(planning.vision.outcomes.map((outcome) => [outcome.id, outcome.text]));
+const title = summary.id ? `${summary.id} ${summary.name}` : summary.name;
+const groups = (Object.keys(FEATURE_STATES) as FeatureState[])
+	.map((state) => ({ state, items: summary.features.filter((feature) => feature.state === state) }))
+	.filter((group) => group.items.length > 0);
+const risks = summary.id ? [...planning.risks.open, ...planning.risks.closed].filter((risk) => risk.affects === summary.id) : [];
+---
+
+<StarlightPage frontmatter={{ title, description: summary.exitCriteria ?? `The items in ${title}.` }}>
+	<ExportStamp kind="Milestone" milestone={title} />
+
+	<p>
+		{summary.isFocus && <span class="plan-focus">Focus</span>}
+		{summary.isFocus && ' '}
+		{summary.id ? 'Status' : 'Items with no milestone'}
+		{summary.id && <strong> {summary.status ?? 'none'}</strong>}
+		{summary.target && <> · target {summary.target}</>}
+	</p>
+
+	{
+		summary.id === null && <p class="plan-meta">These items have no milestone, or name one that is not in STRATEGY.md.</p>
+	}
+
+	{
+		summary.progress.total > 0 && (
+			<p>
+				<progress class="plan-progress" max={summary.progress.total} value={summary.progress.done}>
+					{summary.progress.done} of {summary.progress.total}
+				</progress>{' '}
+				{summary.progress.done} of {summary.progress.total} done
+			</p>
+		)
+	}
+
+	{
+		summary.exitCriteria && (
+			<section>
+				<h2>Exit criteria</h2>
+				<p>{summary.exitCriteria}</p>
+			</section>
+		)
+	}
+
+	{
+		summary.serves.length > 0 && (
+			<section>
+				<h2>Serves</h2>
+				<ul>
+					{summary.serves.map((line) => (
+						<li>
+							<strong>{line}</strong> {outcomes.get(line)}
+						</li>
+					))}
+				</ul>
+			</section>
+		)
+	}
+
+	{groups.length === 0 && <p class="plan-empty">No items</p>}
+	{
+		groups.map((group) => (
+			<section>
+				<h2 id={group.state}>
+					{FEATURE_STATES[group.state]} <span class="plan-count">{group.items.length}</span>
+				</h2>
+				<FeatureTable state={group.state} items={group.items} milestones={planning.strategy.milestones} hideMilestone />
+			</section>
+		))
+	}
+
+	{
+		risks.length > 0 && (
+			<section>
+				<h2>Risks</h2>
+				<ul>
+					{risks.map((risk) => (
+						<li>
+							<span class={`rag rag--${risk.rag}`}>{risk.rag}</span>{' '}
+							<a href={`/plan/risks/#${risk.id.toLowerCase()}`}>
+								<strong>{risk.id}</strong>
+							</a>{' '}
+							{risk.title} — {risk.status}
+						</li>
+					))}
+				</ul>
+			</section>
+		)
+	}
+</StarlightPage>
