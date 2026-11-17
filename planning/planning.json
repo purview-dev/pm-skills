@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-17T16:19:57+00:00",
+  "generatedAt": "2026-11-17T16:30:32+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-001-set-milestones-and-focus",
-    "head": "bea74e30e049ee8d7244aeaa44d120c733bc06ad"
+    "branch": "feat/r-008-docs-site-package-skeleton",
+    "head": "041c38df22b3a00ac1c0ab5ee6f85062cf8e6606"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -159,16 +159,21 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
-    "brief": null,
-    "milestone": null,
+    "status": "active",
+    "item": {
+      "id": "R-008",
+      "title": "Docs-site package: skeleton at parity"
+    },
+    "stage": "design",
+    "session": "feat/r-008-docs-site-package-skeleton",
+    "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+    "milestone": "M1",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-17",
+    "doneWhen": [
+      "`bun test` passes in `packages/pm-docs-site/`, building the planning fixture with the package CLI renders every page that `docs-site/` renders today, and `just version-check` passes with a change under `packages/**` and no rules-marker bump."
+    ],
     "checkpoint": null
   },
   "plan": null,
@@ -199,34 +204,10 @@
         "claimable": false
       },
       {
-        "id": "R-008",
-        "title": "Docs-site package: skeleton at parity",
-        "section": "next",
-        "position": 2,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "`bun test` passes in `packages/pm-docs-site/`, building the planning fixture with the package CLI renders every page that `docs-site/` renders today, and `just version-check` passes with a change under `packages/**` and no rules-marker bump.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-        "note": null,
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-003",
         "title": "Fix pm-export's ajv validation command",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -250,7 +231,7 @@
         "id": "R-009",
         "title": "Docs-site package: backlinks everywhere",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "waiting",
         "serves": [
           "V4"
@@ -276,7 +257,7 @@
         "id": "R-004",
         "title": "Verify the aspire module against a real AppHost",
         "section": "next",
-        "position": 5,
+        "position": 4,
         "label": "next",
         "serves": [
           "V4"
@@ -483,15 +464,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-008",
           "title": "Docs-site package: skeleton at parity",
-          "owner": "agent",
-          "size": "M",
-          "detail": "ready"
-        },
+          "owner": null,
+          "size": null,
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-003",
           "title": "Fix pm-export's ajv validation command",
@@ -616,7 +598,7 @@
       "path": "planning/briefs/2026-11-17-docs-site-package.md",
       "id": "R-008",
       "title": "Docs site as a versioned package",
-      "status": "on roadmap (R-008, R-009, R-010, R-011, R-012, R-013, R-014)",
+      "status": "on roadmap (R-008, R-009, R-010, R-011, R-012, R-013, R-014), R-008 active",
       "origin": "user request",
       "updated": "2026-11-17",
       "decision": "2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.",
@@ -631,7 +613,7 @@
     "removed": []
   },
   "counts": {
-    "next": 5,
+    "next": 4,
     "later": 7,
     "nextMax": 5,
     "openInbox": 0,
@@ -649,7 +631,6 @@
     "reviewDue": false,
     "lastReview": "never",
     "claimable": [
-      "R-008",
       "R-003",
       "R-004"
     ],

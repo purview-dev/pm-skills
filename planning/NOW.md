@@ -11,17 +11,19 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: idle
-- Item:
-- Session:
-- Stage:
-- Brief:
-- Milestone:
+- Status: active
+- Item: R-008 Docs-site package: skeleton at parity
+- Session: feat/r-008-docs-site-package-skeleton
+- Stage: design
+- Brief: planning/briefs/2026-11-17-docs-site-package.md
+- Milestone: M1
 - Spec:
 - Plan:
-- Started:
+- Started: 2026-11-17
 
 ## Done when
+
+- `bun test` passes in `packages/pm-docs-site/`, building the planning fixture with the package CLI renders every page that `docs-site/` renders today, and `just version-check` passes with a change under `packages/**` and no rules-marker bump.
 
 ## Checkpoint
 

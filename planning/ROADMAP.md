@@ -25,17 +25,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Status: ready
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 
-### R-008 Docs-site package: skeleton at parity
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: `bun test` passes in `packages/pm-docs-site/`, building the planning fixture with the package CLI renders every page that `docs-site/` renders today, and `just version-check` passes with a change under `packages/**` and no rules-marker bump.
-- Size: M
-- Depends on: none
-- Status: ready
-- Brief: planning/briefs/2026-11-17-docs-site-package.md
-
 ### R-003 Fix pm-export's ajv validation command
 
 - Serves: V4
