@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-17T16:00:33+00:00",
+  "generatedAt": "2026-11-17T16:03:17+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "main",
-    "head": "d80978228011451a38e23d858dd2f57cfeda7967"
+    "branch": "feat/r-001-set-milestones-and-focus",
+    "head": "a6c1bb3b875b0d42dfc0c0bd454b2449f6360037"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -59,50 +59,31 @@
     "decisions": []
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
+    "status": "active",
+    "item": {
+      "id": "R-001",
+      "title": "Set milestones and focus"
+    },
+    "stage": "design",
+    "session": "feat/r-001-set-milestones-and-focus",
     "brief": null,
     "milestone": null,
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-17",
+    "doneWhen": [
+      "`planning/STRATEGY.md` has at least one milestone and a `Current focus`, and `pm-help` check 6 passes."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-001",
-        "title": "Set milestones and focus",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V2"
-        ],
-        "milestone": null,
-        "owner": "both",
-        "doneWhen": "`planning/STRATEGY.md` has at least one milestone and a `Current focus`, and `pm-help` check 6 passes.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": null,
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-003",
         "title": "Fix pm-export's ajv validation command",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4"
@@ -126,7 +107,7 @@
         "id": "R-004",
         "title": "Verify the aspire module against a real AppHost",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -150,7 +131,7 @@
         "id": "R-008",
         "title": "Docs-site package: skeleton at parity",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -174,7 +155,7 @@
         "id": "R-014",
         "title": "Create the npm @purview-dev scope and token",
         "section": "next",
-        "position": 5,
+        "position": 4,
         "label": "next",
         "serves": [
           "V4"
@@ -358,15 +339,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-001",
           "title": "Set milestones and focus",
-          "owner": "both",
-          "size": "S",
-          "detail": "ready"
-        },
+          "owner": null,
+          "size": null,
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-003",
           "title": "Fix pm-export's ajv validation command",
@@ -476,7 +458,7 @@
     "removed": []
   },
   "counts": {
-    "next": 5,
+    "next": 4,
     "later": 6,
     "nextMax": 5,
     "openInbox": 0,
@@ -494,11 +476,10 @@
     "reviewDue": false,
     "lastReview": "never",
     "claimable": [
-      "R-001",
       "R-003",
       "R-004",
       "R-008"
     ],
-    "drift": false
+    "drift": true
   }
 }

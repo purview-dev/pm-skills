@@ -14,15 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-001 Set milestones and focus
-
-- Serves: V2
-- Owner: both
-- Done when: `planning/STRATEGY.md` has at least one milestone and a `Current focus`, and `pm-help` check 6 passes.
-- Size: S
-- Depends on: none
-- Status: ready
-
 ### R-003 Fix pm-export's ajv validation command
 
 - Serves: V4
