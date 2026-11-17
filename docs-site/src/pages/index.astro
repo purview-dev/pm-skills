@@ -4,13 +4,16 @@
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
 import ExportStamp from '../components/ExportStamp.astro';
-import { loadPlanning } from '../lib/planning';
+import { featureHref, loadPlanning, milestoneHref, milestoneId } from '../lib/planning';
 import { modules } from '../modules';
+import { views } from '../views';
 import '../styles/components.css';
 
 const planning = loadPlanning();
 const { counts, checks } = planning;
 const items = new Map([...planning.roadmap.next, ...planning.roadmap.later].map((item) => [item.id, item]));
+const focusId = milestoneId(planning.strategy.focus.milestone, planning.strategy.milestones);
+const item = (id: string) => (views.features ? featureHref(id) : null);
 
 const figures = [
 	{ label: 'In Next', value: `${counts.next} of ${counts.nextMax}` },
@@ -35,13 +38,27 @@ const redRisks = planning.risks.open.filter((risk) => risk.rag === 'red');
 
 	<section>
 		<h2>Focus</h2>
-		<p><strong>{planning.strategy.focus.milestone ?? 'No focus set'}</strong></p>
+		<p>
+			<strong>
+				{focusId && views.milestones ? <a href={milestoneHref(focusId)}>{planning.strategy.focus.milestone}</a> : (planning.strategy.focus.milestone ?? 'No focus set')}
+			</strong>
+		</p>
 		{planning.strategy.focus.whyNow && <p>{planning.strategy.focus.whyNow}</p>}
 		<p>
 			{
 				planning.now.item ? (
 					<>
-						Now: <strong>{planning.now.item.id} {planning.now.item.title}</strong> ({planning.now.stage})
+						Now:{' '}
+						<strong>
+							{views.now ? (
+								<a href="/plan/now/">
+									{planning.now.item.id} {planning.now.item.title}
+								</a>
+							) : (
+								`${planning.now.item.id} ${planning.now.item.title}`
+							)}
+						</strong>{' '}
+						({planning.now.stage})
 					</>
 				) : (
 					'Nothing is in progress.'
@@ -69,11 +86,22 @@ const redRisks = planning.risks.open.filter((risk) => risk.rag === 'red');
 		{checks.claimable.length === 0 && <p class="plan-empty">Nothing in Next can be started.</p>}
 		<ul>
 			{
-				checks.claimable.map((id) => (
-					<li>
-						<strong>{id}</strong> {items.get(id)?.title}
-					</li>
-				))
+				checks.claimable.map((id) => {
+					const href = item(id);
+					return (
+						<li>
+							{href ? (
+								<a href={href}>
+									<strong>{id}</strong> {items.get(id)?.title}
+								</a>
+							) : (
+								<>
+									<strong>{id}</strong> {items.get(id)?.title}
+								</>
+							)}
+						</li>
+					);
+				})
 			}
 		</ul>
 	</section>
@@ -96,10 +124,17 @@ const redRisks = planning.risks.open.filter((risk) => risk.rag === 'red');
 	<section>
 		<h2>Read on</h2>
 		<ul>
+			{views.now && <li><a href="/plan/now/">Now</a> — the active item, its checkpoint and its plan</li>}
 			<li><a href="/plan/board/">Board</a> — Now, Next, For you, Waiting and Done</li>
 			<li><a href="/plan/roadmap/">Roadmap</a> — milestones in order</li>
+			{views.milestones && <li><a href="/plan/milestones/">Milestones</a> — each milestone, its exit criteria and its items</li>}
+			{views.features && <li><a href="/plan/features/">Features</a> — every item, with a page each</li>}
 			<li><a href="/plan/log/">Log</a> — done, dropped and reviews</li>
 			<li><a href="/plan/risks/">Risks</a> — the risk register by RAG status</li>
+			{views.inbox && <li><a href="/plan/inbox/">Inbox</a> — parked ideas, bugs and questions</li>}
+			{views.briefs && <li><a href="/plan/briefs/">Briefs</a> — shaped ideas and their decisions</li>}
+			{views.strategy && <li><a href="/plan/strategy/">Strategy</a> — the vision, bets, assumptions and decisions</li>}
+			<li>Search — every page above is in the site search once it is built (<code>just docs-preview</code>)</li>
 			{modules.architecture && <li><a href="/architecture/overview/">Architecture</a> — the LikeC4 views</li>}
 			{modules.repoDocs && <li>Documentation — the repository's Markdown, grouped in the sidebar</li>}
 		</ul>

@@ -1,0 +1,50 @@
+---
+// The milestones in strategy order, each with its status, target, exit
+// criteria, the V lines it serves, and its items by state, from planning.json.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+import ExportStamp from '../../../components/ExportStamp.astro';
+import { FEATURE_STATES, loadPlanning, milestoneHref, milestoneSummaries, type FeatureState } from '../../../lib/planning';
+import '../../../styles/components.css';
+
+const planning = loadPlanning();
+const summaries = milestoneSummaries(planning);
+const states = Object.keys(FEATURE_STATES) as FeatureState[];
+const byState = (summary: (typeof summaries)[number]) =>
+	states
+		.map((state) => ({ state, count: summary.features.filter((feature) => feature.state === state).length }))
+		.filter((entry) => entry.count > 0)
+		.map((entry) => `${entry.count} ${FEATURE_STATES[entry.state].toLowerCase()}`)
+		.join(', ');
+---
+
+<StarlightPage frontmatter={{ title: 'Milestones', description: 'Each milestone in strategy order, with its exit criteria and its items.' }}>
+	<ExportStamp />
+
+	{summaries.length === 0 && <p class="plan-empty">No milestones. pm-strategy sets them in STRATEGY.md.</p>}
+
+	<div class="plan-cards not-content">
+		{
+			summaries.map((summary) => (
+				<article class="plan-card">
+					<h3>
+						<a href={milestoneHref(summary.id)}>{summary.id ? `${summary.id} ${summary.name}` : summary.name}</a>
+						{summary.isFocus && <span class="plan-focus">Focus</span>}
+					</h3>
+					<p class="plan-meta">
+						{summary.status ?? 'No status'}
+						{summary.target && <> · target {summary.target}</>} · {summary.progress.done} of {summary.progress.total} done
+					</p>
+					{summary.progress.total > 0 && (
+						<progress class="plan-progress" max={summary.progress.total} value={summary.progress.done}>
+							{summary.progress.done} of {summary.progress.total}
+						</progress>
+					)}
+					{summary.exitCriteria && <p>Exit: {summary.exitCriteria}</p>}
+					{summary.serves.length > 0 && <p class="plan-meta">Serves {summary.serves.join(', ')}</p>}
+					<p class="plan-meta">{byState(summary) || 'No items'}</p>
+				</article>
+			))
+		}
+	</div>
+</StarlightPage>

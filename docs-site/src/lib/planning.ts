@@ -7,7 +7,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import type { Level, Owner, Planning, Rag, Risk, Size } from './planning-types';
+import type { Brief, InboxEntry, Level, Milestone, Owner, Planning, Rag, Risk, RoadmapItem, Size, Stage } from './planning-types';
 
 /** Where the export lives, relative to the site root (`docs-site`). */
 const DEFAULT_PATH = '../planning/planning.json';
@@ -87,8 +87,7 @@ export interface RoadmapGroup {
  * (newest first), the Now item, then Next and Later in roadmap order.
  */
 export function roadmapGroups(planning: Planning): RoadmapGroup[] {
-	const known = new Set(planning.strategy.milestones.map((milestone) => milestone.id));
-	const groupOf = (milestone: string | null) => (milestone && known.has(milestone) ? milestone : null);
+	const groupOf = (milestone: string | null) => milestoneId(milestone, planning.strategy.milestones);
 	const focus = planning.strategy.focus.milestone ?? '';
 
 	const eventsFor = (id: string | null): TimelineEvent[] => [
@@ -126,7 +125,7 @@ export function roadmapGroups(planning: Planning): RoadmapGroup[] {
 			name: milestone.name,
 			status: milestone.status,
 			exitCriteria: milestone.exitCriteria,
-			isFocus: focus === milestone.id || focus.startsWith(`${milestone.id} `),
+			isFocus: milestoneId(focus, [milestone]) !== null,
 		},
 		...withProgress(eventsFor(milestone.id)),
 	}));
@@ -182,4 +181,191 @@ export function docsHref(path: string | null): string | null {
 
 function label(id: string | null, title: string): string {
 	return id ? `${id} ${title}` : title;
+}
+
+/**
+ * The known milestone a value names: its ID (`M2`) or its ID and name
+ * (`M2 Billing`). Anything else (`none`, an unknown ID, `null`) is no milestone.
+ */
+export function milestoneId(value: string | null, milestones: Pick<Milestone, 'id'>[]): string | null {
+	const text = value?.trim() ?? '';
+
+	return milestones.find((milestone) => text === milestone.id || text.startsWith(`${milestone.id} `))?.id ?? null;
+}
+
+/** A plan's completion as a whole percentage; `0` when there is no plan or it has no steps. */
+export function planProgress(plan: { checked: number; total: number } | null): number {
+	return plan && plan.total > 0 ? Math.round((plan.checked / plan.total) * 100) : 0;
+}
+
+/** Inbox severity as a card priority: the inbox has no priority of its own. */
+export function severityToPriority(severity: InboxEntry['severity']): 'low' | 'medium' | 'high' | 'urgent' {
+	return severity === 'blocker' ? 'urgent' : severity === 'major' ? 'high' : severity === 'minor' ? 'medium' : 'low';
+}
+
+export type FeatureState = 'now' | 'next' | 'later' | 'done' | 'dropped';
+
+/** The words each state is shown with, in the order the Features page lists them. */
+export const FEATURE_STATES: Record<FeatureState, string> = {
+	now: 'In progress',
+	next: 'Next',
+	later: 'Later',
+	done: 'Done',
+	dropped: 'Dropped',
+};
+
+/**
+ * One roadmap item wherever the export holds it — the Now item, Next, Later,
+ * the Done log, or the Dropped log — with the fields that place holds.
+ */
+export interface Feature {
+	id: string;
+	title: string;
+	state: FeatureState;
+	/** A known milestone ID (`milestoneId`), or `null`. */
+	milestone: string | null;
+	owner: string | null;
+	size: Size | null;
+	serves: string[];
+	doneWhen: string[];
+	dependsOn: string[];
+	label: RoadmapItem['label'] | null;
+	status: RoadmapItem['status'] | null;
+	position: number | null;
+	brief: string | null;
+	note: string | null;
+	revisits: string | null;
+	stage: Stage | null;
+	started: string | null;
+	/** Done or dropped: the log date. */
+	date: string | null;
+	result: string | null;
+	plan: string | null;
+	reason: string | null;
+}
+
+/** Every item with an ID, in this order: Now, Next, Later, Done (newest first), Dropped (newest first). */
+export function features(planning: Planning): Feature[] {
+	const known = planning.strategy.milestones;
+	const blank = { serves: [], doneWhen: [], dependsOn: [], label: null, status: null, position: null, brief: null, note: null, revisits: null, stage: null, started: null, date: null, result: null, plan: null, reason: null };
+	const now = planning.now.item
+		? [
+				{
+					...blank,
+					id: planning.now.item.id,
+					title: planning.now.item.title,
+					state: 'now' as const,
+					milestone: milestoneId(planning.now.milestone, known),
+					owner: planning.board.columns.now[0]?.owner ?? null,
+					size: planning.board.columns.now[0]?.size ?? null,
+					doneWhen: planning.now.doneWhen,
+					brief: planning.now.brief,
+					stage: planning.now.stage,
+					started: planning.now.started,
+					plan: planning.now.plan,
+				},
+			]
+		: [];
+	const queued = [...planning.roadmap.next, ...planning.roadmap.later].map((item) => ({
+		...blank,
+		id: item.id,
+		title: item.title,
+		state: item.section,
+		milestone: milestoneId(item.milestone, known),
+		owner: item.owner,
+		size: item.size,
+		serves: item.serves,
+		doneWhen: item.doneWhen ? [item.doneWhen] : [],
+		dependsOn: item.dependsOn,
+		label: item.label,
+		status: item.status,
+		position: item.position,
+		brief: item.brief,
+		note: item.note,
+		revisits: item.revisits,
+	}));
+	const done = planning.log.done.flatMap((entry) =>
+		entry.id
+			? [{ ...blank, id: entry.id, title: entry.title, state: 'done' as const, milestone: milestoneId(entry.milestone, known), owner: entry.owner, size: null, date: entry.date, result: entry.result, plan: entry.plan }]
+			: [],
+	);
+	const dropped = planning.log.dropped.flatMap((entry) =>
+		entry.id ? [{ ...blank, id: entry.id, title: entry.title, state: 'dropped' as const, milestone: null, owner: null, size: null, date: entry.date, reason: entry.reason }] : [],
+	);
+
+	const seen = new Set<string>();
+
+	return [...now, ...queued, ...done, ...dropped].filter((feature) => !seen.has(feature.id) && seen.add(feature.id));
+}
+
+/** The items whose `Depends on` names `id`. */
+export function dependents(all: Feature[], id: string): Feature[] {
+	return all.filter((feature) => feature.dependsOn.includes(id));
+}
+
+/** The brief a feature links to, by its `Brief` path, else by the brief's own ID. */
+export function briefOf(planning: Planning, feature: Pick<Feature, 'id' | 'brief'>): Brief | null {
+	return planning.briefs.find((brief) => brief.path === feature.brief) ?? planning.briefs.find((brief) => brief.id === feature.id) ?? null;
+}
+
+export interface MilestoneSummary {
+	/** `null` for the items with no milestone. */
+	id: string | null;
+	/** The page slug: the lower-case ID, or `none`. */
+	slug: string;
+	name: string;
+	status: string | null;
+	target: string | null;
+	exitCriteria: string | null;
+	serves: string[];
+	isFocus: boolean;
+	features: Feature[];
+	/** Done items against every item that is not dropped. */
+	progress: { done: number; total: number };
+}
+
+/** One summary per milestone in strategy order, then `No milestone` when an item has none. */
+export function milestoneSummaries(planning: Planning, all: Feature[] = features(planning)): MilestoneSummary[] {
+	const focus = planning.strategy.focus.milestone;
+	const summary = (milestone: Milestone | null): MilestoneSummary => {
+		const members = all.filter((feature) => feature.milestone === (milestone?.id ?? null));
+		const counted = members.filter((feature) => feature.state !== 'dropped');
+
+		return {
+			id: milestone?.id ?? null,
+			slug: milestone ? milestone.id.toLowerCase() : 'none',
+			name: milestone?.name ?? 'No milestone',
+			status: milestone?.status ?? null,
+			target: milestone?.target ?? null,
+			exitCriteria: milestone?.exitCriteria ?? null,
+			serves: milestone?.serves ?? [],
+			isFocus: milestone ? milestoneId(focus, [milestone]) !== null : false,
+			features: members,
+			progress: { done: counted.filter((feature) => feature.state === 'done').length, total: counted.length },
+		};
+	};
+	const groups = planning.strategy.milestones.map(summary);
+	const unassigned = summary(null);
+
+	return unassigned.features.length > 0 ? [...groups, unassigned] : groups;
+}
+
+/** An inbox file's source as a card's initials: `agent (…)` → `AG`, anything else (the user) → `YOU`. */
+export function sourceInitials(source: string | null): string {
+	return /^agent\b/i.test(source?.trim() ?? '') ? 'AG' : 'YOU';
+}
+
+/** The anchor of a brief's row on the Briefs page: its file name without `.md`, lower-case. */
+export function briefAnchor(path: string): string {
+	return (path.split('/').at(-1) ?? path).replace(/\.md$/i, '').toLowerCase();
+}
+
+/** The page of one item on this site. */
+export function featureHref(id: string): string {
+	return `/plan/features/${id.toLowerCase()}/`;
+}
+
+/** The page of one milestone on this site; `null` is the `No milestone` page. */
+export function milestoneHref(id: string | null): string {
+	return `/plan/milestones/${id ? id.toLowerCase() : 'none'}/`;
 }

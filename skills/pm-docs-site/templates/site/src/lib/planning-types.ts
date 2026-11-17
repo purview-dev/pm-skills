@@ -5,6 +5,7 @@ export type Owner = 'agent' | 'user' | 'both';
 export type Size = 'S' | 'M' | 'L';
 export type Level = 'low' | 'medium' | 'high';
 export type Rag = 'red' | 'amber' | 'green';
+export type Stage = 'design' | 'plan' | 'execute' | 'finish';
 
 export interface ItemRef {
 	id: string;
@@ -33,6 +34,9 @@ export interface RoadmapItem {
 	size: Size;
 	dependsOn: string[];
 	status: { value: 'ready' | 'paused' | 'blocked'; reason: string | null; since: string | null };
+	brief: string | null;
+	note: string | null;
+	revisits: string | null;
 	claimable: boolean;
 }
 
@@ -54,6 +58,13 @@ export interface DoneEntry {
 	result: string | null;
 }
 
+export interface DroppedEntry {
+	date: string;
+	id: string | null;
+	title: string;
+	reason: string | null;
+}
+
 export interface Activity {
 	date: string;
 	kind: 'done' | 'dropped' | 'review';
@@ -62,6 +73,53 @@ export interface Activity {
 	milestone: string | null;
 	owner: string | null;
 	result: string | null;
+}
+
+export interface Checkpoint {
+	at: string;
+	stoppedAt: string | null;
+	nextAction: string | null;
+	startWith: string | null;
+	decisions: string | null;
+	context: string | null;
+	openQuestion: string | null;
+}
+
+export interface PlanTask {
+	number: number;
+	title: string;
+	checked: number;
+	total: number;
+	steps: { text: string; checked: boolean }[];
+}
+
+export interface InboxEntry {
+	file: string;
+	title: string;
+	captured: string | null;
+	source: string | null;
+	kind: 'feature' | 'bug' | 'improvement' | 'question' | 'inspiration' | 'tech-debt' | null;
+	severity: 'blocker' | 'major' | 'minor' | 'cosmetic' | null;
+	affects: string | null;
+	context: string | null;
+	discuss: 'yes' | 'no';
+	related: string[];
+	brief: string | null;
+	reviewed: string | null;
+	idea: string | null;
+}
+
+export interface Brief {
+	path: string;
+	id: string | null;
+	title: string;
+	status: string | null;
+	origin: string | null;
+	updated: string | null;
+	decision: string | null;
+	problem: string | null;
+	doneWhen: string | null;
+	revisions: { date: string | null; text: string }[];
 }
 
 export interface Risk {
@@ -92,24 +150,43 @@ export interface Planning {
 	schemaVersion: 3;
 	generatedAt: string;
 	source: { branch: string | null; head: string | null };
+	vision: {
+		problem: string | null;
+		customer: string | null;
+		outcomes: { id: string; text: string }[];
+		outOfScope: string[];
+		constraints: { timeAvailable: string | null; budget: string | null; stack: string | null };
+	};
 	strategy: {
 		focus: { milestone: string | null; whyNow: string | null };
 		milestones: Milestone[];
+		bets: { id: string; statement: string; evidence: string | null; signal: string | null; status: string | null }[];
+		assumptions: { id: string; statement: string; test: string | null; status: string | null }[];
+		notDoing: { thing: string; why: string | null; revisit: string | null }[];
+		decisions: { date: string | null; decision: string; why: string | null; rejected: string | null }[];
 	};
 	now: {
 		status: 'idle' | 'active';
 		item: ItemRef | null;
-		stage: 'design' | 'plan' | 'execute' | 'finish' | null;
+		stage: Stage | null;
+		session: string | null;
+		brief: string | null;
 		milestone: string | null;
+		spec: string | null;
+		plan: string | null;
 		started: string | null;
+		doneWhen: string[];
+		checkpoint: Checkpoint | null;
 	};
-	plan: { path: string; checked: number; total: number } | null;
+	plan: { path: string; checked: number; total: number; tasks: PlanTask[] } | null;
 	roadmap: { next: RoadmapItem[]; later: RoadmapItem[] };
 	board: {
 		columns: { now: Card[]; next: Card[]; foryou: Card[]; waiting: Card[]; done: DoneEntry[] };
 		activity: Activity[];
 	};
-	log: { done: DoneEntry[] };
+	log: { done: DoneEntry[]; dropped: DroppedEntry[]; reviews: { date: string; summary: string | null }[] };
+	inbox: InboxEntry[];
+	briefs: Brief[];
 	risks: { open: Risk[]; closed: Risk[]; removed: RemovedRisk[] };
 	counts: {
 		next: number;

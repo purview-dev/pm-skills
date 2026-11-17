@@ -4,10 +4,14 @@
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
 import ExportStamp from '../../components/ExportStamp.astro';
-import { docsHref, loadPlanning } from '../../lib/planning';
+import { docsHref, featureHref, features, loadPlanning } from '../../lib/planning';
+import { views } from '../../views';
 import '../../styles/components.css';
 
 const planning = loadPlanning();
+// An item with an ID has its own page when the Features view is on.
+const known = new Set(features(planning).map((feature) => feature.id));
+const itemHref = (id: string | null) => (id && views.features && known.has(id) ? featureHref(id) : null);
 
 // `activity` carries no plan path; the Done log does.
 const plans = new Map(planning.log.done.filter((entry) => entry.id).map((entry) => [entry.id, entry.plan]));
@@ -29,6 +33,7 @@ const plans = new Map(planning.log.done.filter((entry) => entry.id).map((entry) 
 			{
 				planning.board.activity.map((entry) => {
 					const plan = entry.kind === 'done' && entry.id ? docsHref(plans.get(entry.id) ?? null) : null;
+					const href = itemHref(entry.id);
 
 					return (
 						<tr>
@@ -37,8 +42,16 @@ const plans = new Map(planning.log.done.filter((entry) => entry.id).map((entry) 
 								<span class={`log-kind log-kind--${entry.kind}`}>{entry.kind}</span>
 							</td>
 							<td>
-								{entry.id && <strong>{entry.id} </strong>}
-								{entry.title}
+								{href ? (
+									<a href={href}>
+										<strong>{entry.id}</strong> {entry.title}
+									</a>
+								) : (
+									<>
+										{entry.id && <strong>{entry.id} </strong>}
+										{entry.title}
+									</>
+								)}
 								{plan && (
 									<>
 										{' '}
