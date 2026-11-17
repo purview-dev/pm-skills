@@ -1,6 +1,6 @@
 # Docs site as a versioned package
 
-- Status: on roadmap (R-008, R-009, R-010, R-011, R-012, R-013, R-014), R-008 active
+- Status: on roadmap (R-009, R-010, R-011, R-012, R-013, R-014)
 - Origin: user request
 - Updated: 2026-11-17
 
@@ -104,3 +104,4 @@ Proposed: Serves V4. Milestone: none (no milestones exist until R-001 Set milest
 ## Decision
 
 - 2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.
+- 2026-11-17 R-008 Docs-site package: skeleton at parity done on branch feat/r-008-docs-site-package-skeleton. Scope agreed during it: parity is the same page set, not the same content (page content may change as the package improves); a pack-and-install test proves an installed consumer builds. Design: docs/superpowers/specs/2026-11-17-docs-site-package-skeleton-design.md.
