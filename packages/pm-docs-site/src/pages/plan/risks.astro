@@ -1,0 +1,253 @@
+---
+// The risk register from planning.json's `risks`: the RAG counts, the
+// likelihood × impact matrix of open risks, then open, closed and removed risks.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+import ExportStamp from '../../components/ExportStamp.astro';
+import { loadPlanning, riskMatrix } from '../../lib/planning';
+import '../../styles/components.css';
+
+const planning = loadPlanning();
+const { risks, counts } = planning;
+const matrix = riskMatrix(risks.open);
+
+const figures = [
+	{ label: 'Red', value: counts.redRisks, rag: 'red' },
+	{ label: 'Amber', value: counts.amberRisks, rag: 'amber' },
+	{ label: 'Green', value: counts.greenRisks, rag: 'green' },
+	{ label: 'Closed', value: risks.closed.length, rag: null },
+];
+---
+
+<StarlightPage frontmatter={{ title: 'Risks', description: 'The risk register: open risks by RAG status, then closed and removed risks.' }}>
+	<ExportStamp />
+
+	<section>
+		<h2>Open risks: {counts.openRisks}</h2>
+		<dl class="risk-figures">
+			{
+				figures.map((figure) => (
+					<div class={figure.rag ? `risk-figure--${figure.rag}` : undefined}>
+						<dt>{figure.label}</dt>
+						<dd>{figure.value}</dd>
+					</div>
+				))
+			}
+		</dl>
+	</section>
+
+	<section>
+		<h2>Likelihood × impact</h2>
+		<div class="risk-matrix not-content" role="table" aria-label="Open risks by likelihood and impact">
+			<div role="row" class="risk-matrix__row">
+				<span role="columnheader" class="risk-matrix__corner">Impact ↓ / Likelihood →</span>
+				{matrix[0]!.map((cell) => <span role="columnheader" class="risk-matrix__axis">{cell.likelihood}</span>)}
+			</div>
+			{
+				matrix.map((row) => (
+					<div role="row" class="risk-matrix__row">
+						<span role="rowheader" class="risk-matrix__axis">{row[0]!.impact}</span>
+						{row.map((cell) => (
+							<div role="cell" class={`risk-matrix__cell risk-matrix__cell--${cell.rag}`}>
+								{cell.risks.length === 0 ? (
+									<span class="plan-empty">–</span>
+								) : (
+									cell.risks.map((risk) => (
+										<a href={`#${risk.id.toLowerCase()}`} title={risk.title}>
+											{risk.id}
+										</a>
+									))
+								)}
+							</div>
+						))}
+					</div>
+				))
+			}
+		</div>
+		<p class="plan-empty">A cell's colour is the RAG its likelihood and impact derive; a risk's own RAG can differ when it is overridden.</p>
+	</section>
+
+	<section>
+		<h2>Open</h2>
+		{risks.open.length === 0 && <p class="plan-empty">No open risks.</p>}
+		{
+			risks.open.length > 0 && (
+				<table class="risk-table">
+					<thead>
+						<tr>
+							<th scope="col">RAG</th>
+							<th scope="col">Risk</th>
+							<th scope="col">Likelihood</th>
+							<th scope="col">Impact</th>
+							<th scope="col">Status</th>
+							<th scope="col">Owner</th>
+							<th scope="col">Mitigation</th>
+							<th scope="col">Reviewed</th>
+						</tr>
+					</thead>
+					<tbody>
+						{risks.open.map((risk) => (
+							<tr id={risk.id.toLowerCase()}>
+								<td>
+									<span class={`rag rag--${risk.rag}`}>{risk.rag}</span>
+								</td>
+								<td>
+									<strong>{risk.id}</strong> {risk.title}
+									{risk.affects && <div class="risk-detail">Affects: {risk.affects}</div>}
+									{risk.trigger && <div class="risk-detail">Trigger: {risk.trigger}</div>}
+									{risk.ragOverride && <div class="risk-detail">RAG override: {risk.ragOverride}</div>}
+								</td>
+								<td>{risk.likelihood}</td>
+								<td>{risk.impact}</td>
+								<td>{risk.status}</td>
+								<td>{risk.owner}</td>
+								<td>{risk.mitigation ?? 'none'}</td>
+								<td>{risk.reviewed}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			)
+		}
+	</section>
+
+	<section>
+		<h2>Closed</h2>
+		{risks.closed.length === 0 && <p class="plan-empty">No closed risks.</p>}
+		{
+			risks.closed.length > 0 && (
+				<table class="risk-table">
+					<thead>
+						<tr>
+							<th scope="col">RAG</th>
+							<th scope="col">Risk</th>
+							<th scope="col">Closed</th>
+						</tr>
+					</thead>
+					<tbody>
+						{risks.closed.map((risk) => (
+							<tr id={risk.id.toLowerCase()}>
+								<td>
+									<span class={`rag rag--${risk.rag}`}>{risk.rag}</span>
+								</td>
+								<td>
+									<strong>{risk.id}</strong> {risk.title}
+								</td>
+								<td>{risk.closed}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			)
+		}
+	</section>
+
+	{
+		risks.removed.length > 0 && (
+			<section>
+				<h2>Removed</h2>
+				<ul>
+					{risks.removed.map((entry) => (
+						<li>
+							{entry.date} <strong>{entry.id}</strong> {entry.title}
+							{entry.reason && <>. Reason: {entry.reason}</>}
+						</li>
+					))}
+				</ul>
+			</section>
+		)
+	}
+</StarlightPage>
+
+<style>
+	.risk-figures {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+		gap: 0.75rem;
+	}
+
+	.risk-figures > div {
+		padding: 0.75rem 1rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-left-width: 4px;
+		border-radius: 10px;
+	}
+
+	.risk-figures dt {
+		color: var(--sl-color-gray-3);
+		font-size: var(--sl-text-sm);
+	}
+
+	.risk-figures dd {
+		margin: 0;
+		font-size: var(--sl-text-2xl);
+		font-weight: 700;
+	}
+
+	.risk-figure--red {
+		border-left-color: #ef4444 !important;
+	}
+
+	.risk-figure--amber {
+		border-left-color: #f59e0b !important;
+	}
+
+	.risk-figure--green {
+		border-left-color: #10b981 !important;
+	}
+
+	.risk-matrix {
+		display: grid;
+		gap: 0.35rem;
+		max-width: 36rem;
+	}
+
+	.risk-matrix__row {
+		display: grid;
+		grid-template-columns: 8rem repeat(3, 1fr);
+		gap: 0.35rem;
+	}
+
+	.risk-matrix__corner,
+	.risk-matrix__axis {
+		color: var(--sl-color-gray-3);
+		font-size: var(--sl-text-xs);
+		text-transform: capitalize;
+		align-self: center;
+	}
+
+	.risk-matrix__cell {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+		align-content: center;
+		justify-content: center;
+		min-height: 3.5rem;
+		padding: 0.4rem;
+		border-radius: 8px;
+		border: 1px solid var(--sl-color-hairline);
+		font-size: var(--sl-text-sm);
+		font-weight: 600;
+	}
+
+	.risk-matrix__cell--red {
+		background: #ef444426;
+	}
+
+	.risk-matrix__cell--amber {
+		background: #f59e0b26;
+	}
+
+	.risk-matrix__cell--green {
+		background: #10b98126;
+	}
+
+	.risk-table td:first-child {
+		white-space: nowrap;
+	}
+
+	.risk-detail {
+		color: var(--sl-color-gray-3);
+		font-size: var(--sl-text-xs);
+	}
+</style>

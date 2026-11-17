@@ -34,6 +34,11 @@ describe('resolveOptions', () => {
 		expect(resolved.docs).toEqual({ root: resolve(root, '..'), sources: [] });
 	});
 
+	it('labels the export with the path as written, so pages never show a machine path', () => {
+		expect(resolveOptions({ title: 'T' }, root).planningLabel).toBe('../planning/planning.json');
+		expect(resolveOptions({ title: 'T', planning: 'data\\plan.json' }, root).planningLabel).toBe('data/plan.json');
+	});
+
 	it('keeps the description', () => {
 		expect(resolveOptions({ title: 'T', description: 'D' }, root).description).toBe('D');
 	});

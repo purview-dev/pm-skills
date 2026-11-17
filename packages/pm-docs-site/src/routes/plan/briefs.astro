@@ -1,0 +1,66 @@
+---
+// The shaping record from planning.json's `briefs`: each brief's status, the
+// problem it names, its Done when, its decision, and any revisions.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+import ExportStamp from '../../components/ExportStamp.astro';
+import { briefAnchor, featureHref, features, loadPlanning } from '../../lib/planning';
+import config from 'virtual:pm-docs-site/config';
+import '../../styles/components.css';
+
+const planning = loadPlanning();
+const known = new Set(features(planning).map((feature) => feature.id));
+---
+
+<StarlightPage frontmatter={{ title: 'Briefs', description: 'Each shaped idea: its status, problem, Done when, decision and revisions.' }}>
+	<ExportStamp />
+
+	<p>{planning.briefs.length} briefs, {planning.counts.shapingBriefs} still shaping.</p>
+
+	{planning.briefs.length === 0 && <p class="plan-empty">No briefs. pm-shape writes one per idea it discusses.</p>}
+
+	{
+		planning.briefs.map((brief) => (
+			<section id={briefAnchor(brief.path)}>
+				<h2>
+					{brief.id && config.views.features && known.has(brief.id) ? (
+						<a href={featureHref(brief.id)}>
+							{brief.id} {brief.title}
+						</a>
+					) : (
+						[brief.id, brief.title].filter(Boolean).join(' ')
+					)}
+				</h2>
+				<p class="plan-meta">
+					{brief.status ?? 'No status'}
+					{brief.updated && <> · updated {brief.updated}</>}
+					{brief.origin && <> · from {brief.origin}</>} · <code>{brief.path}</code>
+				</p>
+				{brief.problem && (
+					<p>
+						<strong>Problem:</strong> {brief.problem}
+					</p>
+				)}
+				{brief.doneWhen && (
+					<p>
+						<strong>Done when:</strong> {brief.doneWhen}
+					</p>
+				)}
+				{brief.decision && (
+					<p>
+						<strong>Decision:</strong> {brief.decision}
+					</p>
+				)}
+				{brief.revisions.length > 0 && (
+					<ul>
+						{brief.revisions.map((revision) => (
+							<li>
+								{revision.date && <strong>{revision.date}</strong>} {revision.text}
+							</li>
+						))}
+					</ul>
+				)}
+			</section>
+		))
+	}
+</StarlightPage>

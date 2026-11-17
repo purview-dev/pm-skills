@@ -1,0 +1,106 @@
+{
+  "$schema": "./planning.schema.json",
+  "schemaVersion": 3,
+  "generatedAt": "2026-11-09T12:50:07+00:00",
+  "generator": { "skill": "pm-export", "skillsVersion": 12, "rulesVersion": 12 },
+  "project": { "pmRoot": "planning/", "defaultBranch": "main", "branchPattern": "feat/<id>-<slug>" },
+  "source": { "branch": "feat/r-012-invoice-export", "head": "ed9fac2a1b2c3d4e5f60718293a4b5c6d7e8f901" },
+  "vision": {
+    "problem": "Tenants cannot get their invoices without asking.",
+    "customer": "The finance contact of a tenant.",
+    "outcomes": [{ "id": "V1", "text": "A tenant signs up alone." }, { "id": "V2", "text": "A tenant downloads every invoice." }],
+    "outOfScope": ["Payments in the app."],
+    "constraints": { "timeAvailable": "6 hours per week", "budget": null, "stack": "Astro, Postgres" }
+  },
+  "strategy": {
+    "focus": { "milestone": "M2 Billing", "whyNow": "Tenants ask for their invoices every month." },
+    "milestones": [
+      { "id": "M1", "name": "First release", "serves": ["V1"], "exitCriteria": "A tenant signs up without help.", "target": "none", "status": "done (2026-11-03)" },
+      { "id": "M2", "name": "Billing", "serves": ["V2", "V1"], "exitCriteria": "A tenant sees and downloads its invoices.", "target": "none", "status": "active" }
+    ],
+    "bets": [{ "id": "B1", "statement": "We believe CSV export ends the invoice emails.", "evidence": "Nine requests in October.", "signal": "No invoice request for a month.", "status": "open" }],
+    "assumptions": [{ "id": "A1", "statement": "Accountants open CSV.", "test": "Ask three tenants.", "status": "holds" }],
+    "notDoing": [{ "thing": "PDF invoices", "why": "CSV covers it.", "revisit": "When a tenant asks twice." }],
+    "decisions": [{ "date": "2026-11-01", "decision": "Export CSV, not PDF.", "why": "Accountants import it.", "rejected": "PDF." }]
+  },
+  "now": {
+    "status": "active",
+    "item": { "id": "R-012", "title": "Invoice export" },
+    "stage": "execute",
+    "session": "feat/r-012-invoice-export",
+    "brief": "planning/briefs/2026-11-09-invoice-export.md",
+    "milestone": null,
+    "spec": "docs/superpowers/specs/2026-11-09-invoice-export-design.md",
+    "plan": "docs/superpowers/plans/2026-11-09-invoice-export.md",
+    "started": "2026-11-09",
+    "doneWhen": ["An invoice downloads as CSV"],
+    "checkpoint": { "at": "2026-11-09 12:40", "stoppedAt": "Task 2, step 1", "nextAction": "Write the CSV header", "startWith": "src/export.ts", "decisions": "none", "context": null, "openQuestion": null }
+  },
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-09-invoice-export.md",
+    "checked": 3,
+    "total": 5,
+    "tasks": [
+      { "number": 1, "title": "Query the invoices", "checked": 2, "total": 3, "steps": [{ "text": "Write the test", "checked": true }, { "text": "Query", "checked": true }, { "text": "Refactor", "checked": false }] },
+      { "number": 2, "title": "Write the CSV", "checked": 1, "total": 2, "steps": [{ "text": "Write the test", "checked": true }, { "text": "Write the rows", "checked": false }] }
+    ]
+  },
+  "roadmap": {
+    "next": [
+      { "id": "R-013", "title": "Email invoices to tenants", "section": "next", "position": 1, "label": "next", "serves": ["V2"], "milestone": "M2", "owner": "agent", "doneWhen": "A tenant receives its invoice by email.", "size": "M", "dependsOn": ["R-010"], "status": { "value": "ready", "reason": null, "since": null }, "brief": null, "note": null, "revisits": null, "claimable": true },
+      { "id": "R-014", "title": "Retry failed invoice emails", "section": "next", "position": 2, "label": "waiting", "serves": ["V2", "V1"], "milestone": "M2", "owner": "agent", "doneWhen": "A failed email is retried three times.", "size": "M", "dependsOn": ["R-013"], "status": { "value": "ready", "reason": null, "since": null }, "brief": null, "note": null, "revisits": null, "claimable": false }
+    ],
+    "later": [
+      { "id": "R-020", "title": "README matches the code", "section": "later", "position": 1, "label": "later", "serves": ["V1"], "milestone": null, "owner": "agent", "doneWhen": "README.md lists every command in the justfile.", "size": "S", "dependsOn": [], "status": { "value": "ready", "reason": null, "since": null }, "brief": null, "note": null, "revisits": null, "claimable": false }
+    ]
+  },
+  "board": {
+    "columns": {
+      "now": [{ "id": "R-012", "title": "Invoice export", "owner": null, "size": null, "detail": "execute, 3/5 plan steps" }],
+      "next": [{ "id": "R-013", "title": "Email invoices to tenants", "owner": "agent", "size": "M", "detail": "ready" }],
+      "foryou": [],
+      "waiting": [{ "id": "R-014", "title": "Retry failed invoice emails", "owner": "agent", "size": "M", "detail": "depends on R-013" }],
+      "done": [{ "date": "2026-11-09", "id": "R-011", "title": "Write the first export", "milestone": "none", "owner": "user", "plan": null, "result": "planning.json validates." }]
+    },
+    "activity": [
+      { "date": "2026-11-09", "kind": "done", "id": "R-011", "title": "Write the first export", "milestone": "none", "owner": "user", "result": "planning.json validates." },
+      { "date": "2026-11-04", "kind": "dropped", "id": null, "title": "Stray scratch folder", "milestone": null, "owner": null, "result": "Reason: user decision." },
+      { "date": "2026-11-03", "kind": "review", "id": null, "title": null, "milestone": null, "owner": null, "result": "Inbox 14 to 5." },
+      { "date": "2026-11-02", "kind": "done", "id": "R-003", "title": "Tenant model", "milestone": null, "owner": null, "result": "Merged." },
+      { "date": "2026-11-01", "kind": "dropped", "id": "R-009", "title": "Invoice PDFs", "milestone": null, "owner": null, "result": "Reason: CSV covers it." }
+    ]
+  },
+  "log": {
+    "done": [
+      { "date": "2026-11-09", "id": "R-011", "title": "Write the first export", "milestone": "none", "owner": "user", "plan": null, "result": "planning.json validates." },
+      { "date": "2026-11-04", "id": "R-010", "title": "Choose the invoice format", "milestone": "M2", "owner": "user", "plan": null, "result": "CSV with one row per line item." },
+      { "date": "2026-11-02", "id": "R-003", "title": "Tenant model", "milestone": null, "owner": null, "plan": "docs/superpowers/plans/2026-10-27-tenant-model.md", "result": "Merged." }
+    ],
+    "dropped": [
+      { "date": "2026-11-04", "id": null, "title": "Stray scratch folder", "reason": "user decision." },
+      { "date": "2026-11-01", "id": "R-009", "title": "Invoice PDFs", "reason": "CSV covers it." }
+    ],
+    "reviews": [{ "date": "2026-11-03", "summary": "Inbox 14 to 5." }]
+  },
+  "inbox": [
+    { "file": "planning/inbox/2026-11-08-1010-csv-encoding.md", "title": "CSV opens garbled in Excel", "captured": "2026-11-08 10:10", "source": "user", "kind": "bug", "severity": "major", "affects": "R-012", "context": "R-012 execute", "discuss": "no", "related": ["R-012"], "brief": null, "reviewed": "never", "idea": "Accented names show as two characters." },
+    { "file": "planning/inbox/2026-11-09-0900-yearly-export.md", "title": "Export a whole year at once", "captured": "2026-11-09 09:00", "source": "agent (R-012 execute)", "kind": "feature", "severity": null, "affects": null, "context": "R-012 execute", "discuss": "yes", "related": [], "brief": null, "reviewed": "never", "idea": "One CSV for the tax year." }
+  ],
+  "briefs": [
+    { "path": "planning/briefs/2026-11-07-referrals.md", "id": null, "title": "Referral credit", "status": "shaping", "origin": "user request", "updated": "2026-11-07", "decision": null, "problem": "Tenants refer others for nothing.", "doneWhen": null, "revisions": [] },
+    { "path": "planning/briefs/2026-11-09-invoice-export.md", "id": "R-012", "title": "Invoice export", "status": "on roadmap (R-012)", "origin": "inbox/2026-11-01-0800-invoice-export.md", "updated": "2026-11-09", "decision": "Added to Next as R-012.", "problem": "Tenants email us for invoices.", "doneWhen": "An invoice downloads as CSV.", "revisions": [{ "date": "2026-11-09", "text": "CSV, not PDF. Mode: fix-in-place." }] }
+  ],
+  "risks": {
+    "open": [
+      { "id": "RK-002", "title": "Mail provider throttles bulk sends", "likelihood": "high", "impact": "high", "rag": "red", "ragOverride": null, "status": "mitigating", "owner": "agent", "affects": "R-013", "trigger": "More than 1% of sends return 429", "mitigation": "R-014 Retry failed invoice emails", "raised": "2026-11-05 (user)", "reviewed": "2026-11-08", "closed": null },
+      { "id": "RK-004", "title": "CSV opens garbled in spreadsheets", "likelihood": "low", "impact": "medium", "rag": "amber", "ragOverride": "tenants are accountants (derived green, 2026-11-09)", "status": "open", "owner": "user", "affects": "R-012", "trigger": null, "mitigation": null, "raised": "2026-11-09 (agent (R-012 execute))", "reviewed": "2026-11-09", "closed": null },
+      { "id": "RK-005", "title": "Invoice totals round differently", "likelihood": "low", "impact": "low", "rag": "green", "ragOverride": null, "status": "accepted", "owner": "agent", "affects": null, "trigger": null, "mitigation": null, "raised": "2026-11-09 (user)", "reviewed": "never", "closed": null }
+    ],
+    "closed": [
+      { "id": "RK-001", "title": "No tenant signs up in the beta", "likelihood": "medium", "impact": "high", "rag": "red", "ragOverride": null, "status": "closed", "owner": "user", "affects": "M1", "trigger": null, "mitigation": null, "raised": "2026-10-20 (user)", "reviewed": "2026-11-01", "closed": "2026-11-03: twelve tenants signed up" }
+    ],
+    "removed": [{ "date": "2026-11-06", "id": "RK-003", "title": "Mail provider limits", "reason": "duplicate of RK-002" }]
+  },
+  "counts": { "next": 2, "later": 1, "nextMax": 5, "openInbox": 2, "discuss": 1, "shapingBriefs": 1, "done": 3, "dropped": 2, "blockers": 0, "openRisks": 3, "redRisks": 1, "amberRisks": 1, "greenRisks": 1 },
+  "checks": { "reviewDue": false, "lastReview": "2026-11-04", "claimable": ["R-013"], "drift": false }
+}

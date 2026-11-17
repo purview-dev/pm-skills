@@ -1,0 +1,237 @@
+/*
+ * The astrocomponents.dev components read a small set of design tokens
+ * (--c-primary, --c-text-1, --r-md, --font-sans, …). They map onto Starlight's
+ * theme variables here, which Starlight switches between light and dark.
+ */
+:root {
+	--c-primary: var(--sl-color-accent);
+	--c-primary-light: var(--sl-color-accent-high);
+	--c-text-1: var(--sl-color-white);
+	--c-text-2: var(--sl-color-gray-2);
+	--c-text-3: var(--sl-color-gray-3);
+	--r-md: 10px;
+	--sp-4: 0.9rem;
+	--font-sans: var(--sl-font);
+}
+
+/* A kanban board: always one row of five columns, scrolling sideways when the
+   page is narrower than the board, never wrapping a column onto a new line. */
+.plan-columns {
+	display: grid;
+	grid-template-columns: repeat(5, minmax(11rem, 1fr));
+	gap: 1rem;
+	align-items: start;
+	overflow-x: auto;
+	padding-bottom: 0.5rem;
+}
+
+.plan-column {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	padding: 0.75rem;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: 12px;
+	background: var(--sl-color-bg);
+}
+
+.plan-column > h2 {
+	margin: 0;
+	font-size: var(--sl-text-base);
+	display: flex;
+	justify-content: space-between;
+}
+
+.plan-column > * {
+	max-width: none !important;
+	margin-top: 0 !important;
+}
+
+.plan-empty {
+	color: var(--sl-color-gray-3);
+	font-size: var(--sl-text-sm);
+	margin: 0;
+}
+
+/* A risk's RAG status, wherever it is shown: the word is always printed, so
+   the colour is never the only signal. */
+.rag {
+	display: inline-block;
+	padding: 0.1rem 0.45rem;
+	border-radius: 4px;
+	border: 1px solid var(--sl-color-hairline);
+	font-size: var(--sl-text-xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	white-space: nowrap;
+}
+
+.rag--red {
+	color: #b91c1c;
+	background: #ef44441a;
+	border-color: #ef444466;
+}
+
+.rag--amber {
+	color: #b45309;
+	background: #f59e0b1a;
+	border-color: #f59e0b66;
+}
+
+.rag--green {
+	color: #047857;
+	background: #10b9811a;
+	border-color: #10b98166;
+}
+
+:root[data-theme='dark'] .rag--red {
+	color: #fca5a5;
+}
+
+:root[data-theme='dark'] .rag--amber {
+	color: #fcd34d;
+}
+
+:root[data-theme='dark'] .rag--green {
+	color: #6ee7b7;
+}
+
+.export-stamp {
+	color: var(--sl-color-gray-3);
+	font-size: var(--sl-text-xs);
+}
+
+/* An item's state or roadmap label: the word is always printed. */
+.state {
+	display: inline-block;
+	padding: 0.1rem 0.45rem;
+	border-radius: 4px;
+	border: 1px solid var(--sl-color-hairline);
+	font-size: var(--sl-text-xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+.state--now {
+	color: var(--sl-color-accent-high);
+	background: var(--sl-color-accent-low);
+}
+
+.state--done {
+	color: #047857;
+	border-color: #10b98166;
+}
+
+.state--dropped,
+.state--blocked {
+	color: #b91c1c;
+	border-color: #ef444466;
+}
+
+.state--waiting {
+	color: #b45309;
+	border-color: #f59e0b66;
+}
+
+:root[data-theme='dark'] .state--done {
+	color: #6ee7b7;
+}
+
+:root[data-theme='dark'] .state--dropped,
+:root[data-theme='dark'] .state--blocked {
+	color: #fca5a5;
+}
+
+:root[data-theme='dark'] .state--waiting {
+	color: #fcd34d;
+}
+
+/* Tables and fact lists on the plan pages. */
+.plan-table td:first-child {
+	min-width: 12rem;
+}
+
+.plan-table td.plan-nowrap {
+	white-space: nowrap;
+}
+
+.plan-count {
+	color: var(--sl-color-gray-3);
+	font-size: var(--sl-text-base);
+	font-weight: 400;
+}
+
+.plan-facts {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+	gap: 0.75rem;
+}
+
+.plan-facts > div {
+	padding: 0.6rem 0.9rem;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: 10px;
+}
+
+.plan-facts dt {
+	color: var(--sl-color-gray-3);
+	font-size: var(--sl-text-xs);
+}
+
+.plan-facts dd {
+	margin: 0;
+	font-weight: 600;
+}
+
+.plan-progress {
+	width: 100%;
+	max-width: 24rem;
+	height: 0.5rem;
+	accent-color: var(--sl-color-accent);
+}
+
+.plan-focus {
+	margin-left: 0.5rem;
+	padding: 0.1rem 0.5rem;
+	border-radius: 999px;
+	background: var(--sl-color-accent-low);
+	color: var(--sl-color-accent-high);
+	font-size: var(--sl-text-xs);
+	vertical-align: middle;
+}
+
+.plan-meta {
+	color: var(--sl-color-gray-2);
+	font-size: var(--sl-text-sm);
+}
+
+/* Cards in a wrapping grid (milestones, inbox ideas, plan tasks). */
+.plan-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+	gap: 1rem;
+	align-items: start;
+}
+
+.plan-cards > * {
+	margin-top: 0 !important;
+}
+
+.plan-card {
+	padding: 1rem;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: 12px;
+}
+
+.plan-card h3 {
+	margin: 0 0 0.35rem;
+	font-size: var(--sl-text-lg);
+}
+
+.plan-card p {
+	margin: 0.35rem 0 0;
+}

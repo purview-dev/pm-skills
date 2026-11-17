@@ -1,0 +1,67 @@
+---
+// The roadmap by milestone, in strategy order: what is done, what is in
+// progress, and what is queued, all from planning.json.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+import ExportStamp from '../../components/ExportStamp.astro';
+import StatusTimelineFeed from '../../components/lib/StatusTimelineFeed.astro';
+import { loadPlanning, roadmapGroups } from '../../lib/planning';
+import '../../styles/components.css';
+
+const groups = roadmapGroups(loadPlanning());
+---
+
+<StarlightPage frontmatter={{ title: 'Roadmap', description: 'Milestones in order, with what is done, in progress and queued.' }}>
+	<ExportStamp />
+
+	{
+		groups.map((group) => (
+			<section class="roadmap-group">
+				<h2>
+					{group.milestone ? `${group.milestone.id} ${group.milestone.name}` : 'No milestone'}
+					{group.milestone?.isFocus && <span class="roadmap-focus">Focus</span>}
+				</h2>
+				<p class="roadmap-meta">
+					{group.milestone && <strong>{group.milestone.status}</strong>}
+					{group.milestone && ' · '}
+					{group.progress.done} of {group.progress.total} done
+					{group.milestone?.exitCriteria && <> — {group.milestone.exitCriteria}</>}
+				</p>
+				{group.progress.total > 0 && (
+					<progress class="roadmap-progress" max={group.progress.total} value={group.progress.done}>
+						{group.progress.done} of {group.progress.total}
+					</progress>
+				)}
+				{group.events.length === 0 ? <p class="plan-empty">No items</p> : <StatusTimelineFeed events={group.events} />}
+			</section>
+		))
+	}
+</StarlightPage>
+
+<style>
+	.roadmap-group + .roadmap-group {
+		margin-top: 2.5rem;
+	}
+
+	.roadmap-focus {
+		margin-left: 0.5rem;
+		padding: 0.1rem 0.5rem;
+		border-radius: 999px;
+		background: var(--sl-color-accent-low);
+		color: var(--sl-color-accent-high);
+		font-size: var(--sl-text-xs);
+		vertical-align: middle;
+	}
+
+	.roadmap-meta {
+		color: var(--sl-color-gray-2);
+		font-size: var(--sl-text-sm);
+	}
+
+	.roadmap-progress {
+		width: 100%;
+		max-width: 24rem;
+		height: 0.5rem;
+		accent-color: var(--sl-color-accent);
+	}
+</style>

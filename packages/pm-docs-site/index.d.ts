@@ -39,6 +39,8 @@ export interface ResolvedOptions {
 	title: string;
 	description: string | null;
 	planning: string;
+	/** The export path as the options wrote it, `/`-separated: shown on pages instead of the machine path. */
+	planningLabel: string;
 	docs: { root: string; sources: DocsSource[] } | null;
 	views: Record<ViewName, boolean>;
 }

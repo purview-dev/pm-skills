@@ -40,6 +40,7 @@ export function resolveOptions(options, root) {
 		title: options.title,
 		description: options.description ?? null,
 		planning: resolve(root, options.planning ?? DEFAULT_PLANNING),
+		planningLabel: (options.planning ?? DEFAULT_PLANNING).replace(/\\/g, '/'),
 		docs: options.docs ? { root: resolve(root, options.docs.root), sources: options.docs.sources } : null,
 		views,
 	};
