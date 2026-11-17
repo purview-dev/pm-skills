@@ -4,15 +4,15 @@
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
 import ExportStamp from '../../components/ExportStamp.astro';
-import { briefAnchor, featureHref, features, loadPlanning } from '../../lib/planning';
-import config from 'virtual:pm-docs-site/config';
+import LinkedText from '../../components/LinkedText.astro';
+import RefLink from '../../components/RefLink.astro';
+import { briefAnchor, loadPlanning } from '../../lib/planning';
 import '../../styles/components.css';
 
 const planning = loadPlanning();
-const known = new Set(features(planning).map((feature) => feature.id));
 ---
 
-<StarlightPage frontmatter={{ title: 'Briefs', description: 'Each shaped idea: its status, problem, Done when, decision and revisions.' }}>
+<StarlightPage frontmatter={{ title: 'Briefs', description: 'Each shaped idea: its status, problem, Done when, decision and revisions.', tableOfContents: false }}>
 	<ExportStamp />
 
 	<p>{planning.briefs.length} briefs, {planning.counts.shapingBriefs} still shaping.</p>
@@ -23,39 +23,39 @@ const known = new Set(features(planning).map((feature) => feature.id));
 		planning.briefs.map((brief) => (
 			<section id={briefAnchor(brief.path)}>
 				<h2>
-					{brief.id && config.views.features && known.has(brief.id) ? (
-						<a href={featureHref(brief.id)}>
-							{brief.id} {brief.title}
-						</a>
-					) : (
-						[brief.id, brief.title].filter(Boolean).join(' ')
-					)}
+					{brief.id && <RefLink ref={brief.id} label="id" />} {brief.title}
 				</h2>
 				<p class="plan-meta">
-					{brief.status ?? 'No status'}
+					{brief.status ? <LinkedText text={brief.status} /> : 'No status'}
 					{brief.updated && <> · updated {brief.updated}</>}
-					{brief.origin && <> · from {brief.origin}</>} · <code>{brief.path}</code>
+					{brief.origin && (
+						<>
+							{' '}
+							· from <LinkedText text={brief.origin} />
+						</>
+					)}{' '}
+					· <RefLink ref={brief.path} label="id" />
 				</p>
 				{brief.problem && (
 					<p>
-						<strong>Problem:</strong> {brief.problem}
+						<strong>Problem:</strong> <LinkedText text={brief.problem} />
 					</p>
 				)}
 				{brief.doneWhen && (
 					<p>
-						<strong>Done when:</strong> {brief.doneWhen}
+						<strong>Done when:</strong> <LinkedText text={brief.doneWhen} />
 					</p>
 				)}
 				{brief.decision && (
 					<p>
-						<strong>Decision:</strong> {brief.decision}
+						<strong>Decision:</strong> <LinkedText text={brief.decision} />
 					</p>
 				)}
 				{brief.revisions.length > 0 && (
 					<ul>
 						{brief.revisions.map((revision) => (
 							<li>
-								{revision.date && <strong>{revision.date}</strong>} {revision.text}
+								{revision.date && <strong>{revision.date}</strong>} <LinkedText text={revision.text} />
 							</li>
 						))}
 					</ul>

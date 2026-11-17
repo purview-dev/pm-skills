@@ -4,9 +4,11 @@
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
 import ExportStamp from '../../components/ExportStamp.astro';
+import LinkedText from '../../components/LinkedText.astro';
 import TaskKanbanCard from '../../components/lib/TaskKanbanCard.astro';
-import { docsHref, featureHref, initials, loadPlanning, planProgress, sizeToPriority } from '../../lib/planning';
-import config from 'virtual:pm-docs-site/config';
+import RefLink from '../../components/RefLink.astro';
+import { docsHref, initials, loadPlanning, planProgress, sizeToPriority } from '../../lib/planning';
+import { siteRefs } from '../../lib/references';
 import '../../styles/components.css';
 
 const planning = loadPlanning();
@@ -32,7 +34,7 @@ const checkpoint = now.checkpoint
 	: [];
 ---
 
-<StarlightPage frontmatter={{ title: 'Now', description: 'The active item: its Done when checks, the last checkpoint, and its plan.' }}>
+<StarlightPage frontmatter={{ title: 'Now', description: 'The active item: its Done when checks, the last checkpoint, and its plan.', tableOfContents: false }}>
 	<ExportStamp />
 
 	{!now.item && <p class="plan-empty">Nothing is in progress.</p>}
@@ -41,13 +43,7 @@ const checkpoint = now.checkpoint
 		now.item && (
 			<>
 				<h2>
-					{config.views.features ? (
-						<a href={featureHref(now.item.id)}>
-							{now.item.id} {now.item.title}
-						</a>
-					) : (
-						`${now.item.id} ${now.item.title}`
-					)}
+					<RefLink ref={now.item.id} />
 				</h2>
 				<dl class="plan-facts">
 					<div>
@@ -74,7 +70,8 @@ const checkpoint = now.checkpoint
 							const href = docsHref(entry.path);
 							return (
 								<li>
-									{entry.label}: {href ? <a href={href}>{entry.path}</a> : <code>{entry.path}</code>}
+									{entry.label}:{' '}
+									{siteRefs().known.get(entry.path)?.href ? <RefLink ref={entry.path} label="id" /> : href ? <a href={href}>{entry.path}</a> : <code>{entry.path}</code>}
 								</li>
 							);
 						})}
@@ -88,7 +85,9 @@ const checkpoint = now.checkpoint
 					) : (
 						<ul>
 							{now.doneWhen.map((check) => (
-								<li>{check}</li>
+								<li>
+									<LinkedText text={check} />
+								</li>
 							))}
 						</ul>
 					)}
@@ -103,7 +102,9 @@ const checkpoint = now.checkpoint
 							{checkpoint.map((entry) => (
 								<div>
 									<dt>{entry.label}</dt>
-									<dd>{entry.value}</dd>
+									<dd>
+										<LinkedText text={entry.value} />
+									</dd>
 								</div>
 							))}
 						</dl>

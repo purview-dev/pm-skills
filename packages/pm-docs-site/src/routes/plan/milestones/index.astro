@@ -4,7 +4,9 @@
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
 import ExportStamp from '../../../components/ExportStamp.astro';
-import { FEATURE_STATES, loadPlanning, milestoneHref, milestoneSummaries, type FeatureState } from '../../../lib/planning';
+import LinkedText from '../../../components/LinkedText.astro';
+import RefLink from '../../../components/RefLink.astro';
+import { FEATURE_STATES, loadPlanning, milestoneSummaries, type FeatureState } from '../../../lib/planning';
 import '../../../styles/components.css';
 
 const planning = loadPlanning();
@@ -18,7 +20,7 @@ const byState = (summary: (typeof summaries)[number]) =>
 		.join(', ');
 ---
 
-<StarlightPage frontmatter={{ title: 'Milestones', description: 'Each milestone in strategy order, with its exit criteria and its items.' }}>
+<StarlightPage frontmatter={{ title: 'Milestones', description: 'Each milestone in strategy order, with its exit criteria and its items.', tableOfContents: false }}>
 	<ExportStamp />
 
 	{summaries.length === 0 && <p class="plan-empty">No milestones. pm-strategy sets them in STRATEGY.md.</p>}
@@ -28,7 +30,7 @@ const byState = (summary: (typeof summaries)[number]) =>
 			summaries.map((summary) => (
 				<article class="plan-card">
 					<h3>
-						<a href={milestoneHref(summary.id)}>{summary.id ? `${summary.id} ${summary.name}` : summary.name}</a>
+						<RefLink ref={summary.id ?? 'none'} />
 						{summary.isFocus && <span class="plan-focus">Focus</span>}
 					</h3>
 					<p class="plan-meta">
@@ -40,7 +42,11 @@ const byState = (summary: (typeof summaries)[number]) =>
 							{summary.progress.done} of {summary.progress.total}
 						</progress>
 					)}
-					{summary.exitCriteria && <p>Exit: {summary.exitCriteria}</p>}
+					{summary.exitCriteria && (
+						<p>
+							Exit: <LinkedText text={summary.exitCriteria} />
+						</p>
+					)}
 					{summary.serves.length > 0 && <p class="plan-meta">Serves {summary.serves.join(', ')}</p>}
 					<p class="plan-meta">{byState(summary) || 'No items'}</p>
 				</article>

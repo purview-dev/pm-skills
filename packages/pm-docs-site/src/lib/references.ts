@@ -216,15 +216,10 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 
 	const log = source('/plan/log/', 'Log');
 
-	for (const entry of planning.log.done) {
-		log.link(entry.id, 'listed');
-		log.link(milestoneKey(byId.get(entry.id ?? '')?.milestone ?? null), 'listed');
+	for (const entry of planning.board.activity) {
+		if (entry.id) log.link(entry.id, 'listed');
+		else log.prose(entry.title);
 		log.prose(entry.result);
-	}
-
-	for (const entry of planning.log.dropped) {
-		log.link(entry.id, 'listed');
-		log.prose(entry.reason);
 	}
 
 	const risks = source('/plan/risks/', 'Risks');
@@ -249,7 +244,10 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 	if (views.milestones) {
 		const page = source('/plan/milestones/', 'Milestones');
 
-		for (const summary of summaries) page.link(summary.id ?? 'none', 'listed');
+		for (const summary of summaries) {
+			page.link(summary.id ?? 'none', 'listed');
+			page.prose(summary.exitCriteria);
+		}
 	}
 
 	if (views.now && planning.now.item) {
@@ -257,9 +255,8 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 		const checkpoint = planning.now.checkpoint;
 
 		page.link(planning.now.item.id, 'listed');
-		page.link(milestoneKey(byId.get(planning.now.item.id)?.milestone ?? null), 'listed');
 		page.link(planning.now.brief, 'listed');
-		for (const text of [checkpoint?.stoppedAt, checkpoint?.nextAction, checkpoint?.startWith, checkpoint?.decisions, checkpoint?.context, checkpoint?.openQuestion]) page.prose(text);
+		for (const text of [...planning.now.doneWhen, checkpoint?.stoppedAt, checkpoint?.nextAction, checkpoint?.startWith, checkpoint?.decisions, checkpoint?.context, checkpoint?.openQuestion]) page.prose(text);
 	}
 
 	if (views.inbox) {
@@ -278,23 +275,41 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 
 		for (const brief of planning.briefs) {
 			page.link(brief.id, 'listed');
-			for (const text of [brief.problem, brief.decision, brief.doneWhen, ...brief.revisions.map((revision) => revision.text)]) page.prose(text);
+			for (const text of [brief.status, brief.origin, brief.problem, brief.decision, brief.doneWhen, ...brief.revisions.map((revision) => revision.text)]) page.prose(text);
 		}
 	}
 
 	if (views.strategy) {
 		const page = source('/plan/strategy/', 'Strategy');
-		const { strategy } = planning;
+		const { strategy, vision } = planning;
 
 		page.prose(strategy.focus.milestone, 'listed');
-		for (const milestone of strategy.milestones) page.link(milestone.id, 'listed');
 		for (const text of [
+			vision.problem,
+			vision.customer,
+			...vision.outcomes.map((outcome) => outcome.text),
+			...vision.outOfScope,
+			vision.constraints.timeAvailable,
+			vision.constraints.budget,
+			vision.constraints.stack,
 			strategy.focus.whyNow,
-			...strategy.decisions.flatMap((decision) => [decision.decision, decision.why, decision.rejected]),
-			...strategy.bets.flatMap((bet) => [bet.statement, bet.evidence, bet.signal]),
-			...strategy.assumptions.flatMap((assumption) => [assumption.statement, assumption.test]),
+			...strategy.bets.flatMap((bet) => [bet.statement, bet.evidence, bet.signal, bet.status]),
+			...strategy.assumptions.flatMap((assumption) => [assumption.statement, assumption.test, assumption.status]),
+			...strategy.notDoing.flatMap((entry) => [entry.thing, entry.why, entry.revisit]),
+			...strategy.decisions.flatMap((decision) => [decision.date, decision.decision, decision.why, decision.rejected]),
 		])
 			page.prose(text);
+	}
+
+	const home = source('/', 'Home');
+
+	home.prose(planning.strategy.focus.milestone, 'listed');
+	home.prose(planning.strategy.focus.whyNow);
+	if (!views.now && planning.now.item) home.link(planning.now.item.id, 'listed');
+	for (const id of planning.checks.claimable) home.link(id, 'listed');
+	for (const risk of planning.risks.open.filter((candidate) => candidate.rag === 'red')) {
+		home.link(risk.id, 'listed');
+		home.prose(risk.mitigation, 'mitigation');
 	}
 
 	return back;

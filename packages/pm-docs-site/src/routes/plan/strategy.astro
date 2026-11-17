@@ -5,8 +5,9 @@
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
 import ExportStamp from '../../components/ExportStamp.astro';
-import { loadPlanning, milestoneHref, milestoneId } from '../../lib/planning';
-import config from 'virtual:pm-docs-site/config';
+import LinkedText from '../../components/LinkedText.astro';
+import RefLink from '../../components/RefLink.astro';
+import { loadPlanning, milestoneId } from '../../lib/planning';
 import '../../styles/components.css';
 
 const planning = loadPlanning();
@@ -19,20 +20,20 @@ const constraints = [
 ];
 ---
 
-<StarlightPage frontmatter={{ title: 'Strategy', description: 'The vision, the focus, bets, assumptions, what is not being done, and the decisions.' }}>
+<StarlightPage frontmatter={{ title: 'Strategy', description: 'The vision, the focus, bets, assumptions, what is not being done, and the decisions.', tableOfContents: false }}>
 	<ExportStamp />
 
 	<section>
 		<h2>Vision</h2>
-		<p><strong>Problem:</strong> {vision.problem ?? 'Not set.'}</p>
-		<p><strong>Customer:</strong> {vision.customer ?? 'Not set.'}</p>
+		<p><strong>Problem:</strong> {vision.problem ? <LinkedText text={vision.problem} /> : 'Not set.'}</p>
+		<p><strong>Customer:</strong> {vision.customer ? <LinkedText text={vision.customer} /> : 'Not set.'}</p>
 		<h3>v1 is done when</h3>
 		{vision.outcomes.length === 0 && <p class="plan-empty">No V lines.</p>}
 		<ul>
 			{
 				vision.outcomes.map((outcome) => (
 					<li>
-						<strong>{outcome.id}</strong> {outcome.text}
+						<strong>{outcome.id}</strong> <LinkedText text={outcome.text} />
 					</li>
 				))
 			}
@@ -43,7 +44,7 @@ const constraints = [
 					<h3>Out of scope</h3>
 					<ul>
 						{vision.outOfScope.map((line) => (
-							<li>{line}</li>
+							<li><LinkedText text={line} /></li>
 						))}
 					</ul>
 				</>
@@ -54,7 +55,7 @@ const constraints = [
 				constraints.map((entry) => (
 					<div>
 						<dt>{entry.label}</dt>
-						<dd>{entry.value ?? '–'}</dd>
+						<dd>{entry.value ? <LinkedText text={entry.value} /> : '–'}</dd>
 					</div>
 				))
 			}
@@ -65,10 +66,14 @@ const constraints = [
 		<h2>Focus</h2>
 		<p>
 			<strong>
-				{focusId && config.views.milestones ? <a href={milestoneHref(focusId)}>{strategy.focus.milestone}</a> : (strategy.focus.milestone ?? 'No focus set')}
+				{focusId ? <RefLink ref={focusId} /> : strategy.focus.milestone ? <LinkedText text={strategy.focus.milestone} /> : 'No focus set'}
 			</strong>
 		</p>
-		{strategy.focus.whyNow && <p>{strategy.focus.whyNow}</p>}
+		{strategy.focus.whyNow && (
+			<p>
+				<LinkedText text={strategy.focus.whyNow} />
+			</p>
+		)}
 	</section>
 
 	<section>
@@ -89,11 +94,11 @@ const constraints = [
 						{strategy.bets.map((bet) => (
 							<tr>
 								<td>
-									<strong>{bet.id}</strong> {bet.statement}
+									<strong>{bet.id}</strong> <LinkedText text={bet.statement} />
 								</td>
-								<td>{bet.evidence ?? '–'}</td>
-								<td>{bet.signal ?? '–'}</td>
-								<td>{bet.status ?? '–'}</td>
+								<td>{bet.evidence ? <LinkedText text={bet.evidence} /> : '–'}</td>
+								<td>{bet.signal ? <LinkedText text={bet.signal} /> : '–'}</td>
+								<td>{bet.status ? <LinkedText text={bet.status} /> : '–'}</td>
 							</tr>
 						))}
 					</tbody>
@@ -119,10 +124,10 @@ const constraints = [
 						{strategy.assumptions.map((assumption) => (
 							<tr>
 								<td>
-									<strong>{assumption.id}</strong> {assumption.statement}
+									<strong>{assumption.id}</strong> <LinkedText text={assumption.statement} />
 								</td>
-								<td>{assumption.test ?? '–'}</td>
-								<td>{assumption.status ?? '–'}</td>
+								<td>{assumption.test ? <LinkedText text={assumption.test} /> : '–'}</td>
+								<td>{assumption.status ? <LinkedText text={assumption.status} /> : '–'}</td>
 							</tr>
 						))}
 					</tbody>
@@ -147,9 +152,9 @@ const constraints = [
 					<tbody>
 						{strategy.notDoing.map((entry) => (
 							<tr>
-								<td>{entry.thing}</td>
-								<td>{entry.why ?? '–'}</td>
-								<td>{entry.revisit ?? '–'}</td>
+								<td><LinkedText text={entry.thing} /></td>
+								<td>{entry.why ? <LinkedText text={entry.why} /> : '–'}</td>
+								<td>{entry.revisit ? <LinkedText text={entry.revisit} /> : '–'}</td>
 							</tr>
 						))}
 					</tbody>
@@ -175,10 +180,10 @@ const constraints = [
 					<tbody>
 						{strategy.decisions.map((entry) => (
 							<tr>
-								<td class="plan-nowrap">{entry.date ?? '–'}</td>
-								<td>{entry.decision}</td>
-								<td>{entry.why ?? '–'}</td>
-								<td>{entry.rejected ?? '–'}</td>
+								<td class="plan-nowrap">{entry.date ? <LinkedText text={entry.date} /> : '–'}</td>
+								<td><LinkedText text={entry.decision} /></td>
+								<td>{entry.why ? <LinkedText text={entry.why} /> : '–'}</td>
+								<td>{entry.rejected ? <LinkedText text={entry.rejected} /> : '–'}</td>
 							</tr>
 						))}
 					</tbody>

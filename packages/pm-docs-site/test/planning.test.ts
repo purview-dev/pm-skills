@@ -11,6 +11,7 @@ import {
 	dependents,
 	derivedRag,
 	docsHref,
+	docsPages,
 	featureHref,
 	features,
 	initials,
@@ -264,11 +265,32 @@ describe('page derivations', () => {
 	});
 });
 
+describe('docsPages', () => {
+	const docs = {
+		root: fileURLToPath(new URL('./fixtures/docs/', import.meta.url)),
+		sources: [{ label: 'Guide', base: '.', include: ['README.md', 'guide/*.md'], prefix: 'docs/' }],
+	};
+
+	it('maps each built docs file, relative to the docs root, to its page', () => {
+		const pages = docsPages(docs);
+
+		expect(pages.get('guide/intro.md')).toBe('/docs/guide/intro/');
+		expect(pages.get('README.md')).toBe('/docs/readme/');
+	});
+
+	it('is empty without repository docs', () => {
+		expect(docsPages(null).size).toBe(0);
+	});
+});
+
 describe('docsHref', () => {
-	it('maps a plan path and rejects a non-docs path', () => {
-		expect(docsHref('docs/superpowers/plans/2026-10-27-tenant-model.md')).toBe('/superpowers/plans/2026-10-27-tenant-model/');
-		expect(docsHref('planning/briefs/x.md')).toBeNull();
-		expect(docsHref('none (formatting commit)')).toBeNull();
-		expect(docsHref(null)).toBeNull();
+	const pages = new Map([['guide/intro.md', '/docs/guide/intro/']]);
+
+	it('links a path only when that page is built', () => {
+		expect(docsHref('guide/intro.md', pages)).toBe('/docs/guide/intro/');
+		expect(docsHref('./guide/intro.md', pages)).toBe('/docs/guide/intro/');
+		expect(docsHref('docs/superpowers/plans/2026-10-27-tenant-model.md', pages)).toBeNull();
+		expect(docsHref('none (formatting commit)', pages)).toBeNull();
+		expect(docsHref(null, pages)).toBeNull();
 	});
 });

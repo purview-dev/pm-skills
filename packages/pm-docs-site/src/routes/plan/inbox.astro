@@ -5,6 +5,8 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
 import ExportStamp from '../../components/ExportStamp.astro';
 import KanbanItemCard from '../../components/lib/KanbanItemCard.astro';
+import LinkedText from '../../components/LinkedText.astro';
+import RefLink from '../../components/RefLink.astro';
 import { loadPlanning, severityToPriority, sourceInitials } from '../../lib/planning';
 import '../../styles/components.css';
 
@@ -15,7 +17,7 @@ const groups = [
 ];
 ---
 
-<StarlightPage frontmatter={{ title: 'Inbox', description: 'Parked ideas, bugs and questions, with those waiting for discussion first.' }}>
+<StarlightPage frontmatter={{ title: 'Inbox', description: 'Parked ideas, bugs and questions, with those waiting for discussion first.', tableOfContents: false }}>
 	<ExportStamp />
 
 	<p>
@@ -34,14 +36,39 @@ const groups = [
 						<div>
 							<KanbanItemCard
 								title={entry.title}
-								tag={[entry.kind ?? 'idea', entry.affects].filter(Boolean).join(' · ')}
+								tag={entry.kind ?? 'idea'}
 								assignee={sourceInitials(entry.source)}
 								dueDate={entry.captured ?? ''}
 								priority={severityToPriority(entry.severity)}
 								commentsCount={0}
 								attachmentsCount={0}
 							/>
-							{entry.idea && <p class="plan-meta">{entry.idea}</p>}
+							{entry.affects && entry.affects !== 'none' && (
+								<p class="plan-meta">
+									Affects: <LinkedText text={entry.affects} />
+								</p>
+							)}
+							{entry.related.length > 0 && (
+								<p class="plan-meta">
+									Related:{' '}
+									{entry.related.map((ref, index) => (
+										<>
+											{index > 0 && ', '}
+											<RefLink ref={ref} />
+										</>
+									))}
+								</p>
+							)}
+							{entry.brief && (
+								<p class="plan-meta">
+									Brief: <RefLink ref={entry.brief} label="id" />
+								</p>
+							)}
+							{entry.idea && (
+								<p class="plan-meta">
+									<LinkedText text={entry.idea} />
+								</p>
+							)}
 						</div>
 					))}
 				</div>

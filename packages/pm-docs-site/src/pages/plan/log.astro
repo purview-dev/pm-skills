@@ -4,20 +4,17 @@
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
 import ExportStamp from '../../components/ExportStamp.astro';
-import { docsHref, featureHref, features, loadPlanning } from '../../lib/planning';
-import config from 'virtual:pm-docs-site/config';
+import LinkedText from '../../components/LinkedText.astro';
+import RefLink from '../../components/RefLink.astro';
+import { docsHref, loadPlanning } from '../../lib/planning';
 import '../../styles/components.css';
 
 const planning = loadPlanning();
-// An item with an ID has its own page when the Features view is on.
-const known = new Set(features(planning).map((feature) => feature.id));
-const itemHref = (id: string | null) => (id && config.views.features && known.has(id) ? featureHref(id) : null);
-
 // `activity` carries no plan path; the Done log does.
 const plans = new Map(planning.log.done.filter((entry) => entry.id).map((entry) => [entry.id, entry.plan]));
 ---
 
-<StarlightPage frontmatter={{ title: 'Log', description: 'What was done, dropped and reviewed, newest first.' }}>
+<StarlightPage frontmatter={{ title: 'Log', description: 'What was done, dropped and reviewed, newest first.', tableOfContents: false }}>
 	<ExportStamp />
 
 	<table class="log-table">
@@ -33,7 +30,6 @@ const plans = new Map(planning.log.done.filter((entry) => entry.id).map((entry) 
 			{
 				planning.board.activity.map((entry) => {
 					const plan = entry.kind === 'done' && entry.id ? docsHref(plans.get(entry.id) ?? null) : null;
-					const href = itemHref(entry.id);
 
 					return (
 						<tr>
@@ -42,16 +38,7 @@ const plans = new Map(planning.log.done.filter((entry) => entry.id).map((entry) 
 								<span class={`log-kind log-kind--${entry.kind}`}>{entry.kind}</span>
 							</td>
 							<td>
-								{href ? (
-									<a href={href}>
-										<strong>{entry.id}</strong> {entry.title}
-									</a>
-								) : (
-									<>
-										{entry.id && <strong>{entry.id} </strong>}
-										{entry.title}
-									</>
-								)}
+								{entry.id ? <RefLink ref={entry.id} /> : <LinkedText text={entry.title} />}
 								{plan && (
 									<>
 										{' '}
@@ -59,7 +46,9 @@ const plans = new Map(planning.log.done.filter((entry) => entry.id).map((entry) 
 									</>
 								)}
 							</td>
-							<td>{entry.result}</td>
+							<td>
+								<LinkedText text={entry.result} />
+							</td>
 						</tr>
 					);
 				})

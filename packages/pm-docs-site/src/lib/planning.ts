@@ -5,9 +5,12 @@
 // Markdown, and nothing on a page is typed by hand.
 
 import { readFileSync } from 'node:fs';
+import { relative, sep } from 'node:path';
 
 import config from 'virtual:pm-docs-site/config';
 
+import type { DocsSource } from '../../index';
+import { pagesOf } from '../../lib/repo-docs.mjs';
 import { checkSchemaVersion, PlanningExportError, SUPPORTED_SCHEMA_VERSIONS } from '../../lib/schema-version.mjs';
 import type { Brief, InboxEntry, Level, Milestone, Owner, Planning, Rag, Risk, RoadmapItem, Size, Stage } from './planning-types';
 
@@ -161,11 +164,35 @@ export function riskMatrix(risks: Risk[]): MatrixCell[][] {
 	);
 }
 
-/** The site URL of a docs/ file named in the plan, or `null` when it is not one. */
-export function docsHref(path: string | null): string | null {
-	const match = /^docs\/(.+)\.md$/i.exec(path?.trim() ?? '');
+/**
+ * Every repository docs page this site builds, keyed by its file relative to
+ * the docs root (`/`-separated). The first source to claim a file wins, as in
+ * the repo-docs loader.
+ */
+export function docsPages(docs: { root: string; sources: DocsSource[] } | null = config.docs): Map<string, string> {
+	const pages = new Map<string, string>();
+	const ids = new Set<string>();
 
-	return match ? `/${match[1]}/` : null;
+	for (const source of docs?.sources ?? []) {
+		for (const page of pagesOf(source, docs!.root)) {
+			const file = relative(docs!.root, page.file).split(sep).join('/');
+
+			if (pages.has(file) || ids.has(page.id)) continue;
+			ids.add(page.id);
+			pages.set(file, page.id === 'index' ? '/' : `/${page.id}/`);
+		}
+	}
+
+	return pages;
+}
+
+let sitePages: Map<string, string> | undefined;
+
+/** The site URL of a repository file named in the plan, or `null` when this site does not build it as a page. */
+export function docsHref(path: string | null, pages: Map<string, string> = (sitePages ??= docsPages())): string | null {
+	const file = path?.trim().replace(/^\.\//, '') ?? '';
+
+	return pages.get(file) ?? null;
 }
 
 function label(id: string | null, title: string): string {
