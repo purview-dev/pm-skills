@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-17T18:43:51+00:00",
+  "generatedAt": "2026-11-17T19:29:24+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-009-docs-site-package-backlinks",
-    "head": "169be9d40c16792970129304b63b6e2c4ee391df"
+    "head": "eca9106996614276fdc85d42ec10e1f63490430c"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -159,346 +159,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-009",
-      "title": "Docs-site package: backlinks everywhere"
-    },
-    "stage": "execute",
-    "session": "feat/r-009-docs-site-package-backlinks",
-    "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-    "milestone": "M1",
-    "spec": "docs/superpowers/specs/2026-11-17-docs-site-package-backlinks-design.md",
-    "plan": "docs/superpowers/plans/2026-11-17-docs-site-package-backlinks.md",
-    "started": "2026-11-17",
-    "doneWhen": [
-      "The package link test finds every item, milestone, and risk ID the export knows, and every brief path, inside a link on every page of the fixture build (except a page's own ID in its title), and no internal link or anchor that does not resolve.",
-      "Every item, milestone, and risk page has a `Linked from` section listing every page that links to it.",
-      "Browser tests show the Board's five columns in one row at 1440, 1024, and 700px; a collapsed Board column stays collapsed after a reload; a plain click on a Board card or Roadmap row opens a detail popup with an `Open page` link, and a ctrl-click follows the link without a popup.",
-      "At 1440px the main content of a plan page and a docs page is wider than Starlight's default 45rem column.",
-      "`expected-pages.txt` lists the new risk pages, and `bun test`, `bun run check`, and `just version-check` pass in `packages/pm-docs-site/`."
-    ],
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
+    "brief": null,
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-17-docs-site-package-backlinks.md",
-    "checked": 0,
-    "total": 58,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "Targets and the prose tokenizer",
-        "checked": 0,
-        "total": 6,
-        "steps": [
-          {
-            "text": "**Step 1: Add prose mentions to the fixture.** In `test/fixtures/planning.json`, set the `note` of roadmap item `R-013` to a sentence that names `RK-002`, `M2`, and an unknown `R-999`, and give the Now item's checkpoint `context` (or another prose field the Now page renders) a mention of `R-011`. Keep the file valid: `bun ../../skills/pm-export/scripts/export.ts validate test/fixtures/planning.json --schema ../../skills/pm-export/references/planning.schema.json` prints `valid:`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Write the failing tests** in `test/references.test.ts`:",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Run** `bun test test/references.test.ts` — Expected: FAIL, `references` module not found.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Implement** `targets`, `linkify`, `riskHref` in `src/lib/references.ts`. Item targets come from `features(planning)` (every state, so done and dropped items link); milestone targets from `milestoneSummaries` (including `none` when present); risk targets from `risks.open`, `risks.closed`, and `risks.removed`; brief targets from `planning.briefs` by `path`. Labels: `<ID> <title>`, `<M> <name>`, `No milestone`, the brief's title. `linkify` uses one regex: the escaped brief paths, then `\\b(?:RK-\\d{3,}|R-\\d{3,}|M\\d+)\\b`; a match whose text is not a key in `known`, or whose target has `href: null`, stays in a plain run. Adjacent plain text merges into one run.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Run** `bun test test/references.test.ts` — Expected: PASS. Also run `bun test` — Expected: every existing test still passes (the fixture change must not break `planning.test.ts`).",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 2,
-        "title": "The backlink index",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing tests:**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bun test test/references.test.ts` — Expected: FAIL, `references` is not exported.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement** `references` and `RELATION_LABELS`. Mentions reuse `linkify(text, known)` so they match exactly what `<LinkedText>` will link. Every target key has an entry, empty when nothing links to it.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run** `bun test test/references.test.ts` — Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit** `feat(pm-docs-site): backlink index from planning.json`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 3,
-        "title": "The page scanner",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing tests** with inline HTML strings:",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bun test test/scan.test.ts` — Expected: FAIL, module not found.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement** `scanPage`. If `HTMLRewriter` does not expose `<template>` children as elements, fall back to parsing the template's inner HTML with a second `scanPage` pass, and say so in a comment.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run** `bun test test/scan.test.ts` — Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit** `test(pm-docs-site): HTML scanner for the link test`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 4,
-        "title": "Link components and risk pages",
-        "checked": 0,
-        "total": 7,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing parity change:** add `plan/risks/rk-001/index.html`, `plan/risks/rk-002/index.html`, `plan/risks/rk-004/index.html`, `plan/risks/rk-005/index.html` to `expected-pages.txt` (sorted).",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bun test test/cli.test.ts -t \"renders every page\"` — Expected: FAIL, the four risk pages are missing.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement** the three components and `siteRefs`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Implement** `src/pages/plan/risks/[id].astro`: `getStaticPaths` over open and closed risks (`params.id` lower-case). Content: `ExportStamp kind=\"Risk\"`, RAG badge, a `plan-facts` list (likelihood, impact, RAG override, status, owner, raised, reviewed, closed), `Affects` through `<LinkedText>`, `Trigger` and `Mitigation` through `<LinkedText>`, then `<LinkedFrom ref={risk.id} />`. Frontmatter `title: '<RK-NNN> <title>'`, `tableOfContents: false`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Update** `risks.astro`: each table row's risk ID and every matrix cell link to `riskHref(risk)` through `<RefLink label=\"id\">`; `Affects` and `Mitigation` cells through `<LinkedText>`; removed risks keep `id={risk.id.toLowerCase()}` on their `<li>` so `/plan/risks/#rk-003` resolves; set `tableOfContents: false`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Run** `bun test` and `bun run check` — Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 7: Commit** `feat(pm-docs-site): one page per risk, and link components`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 5,
-        "title": "Feature and milestone pages",
-        "checked": 0,
-        "total": 4,
-        "steps": [
-          {
-            "text": "**Step 1: Extract** the feature page's badge, facts, Done when, Related items, Brief, and Risks blocks into `FeatureSummary.astro`, replacing hand-built links (`linkTo`, inline `<a href>`) with `RefLink`, and prose with `LinkedText`. The feature page keeps Result/Plan, Reason, Serves, Note, Inbox around it, with Result, Reason, Note through `LinkedText` and inbox `affects`/`related` through `RefLink`, and ends with `<LinkedFrom ref={feature.id} />`. Set `tableOfContents: false`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Update** the milestone page: every item through `RefLink`, exit criteria through `LinkedText`, `<LinkedFrom ref={summary.id ?? 'none'} />` last, `tableOfContents: false`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Run** `bun test` and `bun run check` — Expected: PASS (the parity page set is unchanged).",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Commit** `feat(pm-docs-site): link feature and milestone pages and list their backlinks`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 6,
-        "title": "Index pages and docs links",
-        "checked": 0,
-        "total": 6,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing test** in `test/planning.test.ts`:",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bun test test/planning.test.ts` — Expected: FAIL.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement** the new `docsHref` and update every caller.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Update** each index page so every ID and brief path follows the Task 2 table: listed IDs through `RefLink`, prose through `LinkedText`. Set `tableOfContents: false` on each plan page.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Run** `bun test` and `bun run check` — Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Commit** `feat(pm-docs-site): link every ID on the index pages`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 7,
-        "title": "Board and Roadmap links with popup templates",
-        "checked": 0,
-        "total": 7,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing test** in `test/planning.test.ts`: `roadmapGroups(planning)` events each have `id` equal to their item's ID (and `null` for an event with none).",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** it — Expected: FAIL. **Implement** the `id` field. Run — Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement** the kit prop changes, adding to each header comment: `and the title (and tag) can be a link, for the site's item popup and backlinks`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Implement** `ItemDetail`, `ItemDialog`, and the Board and Roadmap changes: every card with an ID gets `href`, `itemId`, and (Board) `tagHref` from the milestone target; group headings on the Roadmap link through `RefLink`; one `<ItemDetail>` after each linked card; one `<ItemDialog>` per page. Cards without an ID (log lines with none) stay plain.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Write the Pagefind test** in `test/links.test.ts`: after one fixture build (`runCli(['build', <scratch copy>])`), no file under `dist/pagefind/` fragment output contains the text of a Board popup's Done when that appears only inside a template. If Pagefind's fragments are compressed and not readable, assert instead that every `<template>` in `dist/plan/board/index.html` has `data-pagefind-ignore`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Run** `bun test` and `bun run check` — Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 7: Commit** `feat(pm-docs-site): link Board and Roadmap cards, with popup templates`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 8,
-        "title": "The build-wide link test",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the tests** (one build in `beforeAll` into a scratch copy, timeout `180_000`):",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Add** a views-off case: build with `views: ['now']` and assert the first two tests also pass there (no link points at a page that was not built).",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Run** `bun test test/links.test.ts` — Expected: any failure names the page and the ID or link; fix each in the page that renders it (or in `references` when a backlink is missing) until it passes.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run** `bun test` and `bun run check` — Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit** `test(pm-docs-site): every ID linked, every link resolved, every backlink listed`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 9,
-        "title": "Full width, with the Playwright harness",
-        "checked": 0,
-        "total": 6,
-        "steps": [
-          {
-            "text": "**Step 1: Install** `bun add -d -E @playwright/test` and `bunx playwright install chromium`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Write the failing tests:** `integration.test.ts` asserts Starlight's options include `customCss` ending in `/src/styles/width.css`; `width.browser.ts` at viewport 1440×900 asserts the bounding width of `main .sl-markdown-content` (or Starlight's content container) is greater than `720` (45rem) on `/plan/roadmap/` and on `/docs/guide/intro/`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Run** `bun test test/integration.test.ts` and `bun run test:browser` — Expected: FAIL on both.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Implement** `width.css` (`:root { --sl-content-width: 100%; }`), pass it as `customCss: [fileURLToPath(new URL('./src/styles/width.css', import.meta.url))]`, and remove the Board's `:root:has(.plan-columns)` rule.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Run** both — Expected: PASS. Run `bun test` — Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Commit** `feat(pm-docs-site): use the full width on every page`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 10,
-        "title": "Popup and collapsible columns",
-        "checked": 0,
-        "total": 7,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing browser tests:**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bun run test:browser` — Expected: FAIL.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement** `plan.ts` (click handler on `document` for `a[data-item]`: act only on `event.button === 0` with no ctrl, meta, shift, alt; copy the template's content into the dialog body, set the heading to the link text and `Open page` to the link's `href`, `showModal()`; on close, focus the link; toggles flip `data-collapsed`, `aria-expanded`, and storage, wrapping every storage access in `try`). `PlanInteractions.astro` loads it with `<script>import '../scripts/plan.ts';</script>` and adds an inline `is:inline` script that reads the key and sets `data-collapsed` before paint. Add the CSS: collapsed columns use a narrow grid track (`3rem`) with the name and count written vertically; `.plan-columns` sets its tracks from the columns' state (e.g. `grid-template-columns` built per column with `:has([data-collapsed])` or an inline custom property set by the script).",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run** `bun run test:browser` — Expected: PASS. Run `bun test` and `bun run check` — Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Wire it up:** `justfile` `package-test` gains `bunx playwright install chromium` and `bun run test:browser` after `bun run check`; the CI package job gains `npx playwright install --with-deps chromium` and `bun run test:browser` steps.",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Verify the whole item:** from the repository root, `just package-test`, `just lint-check`, and `just version-check` — Expected: all pass.",
-            "checked": false
-          },
-          {
-            "text": "**Step 7: Commit** `feat(pm-docs-site): item popup and collapsible Board columns`.",
-            "checked": false
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [
       {
@@ -760,15 +433,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-009",
-          "title": "Docs-site package: backlinks everywhere",
-          "owner": null,
-          "size": null,
-          "detail": "execute, 0/58 plan steps"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-003",
@@ -798,6 +463,15 @@
       "done": [
         {
           "date": "2026-11-17",
+          "id": "R-009",
+          "title": "Docs-site package: backlinks everywhere",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-17-docs-site-package-backlinks.md",
+          "result": "branch feat/r-009-docs-site-package-backlinks"
+        },
+        {
+          "date": "2026-11-17",
           "id": "R-008",
           "title": "Docs-site package: skeleton at parity",
           "milestone": "M1",
@@ -817,6 +491,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-17",
+        "kind": "done",
+        "id": "R-009",
+        "title": "Docs-site package: backlinks everywhere",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-009-docs-site-package-backlinks"
+      },
       {
         "date": "2026-11-17",
         "kind": "done",
@@ -866,6 +549,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-17",
+        "id": "R-009",
+        "title": "Docs-site package: backlinks everywhere",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-17-docs-site-package-backlinks.md",
+        "result": "branch feat/r-009-docs-site-package-backlinks"
+      },
       {
         "date": "2026-11-17",
         "id": "R-008",
@@ -967,14 +659,61 @@
       "brief": null,
       "reviewed": "never",
       "idea": "R-008 added `package-test` to `just lint-check`, which the lefthook pre-push hook runs. It adds two Astro builds, a pack, and a networked `bun install` to every push: about 40 to 60 seconds, and a push fails offline. Keep it, move it to CI only, or run only the fast unit tests on pre-push?"
+    },
+    {
+      "file": "planning/inbox/2026-11-17-1928-docs-site-popup-a11y.md",
+      "title": "Docs-site popup and board accessibility polish",
+      "captured": "2026-11-17 19:28",
+      "source": "agent (R-009 execute, final review)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "packages/pm-docs-site",
+      "context": "R-009 execute",
+      "discuss": "no",
+      "related": [
+        "R-010"
+      ],
+      "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+      "reviewed": "never",
+      "idea": "Deferred minors from the R-009 final review: card links do not say they open a popup (aria-haspopup=\"dialog\"); a backdrop click does not close the item dialog; popup section headings share the dialog title's h2 level; Board collapse toggles render without JavaScript and do nothing (render them hidden, let plan.ts reveal them); KanbanItemCard keeps tabindex=0 around a card that now holds links, so each card costs extra tab stops; no browser test for localStorage that throws."
+    },
+    {
+      "file": "planning/inbox/2026-11-17-1929-docs-site-reflink-fallbacks.md",
+      "title": "Docs-site RefLink fallbacks for unknown keys",
+      "captured": "2026-11-17 19:28",
+      "source": "agent (R-009 execute, final review)",
+      "kind": "bug",
+      "severity": "cosmetic",
+      "affects": "packages/pm-docs-site/src/components/RefLink.astro",
+      "context": "R-009 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "RefLink prints the bare key when it has no target: a Log row for an activity ID with no matching item shows the ID without its title, and the Roadmap's no-milestone heading reads \"none\" when that group exists only from log lines with no ID. Give RefLink fallback text (the entry title, \"No milestone\")."
+    },
+    {
+      "file": "planning/inbox/2026-11-17-1930-linkify-ids-inside-paths.md",
+      "title": "linkify links IDs inside file paths",
+      "captured": "2026-11-17 19:28",
+      "source": "agent (R-009 execute, final review)",
+      "kind": "bug",
+      "severity": "cosmetic",
+      "affects": "packages/pm-docs-site/src/lib/references.ts",
+      "context": "R-009 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "linkify uses \\b boundaries, so an upper-case ID inside a path in prose that is not a known brief path (docs/plans/R-009-x.md) gets a link in the middle of the path. The link test's scanner uses a stricter lookbehind, so the two disagree. Match the scanner's boundaries in linkify."
     }
   ],
   "briefs": [
     {
       "path": "planning/briefs/2026-11-17-docs-site-package.md",
-      "id": "R-009",
+      "id": "R-010",
       "title": "Docs site as a versioned package",
-      "status": "on roadmap (R-009, R-010, R-011, R-012, R-013, R-014), R-009 active",
+      "status": "on roadmap (R-010, R-011, R-012, R-013, R-014)",
       "origin": "user request",
       "updated": "2026-11-17",
       "decision": "2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.",
@@ -992,10 +731,10 @@
     "next": 3,
     "later": 7,
     "nextMax": 5,
-    "openInbox": 4,
+    "openInbox": 7,
     "discuss": 1,
     "shapingBriefs": 0,
-    "done": 2,
+    "done": 3,
     "dropped": 3,
     "blockers": 0,
     "openRisks": 0,
@@ -1010,6 +749,6 @@
       "R-003",
       "R-004"
     ],
-    "drift": false
+    "drift": true
   }
 }

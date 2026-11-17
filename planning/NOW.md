@@ -11,23 +11,17 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: active
-- Item: R-009 Docs-site package: backlinks everywhere
-- Session: feat/r-009-docs-site-package-backlinks
-- Stage: execute
-- Brief: planning/briefs/2026-11-17-docs-site-package.md
-- Milestone: M1
-- Spec: docs/superpowers/specs/2026-11-17-docs-site-package-backlinks-design.md
-- Plan: docs/superpowers/plans/2026-11-17-docs-site-package-backlinks.md
-- Started: 2026-11-17
+- Status: idle
+- Item:
+- Session:
+- Stage:
+- Brief:
+- Milestone:
+- Spec:
+- Plan:
+- Started:
 
 ## Done when
-
-- The package link test finds every item, milestone, and risk ID the export knows, and every brief path, inside a link on every page of the fixture build (except a page's own ID in its title), and no internal link or anchor that does not resolve.
-- Every item, milestone, and risk page has a `Linked from` section listing every page that links to it.
-- Browser tests show the Board's five columns in one row at 1440, 1024, and 700px; a collapsed Board column stays collapsed after a reload; a plain click on a Board card or Roadmap row opens a detail popup with an `Open page` link, and a ctrl-click follows the link without a popup.
-- At 1440px the main content of a plan page and a docs page is wider than Starlight's default 45rem column.
-- `expected-pages.txt` lists the new risk pages, and `bun test`, `bun run check`, and `just version-check` pass in `packages/pm-docs-site/`.
 
 ## Checkpoint
 
