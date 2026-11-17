@@ -1,6 +1,6 @@
 # R-009 Docs-site package: backlinks everywhere — Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Every item, milestone, risk ID and brief path on the package site is a link, every item, milestone and risk page lists what links to it, Board and Roadmap cards open a detail popup, Board columns collapse and remember it, and every page uses the full width.
 
@@ -51,9 +51,9 @@
   - `function linkify(text: string, known: Map<string, Target>): Run[]`
   - `function riskHref(risk: { id: string }, removed?: boolean): string`
 
-- [ ] **Step 1: Add prose mentions to the fixture.** In `test/fixtures/planning.json`, set the `note` of roadmap item `R-013` to a sentence that names `RK-002`, `M2`, and an unknown `R-999`, and give the Now item's checkpoint `context` (or another prose field the Now page renders) a mention of `R-011`. Keep the file valid: `bun ../../skills/pm-export/scripts/export.ts validate test/fixtures/planning.json --schema ../../skills/pm-export/references/planning.schema.json` prints `valid:`.
+- [x] **Step 1: Add prose mentions to the fixture.** In `test/fixtures/planning.json`, set the `note` of roadmap item `R-013` to a sentence that names `RK-002`, `M2`, and an unknown `R-999`, and give the Now item's checkpoint `context` (or another prose field the Now page renders) a mention of `R-011`. Keep the file valid: `bun ../../skills/pm-export/scripts/export.ts validate test/fixtures/planning.json --schema ../../skills/pm-export/references/planning.schema.json` prints `valid:`.
 
-- [ ] **Step 2: Write the failing tests** in `test/references.test.ts`:
+- [x] **Step 2: Write the failing tests** in `test/references.test.ts`:
 
 ```ts
 const planning = loadPlanning(FIXTURE);
@@ -89,13 +89,13 @@ it('returns one plain run for text with no known ID', () => {
 });
 ```
 
-- [ ] **Step 3: Run** `bun test test/references.test.ts` — Expected: FAIL, `references` module not found.
+- [x] **Step 3: Run** `bun test test/references.test.ts` — Expected: FAIL, `references` module not found.
 
-- [ ] **Step 4: Implement** `targets`, `linkify`, `riskHref` in `src/lib/references.ts`. Item targets come from `features(planning)` (every state, so done and dropped items link); milestone targets from `milestoneSummaries` (including `none` when present); risk targets from `risks.open`, `risks.closed`, and `risks.removed`; brief targets from `planning.briefs` by `path`. Labels: `<ID> <title>`, `<M> <name>`, `No milestone`, the brief's title. `linkify` uses one regex: the escaped brief paths, then `\b(?:RK-\d{3,}|R-\d{3,}|M\d+)\b`; a match whose text is not a key in `known`, or whose target has `href: null`, stays in a plain run. Adjacent plain text merges into one run.
+- [x] **Step 4: Implement** `targets`, `linkify`, `riskHref` in `src/lib/references.ts`. Item targets come from `features(planning)` (every state, so done and dropped items link); milestone targets from `milestoneSummaries` (including `none` when present); risk targets from `risks.open`, `risks.closed`, and `risks.removed`; brief targets from `planning.briefs` by `path`. Labels: `<ID> <title>`, `<M> <name>`, `No milestone`, the brief's title. `linkify` uses one regex: the escaped brief paths, then `\b(?:RK-\d{3,}|R-\d{3,}|M\d+)\b`; a match whose text is not a key in `known`, or whose target has `href: null`, stays in a plain run. Adjacent plain text merges into one run.
 
-- [ ] **Step 5: Run** `bun test test/references.test.ts` — Expected: PASS. Also run `bun test` — Expected: every existing test still passes (the fixture change must not break `planning.test.ts`).
+- [x] **Step 5: Run** `bun test test/references.test.ts` — Expected: PASS. Also run `bun test` — Expected: every existing test still passes (the fixture change must not break `planning.test.ts`).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/lib/references.ts test/references.test.ts test/fixtures/planning.json
@@ -138,7 +138,7 @@ The source pages and what each links, which Tasks 4 to 7 must render exactly (re
 
 A source page whose view is off contributes nothing. Entries are deduplicated by `href` + `relation`, never include the target's own page, and keep the table's page order.
 
-- [ ] **Step 1: Write the failing tests:**
+- [x] **Step 1: Write the failing tests:**
 
 ```ts
 const back = references(planning, all);
@@ -170,13 +170,13 @@ it('leaves out source pages of views that are off', () => {
 });
 ```
 
-- [ ] **Step 2: Run** `bun test test/references.test.ts` — Expected: FAIL, `references` is not exported.
+- [x] **Step 2: Run** `bun test test/references.test.ts` — Expected: FAIL, `references` is not exported.
 
-- [ ] **Step 3: Implement** `references` and `RELATION_LABELS`. Mentions reuse `linkify(text, known)` so they match exactly what `<LinkedText>` will link. Every target key has an entry, empty when nothing links to it.
+- [x] **Step 3: Implement** `references` and `RELATION_LABELS`. Mentions reuse `linkify(text, known)` so they match exactly what `<LinkedText>` will link. Every target key has an entry, empty when nothing links to it.
 
-- [ ] **Step 4: Run** `bun test test/references.test.ts` — Expected: PASS.
+- [x] **Step 4: Run** `bun test test/references.test.ts` — Expected: PASS.
 
-- [ ] **Step 5: Commit** `feat(pm-docs-site): backlink index from planning.json`.
+- [x] **Step 5: Commit** `feat(pm-docs-site): backlink index from planning.json`.
 
 ### Task 3: The page scanner
 
@@ -193,7 +193,7 @@ it('leaves out source pages of views that are off', () => {
 
 Rules: only text inside `<main>` counts; `unlinked` lists each known key (ID or brief path) found in text with no `<a>` ancestor, skipping the text of the page's `<h1>`; `links` are every `<a href>` inside `<main>` that starts with `/` (and its `#fragment` kept), with `derived: true` when it is inside an element with `data-linked-from` or inside `<template>`; `ids` are every `id` attribute on the page; `title` is the `<h1>` text. `<script>` and `<style>` text is ignored.
 
-- [ ] **Step 1: Write the failing tests** with inline HTML strings:
+- [x] **Step 1: Write the failing tests** with inline HTML strings:
 
 ```ts
 const known = new Set(['R-012', 'M1']);
@@ -218,10 +218,10 @@ it('finds IDs inside templates too', async () => {
 });
 ```
 
-- [ ] **Step 2: Run** `bun test test/scan.test.ts` — Expected: FAIL, module not found.
-- [ ] **Step 3: Implement** `scanPage`. If `HTMLRewriter` does not expose `<template>` children as elements, fall back to parsing the template's inner HTML with a second `scanPage` pass, and say so in a comment.
-- [ ] **Step 4: Run** `bun test test/scan.test.ts` — Expected: PASS.
-- [ ] **Step 5: Commit** `test(pm-docs-site): HTML scanner for the link test`.
+- [x] **Step 2: Run** `bun test test/scan.test.ts` — Expected: FAIL, module not found.
+- [x] **Step 3: Implement** `scanPage`. If `HTMLRewriter` does not expose `<template>` children as elements, fall back to parsing the template's inner HTML with a second `scanPage` pass, and say so in a comment.
+- [x] **Step 4: Run** `bun test test/scan.test.ts` — Expected: PASS.
+- [x] **Step 5: Commit** `test(pm-docs-site): HTML scanner for the link test`.
 
 ### Task 4: Link components and risk pages
 
@@ -241,13 +241,13 @@ it('finds IDs inside templates too', async () => {
   - `<LinkedFrom ref="R-012" />` — `<section data-linked-from data-pagefind-ignore>` with `<h2>Linked from</h2>`, one `<h3>` per relation (in `Relation` order) with a list of links, or `<p class="plan-empty">Nothing links here yet.</p>`.
   - The three components compute `targets` and `references` once per build through a memoised helper in `src/lib/references.ts`: `function siteRefs(): { known: Map<string, Target>; back: Map<string, Backlink[]> }` (reads `loadPlanning()` and `config.views`).
 
-- [ ] **Step 1: Write the failing parity change:** add `plan/risks/rk-001/index.html`, `plan/risks/rk-002/index.html`, `plan/risks/rk-004/index.html`, `plan/risks/rk-005/index.html` to `expected-pages.txt` (sorted).
-- [ ] **Step 2: Run** `bun test test/cli.test.ts -t "renders every page"` — Expected: FAIL, the four risk pages are missing.
-- [ ] **Step 3: Implement** the three components and `siteRefs`.
-- [ ] **Step 4: Implement** `src/pages/plan/risks/[id].astro`: `getStaticPaths` over open and closed risks (`params.id` lower-case). Content: `ExportStamp kind="Risk"`, RAG badge, a `plan-facts` list (likelihood, impact, RAG override, status, owner, raised, reviewed, closed), `Affects` through `<LinkedText>`, `Trigger` and `Mitigation` through `<LinkedText>`, then `<LinkedFrom ref={risk.id} />`. Frontmatter `title: '<RK-NNN> <title>'`, `tableOfContents: false`.
-- [ ] **Step 5: Update** `risks.astro`: each table row's risk ID and every matrix cell link to `riskHref(risk)` through `<RefLink label="id">`; `Affects` and `Mitigation` cells through `<LinkedText>`; removed risks keep `id={risk.id.toLowerCase()}` on their `<li>` so `/plan/risks/#rk-003` resolves; set `tableOfContents: false`.
-- [ ] **Step 6: Run** `bun test` and `bun run check` — Expected: PASS.
-- [ ] **Step 7: Commit** `feat(pm-docs-site): one page per risk, and link components`.
+- [x] **Step 1: Write the failing parity change:** add `plan/risks/rk-001/index.html`, `plan/risks/rk-002/index.html`, `plan/risks/rk-004/index.html`, `plan/risks/rk-005/index.html` to `expected-pages.txt` (sorted).
+- [x] **Step 2: Run** `bun test test/cli.test.ts -t "renders every page"` — Expected: FAIL, the four risk pages are missing.
+- [x] **Step 3: Implement** the three components and `siteRefs`.
+- [x] **Step 4: Implement** `src/pages/plan/risks/[id].astro`: `getStaticPaths` over open and closed risks (`params.id` lower-case). Content: `ExportStamp kind="Risk"`, RAG badge, a `plan-facts` list (likelihood, impact, RAG override, status, owner, raised, reviewed, closed), `Affects` through `<LinkedText>`, `Trigger` and `Mitigation` through `<LinkedText>`, then `<LinkedFrom ref={risk.id} />`. Frontmatter `title: '<RK-NNN> <title>'`, `tableOfContents: false`.
+- [x] **Step 5: Update** `risks.astro`: each table row's risk ID and every matrix cell link to `riskHref(risk)` through `<RefLink label="id">`; `Affects` and `Mitigation` cells through `<LinkedText>`; removed risks keep `id={risk.id.toLowerCase()}` on their `<li>` so `/plan/risks/#rk-003` resolves; set `tableOfContents: false`.
+- [x] **Step 6: Run** `bun test` and `bun run check` — Expected: PASS.
+- [x] **Step 7: Commit** `feat(pm-docs-site): one page per risk, and link components`.
 
 ### Task 5: Feature and milestone pages
 
@@ -261,10 +261,10 @@ it('finds IDs inside templates too', async () => {
 - Consumes: `RefLink`, `LinkedText`, `LinkedFrom` (Task 4).
 - Produces: `<FeatureSummary id="R-012" />` — the item's state badge, milestone (`RefLink`), `plan-facts` (owner, size, position, status, stage, started, plan steps, done/dropped date), Done when (`LinkedText`), depends on (`RefLink` + state badge), brief (`RefLink` on its path), risks (`RefLink`). Used by the feature page (Task 5) and the popup templates (Task 7).
 
-- [ ] **Step 1: Extract** the feature page's badge, facts, Done when, Related items, Brief, and Risks blocks into `FeatureSummary.astro`, replacing hand-built links (`linkTo`, inline `<a href>`) with `RefLink`, and prose with `LinkedText`. The feature page keeps Result/Plan, Reason, Serves, Note, Inbox around it, with Result, Reason, Note through `LinkedText` and inbox `affects`/`related` through `RefLink`, and ends with `<LinkedFrom ref={feature.id} />`. Set `tableOfContents: false`.
-- [ ] **Step 2: Update** the milestone page: every item through `RefLink`, exit criteria through `LinkedText`, `<LinkedFrom ref={summary.id ?? 'none'} />` last, `tableOfContents: false`.
-- [ ] **Step 3: Run** `bun test` and `bun run check` — Expected: PASS (the parity page set is unchanged).
-- [ ] **Step 4: Commit** `feat(pm-docs-site): link feature and milestone pages and list their backlinks`.
+- [x] **Step 1: Extract** the feature page's badge, facts, Done when, Related items, Brief, and Risks blocks into `FeatureSummary.astro`, replacing hand-built links (`linkTo`, inline `<a href>`) with `RefLink`, and prose with `LinkedText`. The feature page keeps Result/Plan, Reason, Serves, Note, Inbox around it, with Result, Reason, Note through `LinkedText` and inbox `affects`/`related` through `RefLink`, and ends with `<LinkedFrom ref={feature.id} />`. Set `tableOfContents: false`.
+- [x] **Step 2: Update** the milestone page: every item through `RefLink`, exit criteria through `LinkedText`, `<LinkedFrom ref={summary.id ?? 'none'} />` last, `tableOfContents: false`.
+- [x] **Step 3: Run** `bun test` and `bun run check` — Expected: PASS (the parity page set is unchanged).
+- [x] **Step 4: Commit** `feat(pm-docs-site): link feature and milestone pages and list their backlinks`.
 
 ### Task 6: Index pages and docs links
 
@@ -278,7 +278,7 @@ it('finds IDs inside templates too', async () => {
 
 - Changes: `function docsHref(path: string | null, pages: Set<string>): string | null` — returns the URL only when it is in `pages`, the set of built repository docs URLs. Pages build that set from `getCollection('docs')` (empty when `config.docs` is null).
 
-- [ ] **Step 1: Write the failing test** in `test/planning.test.ts`:
+- [x] **Step 1: Write the failing test** in `test/planning.test.ts`:
 
 ```ts
 it('links a docs path only when that page is built', () => {
@@ -289,11 +289,11 @@ it('links a docs path only when that page is built', () => {
 
 Confirm the URL shape against the fixture build first (`dist/docs/guide/intro/index.html` → `/docs/guide/intro/`) and use it in both the test and the function.
 
-- [ ] **Step 2: Run** `bun test test/planning.test.ts` — Expected: FAIL.
-- [ ] **Step 3: Implement** the new `docsHref` and update every caller.
-- [ ] **Step 4: Update** each index page so every ID and brief path follows the Task 2 table: listed IDs through `RefLink`, prose through `LinkedText`. Set `tableOfContents: false` on each plan page.
-- [ ] **Step 5: Run** `bun test` and `bun run check` — Expected: PASS.
-- [ ] **Step 6: Commit** `feat(pm-docs-site): link every ID on the index pages`.
+- [x] **Step 2: Run** `bun test test/planning.test.ts` — Expected: FAIL.
+- [x] **Step 3: Implement** the new `docsHref` and update every caller.
+- [x] **Step 4: Update** each index page so every ID and brief path follows the Task 2 table: listed IDs through `RefLink`, prose through `LinkedText`. Set `tableOfContents: false` on each plan page.
+- [x] **Step 5: Run** `bun test` and `bun run check` — Expected: PASS.
+- [x] **Step 6: Commit** `feat(pm-docs-site): link every ID on the index pages`.
 
 ### Task 7: Board and Roadmap links with popup templates
 
@@ -314,13 +314,13 @@ Confirm the URL shape against the fixture build first (`dist/docs/guide/intro/in
   - Column wrapper: `<section class="plan-column" data-column={name}>` with `name` in `now | next | foryou | waiting | done`, and a header `<button type="button" class="plan-column__toggle" aria-expanded="true" aria-controls={`col-${name}-cards`}>`; the cards sit in `<div id={`col-${name}-cards`}>`.
   - Kit props: `KanbanItemCard` `href?: string`, `itemId?: string`, `tagHref?: string`; `TaskKanbanCard` `href?: string`, `itemId?: string`; `StatusTimelineFeed` event `href?: string`, `itemId?: string`. Each renders its title as the `plan-item-link` anchor when `href` is set, and the tag as `<a href={tagHref}>` when set.
 
-- [ ] **Step 1: Write the failing test** in `test/planning.test.ts`: `roadmapGroups(planning)` events each have `id` equal to their item's ID (and `null` for an event with none).
-- [ ] **Step 2: Run** it — Expected: FAIL. **Implement** the `id` field. Run — Expected: PASS.
-- [ ] **Step 3: Implement** the kit prop changes, adding to each header comment: `and the title (and tag) can be a link, for the site's item popup and backlinks`.
-- [ ] **Step 4: Implement** `ItemDetail`, `ItemDialog`, and the Board and Roadmap changes: every card with an ID gets `href`, `itemId`, and (Board) `tagHref` from the milestone target; group headings on the Roadmap link through `RefLink`; one `<ItemDetail>` after each linked card; one `<ItemDialog>` per page. Cards without an ID (log lines with none) stay plain.
-- [ ] **Step 5: Write the Pagefind test** in `test/links.test.ts`: after one fixture build (`runCli(['build', <scratch copy>])`), no file under `dist/pagefind/` fragment output contains the text of a Board popup's Done when that appears only inside a template. If Pagefind's fragments are compressed and not readable, assert instead that every `<template>` in `dist/plan/board/index.html` has `data-pagefind-ignore`.
-- [ ] **Step 6: Run** `bun test` and `bun run check` — Expected: PASS.
-- [ ] **Step 7: Commit** `feat(pm-docs-site): link Board and Roadmap cards, with popup templates`.
+- [x] **Step 1: Write the failing test** in `test/planning.test.ts`: `roadmapGroups(planning)` events each have `id` equal to their item's ID (and `null` for an event with none).
+- [x] **Step 2: Run** it — Expected: FAIL. **Implement** the `id` field. Run — Expected: PASS.
+- [x] **Step 3: Implement** the kit prop changes, adding to each header comment: `and the title (and tag) can be a link, for the site's item popup and backlinks`.
+- [x] **Step 4: Implement** `ItemDetail`, `ItemDialog`, and the Board and Roadmap changes: every card with an ID gets `href`, `itemId`, and (Board) `tagHref` from the milestone target; group headings on the Roadmap link through `RefLink`; one `<ItemDetail>` after each linked card; one `<ItemDialog>` per page. Cards without an ID (log lines with none) stay plain.
+- [x] **Step 5: Write the Pagefind test** in `test/links.test.ts`: after one fixture build (`runCli(['build', <scratch copy>])`), no file under `dist/pagefind/` fragment output contains the text of a Board popup's Done when that appears only inside a template. If Pagefind's fragments are compressed and not readable, assert instead that every `<template>` in `dist/plan/board/index.html` has `data-pagefind-ignore`.
+- [x] **Step 6: Run** `bun test` and `bun run check` — Expected: PASS.
+- [x] **Step 7: Commit** `feat(pm-docs-site): link Board and Roadmap cards, with popup templates`.
 
 ### Task 8: The build-wide link test
 
@@ -333,7 +333,7 @@ Confirm the URL shape against the fixture build first (`dist/docs/guide/intro/in
 
 - Consumes: `scanPage` (Task 3), `targets` (Task 1), `htmlPages`, `runCli`, `scratchFixture` (helpers).
 
-- [ ] **Step 1: Write the tests** (one build in `beforeAll` into a scratch copy, timeout `180_000`):
+- [x] **Step 1: Write the tests** (one build in `beforeAll` into a scratch copy, timeout `180_000`):
 
 ```ts
 it('links every known ID and brief path on every page', () => {
@@ -365,10 +365,10 @@ it('gives every item, milestone and risk page a Linked from section', () => {
 
 `backlinksOn(target)` reads the hrefs inside `[data-linked-from]` on the built target page (add to `PageScan`: `linkedFrom: Set<string>` and `hasLinkedFrom: boolean`). Known keys come from `targets(loadPlanning(fixture), allViews)`.
 
-- [ ] **Step 2: Add** a views-off case: build with `views: ['now']` and assert the first two tests also pass there (no link points at a page that was not built).
-- [ ] **Step 3: Run** `bun test test/links.test.ts` — Expected: any failure names the page and the ID or link; fix each in the page that renders it (or in `references` when a backlink is missing) until it passes.
-- [ ] **Step 4: Run** `bun test` and `bun run check` — Expected: PASS.
-- [ ] **Step 5: Commit** `test(pm-docs-site): every ID linked, every link resolved, every backlink listed`.
+- [x] **Step 2: Add** a views-off case: build with `views: ['now']` and assert the first two tests also pass there (no link points at a page that was not built).
+- [x] **Step 3: Run** `bun test test/links.test.ts` — Expected: any failure names the page and the ID or link; fix each in the page that renders it (or in `references` when a backlink is missing) until it passes.
+- [x] **Step 4: Run** `bun test` and `bun run check` — Expected: PASS.
+- [x] **Step 5: Commit** `test(pm-docs-site): every ID linked, every link resolved, every backlink listed`.
 
 ### Task 9: Full width, with the Playwright harness
 
@@ -384,12 +384,12 @@ it('gives every item, milestone and risk page a Linked from section', () => {
 
 - Produces: browser specs live in `test/browser/*.browser.ts` (`testMatch: '**/*.browser.ts'`), so `bun test` never runs them (Bun runs `*.test.*` and `*.spec.*`). `global-setup.ts` builds a scratch copy of the fixture with `node cli.mjs build` into `test/.tmp/browser/`; `serve.mjs` is a Node `http` static server for that `dist/` on port `4399`, started by `webServer` in the config. `baseURL: 'http://localhost:4399'`, Chromium only.
 
-- [ ] **Step 1: Install** `bun add -d -E @playwright/test` and `bunx playwright install chromium`.
-- [ ] **Step 2: Write the failing tests:** `integration.test.ts` asserts Starlight's options include `customCss` ending in `/src/styles/width.css`; `width.browser.ts` at viewport 1440×900 asserts the bounding width of `main .sl-markdown-content` (or Starlight's content container) is greater than `720` (45rem) on `/plan/roadmap/` and on `/docs/guide/intro/`.
-- [ ] **Step 3: Run** `bun test test/integration.test.ts` and `bun run test:browser` — Expected: FAIL on both.
-- [ ] **Step 4: Implement** `width.css` (`:root { --sl-content-width: 100%; }`), pass it as `customCss: [fileURLToPath(new URL('./src/styles/width.css', import.meta.url))]`, and remove the Board's `:root:has(.plan-columns)` rule.
-- [ ] **Step 5: Run** both — Expected: PASS. Run `bun test` — Expected: PASS.
-- [ ] **Step 6: Commit** `feat(pm-docs-site): use the full width on every page`.
+- [x] **Step 1: Install** `bun add -d -E @playwright/test` and `bunx playwright install chromium`.
+- [x] **Step 2: Write the failing tests:** `integration.test.ts` asserts Starlight's options include `customCss` ending in `/src/styles/width.css`; `width.browser.ts` at viewport 1440×900 asserts the bounding width of `main .sl-markdown-content` (or Starlight's content container) is greater than `720` (45rem) on `/plan/roadmap/` and on `/docs/guide/intro/`.
+- [x] **Step 3: Run** `bun test test/integration.test.ts` and `bun run test:browser` — Expected: FAIL on both.
+- [x] **Step 4: Implement** `width.css` (`:root { --sl-content-width: 100%; }`), pass it as `customCss: [fileURLToPath(new URL('./src/styles/width.css', import.meta.url))]`, and remove the Board's `:root:has(.plan-columns)` rule.
+- [x] **Step 5: Run** both — Expected: PASS. Run `bun test` — Expected: PASS.
+- [x] **Step 6: Commit** `feat(pm-docs-site): use the full width on every page`.
 
 ### Task 10: Popup and collapsible columns
 
@@ -405,12 +405,12 @@ it('gives every item, milestone and risk page a Linked from section', () => {
 - Consumes: Task 7's attributes (`data-item`, `data-item-detail`, `data-item-dialog*`, `data-column`, `.plan-column__toggle`).
 - Produces: `const STORAGE_KEY = 'pm-docs-site:board:collapsed'` (value: JSON array of column names); a collapsed column has `data-collapsed` and its toggle `aria-expanded="false"`.
 
-- [ ] **Step 1: Write the failing browser tests:**
+- [x] **Step 1: Write the failing browser tests:**
   - `board.browser.ts`: at widths 1440, 1024, 700 the five `[data-column]` elements share one `boundingBox().y` (within 1px); clicking `done`'s toggle sets `data-collapsed` and makes the column narrower than `64px`; after `page.reload()` it is still collapsed; clicking again and reloading restores it; with `localStorage` set to `'not json'` before load, the page shows five expanded columns and no `pageerror`.
   - `popup.browser.ts`: a plain click on the first Board `[data-item]` opens `dialog[open]` whose body contains that item's Done when and whose `Open page` `href` equals the card's `href`; `Escape` closes it and `document.activeElement` is the card link; the same for the first Roadmap `[data-item]`; a click with `modifiers: ['ControlOrMeta']` opens a new page (`context.waitForEvent('page')`) at the card's URL and no `dialog[open]`; clicking the card's milestone tag navigates to the milestone page with no dialog.
-- [ ] **Step 2: Run** `bun run test:browser` — Expected: FAIL.
-- [ ] **Step 3: Implement** `plan.ts` (click handler on `document` for `a[data-item]`: act only on `event.button === 0` with no ctrl, meta, shift, alt; copy the template's content into the dialog body, set the heading to the link text and `Open page` to the link's `href`, `showModal()`; on close, focus the link; toggles flip `data-collapsed`, `aria-expanded`, and storage, wrapping every storage access in `try`). `PlanInteractions.astro` loads it with `<script>import '../scripts/plan.ts';</script>` and adds an inline `is:inline` script that reads the key and sets `data-collapsed` before paint. Add the CSS: collapsed columns use a narrow grid track (`3rem`) with the name and count written vertically; `.plan-columns` sets its tracks from the columns' state (e.g. `grid-template-columns` built per column with `:has([data-collapsed])` or an inline custom property set by the script).
-- [ ] **Step 4: Run** `bun run test:browser` — Expected: PASS. Run `bun test` and `bun run check` — Expected: PASS.
-- [ ] **Step 5: Wire it up:** `justfile` `package-test` gains `bunx playwright install chromium` and `bun run test:browser` after `bun run check`; the CI package job gains `npx playwright install --with-deps chromium` and `bun run test:browser` steps.
-- [ ] **Step 6: Verify the whole item:** from the repository root, `just package-test`, `just lint-check`, and `just version-check` — Expected: all pass.
-- [ ] **Step 7: Commit** `feat(pm-docs-site): item popup and collapsible Board columns`.
+- [x] **Step 2: Run** `bun run test:browser` — Expected: FAIL.
+- [x] **Step 3: Implement** `plan.ts` (click handler on `document` for `a[data-item]`: act only on `event.button === 0` with no ctrl, meta, shift, alt; copy the template's content into the dialog body, set the heading to the link text and `Open page` to the link's `href`, `showModal()`; on close, focus the link; toggles flip `data-collapsed`, `aria-expanded`, and storage, wrapping every storage access in `try`). `PlanInteractions.astro` loads it with `<script>import '../scripts/plan.ts';</script>` and adds an inline `is:inline` script that reads the key and sets `data-collapsed` before paint. Add the CSS: collapsed columns use a narrow grid track (`3rem`) with the name and count written vertically; `.plan-columns` sets its tracks from the columns' state (e.g. `grid-template-columns` built per column with `:has([data-collapsed])` or an inline custom property set by the script).
+- [x] **Step 4: Run** `bun run test:browser` — Expected: PASS. Run `bun test` and `bun run check` — Expected: PASS.
+- [x] **Step 5: Wire it up:** `justfile` `package-test` gains `bunx playwright install chromium` and `bun run test:browser` after `bun run check`; the CI package job gains `npx playwright install --with-deps chromium` and `bun run test:browser` steps.
+- [x] **Step 6: Verify the whole item:** from the repository root, `just package-test`, `just lint-check`, and `just version-check` — Expected: all pass.
+- [x] **Step 7: Commit** `feat(pm-docs-site): item popup and collapsible Board columns`.
