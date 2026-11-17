@@ -76,6 +76,38 @@ jobs:
       - name: Build
         run: bun run build
 
+  # Mirrors `just package-test`: the pm-docs-site package (unpublished until
+  # R-013). Its tests build sites with the CLI under Node, as a consumer
+  # would, including one from the packed tarball installed outside the repo.
+  pm-docs-site-package:
+    name: pm-docs-site package
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/pm-docs-site
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Test
+        run: bun test
+
+      - name: Type-check
+        run: bun run check
+
   # Mirrors `just version-check` (the lefthook pre-push hook): a skills change
   # ships in a release, so it must raise the rules version and package.json
   # past the version on main; anything else (docs, CI, scripts, package
