@@ -1,0 +1,113 @@
+---
+// One roadmap item, wherever the export holds it (Now, Next, Later, Done or
+// Dropped): its summary, result or plan, reason, what it serves, its note, the
+// inbox entries that name it, and the pages that link to it. All from planning.json.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+import ExportStamp from '../../../components/ExportStamp.astro';
+import FeatureSummary from '../../../components/FeatureSummary.astro';
+import LinkedFrom from '../../../components/LinkedFrom.astro';
+import LinkedText from '../../../components/LinkedText.astro';
+import { docsHref, FEATURE_STATES, features, loadPlanning } from '../../../lib/planning';
+import config from 'virtual:pm-docs-site/config';
+import '../../../styles/components.css';
+
+export function getStaticPaths() {
+	return features(loadPlanning()).map((feature) => ({ params: { id: feature.id.toLowerCase() }, props: { id: feature.id } }));
+}
+
+const { id } = Astro.props;
+const planning = loadPlanning();
+const feature = features(planning).find((candidate) => candidate.id === id)!;
+const outcomes = new Map(planning.vision.outcomes.map((outcome) => [outcome.id, outcome.text]));
+const milestone = planning.strategy.milestones.find((candidate) => candidate.id === feature.milestone) ?? null;
+const inbox = planning.inbox.filter((entry) => entry.affects === feature.id || entry.related.includes(feature.id));
+const planLink = docsHref(feature.plan);
+---
+
+<StarlightPage
+	frontmatter={{
+		title: `${feature.id} ${feature.title}`,
+		description: feature.doneWhen[0] ?? feature.result ?? feature.reason ?? `${FEATURE_STATES[feature.state]} item ${feature.id}.`,
+		tableOfContents: false,
+	}}
+>
+	<ExportStamp kind="Feature" state={FEATURE_STATES[feature.state]} milestone={milestone ? `${milestone.id} ${milestone.name}` : 'No milestone'} />
+
+	<FeatureSummary id={feature.id} />
+
+	{
+		(feature.result || feature.plan) && (
+			<section>
+				<h2>{feature.state === 'done' ? 'Result' : 'Plan'}</h2>
+				{feature.result && (
+					<p>
+						<LinkedText text={feature.result} />
+					</p>
+				)}
+				{feature.plan && <p>Plan: {planLink ? <a href={planLink}>{feature.plan}</a> : <code>{feature.plan}</code>}</p>}
+				{feature.state === 'now' && config.views.now && (
+					<p>
+						<a href="/plan/now/">The plan's tasks and the last checkpoint</a>
+					</p>
+				)}
+			</section>
+		)
+	}
+
+	{
+		feature.reason && (
+			<section>
+				<h2>Reason</h2>
+				<p>
+					<LinkedText text={feature.reason} />
+				</p>
+			</section>
+		)
+	}
+
+	{
+		feature.serves.length > 0 && (
+			<section>
+				<h2>Serves</h2>
+				<ul>
+					{feature.serves.map((line) => (
+						<li>
+							<strong>{line}</strong> {outcomes.get(line)}
+						</li>
+					))}
+				</ul>
+			</section>
+		)
+	}
+
+	{
+		feature.note && (
+			<section>
+				<h2>Note</h2>
+				<p>
+					<LinkedText text={feature.note} />
+				</p>
+			</section>
+		)
+	}
+
+	{
+		inbox.length > 0 && (
+			<section>
+				<h2>Inbox</h2>
+				<ul>
+					{inbox.map((entry) => (
+						<li>
+							{entry.kind && <strong>{entry.kind}</strong>} <LinkedText text={entry.title} />
+							{entry.severity && <> ({entry.severity})</>}
+							{entry.captured && <>, captured {entry.captured}</>}
+						</li>
+					))}
+				</ul>
+			</section>
+		)
+	}
+
+	<LinkedFrom ref={feature.id} />
+</StarlightPage>

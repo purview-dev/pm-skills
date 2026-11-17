@@ -1,0 +1,64 @@
+---
+// A table of roadmap items of one state: each row links to the item's page,
+// with its milestone, owner, size, and what decides it (Done when, Result, or Reason).
+import type { Feature, FeatureState } from '../lib/planning';
+import type { Milestone } from '../lib/planning-types';
+import LinkedText from './LinkedText.astro';
+import RefLink from './RefLink.astro';
+import StateBadge from './StateBadge.astro';
+
+interface Props {
+	state: FeatureState;
+	items: Feature[];
+	milestones: Milestone[];
+	/** Leave the Milestone column out (on a milestone's own page). */
+	hideMilestone?: boolean;
+}
+
+const { state, items, hideMilestone = false } = Astro.props;
+const decision = (feature: Feature) => (state === 'done' ? feature.result : state === 'dropped' ? feature.reason : feature.doneWhen.join(' ')) || null;
+const decides = state === 'done' ? 'Result' : state === 'dropped' ? 'Reason' : 'Done when';
+const when = (feature: Feature) => (state === 'done' || state === 'dropped' ? feature.date : state === 'now' ? feature.stage : `${state === 'next' ? 'Next' : 'Later'} ${feature.position}`);
+---
+
+{items.length === 0 && <p class="plan-empty">Nothing here</p>}
+{
+	items.length > 0 && (
+		<table class="plan-table">
+			<thead>
+				<tr>
+					<th scope="col">Item</th>
+					<th scope="col">{state === 'done' || state === 'dropped' ? 'Date' : state === 'now' ? 'Stage' : 'Position'}</th>
+					{!hideMilestone && <th scope="col">Milestone</th>}
+					<th scope="col">Owner</th>
+					<th scope="col">Size</th>
+					<th scope="col">{decides}</th>
+				</tr>
+			</thead>
+			<tbody>
+				{items.map((feature) => (
+					<tr id={feature.id.toLowerCase()}>
+						<td>
+							<RefLink ref={feature.id} />
+							{(feature.label === 'blocked' || feature.label === 'waiting') && (
+								<>
+									{' '}
+									<StateBadge label={feature.label} />
+								</>
+							)}
+						</td>
+						<td class="plan-nowrap">{when(feature) ?? '–'}</td>
+						{!hideMilestone && (
+							<td>
+								<RefLink ref={feature.milestone ?? 'none'} />
+							</td>
+						)}
+						<td>{feature.owner ?? '–'}</td>
+						<td>{feature.size ?? '–'}</td>
+						<td>{decision(feature) ? <LinkedText text={decision(feature)} /> : '–'}</td>
+					</tr>
+				))}
+			</tbody>
+		</table>
+	)
+}

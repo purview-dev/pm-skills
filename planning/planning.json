@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-17T16:19:57+00:00",
+  "generatedAt": "2026-11-17T19:29:24+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-001-set-milestones-and-focus",
-    "head": "bea74e30e049ee8d7244aeaa44d120c733bc06ad"
+    "branch": "feat/r-009-docs-site-package-backlinks",
+    "head": "eca9106996614276fdc85d42ec10e1f63490430c"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -199,34 +199,10 @@
         "claimable": false
       },
       {
-        "id": "R-008",
-        "title": "Docs-site package: skeleton at parity",
-        "section": "next",
-        "position": 2,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "`bun test` passes in `packages/pm-docs-site/`, building the planning fixture with the package CLI renders every page that `docs-site/` renders today, and `just version-check` passes with a change under `packages/**` and no rules-marker bump.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-        "note": null,
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-003",
         "title": "Fix pm-export's ajv validation command",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -247,36 +223,10 @@
         "claimable": true
       },
       {
-        "id": "R-009",
-        "title": "Docs-site package: backlinks everywhere",
-        "section": "next",
-        "position": 4,
-        "label": "waiting",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "the package link test finds no item, milestone, risk, or brief ID on any page of the fixture build without a link and no internal link that 404s, each item, milestone, and risk page lists what links to it, and a browser test shows the Board's five columns in one row at 1440, 1024, and 700px.",
-        "size": "M",
-        "dependsOn": [
-          "R-008"
-        ],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-        "note": null,
-        "revisits": null,
-        "claimable": false
-      },
-      {
         "id": "R-004",
         "title": "Verify the aspire module against a real AppHost",
         "section": "next",
-        "position": 5,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -303,7 +253,7 @@
         "title": "Docs-site package: board filters and swimlanes",
         "section": "later",
         "position": 1,
-        "label": "waiting",
+        "label": "later",
         "serves": [
           "V4"
         ],
@@ -329,7 +279,7 @@
         "title": "Docs-site package: milestone timeline",
         "section": "later",
         "position": 2,
-        "label": "waiting",
+        "label": "later",
         "serves": [
           "V4"
         ],
@@ -355,7 +305,7 @@
         "title": "Docs-site package: dependency graph",
         "section": "later",
         "position": 3,
-        "label": "waiting",
+        "label": "later",
         "serves": [
           "V4"
         ],
@@ -486,13 +436,6 @@
       "now": [],
       "next": [
         {
-          "id": "R-008",
-          "title": "Docs-site package: skeleton at parity",
-          "owner": "agent",
-          "size": "M",
-          "detail": "ready"
-        },
-        {
           "id": "R-003",
           "title": "Fix pm-export's ajv validation command",
           "owner": "agent",
@@ -516,16 +459,26 @@
           "detail": "blocks R-013 Docs-site package: publish and migrate"
         }
       ],
-      "waiting": [
+      "waiting": [],
+      "done": [
         {
+          "date": "2026-11-17",
           "id": "R-009",
           "title": "Docs-site package: backlinks everywhere",
+          "milestone": "M1",
           "owner": "agent",
-          "size": "M",
-          "detail": "needs R-008 Docs-site package: skeleton at parity"
-        }
-      ],
-      "done": [
+          "plan": "docs/superpowers/plans/2026-11-17-docs-site-package-backlinks.md",
+          "result": "branch feat/r-009-docs-site-package-backlinks"
+        },
+        {
+          "date": "2026-11-17",
+          "id": "R-008",
+          "title": "Docs-site package: skeleton at parity",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-17-docs-site-package-skeleton.md",
+          "result": "branch feat/r-008-docs-site-package-skeleton"
+        },
         {
           "date": "2026-11-17",
           "id": "R-001",
@@ -538,6 +491,24 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-17",
+        "kind": "done",
+        "id": "R-009",
+        "title": "Docs-site package: backlinks everywhere",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-009-docs-site-package-backlinks"
+      },
+      {
+        "date": "2026-11-17",
+        "kind": "done",
+        "id": "R-008",
+        "title": "Docs-site package: skeleton at parity",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-008-docs-site-package-skeleton"
+      },
       {
         "date": "2026-11-17",
         "kind": "done",
@@ -580,6 +551,24 @@
     "done": [
       {
         "date": "2026-11-17",
+        "id": "R-009",
+        "title": "Docs-site package: backlinks everywhere",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-17-docs-site-package-backlinks.md",
+        "result": "branch feat/r-009-docs-site-package-backlinks"
+      },
+      {
+        "date": "2026-11-17",
+        "id": "R-008",
+        "title": "Docs-site package: skeleton at parity",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-17-docs-site-package-skeleton.md",
+        "result": "branch feat/r-008-docs-site-package-skeleton"
+      },
+      {
+        "date": "2026-11-17",
         "id": "R-001",
         "title": "Set milestones and focus",
         "milestone": null,
@@ -610,13 +599,121 @@
     ],
     "reviews": []
   },
-  "inbox": [],
+  "inbox": [
+    {
+      "file": "planning/inbox/2026-11-17-1741-docs-site-package-cli-gaps.md",
+      "title": "Docs-site package CLI and README gaps",
+      "captured": "2026-11-17 17:41",
+      "source": "agent (R-008 execute, final review)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "packages/pm-docs-site/cli.mjs",
+      "context": "R-008 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Gaps left in the R-008 package CLI, for R-013 before publishing: `pm-docs-site dev` has no automated test (smoke-tested by hand only); `--title` and `--planning` are ignored without a warning when the site has an `astro.config.*`; `check` imports an `astro.config.ts` or `.mts` with plain Node `import()`, which needs Node 22.18 or later while `engines` says `>=22`; a `planning.json` containing `null` gives a TypeError without the pm-export hint; and the README does not say the site and the package must be on the same Windows drive (a symlinked package on another drive fails the build)."
+    },
+    {
+      "file": "planning/inbox/2026-11-17-1741-docs-site-package-consumer-text.md",
+      "title": "Docs-site package shows repository-only text",
+      "captured": "2026-11-17 17:41",
+      "source": "agent (R-008 execute, final review)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "packages/pm-docs-site/src/pages/index.astro",
+      "context": "R-008 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Two things a package consumer sees that belong to this repository: the home page tells the reader to run `just docs-preview`, a recipe in this repository's justfile only (inherited from the templates); and every build without the `docs` option logs Starlight's warning that `node_modules/@purview-dev/pm-docs-site/src/content/docs/` does not exist, plus an empty-collection warning. Use consumer-neutral text, and an empty inline loader instead of Starlight's `docsLoader()` when `docs` is omitted."
+    },
+    {
+      "file": "planning/inbox/2026-11-17-1741-docs-site-package-dead-doc-links.md",
+      "title": "Docs-site package links docs to missing pages",
+      "captured": "2026-11-17 17:41",
+      "source": "agent (R-008 execute, final review)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "packages/pm-docs-site/src/lib/planning.ts",
+      "context": "R-008 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "`docsHref` in `packages/pm-docs-site/src/lib/planning.ts` turns any `docs/<x>.md` path into `/<x>/` whatever the `docs` option holds. With `docs` omitted (the default) the Now, Log, and feature pages link specs and plans to pages that do not exist; with a source `prefix` the links miss the prefixed pages. Inherited from the templates. Resolve the link against the configured docs sources and return no link when no source maps the path; R-009's link test should catch it."
+    },
+    {
+      "file": "planning/inbox/2026-11-17-1741-pre-push-package-test-cost.md",
+      "title": "Package tests slow the pre-push hook",
+      "captured": "2026-11-17 17:41",
+      "source": "agent (R-008 execute, final review)",
+      "kind": "question",
+      "severity": null,
+      "affects": "justfile",
+      "context": "R-008 execute",
+      "discuss": "yes",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "R-008 added `package-test` to `just lint-check`, which the lefthook pre-push hook runs. It adds two Astro builds, a pack, and a networked `bun install` to every push: about 40 to 60 seconds, and a push fails offline. Keep it, move it to CI only, or run only the fast unit tests on pre-push?"
+    },
+    {
+      "file": "planning/inbox/2026-11-17-1928-docs-site-popup-a11y.md",
+      "title": "Docs-site popup and board accessibility polish",
+      "captured": "2026-11-17 19:28",
+      "source": "agent (R-009 execute, final review)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "packages/pm-docs-site",
+      "context": "R-009 execute",
+      "discuss": "no",
+      "related": [
+        "R-010"
+      ],
+      "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+      "reviewed": "never",
+      "idea": "Deferred minors from the R-009 final review: card links do not say they open a popup (aria-haspopup=\"dialog\"); a backdrop click does not close the item dialog; popup section headings share the dialog title's h2 level; Board collapse toggles render without JavaScript and do nothing (render them hidden, let plan.ts reveal them); KanbanItemCard keeps tabindex=0 around a card that now holds links, so each card costs extra tab stops; no browser test for localStorage that throws."
+    },
+    {
+      "file": "planning/inbox/2026-11-17-1929-docs-site-reflink-fallbacks.md",
+      "title": "Docs-site RefLink fallbacks for unknown keys",
+      "captured": "2026-11-17 19:28",
+      "source": "agent (R-009 execute, final review)",
+      "kind": "bug",
+      "severity": "cosmetic",
+      "affects": "packages/pm-docs-site/src/components/RefLink.astro",
+      "context": "R-009 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "RefLink prints the bare key when it has no target: a Log row for an activity ID with no matching item shows the ID without its title, and the Roadmap's no-milestone heading reads \"none\" when that group exists only from log lines with no ID. Give RefLink fallback text (the entry title, \"No milestone\")."
+    },
+    {
+      "file": "planning/inbox/2026-11-17-1930-linkify-ids-inside-paths.md",
+      "title": "linkify links IDs inside file paths",
+      "captured": "2026-11-17 19:28",
+      "source": "agent (R-009 execute, final review)",
+      "kind": "bug",
+      "severity": "cosmetic",
+      "affects": "packages/pm-docs-site/src/lib/references.ts",
+      "context": "R-009 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "linkify uses \\b boundaries, so an upper-case ID inside a path in prose that is not a known brief path (docs/plans/R-009-x.md) gets a link in the middle of the path. The link test's scanner uses a stricter lookbehind, so the two disagree. Match the scanner's boundaries in linkify."
+    }
+  ],
   "briefs": [
     {
       "path": "planning/briefs/2026-11-17-docs-site-package.md",
-      "id": "R-008",
+      "id": "R-010",
       "title": "Docs site as a versioned package",
-      "status": "on roadmap (R-008, R-009, R-010, R-011, R-012, R-013, R-014)",
+      "status": "on roadmap (R-010, R-011, R-012, R-013, R-014)",
       "origin": "user request",
       "updated": "2026-11-17",
       "decision": "2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.",
@@ -631,13 +728,13 @@
     "removed": []
   },
   "counts": {
-    "next": 5,
+    "next": 3,
     "later": 7,
     "nextMax": 5,
-    "openInbox": 0,
-    "discuss": 0,
+    "openInbox": 7,
+    "discuss": 1,
     "shapingBriefs": 0,
-    "done": 1,
+    "done": 3,
     "dropped": 3,
     "blockers": 0,
     "openRisks": 0,
@@ -649,7 +746,6 @@
     "reviewDue": false,
     "lastReview": "never",
     "claimable": [
-      "R-008",
       "R-003",
       "R-004"
     ],

@@ -1,0 +1,57 @@
+import { cpSync, mkdirSync, mkdtempSync, readdirSync, readFileSync } from 'node:fs';
+import { join, relative, sep } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+
+export const PACKAGE = fileURLToPath(new URL('..', import.meta.url));
+export const FIXTURES = join(PACKAGE, 'test', 'fixtures');
+export const CLI = join(PACKAGE, 'cli.mjs');
+
+/** Run the CLI under Node, as a consumer would. */
+export function runCli(args: string[], cwd: string = PACKAGE): { code: number; stdout: string; stderr: string } {
+	const result = Bun.spawnSync(['node', CLI, ...args], { cwd, stdout: 'pipe', stderr: 'pipe' });
+
+	return { code: result.exitCode, stdout: result.stdout.toString(), stderr: result.stderr.toString() };
+}
+
+/** Every `.html` file under a build folder, `/`-separated and sorted. */
+export function htmlPages(distDir: string): string[] {
+	return (readdirSync(distDir, { recursive: true }) as string[])
+		.filter((file) => file.endsWith('.html'))
+		.map((file) => relative(distDir, join(distDir, file)).split(sep).join('/'))
+		.sort();
+}
+
+/** The parity snapshot: the pages the template site renders from the fixture. */
+export function expectedPages(): string[] {
+	return readFileSync(join(FIXTURES, 'expected-pages.txt'), 'utf8').split('\n').filter(Boolean).sort();
+}
+
+/**
+ * Scratch sites live in test/.tmp/ (gitignored), not the OS temp folder: on
+ * Windows, Astro cannot build a site whose root is on another drive than the
+ * package's src/. An installed package is always on the consumer's drive.
+ */
+export const SCRATCH = join(PACKAGE, 'test', '.tmp');
+
+/**
+ * A scratch copy of the fixture layout (site/, planning.json, docs/), so a test
+ * can change one file without touching the fixtures.
+ */
+export function scratchFixture(prefix: string): string {
+	mkdirSync(SCRATCH, { recursive: true });
+	const dir = mkdtempSync(join(SCRATCH, prefix));
+
+	cpSync(join(FIXTURES, 'planning.json'), join(dir, 'planning.json'));
+	cpSync(join(FIXTURES, 'docs'), join(dir, 'docs'), { recursive: true });
+	mkdirSync(join(dir, 'site'));
+	cpSync(join(FIXTURES, 'site', 'package.json'), join(dir, 'site', 'package.json'));
+
+	return dir;
+}
+
+/** An astro.config.mjs for a scratch site, importing the package by file URL. */
+export function siteConfig(options: string): string {
+	const index = pathToFileURL(join(PACKAGE, 'index.mjs')).href;
+
+	return `import pmDocsSite from '${index}';\nexport default { integrations: [pmDocsSite(${options})] };\n`;
+}

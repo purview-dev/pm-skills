@@ -27,7 +27,7 @@ pm-lint command="check":
     bun skills/pm-lint/scripts/lint.ts {{command}}
 
 # Lint Markdown, validate skills, test their scripts, and lint planning/. Used by the lefthook pre-push hook.
-lint-check: validate test pm-lint
+lint-check: validate test pm-lint package-test
     bunx markdownlint-cli2 "**/*.md" "#node_modules"
 
 # Lint all Markdown and apply automatic fixes.
@@ -66,3 +66,13 @@ docs-check:
     bun run test
     bun run check
     bun run build
+
+# Test and type-check the pm-docs-site package (unpublished until R-013), then run its browser tests in Chromium. Its builds need Node 22 or later.
+[group('Docs')]
+[working-directory('packages/pm-docs-site')]
+package-test:
+    bun install --frozen-lockfile
+    bun test
+    bun run check
+    bunx playwright install chromium
+    bun run test:browser

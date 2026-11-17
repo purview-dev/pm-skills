@@ -1,0 +1,158 @@
+---
+// The site's front page: where the project is, from planning.json, and the
+// way into the plan and the repository docs (the integration's options).
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+import ExportStamp from '../components/ExportStamp.astro';
+import LinkedText from '../components/LinkedText.astro';
+import RefLink from '../components/RefLink.astro';
+import { loadPlanning, milestoneId } from '../lib/planning';
+import config from 'virtual:pm-docs-site/config';
+import '../styles/components.css';
+
+const planning = loadPlanning();
+const { counts, checks } = planning;
+const focusId = milestoneId(planning.strategy.focus.milestone, planning.strategy.milestones);
+
+const figures = [
+	{ label: 'In Next', value: `${counts.next} of ${counts.nextMax}` },
+	{ label: 'In Later', value: counts.later },
+	{ label: 'Done', value: counts.done },
+	{ label: 'Open ideas', value: counts.openInbox },
+	{ label: 'Blocked', value: counts.blockers },
+	{ label: 'Red risks', value: `${counts.redRisks} of ${counts.openRisks}` },
+];
+
+const redRisks = planning.risks.open.filter((risk) => risk.rag === 'red');
+---
+
+<StarlightPage
+	frontmatter={{
+		title: config.title,
+		...(config.description ? { description: config.description } : {}),
+		template: 'splash',
+	}}
+>
+	<ExportStamp />
+
+	<section>
+		<h2>Focus</h2>
+		<p>
+			<strong>
+				{focusId ? <RefLink ref={focusId} /> : planning.strategy.focus.milestone ? <LinkedText text={planning.strategy.focus.milestone} /> : 'No focus set'}
+			</strong>
+		</p>
+		{planning.strategy.focus.whyNow && (
+			<p>
+				<LinkedText text={planning.strategy.focus.whyNow} />
+			</p>
+		)}
+		<p>
+			{
+				planning.now.item ? (
+					<>
+						Now:{' '}
+						<strong>
+							{config.views.now ? (
+								<a href="/plan/now/">
+									{planning.now.item.id} {planning.now.item.title}
+								</a>
+							) : (
+								<RefLink ref={planning.now.item.id} />
+							)}
+						</strong>{' '}
+						({planning.now.stage})
+					</>
+				) : (
+					'Nothing is in progress.'
+				)
+			}
+		</p>
+	</section>
+
+	<section>
+		<h2>Figures</h2>
+		<dl class="home-figures">
+			{
+				figures.map((figure) => (
+					<div>
+						<dt>{figure.label}</dt>
+						<dd>{figure.value}</dd>
+					</div>
+				))
+			}
+		</dl>
+	</section>
+
+	<section>
+		<h2>Ready to start</h2>
+		{checks.claimable.length === 0 && <p class="plan-empty">Nothing in Next can be started.</p>}
+		<ul>
+			{
+				checks.claimable.map((id) => (
+					<li>
+						<RefLink ref={id} />
+					</li>
+				))
+			}
+		</ul>
+	</section>
+
+	<section>
+		<h2>Red risks</h2>
+		{redRisks.length === 0 && <p class="plan-empty">No open risk is red.</p>}
+		<ul>
+			{
+				redRisks.map((risk) => (
+					<li>
+						<span class="rag rag--red">red</span> <strong><RefLink ref={risk.id} label="id" /></strong>{' '}
+						<LinkedText text={risk.title} /> — mitigation: {risk.mitigation ? <LinkedText text={risk.mitigation} /> : 'none'}
+					</li>
+				))
+			}
+		</ul>
+	</section>
+
+	<section>
+		<h2>Read on</h2>
+		<ul>
+			{config.views.now && <li><a href="/plan/now/">Now</a> — the active item, its checkpoint and its plan</li>}
+			<li><a href="/plan/board/">Board</a> — Now, Next, For you, Waiting and Done</li>
+			<li><a href="/plan/roadmap/">Roadmap</a> — milestones in order</li>
+			{config.views.milestones && <li><a href="/plan/milestones/">Milestones</a> — each milestone, its exit criteria and its items</li>}
+			{config.views.features && <li><a href="/plan/features/">Features</a> — every item, with a page each</li>}
+			<li><a href="/plan/log/">Log</a> — done, dropped and reviews</li>
+			<li><a href="/plan/risks/">Risks</a> — the risk register by RAG status</li>
+			{config.views.inbox && <li><a href="/plan/inbox/">Inbox</a> — parked ideas, bugs and questions</li>}
+			{config.views.briefs && <li><a href="/plan/briefs/">Briefs</a> — shaped ideas and their decisions</li>}
+			{config.views.strategy && <li><a href="/plan/strategy/">Strategy</a> — the vision, bets, assumptions and decisions</li>}
+			<li>Search — every page above is in the site search once it is built (<code>just docs-preview</code>)</li>
+			{config.docs !== null && <li>Documentation — the repository's Markdown, grouped in the sidebar</li>}
+		</ul>
+	</section>
+</StarlightPage>
+
+<style>
+	.home-figures {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+		gap: 0.75rem;
+	}
+
+	.home-figures > div {
+		padding: 0.75rem 1rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: 10px;
+	}
+
+	.home-figures dt {
+		color: var(--sl-color-gray-3);
+		font-size: var(--sl-text-sm);
+	}
+
+	.home-figures dd {
+		margin: 0;
+		font-size: var(--sl-text-2xl);
+		font-weight: 700;
+	}
+</style>

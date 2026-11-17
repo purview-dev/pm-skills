@@ -1,0 +1,18 @@
+---
+// One item, milestone, risk or brief as a link to its page, named with its
+// title, or as plain text when that page is not built or the key is unknown.
+import { siteRefs } from '../lib/references';
+
+interface Props {
+	/** An ID (`R-012`, `M1`, `RK-002`), `none` for the No-milestone page, or a brief path. */
+	ref: string | null | undefined;
+	/** `full` shows the target's label (`R-012 Invoice export`); `id` the key only. */
+	label?: 'full' | 'id';
+}
+
+const { ref, label = 'full' } = Astro.props;
+const target = ref ? siteRefs().known.get(ref) : undefined;
+const text = target && label === 'full' ? target.label : (ref ?? '');
+---
+
+{target?.href ? <a href={target.href} title={target.label}>{text}</a> : text}

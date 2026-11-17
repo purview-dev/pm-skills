@@ -1,0 +1,66 @@
+---
+// The shaping record from planning.json's `briefs`: each brief's status, the
+// problem it names, its Done when, its decision, and any revisions.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+import ExportStamp from '../../components/ExportStamp.astro';
+import LinkedText from '../../components/LinkedText.astro';
+import RefLink from '../../components/RefLink.astro';
+import { briefAnchor, loadPlanning } from '../../lib/planning';
+import '../../styles/components.css';
+
+const planning = loadPlanning();
+---
+
+<StarlightPage frontmatter={{ title: 'Briefs', description: 'Each shaped idea: its status, problem, Done when, decision and revisions.', tableOfContents: false }}>
+	<ExportStamp />
+
+	<p>{planning.briefs.length} briefs, {planning.counts.shapingBriefs} still shaping.</p>
+
+	{planning.briefs.length === 0 && <p class="plan-empty">No briefs. pm-shape writes one per idea it discusses.</p>}
+
+	{
+		planning.briefs.map((brief) => (
+			<section id={briefAnchor(brief.path)}>
+				<h2>
+					{brief.id && <RefLink ref={brief.id} label="id" />} {brief.title}
+				</h2>
+				<p class="plan-meta">
+					{brief.status ? <LinkedText text={brief.status} /> : 'No status'}
+					{brief.updated && <> · updated {brief.updated}</>}
+					{brief.origin && (
+						<>
+							{' '}
+							· from <LinkedText text={brief.origin} />
+						</>
+					)}{' '}
+					· <RefLink ref={brief.path} label="id" />
+				</p>
+				{brief.problem && (
+					<p>
+						<strong>Problem:</strong> <LinkedText text={brief.problem} />
+					</p>
+				)}
+				{brief.doneWhen && (
+					<p>
+						<strong>Done when:</strong> <LinkedText text={brief.doneWhen} />
+					</p>
+				)}
+				{brief.decision && (
+					<p>
+						<strong>Decision:</strong> <LinkedText text={brief.decision} />
+					</p>
+				)}
+				{brief.revisions.length > 0 && (
+					<ul>
+						{brief.revisions.map((revision) => (
+							<li>
+								{revision.date && <strong>{revision.date}</strong>} <LinkedText text={revision.text} />
+							</li>
+						))}
+					</ul>
+				)}
+			</section>
+		))
+	}
+</StarlightPage>

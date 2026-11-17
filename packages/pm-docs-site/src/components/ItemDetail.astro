@@ -1,0 +1,16 @@
+---
+// The popup content for one item, kept inert in a <template> until a plain
+// click on its card opens the item dialog. Search ignores it: the item's own
+// page holds the same summary.
+import FeatureSummary from './FeatureSummary.astro';
+
+interface Props {
+	id: string;
+}
+
+const { id } = Astro.props;
+---
+
+<template data-item-detail={id} data-pagefind-ignore>
+	<FeatureSummary id={id} />
+</template>

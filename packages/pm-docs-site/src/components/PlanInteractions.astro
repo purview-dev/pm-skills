@@ -1,0 +1,18 @@
+---
+// The Board's and Roadmap's client script (src/scripts/plan.ts). The inline
+// part runs as the page is parsed, before the columns paint, so a collapsed
+// column never flashes open; it must stay in step with STORAGE_KEY there.
+---
+
+<script is:inline>
+	try {
+		const names = JSON.parse(localStorage.getItem('pm-docs-site:board:collapsed') ?? '[]');
+
+		if (Array.isArray(names)) document.documentElement.dataset.boardCollapsed = names.filter((name) => typeof name === 'string').join(' ');
+	} catch {
+		// Junk or no storage: every column stays open.
+	}
+</script>
+<script>
+	import '../scripts/plan.ts';
+</script>

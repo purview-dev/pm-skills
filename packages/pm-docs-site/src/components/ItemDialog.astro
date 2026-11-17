@@ -1,0 +1,16 @@
+---
+// The one item dialog on the Board and Roadmap. src/scripts/plan.ts fills it
+// from a card's <template> and opens it on a plain click; without JavaScript
+// the card link goes to the item's page instead.
+---
+
+<dialog class="plan-dialog" data-item-dialog aria-labelledby="plan-dialog-title" data-pagefind-ignore>
+	<div class="plan-dialog__head">
+		<h2 id="plan-dialog-title"></h2>
+		<button type="button" class="plan-dialog__close" data-item-dialog-close aria-label="Close">×</button>
+	</div>
+	<div class="plan-dialog__body" data-item-dialog-body></div>
+	<p class="plan-dialog__foot">
+		<a data-item-dialog-open href="">Open page</a>
+	</p>
+</dialog>
