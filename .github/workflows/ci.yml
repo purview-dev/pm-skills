@@ -31,6 +31,14 @@ jobs:
       - name: Validate skills
         run: bun scripts/validate.ts
 
+      # Mirrors `just test`: the version scripts, and pm-export's exporter and pm-lint against their fixtures.
+      - name: Test scripts
+        run: bun test scripts/ skills/pm-export/ skills/pm-lint/
+
+      # Mirrors `just pm-lint`: planning/ against the PM file format rules.
+      - name: Lint PM state
+        run: bun skills/pm-lint/scripts/lint.ts check
+
       # Mirrors `just lint-check`: markdownlint-cli2 with the repository config.
       - name: Lint Markdown
         run: bunx markdownlint-cli2 "**/*.md" "#node_modules"

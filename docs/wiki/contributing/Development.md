@@ -30,8 +30,12 @@ PM state, and `docs-site/` is the site `pm-docs-site` builds from it.
 
 ## Versions and releases
 
-- `just bump patch|minor|major` writes the next release version to
-  `package.json`; `major` also raises the rules version.
+- `just bump <part>` writes the next release version to `package.json`:
+  `patch`, `minor`, or `major` for a stable release; `prepatch`,
+  `preminor`, `premajor`, or `prerelease` (with `--preid <id>`, default
+  `pre`) for a prerelease such as `2.4.3-pre.1`; `release` to turn a
+  prerelease into its stable version; `set <version>` for an exact one.
+  Raising the major (`major`, `premajor`) also raises the rules version.
 - `just version-check` compares the version with `main` (also run on push).
 
 The `package.json` major is the rules/skills version (rules v17 ship as
@@ -39,11 +43,14 @@ The `package.json` major is the rules/skills version (rules v17 ship as
 `planning/config.md` and `AGENTS.md` carry the same rules version. CI runs
 the same checks on every push and pull request to `main`. A pull request
 that changes anything under `skills/` must raise the rules version past the
-one on `main` (`just bump major`, then `pm-setup`), to a version that is not
-already tagged. Pull requests that touch nothing under `skills/` (docs, CI,
-scripts, package metadata) keep the rules version, and may bump the minor
-or patch. The repository-only `release` skill in `.agents/skills/release/`
-picks the bump and commits it; it is not installed into consuming projects.
+one on `main` (`just bump major` or `just bump premajor`, then `pm-setup`),
+to a version that is not already tagged; while `main` is an unreleased
+`N.0.0-pre.*` prerelease, skills changes may stay on rules N and move the
+prerelease on. Pull requests that touch nothing under `skills/` (docs, CI,
+scripts, package metadata) keep the rules version, and may move the
+version forward within it. Prerelease versions are published as GitHub
+prereleases. The repository-only `release` skill in `skills/release/` picks
+the bump and commits it; it is not installed into consuming projects.
 
 ## Adding a skill
 

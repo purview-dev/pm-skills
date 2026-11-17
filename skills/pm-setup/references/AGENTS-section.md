@@ -1,4 +1,4 @@
-<!-- pm-skills:start version=18 -->
+<!-- pm-skills:start version=19 -->
 <!-- Managed by pm-setup. Edit outside these markers; content inside is replaced on upgrade.
      Installed copies keep this marker without a version. The version of record is
      `Rules version` in the PM root config.md, so editing or merging this file cannot lose it. -->
@@ -39,8 +39,9 @@ repository root.
 | `pm-board` | Show the task board; move, add, insert, or close one card | User asks |
 | `pm-roadmap` | Show the full roadmap; move, add, or insert one item | User asks |
 | `pm-status` | Show the summary or the user's queue (read-only) | User asks |
-| `pm-export` | Write the machine-readable plan document and its schema, or check them against the schema | User asks, or a tool needs the plan as JSON (check only during a workflow) |
-| `pm-docs-site` | Plan, build, extend, upgrade, or check the local project site that renders the export | User asks (check only during a workflow); its build modes run in the execute stage of a docs-site item (rule 9) |
+| `pm-export` | Write the machine-readable plan document and its schema with its script, check them against the schema and the Markdown, or query one value or ID | User asks, or a tool needs the plan as JSON (check and query only during a workflow) |
+| `pm-lint` | Check the PM files against the **PM file format** rules, fix the layout ones, or print a pre-commit hook that checks them | User asks (check, rules, and hook only during a workflow); every PM commit runs it (Committing PM state, step 6) |
+| `pm-docs-site` | Plan, build, extend, upgrade, or check the local, searchable project site that renders the export: board, roadmap, milestones, features, and the plan views | User asks (check only during a workflow); its build modes run in the execute stage of a docs-site item (rule 9) |
 | `pm-up-next` | Show the ordered queue and the one next action (read-only) | User asks |
 | `pm-help` | Explain the skills, find what is missing in the setup, recommend the next skill (read-only) | User asks (explain mode only during a workflow) |
 
@@ -299,8 +300,9 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
 - **Uncommitted PM state:** the paths printed by
   `git -C <worktree> status --porcelain -- <PM root>`, with the main
   worktree as the default `worktree`.
-- **Export file:** `<PM root>/planning.json`, written only by `pm-export`,
-  either when it runs or as the export refresh of a PM commit (rules:
+- **Export file:** `<PM root>/planning.json`, written only by `pm-export`
+  (with its script, `scripts/export.ts`, when Bun is installed), either
+  when it runs or as the export refresh of a PM commit (rules:
   Committing PM state). It is **derived**: the Markdown files are the
   state, and the export is a projection for other tools. Never hand-edit it
   and never read it as PM state; when the two disagree, the Markdown is
@@ -309,6 +311,17 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   the **Export file**, refreshed from `pm-export`'s
   `references/planning.schema.json` on every write. `schemaVersion` in the
   export and the schema's const change together when the format changes.
+- **PM file format:** the layout and schema every PM file follows, written
+  as checkable rules in `pm-lint`'s `references/rules.md`. Formatting: one
+  level-1 heading first, blank lines around headings, lists, and code
+  fences, `-` bullets, no trailing spaces or tabs, one final newline. Schema:
+  each file's sections, fields, and values as these Shared definitions and
+  the `pm-init` templates define them, and the references between files
+  (IDs never reused, `Depends on`, `Serves`, `Milestone`, derived RAG).
+  Every skill that writes a PM file writes it to these rules, and a PM
+  commit lints what it commits. `pm-lint fix` changes layout only; any
+  other finding is corrected by the skill that owns the file. A repository
+  may run `pm-lint check --staged` as a pre-commit hook.
 - **Docs site:** the optional local Astro site that `pm-docs-site` builds
   from its templates. It reads the **Export file** only, never writes the
   PM root, and is code, not PM state: its files are committed by the
@@ -429,7 +442,8 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    captured risk keeps `Reviewed: never` until `pm-risk` reviews it. The
    read-only exceptions: `pm-help` may answer a question about a skill in
    explain mode, without reading PM state; `pm-rejoin` may run in `locate`
-   mode; `pm-export` and `pm-docs-site` may run in `check` mode; and
+   mode; `pm-export` may run in `check` or `query` mode, `pm-lint` in
+   `check`, `rules`, or `hook` mode, and `pm-docs-site` in `check` mode; and
    `pm-status`, `pm-board`, `pm-roadmap`, `pm-up-next`, and `pm-risk`
    (`view`) may render their view when the user explicitly asks for it. None of them may add, move, insert, close,
    or reorder anything during a workflow. In every case the step in
@@ -687,17 +701,27 @@ commit later. A commit made this way is a **PM commit**.
    them (recommended)` and `Leave them uncommitted`; the free-text entry is
    the commit message. On `always`, commit without asking. On `never`, put
    the commands in a `Note` and run nothing.
-6. **Refresh the export** after the last PM file is written and before the
-   commands in step 7, or before the `Note` on `never`. It runs when
-   `Export on commit` is `always`, or `if present` and
-   `<PM root>/planning.json` exists in the commit worktree, and the changed
-   paths include a PM file other than the **Export file** and **Export
-   schema**. Run `pm-export` (`write`) steps 1 to 5 in the commit worktree,
-   without its commit or output; reading every PM file is that step's
-   scope. If its verify fails, leave the **Export file** as it was, add
-   `Export not refreshed: <first failure>` to the `Note`, and commit the
-   rest. Skip it when the user chose `Leave them uncommitted` or `Leave it
+6. **Lint, then refresh the export**, after the last PM file is written and
+   before the commands in step 7, or before the `Note` on `never`. Skip
+   both when the user chose `Leave them uncommitted` or `Leave it
    uncommitted`.
+   - **Lint** (**PM file format**). When Bun and `pm-lint` are installed,
+     run `bun <pm-lint skill>/scripts/lint.ts fix <changed PM paths> --root
+     "<commit worktree>"`, which fixes layout only and then checks. Correct
+     each remaining error in content this run wrote, and run it again. An
+     error in a file this run did not write goes in the `Note` as `Lint:
+     <n> errors (<file>:<line> <rule>)` for the skill that owns it. When a
+     pre-commit hook runs `pm-lint` and the commit then fails, step 4
+     applies. Without Bun or `pm-lint`, add `PM files not linted: <Bun |
+     pm-lint> is not installed.` to the `Note`.
+   - **Refresh the export.** It runs when `Export on commit` is `always`, or
+     `if present` and `<PM root>/planning.json` exists in the commit
+     worktree, and the changed paths include a PM file other than the
+     **Export file** and **Export schema**. Run `pm-export` (`write`) steps
+     1 to 5 in the commit worktree, without its commit or output; reading
+     every PM file is that step's scope. If its verify fails, leave the
+     **Export file** as it was, add `Export not refreshed: <first failure>`
+     to the `Note`, and commit the rest.
 7. **Run these two commands, in this order:**
 
    ```bash
@@ -724,7 +748,7 @@ Rules:
   files are never included, even when the same work changed them.
 - `pm-park` never commits, and `pm-risk` never commits in capture mode:
   they run mid-workflow and must return in one line. Their inbox files and
-  risks are committed by the next skill that commits, usually
+  risks are linted and committed by the next skill that commits, usually
   `pm-checkpoint`.
 - The **Export file** and its **Export schema** are ordinary PM files
   inside the PM root, so the same commit covers them. `pm-export` is the
@@ -887,6 +911,21 @@ session's position to `<PM root>/PAUSE.md`, and `pm-resume` continues from
 it and deletes it. A missing file means no pause. From version 17 the
 release major is the rules version, so every skills release is a rules
 upgrade. No setting is added.
+
+Version 19 gives `pm-export` a script, `scripts/export.ts`, that builds
+`<PM root>/planning.json` from the Markdown the same way on every run,
+validates it against the schema without a package, checks it for
+staleness, and answers queries (`get`, `find`, `summary`). The export
+format stays at `schemaVersion` 3: run `pm-export` once so the export
+records the new skills version. Version 19 also adds the docs site's
+default views — Milestones and Features with one page per milestone and
+item, Now, Inbox, Briefs, and Strategy — and documents its search: run
+`pm-docs-site upgrade` for an installed site. Version 19 also adds
+`pm-lint` and the **PM file format**: every PM commit fixes the PM files'
+layout and checks their schema before it commits, and `pm-lint hook`
+prints a pre-commit hook (lefthook, husky, or git) that runs `pm-lint
+check --staged`. Run `pm-lint check` once after upgrading; older files may
+need `pm-lint fix` and the owning skill. No setting is added.
 
 ## Asking the user (mandatory)
 

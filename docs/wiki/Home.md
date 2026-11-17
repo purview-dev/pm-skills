@@ -39,9 +39,19 @@ literal, predictable, low-friction output: one next action, an explicit
 - **The plan as data:** `pm-export` writes every roadmap item, board
   column, milestone, bug, brief, risk, and log entry to `planning/planning.json`
   in one fixed shape, with the JSON Schema that describes it, or checks the
-  file without writing. The Markdown stays the source of truth.
+  file without writing. A bundled Bun script does the export, the schema
+  validation, the staleness check, and queries (`get`, `find`, `summary`),
+  so every project gets the same output. The Markdown stays the source of
+  truth.
+- **One file format:** `pm-lint` checks every PM file against the format
+  rules: the Markdown layout, each file's fields and values, and the
+  references between files. It fixes the layout ones, runs before every PM
+  commit, and prints a lefthook, husky, or git pre-commit hook that runs
+  `check --staged`.
 - **The plan as a site:** `pm-docs-site` plans a local Astro and Starlight
   site that renders `planning.json` as Home, Board, Roadmap, Log, and Risks pages,
+  with Milestones and Features (one page per milestone and per item), Now,
+  Inbox, Briefs, and Strategy by default, and site search over all of them,
   then builds it from shipped templates inside that item's workflow.
   Optional modules add the repository's `docs/` pages, LikeC4 architecture
   views, and an Aspire AppHost resource. It reads the export only.

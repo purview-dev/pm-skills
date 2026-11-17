@@ -58,8 +58,9 @@ asked, the skill's own `SKILL.md` steps.
 | `pm-roadmap` | Seeing the full roadmap by milestone, or moving, adding, or inserting one item | "show the roadmap", "put R-012 at the top of Next" | Nothing in view mode; `ROADMAP.md` in edit modes |
 | `pm-status` | Seeing the one-screen summary or your own queue | "where are we?", "what do I need to do?" | Nothing |
 | `pm-up-next` | Seeing the ordered queue and the one next action without starting anything | "what's next?", "up next" | Nothing |
-| `pm-export` | A tool needs the whole plan as JSON, or you want the export refreshed or validated | "export the plan", "update the status JSON" | `<PM root>/planning.json` and `planning.schema.json` |
-| `pm-docs-site` | You want the plan as a local web site (Board, Roadmap, Log, Risks), a module or page added to it, or to know whether it is current | "add a docs site", "is the docs site current?" | `ROADMAP.md` (plan); the site folder, inside the item's workflow (build modes) |
+| `pm-export` | A tool needs the whole plan as JSON, you want the export refreshed or validated, or you want one value or ID from it | "export the plan", "update the status JSON", "what does the export say about R-012?" | `<PM root>/planning.json` and `planning.schema.json` (write); nothing (check, query) |
+| `pm-lint` | You want the PM files checked or fixed against their format rules, or a pre-commit hook that checks them | "lint the planning files", "fix the PM formatting", "add a pre-commit hook for the plan" | Nothing (check, rules, hook); the PM files it fixes (fix) |
+| `pm-docs-site` | You want the plan as a local, searchable web site (Board, Roadmap, Milestones, Features, Log, Risks, Now, Inbox, Briefs, Strategy), a module or view added to it, or to know whether it is current | "add a docs site", "add the features page", "is the docs site current?" | `ROADMAP.md` (plan); the site folder, inside the item's workflow (build modes) |
 | `pm-help` | Not sure which skill to use | "pm help" | Nothing |
 
 Concepts to explain on request, from the pm-skills section: the PM root,
@@ -117,6 +118,7 @@ push/pop to suspend).
    | 23 | The `Commits` section of `config.md` sets `PM state commit`, `PM branch`, and `Export on commit` | `Commits setting missing: <names>` (PM commits ask, or the export lags) | `pm-setup` |
    | 24 | If an item is active, its `Session` is not the PM branch, and `git rev-list --count HEAD..@{upstream}` is 0 (against the remote refs already fetched) | `<ID> <title> is on the PM branch` (expected only when the user asked to stay there), or `<branch> is <n> commits behind <upstream>` | `pm-rejoin`, or `git pull --ff-only` |
    | 25 | `PAUSE.md` is missing | `Paused on <Session> at <Paused>: <Running>` | `pm-resume` on `<Session>` |
+   | 26 | If Bun is installed: `bun <pm-lint skill>/scripts/lint.ts check --format json` reports no error (read-only) | `<n> PM format errors: <first file:line rule>` | `pm-lint fix`, then the skill that owns the file |
 
    Stop at the first failing check among 1 to 4; later checks depend on
    them.
