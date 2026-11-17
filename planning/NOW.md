@@ -11,19 +11,17 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: active
-- Item: R-001 Set milestones and focus
-- Session: feat/r-001-set-milestones-and-focus
-- Stage: design
+- Status: idle
+- Item:
+- Session:
+- Stage:
 - Brief:
 - Milestone:
 - Spec:
 - Plan:
-- Started: 2026-11-17
+- Started:
 
 ## Done when
-
-- `planning/STRATEGY.md` has at least one milestone and a `Current focus`, and `pm-help` check 6 passes.
 
 ## Checkpoint
 

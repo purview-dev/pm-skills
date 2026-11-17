@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-17T16:09:59+00:00",
+  "generatedAt": "2026-11-17T16:19:57+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-001-set-milestones-and-focus",
-    "head": "5c614e0fbc0c4c44d56a9b7caf51e5972594defa"
+    "head": "bea74e30e049ee8d7244aeaa44d120c733bc06ad"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -159,21 +159,16 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-001",
-      "title": "Set milestones and focus"
-    },
-    "stage": "design",
-    "session": "feat/r-001-set-milestones-and-focus",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
     "brief": null,
     "milestone": null,
     "spec": null,
     "plan": null,
-    "started": "2026-11-17",
-    "doneWhen": [
-      "`planning/STRATEGY.md` has at least one milestone and a `Current focus`, and `pm-help` check 6 passes."
-    ],
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
   "plan": null,
@@ -488,15 +483,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-001",
-          "title": "Set milestones and focus",
-          "owner": null,
-          "size": null,
-          "detail": "design"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-008",
@@ -538,9 +525,28 @@
           "detail": "needs R-008 Docs-site package: skeleton at parity"
         }
       ],
-      "done": []
+      "done": [
+        {
+          "date": "2026-11-17",
+          "id": "R-001",
+          "title": "Set milestones and focus",
+          "milestone": null,
+          "owner": "both",
+          "plan": null,
+          "result": "branch feat/r-001-set-milestones-and-focus"
+        }
+      ]
     },
     "activity": [
+      {
+        "date": "2026-11-17",
+        "kind": "done",
+        "id": "R-001",
+        "title": "Set milestones and focus",
+        "milestone": null,
+        "owner": "both",
+        "result": "branch feat/r-001-set-milestones-and-focus"
+      },
       {
         "date": "2026-11-17",
         "kind": "dropped",
@@ -571,7 +577,17 @@
     ]
   },
   "log": {
-    "done": [],
+    "done": [
+      {
+        "date": "2026-11-17",
+        "id": "R-001",
+        "title": "Set milestones and focus",
+        "milestone": null,
+        "owner": "both",
+        "plan": null,
+        "result": "branch feat/r-001-set-milestones-and-focus"
+      }
+    ],
     "dropped": [
       {
         "date": "2026-11-17",
@@ -621,7 +637,7 @@
     "openInbox": 0,
     "discuss": 0,
     "shapingBriefs": 0,
-    "done": 0,
+    "done": 1,
     "dropped": 3,
     "blockers": 0,
     "openRisks": 0,
@@ -637,6 +653,6 @@
       "R-003",
       "R-004"
     ],
-    "drift": false
+    "drift": true
   }
 }
