@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-17T16:43:23+00:00",
+  "generatedAt": "2026-11-17T17:10:31+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-008-docs-site-package-skeleton",
-    "head": "cf14e0933d4cbe7d5485e316281b2a5ba80ef5da"
+    "head": "3ceb6a92f1de6172323fe059919040769b9ff38a"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -164,19 +164,213 @@
       "id": "R-008",
       "title": "Docs-site package: skeleton at parity"
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-008-docs-site-package-skeleton",
     "brief": "planning/briefs/2026-11-17-docs-site-package.md",
     "milestone": "M1",
     "spec": "docs/superpowers/specs/2026-11-17-docs-site-package-skeleton-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-17-docs-site-package-skeleton.md",
     "started": "2026-11-17",
     "doneWhen": [
       "`bun test` passes in `packages/pm-docs-site/`, building the planning fixture with the package CLI renders every page that `docs-site/` renders today, and `just version-check` passes with a change under `packages/**` and no rules-marker bump."
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-17-docs-site-package-skeleton.md",
+    "checked": 0,
+    "total": 35,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "Package scaffold, options, and schemaVersion check",
+        "checked": 0,
+        "total": 7,
+        "steps": [
+          {
+            "text": "**Step 1: Let git see the package.** Add `!/packages/pm-docs-site/` on the line after `**/packages/*` in `.gitignore`. Check: `git check-ignore -v packages/pm-docs-site/package.json` prints nothing (exit 1).",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Write `package.json` and `tsconfig.json`.** `package.json` per Global Constraints plus `\"bin\": { \"pm-docs-site\": \"./cli.mjs\" }`, `\"exports\": { \".\": { \"types\": \"./index.d.ts\", \"default\": \"./index.mjs\" } }`, `\"files\": [\"index.mjs\", \"index.d.ts\", \"cli.mjs\", \"lib\", \"src\", \"README.md\"]`, scripts `\"test\": \"bun test\"`, `\"check\": \"astro check --root test/fixtures/site\"`. `tsconfig.json` extends `astro/tsconfigs/strict`, sets `\"allowJs\": true, \"checkJs\": true`, excludes `dist`, `node_modules`, `test/fixtures/**/dist`. Run `bun install` in `packages/pm-docs-site/`; `bun.lock` is created.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Write the failing tests.**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run them to see them fail.** `bun test` in `packages/pm-docs-site/` — FAIL, modules not found.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Implement `lib/schema-version.mjs`, `lib/options.mjs`, and `index.d.ts`** with the interfaces above, JSDoc-typed (`// @ts-check` at the top of each `.mjs`).",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Run the tests.** `bun test` — PASS.",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Commit.**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "Repository docs pages and the sidebar",
+        "checked": 0,
+        "total": 6,
+        "steps": [
+          {
+            "text": "**Step 1: Copy the loader test** to `test/repo-docs.test.ts`, change the import to `from 'bun:test'` (use `mock` / `spyOn` from `bun:test` where it used `vi`), and import the pure functions from `../lib/repo-docs.mjs` and `repoDocsLoader` from `../src/loaders/repo-docs`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Write `test/sidebar.test.ts`** asserting: with all views on and no docs, the result is exactly `[{ label: 'Plan', items: [ ten links ] }]` with the links `/plan/now/`, `/plan/board/`, `/plan/roadmap/`, `/plan/milestones/`, `/plan/features/`, `/plan/log/`, `/plan/risks/`, `/plan/inbox/`, `/plan/briefs/`, `/plan/strategy/` in that order; with `views: ['now']` the Plan items are Now, Board, Roadmap, Log, Risks; with `docs` pointing at `test/fixtures/docs` (Task 4 creates it; create a minimal two-file version now: `README.md` and `guide/intro.md`) and one source `{ label: 'Guide', base: '.', include: ['README.md', 'guide/*.md'], prefix: 'docs/' }`, a second group `{ label: 'Guide', collapsed: false, items: ['docs/readme', 'docs/guide/intro'] }` follows (use the ids `pageId` actually returns; assert against `pagesOf` output, not hand-written ids, if they differ).",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Run to see them fail.** `bun test` — FAIL, modules not found.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Implement** `lib/repo-docs.mjs` (move the template's pure functions, JSDoc types), `src/loaders/repo-docs.ts`, and `lib/sidebar.mjs`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Run the tests.** `bun test` — PASS, including the copied loader tests unchanged in their assertions.",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Commit.**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "The integration, the virtual module, and the pages",
+        "checked": 0,
+        "total": 7,
+        "steps": [
+          {
+            "text": "**Step 1: Copy the planning test** to `test/planning.test.ts` with `bun:test` imports and the fixture path `test/fixtures/planning.json`. Replace its `SCHEMA_VERSION` assertions with `checkSchemaVersion` behaviour already covered in Task 1, and keep a test that `loadPlanning` on a missing file throws `No plan export at <path>. Run the pm-export skill to write planning.json.` and on invalid JSON throws `<path> is not valid JSON`. Because `planning.ts` imports the virtual module, call `loadPlanning` with an explicit path and register the virtual module for the test with Bun's `mock.module('virtual:pm-docs-site/config', () => ({ default: <resolved options for the fixture> }))` before importing `planning.ts`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Write `test/integration.test.ts`**: call `pmDocsSite({ title: 'T' })`, run its `astro:config:setup` hook with a stub `config.root` of `pathToFileURL('/site/')` and a recording `updateConfig`; assert one call whose `srcDir.href` ends with `/packages/pm-docs-site/src/`, whose `integrations` has one entry named `@astrojs/starlight`, whose `vite.ssr.noExternal` equals the two names above, and whose virtual plugin `load('\\0virtual:pm-docs-site/config')` returns source containing `\"title\":\"T\"`. Assert `pmDocsSite({ title: 'T' }).pmDocsSiteOptions` deep-equals `{ title: 'T' }`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Run to see them fail.** `bun test` — FAIL.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Implement `index.mjs`, `src/env.d.ts`, `src/content.config.ts`.** The content config always defines `docs`: with `repoDocsLoader({ root: config.docs.root, sources: config.docs.sources })` when `config.docs` is set, else Starlight's `docsLoader()` (which finds no `src/content/docs/` and yields an empty collection).",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Copy the site files** listed under Files and replace each placeholder: `{{PM_ROOT}}planning.json` in comments and in `ExportStamp.astro`'s text becomes the export path relative to the site root, computed in `ExportStamp.astro` from `config.planning`; `{{SITE_TITLE}}`/`{{SITE_DESCRIPTION}}` in `index.astro` come from `config.title`/`config.description`; `DEFAULT_PATH` is gone (Interfaces). Replace every `import { views } from '...views'` with `import config from 'virtual:pm-docs-site/config'` and `views.x` with `config.views.x`; replace `modules.repoDocs` with `config.docs !== null` and drop `modules.architecture` branches. Check: `git grep -nE \"\\{\\{[A-Z_]+\\}\\}\" -- packages/pm-docs-site` prints nothing (stage the files first, or use the Grep tool).",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Run the tests.** `bun test` — PASS.",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Commit.**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "CLI, fixture site, and the parity snapshot",
+        "checked": 0,
+        "total": 7,
+        "steps": [
+          {
+            "text": "**Step 1: Generate the parity snapshot from the current templates.** In a scratch folder outside the repository (for example `$TMPDIR/pmds-parity/`): create `planning/planning.json` (copy of the fixture), `docs/` (copy of `test/fixtures/docs/`), and `site/pm-docs-site.json` equal to `docs-site/pm-docs-site.json` with `\"SITE_ROOT\": \"site\"`; run `bun <repo>/skills/pm-docs-site/scripts/site.ts write <scratch>/site`; edit `site/src/docs-sources.ts` to the single Guide source with `base` relative to the scratch root (`docs`); `bun install` and `bun run build` in `site/`; write the sorted `.html` paths of `site/dist/` to `test/fixtures/expected-pages.txt`, one per line. Record the commands in the Step 7 commit body. Delete the scratch folder.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Write the failing tests** in `test/cli.test.ts` (each with a 180 000 ms timeout):",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Run to see them fail.** `bun test test/cli.test.ts` — FAIL, `cli.mjs` missing.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Implement `lib/site-options.mjs` and `cli.mjs`** (Interfaces). Make `cli.mjs` executable in git: `git update-index --chmod=+x packages/pm-docs-site/cli.mjs` after adding it.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Run the tests.** `bun test` — PASS. If the page set differs from the snapshot, fix the package; change the snapshot only for a page the spec removes (the `architecture` route, which the fixture does not produce).",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Type-check.** `bun run check` in `packages/pm-docs-site/` — `0 errors`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Commit.**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 5,
+        "title": "An installed consumer builds",
+        "checked": 0,
+        "total": 3,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing test** `an installed package builds the fixture` (timeout 300 000 ms): `bun pm pack --destination <tmp>` in the package; create `<tmp>/consumer site/` (the space is deliberate) with `package.json` `{ \"name\": \"consumer\", \"private\": true, \"type\": \"module\", \"dependencies\": { \"@purview-dev/pm-docs-site\": \"file:<tarball>\" } }`; run `bun install` there; copy `planning.json` and `docs/` beside it and an `astro.config.mjs` equal to the fixture's but importing `pmDocsSite` from `'@purview-dev/pm-docs-site'`; run `node node_modules/@purview-dev/pm-docs-site/cli.mjs build .` with that folder as `cwd`; assert exit 0 and `htmlPages(dist)` equals `expected-pages.txt`. Delete `<tmp>` in `afterAll`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run it.** `bun test test/install.test.ts` — it fails if the `files` list, the dependency placement, or `noExternal` is wrong; otherwise it passes at once. Fix the package (not the test) until it passes.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Commit.**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 6,
+        "title": "Repository wiring and the version check",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write `README.md`**: what the package is, the consumer's three files with a sample `astro.config.mjs`, the options table from the spec, the CLI commands, `SUPPORTED_SCHEMA_VERSIONS`, and that it is unpublished until R-013. Check: `bunx markdownlint-cli2 packages/pm-docs-site/README.md` reports `0 issues`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Add the justfile recipe**, in the `Docs` group, with `[working-directory('packages/pm-docs-site')]`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Add the CI job** `pm-docs-site-package` (`name: pm-docs-site package`, `runs-on: ubuntu-latest`, `working-directory: packages/pm-docs-site`): checkout `actions/checkout@v6`; `oven-sh/setup-bun@v2` with `bun-version: latest`; `actions/setup-node@v4` with `node-version: 24`; then `bun install --frozen-lockfile`, `bun test`, `bun run check`, each as a named step like the `docs-site` job.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Verify the whole repository.** Run `just lint-check` — passes (validate, tests, pm-lint, package-test, markdownlint). Run `just docs-check` — passes unchanged. Run `just version-check` — passes with no rules-marker bump (`git diff --name-only main...HEAD` shows no `skills/` path). If `origin/main` is behind local `main`, run `bun scripts/check-version.ts main` and record that in the commit body.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit.**",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -470,7 +664,7 @@
           "title": "Docs-site package: skeleton at parity",
           "owner": null,
           "size": null,
-          "detail": "plan"
+          "detail": "execute, 0/35 plan steps"
         }
       ],
       "next": [
