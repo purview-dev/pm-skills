@@ -1,3 +1,10 @@
+pre-commit:
+  jobs:
+    # The PM file format rules (skills/pm-lint/references/rules.md) for the
+    # staged planning/ files; exits 0 when no PM file is staged.
+    - name: pm-lint
+      run: bun skills/pm-lint/scripts/lint.ts check --staged
+
 commit-msg:
   jobs:
     - name: conventional commits
