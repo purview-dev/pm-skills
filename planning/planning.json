@@ -1,11 +1,11 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-12T10:29:24+00:00",
+  "generatedAt": "2026-11-17T16:00:33+00:00",
   "generator": {
     "skill": "pm-export",
-    "skillsVersion": 12,
-    "rulesVersion": 12
+    "skillsVersion": 19,
+    "rulesVersion": 19
   },
   "project": {
     "pmRoot": "planning/",
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "main",
-    "head": "83ba3848cfebc91c9c563fbbeb4531381c2ae04a"
+    "head": "d80978228011451a38e23d858dd2f57cfeda7967"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -99,34 +99,10 @@
         "claimable": true
       },
       {
-        "id": "R-002",
-        "title": "Check the docs-site Board at three widths",
-        "section": "next",
-        "position": 2,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": null,
-        "owner": "agent",
-        "doneWhen": "a browser test of `docs-site` shows the Board's five columns in one row at 1440, 1024, and 700px.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": null,
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-003",
         "title": "Fix pm-export's ajv validation command",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -150,7 +126,7 @@
         "id": "R-004",
         "title": "Verify the aspire module against a real AppHost",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -169,21 +145,19 @@
         "note": null,
         "revisits": null,
         "claimable": true
-      }
-    ],
-    "later": [
+      },
       {
-        "id": "R-005",
-        "title": "Rehearse a schemaVersion bump through the docs site",
-        "section": "later",
-        "position": 1,
-        "label": "later",
+        "id": "R-008",
+        "title": "Docs-site package: skeleton at parity",
+        "section": "next",
+        "position": 4,
+        "label": "next",
         "serves": [
           "V4"
         ],
         "milestone": null,
         "owner": "agent",
-        "doneWhen": "on a scratch branch, moving `pm-export` to schemaVersion 3 fails `just validate` until the templates follow, and `pm-docs-site upgrade` then passes `just docs-check`.",
+        "doneWhen": "`bun test` passes in `packages/pm-docs-site/`, building the planning fixture with the package CLI renders every page that `docs-site/` renders today, and `just version-check` passes with a change under `packages/**` and no rules-marker bump.",
         "size": "M",
         "dependsOn": [],
         "status": {
@@ -191,16 +165,42 @@
           "reason": null,
           "since": null
         },
-        "brief": null,
+        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+        "note": null,
+        "revisits": null,
+        "claimable": true
+      },
+      {
+        "id": "R-014",
+        "title": "Create the npm @purview-dev scope and token",
+        "section": "next",
+        "position": 5,
+        "label": "next",
+        "serves": [
+          "V4"
+        ],
+        "milestone": null,
+        "owner": "user",
+        "doneWhen": "the `@purview-dev` scope exists on npm, and an `NPM_TOKEN` secret is set on the repository.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
         "note": null,
         "revisits": null,
         "claimable": false
-      },
+      }
+    ],
+    "later": [
       {
         "id": "R-006",
         "title": "Check pm-setup's skill counts in validate",
         "section": "later",
-        "position": 2,
+        "position": 1,
         "label": "later",
         "serves": [
           "V1"
@@ -221,26 +221,136 @@
         "claimable": false
       },
       {
-        "id": "R-007",
-        "title": "Docs-site extension pages",
+        "id": "R-009",
+        "title": "Docs-site package: backlinks everywhere",
         "section": "later",
-        "position": 3,
-        "label": "later",
+        "position": 2,
+        "label": "waiting",
         "serves": [
           "V4"
         ],
         "milestone": null,
         "owner": "agent",
-        "doneWhen": "the Now, Inbox, Briefs, and Strategy pages from `pm-docs-site` spec section 12 render from `planning.json` only, each with unit-tested derivations.",
-        "size": "L",
-        "dependsOn": [],
+        "doneWhen": "the package link test finds no item, milestone, risk, or brief ID on any page of the fixture build without a link and no internal link that 404s, each item, milestone, and risk page lists what links to it, and a browser test shows the Board's five columns in one row at 1440, 1024, and 700px.",
+        "size": "M",
+        "dependsOn": [
+          "R-008"
+        ],
         "status": {
           "value": "ready",
           "reason": null,
           "since": null
         },
-        "brief": null,
-        "note": "Size L: split into one item per page with `pm-docs-site plan <extension>` before starting.",
+        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+        "note": null,
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-010",
+        "title": "Docs-site package: board filters and swimlanes",
+        "section": "later",
+        "position": 3,
+        "label": "waiting",
+        "serves": [
+          "V4"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "browser tests show that filtering the fixture Board by owner, milestone, size, and RAG leaves only matching cards, and that grouping by milestone and by owner renders one lane per group.",
+        "size": "M",
+        "dependsOn": [
+          "R-008"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+        "note": null,
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-011",
+        "title": "Docs-site package: milestone timeline",
+        "section": "later",
+        "position": 4,
+        "label": "waiting",
+        "serves": [
+          "V4"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "the Roadmap page shows each milestone with its target, status, and progress from `planning.json`, each linking to its milestone page, and the derivation has unit tests.",
+        "size": "M",
+        "dependsOn": [
+          "R-008"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+        "note": null,
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-012",
+        "title": "Docs-site package: dependency graph",
+        "section": "later",
+        "position": 5,
+        "label": "waiting",
+        "serves": [
+          "V4"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "the graph page shows one node per open item and one edge per `Depends on` and `Revisits`, each node links to its feature page, and the layout is computed at build time.",
+        "size": "M",
+        "dependsOn": [
+          "R-008"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+        "note": null,
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-013",
+        "title": "Docs-site package: publish and migrate",
+        "section": "later",
+        "position": 6,
+        "label": "waiting",
+        "serves": [
+          "V4"
+        ],
+        "milestone": null,
+        "owner": "both",
+        "doneWhen": "`npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.mjs`, `bun.lock`, and `.gitignore` and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; and a scratch export at schemaVersion 4 fails the build until the package's range includes it.",
+        "size": "M",
+        "dependsOn": [
+          "R-009",
+          "R-010",
+          "R-011",
+          "R-012",
+          "R-014"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+        "note": "Rewrites `pm-docs-site` and Non-interruption rule 9, so it bumps the rules major.",
         "revisits": null,
         "claimable": false
       }
@@ -258,13 +368,6 @@
           "detail": "ready"
         },
         {
-          "id": "R-002",
-          "title": "Check the docs-site Board at three widths",
-          "owner": "agent",
-          "size": "S",
-          "detail": "ready"
-        },
-        {
           "id": "R-003",
           "title": "Fix pm-export's ajv validation command",
           "owner": "agent",
@@ -277,35 +380,110 @@
           "owner": "both",
           "size": "M",
           "detail": "ready"
+        },
+        {
+          "id": "R-008",
+          "title": "Docs-site package: skeleton at parity",
+          "owner": "agent",
+          "size": "M",
+          "detail": "ready"
         }
       ],
-      "foryou": [],
+      "foryou": [
+        {
+          "id": "R-014",
+          "title": "Create the npm @purview-dev scope and token",
+          "owner": "user",
+          "size": "S",
+          "detail": "blocks R-013 Docs-site package: publish and migrate"
+        }
+      ],
       "waiting": [],
       "done": []
     },
-    "activity": []
+    "activity": [
+      {
+        "date": "2026-11-17",
+        "kind": "dropped",
+        "id": "R-007",
+        "title": "Docs-site extension pages",
+        "milestone": null,
+        "owner": null,
+        "result": "Reason: the Now, Inbox, Briefs, and Strategy pages already exist in the pm-docs-site templates. Brief: planning/briefs/2026-11-17-docs-site-package.md"
+      },
+      {
+        "date": "2026-11-17",
+        "kind": "dropped",
+        "id": "R-005",
+        "title": "Rehearse a schemaVersion bump through the docs site",
+        "milestone": null,
+        "owner": null,
+        "result": "Reason: folded into R-013's Done when. Brief: planning/briefs/2026-11-17-docs-site-package.md"
+      },
+      {
+        "date": "2026-11-17",
+        "kind": "dropped",
+        "id": "R-002",
+        "title": "Check the docs-site Board at three widths",
+        "milestone": null,
+        "owner": null,
+        "result": "Reason: folded into R-009's Done when. Brief: planning/briefs/2026-11-17-docs-site-package.md"
+      }
+    ]
   },
   "log": {
     "done": [],
-    "dropped": [],
+    "dropped": [
+      {
+        "date": "2026-11-17",
+        "id": "R-007",
+        "title": "Docs-site extension pages",
+        "reason": "the Now, Inbox, Briefs, and Strategy pages already exist in the pm-docs-site templates. Brief: planning/briefs/2026-11-17-docs-site-package.md"
+      },
+      {
+        "date": "2026-11-17",
+        "id": "R-005",
+        "title": "Rehearse a schemaVersion bump through the docs site",
+        "reason": "folded into R-013's Done when. Brief: planning/briefs/2026-11-17-docs-site-package.md"
+      },
+      {
+        "date": "2026-11-17",
+        "id": "R-002",
+        "title": "Check the docs-site Board at three widths",
+        "reason": "folded into R-009's Done when. Brief: planning/briefs/2026-11-17-docs-site-package.md"
+      }
+    ],
     "reviews": []
   },
   "inbox": [],
-  "briefs": [],
+  "briefs": [
+    {
+      "path": "planning/briefs/2026-11-17-docs-site-package.md",
+      "id": "R-008",
+      "title": "Docs site as a versioned package",
+      "status": "on roadmap (R-008, R-009, R-010, R-011, R-012, R-013, R-014)",
+      "origin": "user request",
+      "updated": "2026-11-17",
+      "decision": "2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.",
+      "problem": "The docs site is chaotic to maintain and builds non-deterministically: each consumer carries its own copy of the templates, resolves its own package versions, and any template change forces a rules-major bump on every consumer.",
+      "doneWhen": "`docs-site/` contains only `package.json`, `astro.config.mjs`, and `bun.lock` (plus `.gitignore`), and `just docs-check` passes.",
+      "revisions": []
+    }
+  ],
   "risks": {
     "open": [],
     "closed": [],
     "removed": []
   },
   "counts": {
-    "next": 4,
-    "later": 3,
+    "next": 5,
+    "later": 6,
     "nextMax": 5,
     "openInbox": 0,
     "discuss": 0,
     "shapingBriefs": 0,
     "done": 0,
-    "dropped": 0,
+    "dropped": 3,
     "blockers": 0,
     "openRisks": 0,
     "redRisks": 0,
@@ -317,9 +495,9 @@
     "lastReview": "never",
     "claimable": [
       "R-001",
-      "R-002",
       "R-003",
-      "R-004"
+      "R-004",
+      "R-008"
     ],
     "drift": false
   }
