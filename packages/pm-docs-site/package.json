@@ -1,7 +1,6 @@
 {
 	"name": "@purview-dev/pm-docs-site",
 	"version": "0.1.0-pre.1",
-	"private": true,
 	"type": "module",
 	"description": "A local, searchable project site for pm-skills: the board, roadmap, milestones, features, log, and risks from pm-export's planning.json, with the repository's Markdown, as an Astro and Starlight integration.",
 	"license": "MIT",
