@@ -2,7 +2,7 @@
 
 - Status: on roadmap (R-010, R-011, R-012, R-013, R-014)
 - Origin: user request
-- Updated: 2026-11-17
+- Updated: 2026-11-18
 
 ## Problem
 
@@ -59,19 +59,23 @@ Recommended: the full idea, sliced. Strongest argument against: at about 4 hours
 - 2026-11-17 Aspire: `DocsSiteKit.cs` is C# and cannot ship in an npm package. Answer: keep `templates/aspire/` in the skill; its resource runs the package's CLI. R-004 stays.
 - 2026-11-17 Inputs: parsing PM Markdown in the site would duplicate `skills/pm-export/scripts/planning.ts`. Answer: plan data only from `planning.json`; Markdown paths only for repository docs (repo-docs). A stale export is reported and fixed with `pm-export`.
 - 2026-11-17 Slicing: L at about 4 hours per week. Answer: everything in the first release. The work is still sliced into M items, but nothing is published until the last slice, so the first public version has every view.
+- 2026-11-18 Publishing before slice 6. Evidence: the publish workflow was built outside the slices (PRs #25, #26, #27: `.github/workflows/publish-pm-docs-site.yml`, following purview-dev/astroc4); `0.1.0-pre.1` was published by hand on 2026-11-18 under the `prerelease` dist-tag to create the package for npm trusted publishing, and the workflow tagged it `pm-docs-site-v0.1.0-pre.1`. npm's placeholder `0.0.0-stage` is deprecated. The package was validated by building proj-infosec-scp-review's real `planning.json` (173 pages). This overrides the slicing answer above: a prerelease without R-010, R-011, and R-012 is public, and `0.1.0-pre.1` can never be reused. Answer: the user chose to publish it (2026-11-18).
+- 2026-11-18 Release cadence for R-010, R-011, R-012: a prerelease per slice would exercise the pipeline and let consumers test each slice. Answer: hold until R-013. Reason: the next public version has every view, as first intended; the slices change the package without bumping its version, and the publish workflow skips the tagged `0.1.0-pre.1` (REL002).
+- 2026-11-18 R-014's `Done when` asks for an `NPM_TOKEN` secret, which trusted publishing replaced; the scope, the package, and the trusted publisher (publish, stage publish, manage dist-tags) exist. Answer: close R-014 as done, with its `Done when` restated as: the `@purview-dev` scope exists, `0.1.0-pre.1` is published, and the trusted publisher for `publish-pm-docs-site.yml` is configured.
+- 2026-11-18 R-013's publish workflow is already built (PRs #25 to #27). Answer: R-013 releases stable `1.0.0` once the migration is verified. Reason: it marks the integration options as a stable API; a later breaking option change needs `2.0.0`. R-013 narrows to the migration, the rules major bump, and that release.
 
 ## Ramifications
 
 | Area | Effect | Mitigation |
 | --- | --- | --- |
 | Data and migrations | Existing sites hold rendered templates and a `pm-docs-site.json` manifest; they move to a dependency and a config file | `pm-docs-site upgrade` migrates: maps manifest `values` and `views` to integration options, deletes template-owned files, keeps site-owned ones |
-| Security and privacy | Consumers run published code at build time; an npm token becomes a repository secret | Publish with npm provenance from GitHub Actions only; exact-pinned dependencies; the site stays static and local, reading only `planning.json` and the docs paths given |
+| Security and privacy | Consumers run published code at build time | 2026-11-18: npm trusted publishing (OIDC) from `publish-pm-docs-site.yml` in the `npm` environment, limited to `main`; no npm token exists, and `scripts/workflows.test.ts` fails a PR that adds one; provenance on every CI publish; exact-pinned dependencies; the site stays static and local, reading only `planning.json` and the docs paths given |
 | Performance | Board filters, timeline, and dependency graph add client JavaScript; graph layout on large roadmaps | Render static HTML first and enhance with small islands; lay out the graph at build time, not in the browser |
 | User experience | Consumers lose file-level edits; every ID becomes a link | Options and Starlight component overrides for customisation; a link checker in the package tests |
-| Operations and cost | A second release line, tags `pm-docs-site-v<version>`, and a publish workflow; npm public scope is free (GBP 0 constraint holds) | `scripts/check-version.ts` exempts `packages/**`; the publish workflow mirrors `release.yml` |
+| Operations and cost | A second release line, tags `pm-docs-site-v<version>`, and a publish workflow; npm public scope is free (GBP 0 constraint holds) | `scripts/check-version.ts` exempts `packages/**` from the rules bump and, since 2026-11-18, fails a package version that goes back, is not SemVer, or is already tagged; the publish workflow applies REL001 to REL003 and skips a tagged version |
 | Maintenance | Templates, `site.ts`, the placeholder table, and four `SCHEMA_VERSION` checks go; the package has its own tests and CI | `scripts/validate.ts` checks the skill's supported package range against the package's supported schemaVersions instead |
 | Dependencies | Drops R-007 (built), R-002 and R-005 (folded in); R-004 keeps the aspire module in the skill; slices depend on slice 1 | Recorded under Size and slicing |
-| Reversibility | Until publish (slice 6) everything is in-repo and revertible; once published, npm versions cannot be reused | Publish only from the last slice, starting at `0.x` pre-release until the migration is verified |
+| Reversibility | Until publish (slice 6) everything is in-repo and revertible; once published, npm versions cannot be reused | Publish only from the last slice, starting at `0.x` pre-release until the migration is verified. 2026-11-18: `0.1.0-pre.1` is published, so publishing is no longer reversible; no further version is published until R-013, which releases `1.0.0` once the migration is verified |
 
 The skill change is a rules change: Non-interruption rule 9 and `pm-docs-site` build modes are rewritten, so slice 6 bumps the rules major.
 
@@ -81,11 +85,11 @@ The skill change is a rules change: Non-interruption rule 9 and `pm-docs-site` b
 - Two `bun run build` runs from the same `planning.json` and lockfile produce byte-identical `dist/` HTML.
 - A change under `packages/pm-docs-site/` passes `just version-check` without a rules-marker bump.
 - The package's link test finds no item, milestone, risk, or brief ID on any built page without a link, and no internal link that 404s.
-- `npm view @purview-dev/pm-docs-site version` returns the released version.
+- `npm view @purview-dev/pm-docs-site version` returns the released version (`1.0.0`, from R-013).
 
 ## Size and slicing
 
-L, sliced into six M items and one S user task, in dependency order. Nothing is published before slice 6.
+L, sliced into six M items and one S user task, in dependency order. Nothing is published before slice 6. 2026-11-18: `0.1.0-pre.1` was published early to set up trusted publishing; slices 3 to 5 do not bump the package version, and slice 6 releases `1.0.0`. The publish workflow in slice 6 is done (PRs #25 to #27), and slice 7 is done with the restated `Done when`.
 
 1. **Docs-site package: skeleton at parity** (M). `packages/pm-docs-site/` with the integration, the CLI, pinned dependencies, a supported `schemaVersion` range, today's views, and tests on the existing fixtures; `check-version.ts` exempts `packages/**`. Done when: `bun test` passes in the package, and building the planning fixture with the CLI renders every page that `docs-site/` renders today.
 2. **Docs-site package: backlinks everywhere** (M, depends on 1). Board cards, roadmap rows, log, risks, inbox, and briefs link every ID; each item, milestone, and risk page lists what links to it. Done when: the link test passes on the fixture build, and a browser test shows the Board's five columns in one row at 1440, 1024, and 700px (from R-002).
@@ -106,3 +110,4 @@ Proposed: Serves V4. Milestone: none (no milestones exist until R-001 Set milest
 - 2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.
 - 2026-11-17 R-008 Docs-site package: skeleton at parity done on branch feat/r-008-docs-site-package-skeleton. Scope agreed during it: parity is the same page set, not the same content (page content may change as the package improves); a pack-and-install test proves an installed consumer builds. Design: docs/superpowers/specs/2026-11-17-docs-site-package-skeleton-design.md.
 - 2026-11-17 R-009 Docs-site package: backlinks everywhere done on branch feat/r-009-docs-site-package-backlinks. Scope agreed during it: Board and Roadmap cards open a detail popup whose `Open page` link (and ctrl-click) reaches the item page; any Board column collapses and is remembered in localStorage; every page is full width; each open and closed risk has its own page; `Linked from` groups by relation, with index views under `Listed on`. Design: docs/superpowers/specs/2026-11-17-docs-site-package-backlinks-design.md.
+- 2026-11-18 Keep the slices on the roadmap as revised. R-010, R-011, and R-012 stay in Later and do not bump the package version; R-013 migrates `docs-site/` and the `pm-docs-site` skill and releases `1.0.0`; R-014 closes with its restated `Done when` (with `pm-item`). Reason: `0.1.0-pre.1` was published early to set up trusted publishing, and the user chose to hold every further release until the views are complete.

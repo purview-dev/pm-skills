@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-17T23:52:52+00:00",
+  "generatedAt": "2026-11-18T08:30:08+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-004-verify-the-aspire-module",
-    "head": "9c7c6c83d2f521b2e213abc327236de2e0fb7134"
+    "branch": "main",
+    "head": "3f2e97b33238545d05432805a1d0dd50157d9caa"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -709,7 +709,7 @@
       "title": "Docs site as a versioned package",
       "status": "on roadmap (R-010, R-011, R-012, R-013, R-014)",
       "origin": "user request",
-      "updated": "2026-11-17",
+      "updated": "2026-11-18",
       "decision": "2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.",
       "problem": "The docs site is chaotic to maintain and builds non-deterministically: each consumer carries its own copy of the templates, resolves its own package versions, and any template change forces a rules-major bump on every consumer.",
       "doneWhen": "`docs-site/` contains only `package.json`, `astro.config.mjs`, and `bun.lock` (plus `.gitignore`), and `just docs-check` passes.",
@@ -740,6 +740,6 @@
     "reviewDue": false,
     "lastReview": "never",
     "claimable": [],
-    "drift": true
+    "drift": false
   }
 }
