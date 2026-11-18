@@ -75,13 +75,22 @@
 /* The header row and the lanes. It adds no box, so its children stay items of
    the board's grid. While <html> has the pending mark (a board key in the URL,
    PlanInteractions.astro) it is hidden, until the island has rendered that
-   state, so a filtered link never shows the unfiltered board. */
+   state, so a filtered link never shows the unfiltered board. If the island
+   never loads and so never clears the mark, the board shows anyway after 3s,
+   unfiltered: never a blank board. */
 .plan-board__body {
 	display: contents;
 }
 
 :root[data-board-pending] .plan-board__body {
 	visibility: hidden;
+	animation: plan-board-reveal 0s 3s forwards;
+}
+
+@keyframes plan-board-reveal {
+	to {
+		visibility: visible;
+	}
 }
 
 /* A lane is a row of the board's grid: a header across every column, then one cell per column. */

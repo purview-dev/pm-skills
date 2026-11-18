@@ -238,6 +238,22 @@ test('a filtered link never shows the unfiltered board', async ({ page }) => {
 	await expect(page.locator('.plan-board__body')).toHaveCSS('visibility', 'visible');
 });
 
+test('a filtered link still shows the board when the island never loads', async ({ page }) => {
+	const url = await page.goto('/plan/board/').then(() => page.locator('astro-island').first().getAttribute('component-url'));
+
+	expect(url).toMatch(/\/Board\..*\.js$/);
+	// By path: Astro retries a failed island import with an `astro-retry` query.
+	await page.route((request) => request.pathname === url, (route) => route.abort());
+	await page.goto('/plan/board/?owner=user&group=owner');
+
+	// The island never hydrates, so the pending mark stays and the filter bar stays hidden.
+	await expect(page.locator('html')).toHaveAttribute('data-board-pending', '');
+	await expect(page.locator('.plan-board__filters')).not.toBeVisible();
+	// The board shows anyway, unfiltered, after a short delay.
+	await expect(page.locator('.plan-board__body')).toHaveCSS('visibility', 'visible', { timeout: 10_000 });
+	await expect(page.locator('[data-card]:visible')).toHaveCount(9);
+});
+
 test('junk in the URL gives the default board', async ({ page }) => {
 	const errors: Error[] = [];
 
