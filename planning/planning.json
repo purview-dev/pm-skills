@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T22:22:02+00:00",
+  "generatedAt": "2026-11-18T22:27:15+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-017-docs-site-package-in-repo-dev-hydrates",
-    "head": "e51ddccba8bc50ed482e625d66c8a338c235ac67"
+    "head": "249cb60110603db55b3441c4220851bd7d0c5452"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -182,7 +182,7 @@
       "id": "R-017",
       "title": "Docs-site package: in-repo dev hydrates"
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-017-docs-site-package-in-repo-dev-hydrates",
     "brief": null,
     "milestone": "M1",
@@ -192,15 +192,7 @@
     "doneWhen": [
       "From `packages/pm-docs-site`, the package CLI's `dev test/fixtures/site` serves `/plan/board/?group=owner` with the Board island hydrated, and the dev server logs no `server.fs.allow` error."
     ],
-    "checkpoint": {
-      "at": "2026-11-18 17:02",
-      "stoppedAt": "design, approach 1 chosen (a `configResolved` plugin appends the package's real directory to the resolved `server.fs.allow` when no entry contains it), spec `docs/superpowers/specs/2026-11-18-docs-site-package-in-repo-dev-design.md` on this branch (commits 4eaf974, 53c8730).",
-      "nextAction": "R-021 Docs-site package: TypeScript source with a build step has merged and `origin/main` is merged into this branch (e51ddcc); update the spec's Language line (the helper is a `.ts` source file in `lib/`, emitted by R-021's build) and its blocked decision, get the user's approval, then run writing-plans.",
-      "startWith": "the spec file.",
-      "decisions": "TypeScript strongly preferred, JavaScript only where the runtime needs it (user, 2026-11-18, while shaping R-021); R-017 waits for R-021 so its helper is TypeScript.",
-      "context": "Node refuses `.ts` under `node_modules` (`ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING`), Bun loads it (checked 2026-11-18).",
-      "openQuestion": null
-    }
+    "checkpoint": null
   },
   "plan": null,
   "roadmap": {
@@ -421,7 +413,7 @@
           "title": "Docs-site package: in-repo dev hydrates",
           "owner": null,
           "size": null,
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
