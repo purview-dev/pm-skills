@@ -14,17 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-017 Docs-site package: in-repo dev hydrates
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: from `packages/pm-docs-site`, `node cli.mjs dev test/fixtures/site` serves `/plan/board/?group=owner` with the Board island hydrated, and the dev server logs no `server.fs.allow` error.
-- Size: S
-- Depends on: none
-- Status: ready
-- Note: Vite refuses `packages/pm-docs-site/node_modules/@astrojs/react/dist/client.js` as outside `server.fs.allow`; allowing the package's own folder from the integration hydrated it in R-010's fix-wave experiment. A packed-install consumer is already fixed by R-010.
-
 ### R-011 Docs-site package: milestone timeline
 
 - Serves: V4

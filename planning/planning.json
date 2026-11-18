@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T16:50:12+00:00",
+  "generatedAt": "2026-11-18T16:51:49+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "main",
-    "head": "91fc97a0e22c57acf7c2dffd180e5b749d4101d1"
+    "branch": "feat/r-017-docs-site-package-in-repo-dev-hydrates",
+    "head": "f47dcfaf3c580235bf659e69ee1ef8624a3d5310"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -165,50 +165,31 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
+    "status": "active",
+    "item": {
+      "id": "R-017",
+      "title": "Docs-site package: in-repo dev hydrates"
+    },
+    "stage": "design",
+    "session": "feat/r-017-docs-site-package-in-repo-dev-hydrates",
     "brief": null,
-    "milestone": null,
+    "milestone": "M1",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-18",
+    "doneWhen": [
+      "From `packages/pm-docs-site`, `node cli.mjs dev test/fixtures/site` serves `/plan/board/?group=owner` with the Board island hydrated, and the dev server logs no `server.fs.allow` error."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-017",
-        "title": "Docs-site package: in-repo dev hydrates",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "from `packages/pm-docs-site`, `node cli.mjs dev test/fixtures/site` serves `/plan/board/?group=owner` with the Board island hydrated, and the dev server logs no `server.fs.allow` error.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "Vite refuses `packages/pm-docs-site/node_modules/@astrojs/react/dist/client.js` as outside `server.fs.allow`; allowing the package's own folder from the integration hydrated it in R-010's fix-wave experiment. A packed-install consumer is already fixed by R-010.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-011",
         "title": "Docs-site package: milestone timeline",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4"
@@ -234,7 +215,7 @@
         "id": "R-012",
         "title": "Docs-site package: dependency graph",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -260,7 +241,7 @@
         "id": "R-018",
         "title": "Export the Now card's owner and size",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -284,7 +265,7 @@
         "id": "R-019",
         "title": "Docs-site package: consumer-ready for 1.0.0",
         "section": "next",
-        "position": 5,
+        "position": 4,
         "label": "next",
         "serves": [
           "V4"
@@ -438,15 +419,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-017",
           "title": "Docs-site package: in-repo dev hydrates",
-          "owner": "agent",
-          "size": "S",
-          "detail": "ready"
-        },
+          "owner": null,
+          "size": null,
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-011",
           "title": "Docs-site package: milestone timeline",
@@ -851,7 +833,7 @@
     "removed": []
   },
   "counts": {
-    "next": 5,
+    "next": 4,
     "later": 5,
     "nextMax": 5,
     "openInbox": 7,
@@ -869,12 +851,11 @@
     "reviewDue": false,
     "lastReview": "never",
     "claimable": [
-      "R-017",
       "R-011",
       "R-012",
       "R-018",
       "R-019"
     ],
-    "drift": false
+    "drift": true
   }
 }
