@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T16:50:12+00:00",
+  "generatedAt": "2026-11-18T17:03:58+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "main",
-    "head": "91fc97a0e22c57acf7c2dffd180e5b749d4101d1"
+    "head": "f47dcfaf3c580235bf659e69ee1ef8624a3d5310"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -195,12 +195,12 @@
         "size": "S",
         "dependsOn": [],
         "status": {
-          "value": "ready",
+          "value": "paused",
           "reason": null,
           "since": null
         },
         "brief": null,
-        "note": "Vite refuses `packages/pm-docs-site/node_modules/@astrojs/react/dist/client.js` as outside `server.fs.allow`; allowing the package's own folder from the integration hydrated it in R-010's fix-wave experiment. A packed-install consumer is already fixed by R-010.",
+        "note": "Vite refuses `packages/pm-docs-site/node_modules/@astrojs/react/dist/client.js` as outside `server.fs.allow`; allowing the package's own folder from the integration hydrated it in R-010's fix-wave experiment. A packed-install consumer is already fixed by R-010. Waits on the package's TypeScript conversion (inbox `2026-11-18-0925-pm-docs-site-mjs-to-typescript.md`, being shaped); add it to `Depends on` once it has an ID.",
         "revisits": null,
         "claimable": true
       },
@@ -445,7 +445,7 @@
           "title": "Docs-site package: in-repo dev hydrates",
           "owner": "agent",
           "size": "S",
-          "detail": "ready"
+          "detail": "paused"
         },
         {
           "id": "R-011",
