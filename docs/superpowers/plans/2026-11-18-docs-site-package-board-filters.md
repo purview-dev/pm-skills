@@ -38,12 +38,14 @@
 ### Task 1: React in the integration
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/package.json` (dependencies), `bun.lock`
 - Modify: `packages/pm-docs-site/tsconfig.json`
 - Modify: `packages/pm-docs-site/index.mjs` (the `updateConfig` integrations list)
 - Test: `packages/pm-docs-site/test/integration.test.ts`
 
 **Interfaces:**
+
 - Produces: every site built with `pmDocsSite()` renders `.tsx` islands with no consumer configuration.
 
 - [ ] **Step 1: Write the failing test** `it('adds React with Starlight, so islands need no consumer config')` in `test/integration.test.ts`: call `pmDocsSite({ title: 'T' }).hooks['astro:config:setup']` with a fake `{ config: { root: <fixture site URL> }, updateConfig, injectRoute }`, capture the object passed to `updateConfig`, and assert `integrations.map((i) => i.name)` contains both `'@astrojs/starlight'` and `'@astrojs/react'`.
@@ -56,10 +58,12 @@
 ### Task 2: Board model (pure)
 
 **Files:**
+
 - Create: `packages/pm-docs-site/src/lib/board.ts` (no imports from Astro, `node:*`, or `planning.ts` runtime code; types only)
 - Test: `packages/pm-docs-site/test/board.test.ts`
 
 **Interfaces:**
+
 - Consumes: `Owner`, `Size`, `Rag` from `src/lib/planning-types.ts`.
 - Produces:
 
@@ -115,10 +119,12 @@ export function lanes(cards: BoardCard[], group: GroupBy, milestones: { id: stri
 ### Task 3: Fixture coverage
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/test/fixtures/planning.json`
 - Modify: `packages/pm-docs-site/test/fixtures/expected-pages.txt`
 
 **Interfaces:**
+
 - Produces: the Board below, which Tasks 4 to 6 assert on. Keep every existing item, risk, and field unchanged.
 
 | Column | Card | Owner | Size | Milestone | RAG (risk) |
@@ -142,10 +148,12 @@ export function lanes(cards: BoardCard[], group: GroupBy, milestones: { id: stri
 ### Task 4: Board data at build time
 
 **Files:**
+
 - Create: `packages/pm-docs-site/src/lib/board-data.ts`
 - Test: `packages/pm-docs-site/test/board-data.test.ts`
 
 **Interfaces:**
+
 - Consumes: `features`, `milestoneId`, `planProgress`, `loadPlanning` (`src/lib/planning.ts`); `linkify`, `Target` (`src/lib/references.ts`); `BoardCard`, `LinkRun`, `cardRag` (Task 2).
 - Produces: `export function boardCards(planning: Planning, known: Map<string, Target>): BoardCard[]` — columns in `COLUMNS` order, cards in export order. Owner and size come from the card, else the item's feature; milestone from the feature (`now`, `next`, `foryou`, `waiting`) or `milestoneId(entry.milestone, …)` (`done`); `tag`/`tagHref` exactly as `board.astro`'s `tagOf` does today; `detail` is `linkify(card.detail)` (Done: `linkify(entry.date)`), mapped to `LinkRun` (`href: run.target?.href ?? null`, `label: run.target?.label ?? null`); `started`/`progress` from `planning.now.started` and `planProgress(planning.plan)` for the Now card only, else null.
 
@@ -158,12 +166,14 @@ export function lanes(cards: BoardCard[], group: GroupBy, milestones: { id: stri
 ### Task 5: The Board island (filters, collapse, popup)
 
 **Files:**
+
 - Create: `packages/pm-docs-site/src/components/board/Board.tsx`, `KanbanItemCard.tsx`, `TaskKanbanCard.tsx`, `LinkRuns.tsx`
 - Create: `packages/pm-docs-site/src/styles/kanban.css` (the two Astro cards' `<style>` blocks as global CSS, attribution comment at top)
 - Modify: `packages/pm-docs-site/src/pages/plan/board.astro`, `src/scripts/plan.ts`, `src/styles/components.css`
 - Test: `packages/pm-docs-site/test/browser/board.browser.ts`
 
 **Interfaces:**
+
 - Consumes: `boardCards` (Task 4), `COLUMNS`, `matches`, `isFiltered`, `BoardState`, `DEFAULT_STATE` (Task 2).
 - Produces: `export default function Board(props: { cards: BoardCard[]; milestones: { id: string; name: string }[] }): JSX.Element`. DOM contract the tests and CSS rely on:
   - Filter bar `.plan-board__filters`, hidden until hydrated (rendered with `hidden`, cleared in `useEffect`); `<select>`s with ids `board-owner`, `board-milestone`, `board-size`, `board-rag`, `board-group` (each with a visible `<label>`); first option value `''` "All" (`board-group`: `none` "None", `milestone` "Milestone", `owner` "Owner"); a "Clear" button `#board-clear`.
@@ -189,10 +199,12 @@ export function lanes(cards: BoardCard[], group: GroupBy, milestones: { id: stri
 ### Task 6: Lanes, URL state, and no flash
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/src/components/board/Board.tsx`, `src/components/PlanInteractions.astro`, `src/styles/components.css`
 - Test: `packages/pm-docs-site/test/browser/board.browser.ts`
 
 **Interfaces:**
+
 - Consumes: `lanes`, `parseBoardQuery`, `boardQuery` (Task 2).
 - Produces: the pending mark `data-board-pending` on `<html>`, set by the inline script and cleared by the island after it applies the query.
 
@@ -214,6 +226,7 @@ export function lanes(cards: BoardCard[], group: GroupBy, milestones: { id: stri
 ### Task 7: Docs and whole-package verification
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/README.md` (what the Board offers), `docs/wiki/guide/Docs-Site-Package.md` (a sentence on Board filters, lanes, and linkable URLs, and that the package adds React itself)
 
 - [ ] **Step 1: Document** the Board's filters, grouping, and URL parameters (`owner`, `milestone`, `size`, `rag`, `group`, `none`) in both files; note that the integration adds `@astrojs/react`, so consumer sites stay three files.
