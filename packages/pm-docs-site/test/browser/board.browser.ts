@@ -193,6 +193,22 @@ test('grouping and filtering together drop empty lanes', async ({ page }) => {
 	expect(await laneSummary(page)).toEqual({ keys: ['both'], counts: ['2'] });
 });
 
+test('Clear resets the group', async ({ page }) => {
+	await openBoard(page);
+	const clear = page.locator('#board-clear');
+
+	await expect(clear).toBeDisabled();
+	await page.selectOption('#board-group', 'owner');
+	await expect(clear).toBeEnabled();
+
+	await clear.click();
+	await expect(page.locator('#board-group')).toHaveValue('none');
+	await expect(page.locator('.plan-lane__header')).toHaveCount(0);
+	await expect(page.locator('[data-card]:visible')).toHaveCount(9);
+	await expect(clear).toBeDisabled();
+	await expect.poll(() => new URL(page.url()).search).toBe('');
+});
+
 test('the URL carries the state', async ({ page }) => {
 	await openBoard(page);
 	await page.selectOption('#board-owner', 'user');

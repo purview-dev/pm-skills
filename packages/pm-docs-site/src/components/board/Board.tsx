@@ -146,6 +146,7 @@ export default function Board({ cards, milestones }: Props) {
 	const visible = cards.filter((card) => matches(card, state.filters));
 	const filtered = isFiltered(state);
 	const grouped = state.group !== 'none';
+	// Clear resets every filter and the grouping, so it is live while either is set.
 	const rows = lanes(visible, state.group, milestones);
 
 	return (
@@ -202,7 +203,7 @@ export default function Board({ cards, milestones }: Props) {
 						))}
 					</select>
 				</div>
-				<button type="button" id="board-clear" className="plan-board__clear" disabled={!filtered} onClick={() => setState((current) => ({ ...current, filters: DEFAULT_STATE.filters }))}>
+				<button type="button" id="board-clear" className="plan-board__clear" disabled={!filtered && !grouped} onClick={() => setState(DEFAULT_STATE)}>
 					Clear
 				</button>
 			</div>
