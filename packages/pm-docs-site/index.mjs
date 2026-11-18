@@ -2,11 +2,15 @@
 // The pm-docs-site Astro integration. The consumer's astro.config.mjs holds
 // only `integrations: [pmDocsSite({ title, ... })]`: this points Astro's srcDir
 // at the package's own src/ (pages, components, content config), adds
-// Starlight with the plan sidebar, and serves the resolved options to the pages
-// as `virtual:pm-docs-site/config`.
+// Starlight with the plan sidebar, adds React so pages can render `.tsx` islands with
+// no consumer config, and serves the resolved options to the pages as
+// `virtual:pm-docs-site/config`.
 
+import { existsSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import react from '@astrojs/react';
 import starlight from '@astrojs/starlight';
 
 import { resolveOptions } from './lib/options.mjs';
@@ -32,8 +36,45 @@ const VIEW_ROUTES = {
 	strategy: [['/plan/strategy', 'plan/strategy.astro']],
 };
 
-const NO_EXTERNAL = ['@astrojs/starlight', '@purview-dev/pm-docs-site'];
+const PACKAGE_NAME = '@purview-dev/pm-docs-site';
+const REACT_INTEGRATION = '@astrojs/react';
+
+const NO_EXTERNAL = ['@astrojs/starlight', PACKAGE_NAME];
 const SERVER_ENVIRONMENTS = ['ssr', 'astro', 'prerender'];
+
+/**
+ * Whether `name` is installed in a node_modules folder at or above `root`,
+ * walked as Vite resolves it: under Bun, `createRequire` also finds Bun's
+ * global cache, which Vite never looks in.
+ * @param {string} name
+ * @param {string} root
+ */
+function resolvesFrom(name, root) {
+	for (let dir = resolve(root); ; dir = dirname(dir)) {
+		if (existsSync(join(dir, 'node_modules', name, 'package.json'))) return true;
+		if (dirname(dir) === dir) return false;
+	}
+}
+
+/**
+ * The `optimizeDeps.include` entries the site lacks. The island's renderer
+ * (@astrojs/react-renderer) imports react-dom/client from under node_modules,
+ * which Vite's dev optimizer skips, so React's CommonJS reaches the browser
+ * raw and the Board never hydrates. An installed package is pre-bundled
+ * through itself (`<package> > react-dom/client`); a site that cannot resolve
+ * the package by name (this repository's fixtures) names react-dom/client
+ * plainly, since naming a package Vite cannot resolve breaks the optimizer.
+ * Only missing entries: Vite's mergeConfig concatenates arrays.
+ * @param {unknown} include
+ * @param {string} root
+ * @returns {string[]}
+ */
+function optimizedDependencies(include, root) {
+	const existing = Array.isArray(include) ? include : [];
+	const entry = resolvesFrom(PACKAGE_NAME, root) ? `${PACKAGE_NAME} > react-dom/client` : 'react-dom/client';
+
+	return existing.includes(entry) ? [] : [entry];
+}
 
 const VIRTUAL_ID = 'virtual:pm-docs-site/config';
 const RESOLVED_ID = `\0${VIRTUAL_ID}`;
@@ -48,7 +89,10 @@ export default function pmDocsSite(options) {
 		pmDocsSiteOptions: options,
 		hooks: {
 			'astro:config:setup': ({ config, updateConfig, injectRoute }) => {
-				const resolved = resolveOptions(options, fileURLToPath(config.root));
+				const root = fileURLToPath(config.root);
+				const resolved = resolveOptions(options, root);
+				// A consumer that adds React itself keeps its own: two would register the renderer twice.
+				const hasReact = (config.integrations ?? []).some((integration) => integration.name === REACT_INTEGRATION);
 
 				for (const [view, routes] of Object.entries(VIEW_ROUTES)) {
 					if (!resolved.views[/** @type {import('./index').ViewName} */ (view)]) continue;
@@ -68,8 +112,10 @@ export default function pmDocsSite(options) {
 							// Every page uses the full width (src/styles/width.css).
 							customCss: [fileURLToPath(new URL('./src/styles/width.css', import.meta.url))],
 						}),
+						...(hasReact ? [] : [react()]),
 					],
 					vite: {
+						optimizeDeps: { include: optimizedDependencies(config.vite?.optimizeDeps?.include, root) },
 						plugins: [
 							{
 								name: 'pm-docs-site:config',

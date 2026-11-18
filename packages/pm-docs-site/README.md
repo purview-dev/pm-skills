@@ -64,6 +64,36 @@ Home, Board, Roadmap, Log and Risks are always rendered. A docs source has
 `label`, `base`, `include`, and optionally `prefix`, `indexFile`, `order`,
 `collapsed`, and `hidden` (see `index.d.ts`).
 
+## Board
+
+The Board is a React island, hydrated on load: every roadmap item in five
+columns (Now, Next, For you, Waiting, Done), filtered and grouped without a
+page reload.
+
+| Filter | Values |
+| --- | --- |
+| Owner | `agent`, `user`, `both` |
+| Milestone | each milestone in the plan, or `none` (no milestone) |
+| Size | `S`, `M`, `L` |
+| RAG | `red`, `amber`, `green`, or `none` (no risk) |
+
+Filters combine with AND. A card's RAG is the worst of the open, mitigating,
+or accepted risks that affect it (closed risks and milestone-level risks
+never colour a card). Group by `none` (today's board), `milestone`, or
+`owner`, which splits the board into one lane per group, each holding all
+five columns.
+
+Filter and group state lives in the URL query string, in that order
+(`owner`, `milestone`, `size`, `rag`, `group`), so a filtered or grouped
+board can be linked and survives a reload:
+`/plan/board/?owner=user&milestone=M2&group=milestone`. Unknown or junk
+values fall back to All / None. Column collapse still works per column,
+across every lane, and without JavaScript the full, ungrouped board renders
+with the filter bar hidden.
+
+The integration adds `@astrojs/react` itself, so a consumer site stays the
+three files above.
+
 ## CLI
 
 The CLI runs under Node 22 or later.

@@ -11,7 +11,9 @@ import { expectedPages, FIXTURES, htmlPages, PACKAGE } from './helpers';
 
 const tmp = mkdtempSync(join(tmpdir(), 'pm-docs-site-install-'));
 
-afterAll(() => rmSync(tmp, { recursive: true, force: true }));
+// Windows can take longer than the default hook timeout to remove a real
+// node_modules tree, so give the cleanup room to finish.
+afterAll(() => rmSync(tmp, { recursive: true, force: true }), 60_000);
 
 function run(cmd: string[], cwd: string): void {
 	const result = Bun.spawnSync(cmd, { cwd, stdout: 'pipe', stderr: 'pipe' });

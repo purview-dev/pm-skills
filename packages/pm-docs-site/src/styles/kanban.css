@@ -1,0 +1,277 @@
+/*
+ * The Board island's cards (src/components/board/KanbanItemCard.tsx and
+ * TaskKanbanCard.tsx): the <style> blocks of src/components/lib/KanbanItemCard.astro
+ * and TaskKanbanCard.astro as global CSS, plus the size pill and RAG dot group.
+ *
+ * KanbanItemCard and TaskKanbanCard are from the Astro Components Kit by Konstantin
+ * (https://astrocomponents.dev/docs/kanban-item-card/, https://astrocomponents.dev/docs/task-kanban-card/,
+ * https://github.com/konstantinWDK/astro-components), MIT License. Copied from its manual-install
+ * source; the only changes are that hard-coded dark-theme colours use Starlight theme variables,
+ * so the cards read in light and dark themes, and the RAG dot added beside the size pill.
+ */
+
+.k-item {
+	background: var(--sl-color-bg-nav, rgba(17, 24, 39, 0.7));
+	backdrop-filter: blur(12px);
+	border: 1px solid var(--sl-color-hairline, rgba(255, 255, 255, 0.08));
+	border-radius: var(--r-md, 12px);
+	padding: var(--sp-4, 1rem);
+	display: flex;
+	flex-direction: column;
+	gap: 0.65rem;
+	cursor: grab;
+	transition:
+		transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+		border-color 0.2s ease,
+		box-shadow 0.2s ease;
+	max-width: 300px;
+	box-sizing: border-box;
+	outline: none;
+}
+
+.k-item:hover,
+.k-item:focus-visible {
+	transform: translateY(-2px);
+	border-color: var(--sl-color-accent, rgba(99, 102, 241, 0.4));
+	box-shadow: 0 10px 24px -6px rgba(0, 0, 0, 0.25);
+}
+
+.k-item:focus-visible {
+	box-shadow: 0 0 0 2px var(--c-primary, #6366f1);
+}
+
+.k-item__head {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.k-item__tag {
+	font-size: 0.68rem;
+	font-weight: 700;
+	color: var(--c-text-2, #94a3b8);
+	background: var(--sl-color-bg, rgba(255, 255, 255, 0.04));
+	border: 1px solid var(--sl-color-hairline, rgba(255, 255, 255, 0.08));
+	padding: 2px 7px;
+	border-radius: 4px;
+	letter-spacing: 0.03em;
+}
+
+.k-item__priority {
+	font-size: 0.66rem;
+	font-weight: 800;
+	padding: 2px 7px;
+	border-radius: 4px;
+	border: 1px solid;
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.k-item__priority-dot {
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+}
+
+.k-item__title {
+	margin: 0;
+	font-size: 0.88rem;
+	font-weight: 600;
+	color: var(--c-text-1, #f8fafc);
+	line-height: 1.45;
+}
+
+.k-item__footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 0.5rem;
+	padding-top: 0.5rem;
+	border-top: 1px solid var(--sl-color-hairline, rgba(255, 255, 255, 0.06));
+	margin-top: 0.1rem;
+}
+
+.k-item__meta {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+}
+
+.k-item__meta-item {
+	display: flex;
+	align-items: center;
+	gap: 3px;
+	font-size: 0.72rem;
+	color: var(--c-text-3, #64748b);
+}
+
+.k-item__icon {
+	opacity: 0.75;
+}
+
+.k-item__assignee {
+	min-width: 24px;
+	height: 24px;
+	padding: 0 4px;
+	box-sizing: border-box;
+	border-radius: 12px;
+	background: linear-gradient(135deg, var(--c-primary, #6366f1), var(--c-primary-light, #818cf8));
+	color: #fff;
+	font-size: 0.6rem;
+	font-weight: 800;
+	display: grid;
+	place-items: center;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* The size pill and the RAG dot beside it, on both cards. */
+.k-item__badges {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+}
+
+.k-item__rag {
+	display: inline-block;
+	width: 0.6rem;
+	height: 0.6rem;
+	border-radius: 50%;
+	flex: none;
+}
+
+.k-item__rag[data-rag='red'] {
+	background: var(--sl-color-red);
+}
+
+.k-item__rag[data-rag='amber'] {
+	background: var(--sl-color-orange);
+}
+
+.k-item__rag[data-rag='green'] {
+	background: var(--sl-color-green);
+}
+
+.task-card {
+	background: var(--sl-color-bg-nav, rgba(30, 41, 59, 0.7));
+	backdrop-filter: blur(12px);
+	padding: var(--sp-4, 1rem);
+	border-radius: var(--r-md, 12px);
+	border: 1px solid var(--sl-color-hairline, rgba(255, 255, 255, 0.08));
+	display: flex;
+	flex-direction: column;
+	gap: 0.65rem;
+	max-width: 320px;
+	box-sizing: border-box;
+	transition:
+		transform 0.2s ease,
+		border-color 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+.task-card:hover {
+	transform: translateY(-2px);
+	border-color: var(--sl-color-accent, rgba(99, 102, 241, 0.35));
+	box-shadow: 0 10px 24px -6px rgba(0, 0, 0, 0.25);
+}
+
+.task-card__tags {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.task-card__tag {
+	font-size: 0.7rem;
+	font-weight: 700;
+	padding: 2px 8px;
+	border-radius: 4px;
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.task-card__tag-dot {
+	width: 5px;
+	height: 5px;
+	border-radius: 50%;
+	background: currentColor;
+}
+
+.task-card__tag--high {
+	background: rgba(239, 68, 68, 0.12);
+	color: #dc2626;
+}
+
+.task-card__tag--med {
+	background: rgba(245, 158, 11, 0.12);
+	color: #d97706;
+}
+
+.task-card__tag--low {
+	background: rgba(16, 185, 129, 0.12);
+	color: #059669;
+}
+
+.task-card__pct {
+	font-size: 0.72rem;
+	font-weight: 700;
+	color: var(--c-text-2, #94a3b8);
+}
+
+.task-card__desc {
+	font-size: 0.88rem;
+	color: var(--c-text-1, #f1f5f9);
+	margin: 0;
+	font-weight: 500;
+	line-height: 1.45;
+}
+
+.task-card__progress-wrap {
+	height: 4px;
+	background: var(--sl-color-hairline, rgba(255, 255, 255, 0.08));
+	border-radius: 2px;
+	overflow: hidden;
+}
+
+.task-card__progress-bar {
+	height: 100%;
+	background: linear-gradient(90deg, var(--c-primary, #6366f1), var(--c-primary-light, #818cf8));
+	border-radius: 2px;
+}
+
+.task-card__footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-top: 0.35rem;
+}
+
+.task-card__date {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 0.75rem;
+	color: var(--c-text-2, #94a3b8);
+}
+
+.task-card__date-icon {
+	opacity: 0.75;
+}
+
+.task-card__assignee {
+	min-width: 24px;
+	height: 24px;
+	padding: 0 4px;
+	box-sizing: border-box;
+	background: var(--c-primary, #6366f1);
+	color: #fff;
+	font-size: 0.6rem;
+	border-radius: 12px;
+	display: grid;
+	place-items: center;
+	font-weight: 800;
+}

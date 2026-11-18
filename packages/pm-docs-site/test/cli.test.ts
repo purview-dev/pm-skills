@@ -6,6 +6,9 @@ import { afterAll, describe, expect, it } from 'bun:test';
 import { expectedPages, FIXTURES, htmlPages, runCli, SCRATCH, scratchFixture, siteConfig } from './helpers';
 
 const BUILD = 180_000;
+// A check runs the CLI in a Node subprocess and builds nothing, but the start-up
+// can pass bun's 5000ms default under load on Windows.
+const CHECK = 60_000;
 const FIXTURE_SITE = join(FIXTURES, 'site');
 
 afterAll(() => {
@@ -80,7 +83,7 @@ describe('pm-docs-site check', () => {
 
 		expect(result.code, result.stderr).toBe(0);
 		expect(result.stdout).toContain('schemaVersion 3');
-	});
+	}, CHECK);
 
 	it('fails on a schemaVersion it does not read', () => {
 		const dir = scratchFixture('v4-');
@@ -93,7 +96,7 @@ describe('pm-docs-site check', () => {
 		expect(result.code).toBe(1);
 		expect(result.stdout + result.stderr).toContain('has schemaVersion 4; this site reads schemaVersion 3');
 		expect(existsSync(join(dir, 'site', 'dist'))).toBe(false);
-	});
+	}, CHECK);
 
 	it('fails when the config has no pm-docs-site integration', () => {
 		const dir = scratchFixture('none-');
@@ -103,7 +106,7 @@ describe('pm-docs-site check', () => {
 
 		expect(result.code).toBe(1);
 		expect(result.stdout + result.stderr).toContain('no pm-docs-site integration in');
-	});
+	}, CHECK);
 
 	it('fails when a docs source folder is missing', () => {
 		const dir = scratchFixture('docs-');
@@ -116,7 +119,7 @@ describe('pm-docs-site check', () => {
 
 		expect(result.code).toBe(1);
 		expect(result.stdout + result.stderr).toContain('Gone');
-	});
+	}, CHECK);
 });
 
 describe('pm-docs-site usage', () => {
@@ -125,5 +128,5 @@ describe('pm-docs-site usage', () => {
 
 		expect(result.code).toBe(2);
 		expect(result.stderr).toContain('usage: pm-docs-site <dev | build | check> [site-dir]');
-	});
+	}, CHECK);
 });

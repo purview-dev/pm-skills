@@ -1,7 +1,9 @@
 ---
-// The Board's and Roadmap's client script (src/scripts/plan.ts). The inline
-// part runs as the page is parsed, before the columns paint, so a collapsed
-// column never flashes open; it must stay in step with STORAGE_KEY there.
+// The Board's and Roadmap's client script (src/scripts/plan.ts, the item
+// popup). The inline part runs as the page is parsed, before the Board's
+// columns paint, so a collapsed column never flashes open and a filtered link
+// never shows the unfiltered board; it must stay in step with STORAGE_KEY in
+// src/components/board/Board.tsx and the URL keys in src/lib/board.ts.
 ---
 
 <script is:inline>
@@ -11,6 +13,16 @@
 		if (Array.isArray(names)) document.documentElement.dataset.boardCollapsed = names.filter((name) => typeof name === 'string').join(' ');
 	} catch {
 		// Junk or no storage: every column stays open.
+	}
+
+	// A board key in the URL: hide the Board's body until the island has
+	// rendered that state and deleted the mark (useBoardUrlState.ts), so a
+	// filtered link never shows the unfiltered board first.
+	// A block, so the binding stays out of the page's global scope.
+	{
+		const params = new URLSearchParams(location.search);
+
+		if (['owner', 'milestone', 'size', 'rag', 'group'].some((key) => params.has(key))) document.documentElement.dataset.boardPending = '';
 	}
 </script>
 <script>
