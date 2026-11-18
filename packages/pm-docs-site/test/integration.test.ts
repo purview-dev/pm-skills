@@ -5,6 +5,8 @@ import { describe, expect, it } from 'bun:test';
 
 import pmDocsSite from '../index.mjs';
 
+const fixtureSite = new URL('./fixtures/site/', import.meta.url);
+
 type Plugin = {
 	name: string;
 	resolveId: (id: string) => string | undefined;
@@ -50,7 +52,25 @@ describe('pmDocsSite', () => {
 
 		expect(updates).toHaveLength(1);
 		expect(updates[0]!.srcDir.href).toEndWith('/packages/pm-docs-site/src/');
-		expect(updates[0]!.integrations.map((integration) => integration.name)).toEqual(['@astrojs/starlight']);
+		expect(updates[0]!.integrations.map((integration) => integration.name)).toEqual(['@astrojs/starlight', '@astrojs/react']);
+	});
+
+	it('adds React with Starlight, so islands need no consumer config', () => {
+		const updates: Update[] = [];
+		const hook = pmDocsSite({ title: 'T' }).hooks['astro:config:setup'];
+
+		if (!hook) throw new Error('no astro:config:setup hook');
+
+		void hook({
+			config: { root: fixtureSite },
+			updateConfig: (update: Update) => updates.push(update),
+			injectRoute: () => {},
+		} as never);
+
+		const names = updates[0]!.integrations.map((integration) => integration.name);
+
+		expect(names).toContain('@astrojs/starlight');
+		expect(names).toContain('@astrojs/react');
 	});
 
 	it('bundles Starlight and the package in every server environment, prerender included', () => {

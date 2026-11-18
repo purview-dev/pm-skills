@@ -7,6 +7,7 @@
 
 import { fileURLToPath } from 'node:url';
 
+import react from '@astrojs/react';
 import starlight from '@astrojs/starlight';
 
 import { resolveOptions } from './lib/options.mjs';
@@ -68,6 +69,7 @@ export default function pmDocsSite(options) {
 							// Every page uses the full width (src/styles/width.css).
 							customCss: [fileURLToPath(new URL('./src/styles/width.css', import.meta.url))],
 						}),
+						react(),
 					],
 					vite: {
 						plugins: [
