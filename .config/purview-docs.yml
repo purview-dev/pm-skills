@@ -116,6 +116,28 @@ useCases:
       idea — and completes a ramifications row for each of the eight Challenge protocol areas,
       writing "none found" rather than leaving one out; a dropped idea appends its reason to Dropped
       in LOG.md.
+  - audience: developer
+    title: The plan as a site, from one pinned package
+    scenario: >-
+      You want the board, roadmap, milestones, and features as a local, searchable site, and you do
+      not want to carry a copy of the site's templates that drifts each time they change.
+    code: |
+      // astro.config.mjs
+      import pmDocsSite from '@purview-dev/pm-docs-site';
+
+      export default {
+        integrations: [pmDocsSite({ title: 'My project', planning: '../planning/planning.json' })],
+      };
+    language: js
+    outcome: >-
+      The site is package.json, a lockfile, and astro.config.mjs; pm-docs-site build renders every
+      plan page and its search index from planning.json, and pm-docs-site check reports an export
+      in a format the package does not read before anything is built. The package is in
+      development, at the unpublished prerelease 0.1.0-pre.1.
+    evidence: >-
+      The package's tests install it from its packed tarball into a folder outside the repository
+      and build the fixture site there, and the built page list must equal the recorded
+      expected-pages list, so a release cannot silently drop a page.
   - audience: contributor
     title: Add a skill without breaking the consistency checks
     scenario: >-

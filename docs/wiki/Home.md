@@ -54,7 +54,11 @@ literal, predictable, low-friction output: one next action, an explicit
   Inbox, Briefs, and Strategy by default, and site search over all of them,
   then builds it from shipped templates inside that item's workflow.
   Optional modules add the repository's `docs/` pages, LikeC4 architecture
-  views, and an Aspire AppHost resource. It reads the export only.
+  views, and an Aspire AppHost resource. It reads the export only. The
+  same site is becoming an npm package, `@purview-dev/pm-docs-site`, so a
+  site is three files and one pinned dependency instead of a copy of the
+  templates (in development; see
+  [The docs-site package](guide/Docs-Site-Package.md)).
 - **Purview fit:** for .NET projects, `pm-purview` recommends
   [Purview](https://purview.dev/) tools only where they remove real work.
   For an empty project it asks first what you are building and at what
@@ -81,6 +85,7 @@ literal, predictable, low-friction output: one next action, an explicit
 | [Non-interruption guarantee](guide/Non-Interruption.md) | What a PM skill may do during an active workflow |
 | [Using a different workflow framework](guide/Other-Workflow-Frameworks.md) | How to hand off to something other than Superpowers |
 | [Upgrading](guide/Upgrading.md) | How to update the skills and the shared rules |
+| [The docs-site package](guide/Docs-Site-Package.md) | How a site uses `@purview-dev/pm-docs-site`: its options, commands, and versions |
 | [Planning files](reference/Planning-Files.md) | What `pm-init` creates and what each file holds |
 | [Version history](reference/Version-History.md) | What each rules version changed |
 | [Development](contributing/Development.md) | How to work on this repository |

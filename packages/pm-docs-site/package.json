@@ -1,18 +1,36 @@
 {
 	"name": "@purview-dev/pm-docs-site",
-	"version": "0.0.0",
+	"version": "0.1.0-pre.1",
 	"private": true,
 	"type": "module",
-	"description": "A local, searchable project site for pm-skills: the plan from planning.json, rendered by an Astro integration.",
+	"description": "A local, searchable project site for pm-skills: the board, roadmap, milestones, features, log, and risks from pm-export's planning.json, with the repository's Markdown, as an Astro and Starlight integration.",
 	"license": "MIT",
 	"author": {
 		"name": "Kieron Lanning",
 		"url": "https://kieronlanning.dev/"
 	},
+	"homepage": "https://purview.dev/projects/pm-skills/",
+	"bugs": {
+		"url": "https://github.com/purview-dev/pm-skills/issues"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/purview-dev/pm-skills.git",
 		"directory": "packages/pm-docs-site"
+	},
+	"keywords": [
+		"pm-skills",
+		"project-management",
+		"roadmap",
+		"kanban",
+		"documentation",
+		"astro",
+		"astro-integration",
+		"withastro",
+		"starlight"
+	],
+	"publishConfig": {
+		"access": "public"
 	},
 	"engines": {
 		"node": ">=22"
@@ -26,8 +44,9 @@
 			"default": "./index.mjs"
 		}
 	},
-	"files": ["index.mjs", "index.d.ts", "cli.mjs", "lib", "src", "README.md"],
+	"files": ["index.mjs", "index.d.ts", "cli.mjs", "lib", "src", "README.md", "LICENSE.md"],
 	"scripts": {
+		"prepublishOnly": "node scripts/check-exports.mjs",
 		"test": "bun test",
 		"check": "astro-check --root .",
 		"test:browser": "playwright test"

@@ -4,7 +4,11 @@ A local, searchable project site for [pm-skills](https://github.com/purview-dev/
 the plan from `planning.json` (written by the `pm-export` skill) and,
 optionally, the repository's Markdown, rendered by Astro and Starlight.
 
-Unpublished: version `0.0.0` and `private` until roadmap item R-013 publishes
+**Documentation:** [PM Skills documentation](https://purview.dev/docs/pm-skills/)
+on purview.dev (the *Docs-site package* guide page), part of the
+[PM Skills](https://purview.dev/projects/pm-skills/) project.
+
+Unpublished: version `0.1.0-pre.1` and `private` until roadmap item R-013 publishes
 it to npm. Until then the repository's `docs-site/` still renders the
 `pm-docs-site` skill's templates.
 
@@ -23,7 +27,7 @@ folder: the integration points Astro's `srcDir` at the package.
     "build": "pm-docs-site build",
     "check": "pm-docs-site check"
   },
-  "dependencies": { "@purview-dev/pm-docs-site": "0.0.0" }
+  "dependencies": { "@purview-dev/pm-docs-site": "0.1.0-pre.1" }
 }
 ```
 
@@ -89,19 +93,76 @@ installed into a temporary folder.
 ## Releasing
 
 The package is versioned on its own, by `version` in this `package.json`,
-not by the repository's skills version. A change to this file on `main`
-runs `.github/workflows/publish-pm-docs-site.yml`, which:
+not by the repository's skills version, and tagged `pm-docs-site-v<version>`.
+The release follows purview-dev/astroc4: bump `version` and merge to `main`.
+That is the whole process.
 
-1. Skips when the `pm-docs-site-v<version>` tag exists, or while
-   `package.json` sets `"private": true`.
-2. Installs, tests, type-checks, and checks the tarball's entry points.
-3. Publishes to npm with provenance: a prerelease (`0.1.0-pre.1`) under the
-   `prerelease` dist-tag, a stable version under `latest`. A version already
-   on the registry is not published again.
-4. Creates the `pm-docs-site-v<version>` tag and a GitHub release, never
-   marked as the repository's latest release.
+### Version changes
 
-It authenticates with the `NPM_TOKEN` repository secret when it is set,
-otherwise through npm trusted publishing, and runs in the `npm` environment.
-Re-run it from the Actions tab (`workflow_dispatch`); every step is
-idempotent.
+`scripts/check-version.ts` runs on every pull request (and the pre-push
+hook) and fails when the package's version:
+
+- is not SemVer (`MAJOR.MINOR.PATCH`, optionally `-<prerelease>`),
+- is older than the version on `main`,
+- was bumped to a version whose `pm-docs-site-v<version>` tag exists, or
+- is a prerelease of an already released version.
+
+A bump is not required: a change that keeps the version merges, and the
+publish workflow then skips it (REL002).
+
+### The publish workflow
+
+A change to this `package.json` on `main` runs
+`.github/workflows/publish-pm-docs-site.yml`. Its eligibility step applies
+the purview-dev release rules:
+
+| Rule | Passes when | Otherwise |
+| --- | --- | --- |
+| REL001 | the version is SemVer | fails |
+| REL002 | `pm-docs-site-v<version>` is not tagged | skips, green: the version is released |
+| REL003 | a stable version runs from `main` | fails |
+
+While `package.json` sets `"private": true` it also skips, green. Then it
+installs, tests, type-checks, and runs `scripts/check-exports.mjs`, which is
+also the `prepublishOnly` script, so a local `npm publish` cannot burn a
+version on a package with missing files. It publishes a prerelease
+(`0.1.0-pre.1`) under the `prerelease` dist-tag and a stable version under
+`latest`, skips a version already on the registry, and keeps `latest` on the
+newest prerelease until a stable release exists. Only then does it create the
+tag and a GitHub release, never marked as the repository's latest release.
+Every step is idempotent, so re-run it from the Actions tab
+(`workflow_dispatch`).
+
+The tag is written only by the workflow. A hand-pushed
+`pm-docs-site-v<version>` tag makes the release of that version skip.
+
+### Authentication: npm trusted publishing
+
+The workflow holds no npm token: `id-token: write` lets npm exchange the
+job's OIDC token for a short-lived publish credential, and npm attaches
+provenance itself. `scripts/workflows.test.ts` fails a pull request that adds
+a token, `registry-url`, or `--provenance`. The job runs in the GitHub `npm`
+environment.
+
+A trusted publisher is configured on the package, so the package must exist
+on npm first. Once, from an account that can publish to `@purview-dev`:
+
+1. Remove `"private": true`, set the first version (`0.1.0-pre.1`), and
+   publish it locally: `npm publish --access public --tag prerelease`.
+2. Add the trusted publisher, with *Allow npm publish* and *Allow npm
+   dist-tag* ticked (the CLI grants only the first):
+
+   ```sh
+   npm trust github @purview-dev/pm-docs-site \
+     --repo purview-dev/pm-skills \
+     --file publish-pm-docs-site.yml \
+     --allow-publish
+   npm trust list @purview-dev/pm-docs-site
+   ```
+
+3. Merge that version bump. Its tag does not exist yet, so the workflow
+   finds the version on the registry, skips the publish, and writes the tag
+   and the release. Every later version is published by the workflow.
+
+Renaming `publish-pm-docs-site.yml` stops publishing until the trusted
+publisher is re-created, because npm validates the workflow filename.

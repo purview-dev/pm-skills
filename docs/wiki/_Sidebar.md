@@ -9,6 +9,7 @@
 - [Non-interruption guarantee](guide/Non-Interruption.md)
 - [Using a different workflow framework](guide/Other-Workflow-Frameworks.md)
 - [Upgrading](guide/Upgrading.md)
+- [The docs-site package](guide/Docs-Site-Package.md)
 
 ## Reference
 

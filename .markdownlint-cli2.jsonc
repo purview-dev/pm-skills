@@ -5,12 +5,14 @@
   },
   // Skip what git ignores: .claude/ holds local links to the skills.
   "gitignore": true,
-  // LICENSE.md is legal text, not Markdown documentation (MD041 does not apply).
+  // LICENSE.md is legal text, not Markdown documentation (MD041 does not apply);
+  // the pm-docs-site package ships a copy of it, kept equal by scripts/validate.ts.
   // node_modules anywhere (the docs site has its own) is third-party Markdown.
   // The .agents/skills entries below are installed from purview-dev/purview-dev
   // and recorded in skills-lock.json; they are linted in their own repository.
   "ignores": [
     "LICENSE.md",
+    "packages/pm-docs-site/LICENSE.md",
     "**/node_modules/**",
     ".agents/skills/add-catalogue-project/**",
     ".agents/skills/audit-catalogue-projects/**",

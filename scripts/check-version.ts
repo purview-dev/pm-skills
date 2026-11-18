@@ -78,13 +78,37 @@ if (bumped && now && isPrerelease(now) && tagged(`${now.major}.${now.minor}.${no
   errors.push(`v${now.major}.${now.minor}.${now.patch} is already released, so the prerelease v${current.version} comes before it.`);
 }
 
+// The pm-docs-site package has its own version, published to npm by
+// .github/workflows/publish-pm-docs-site.yml under the pm-docs-site-v{version}
+// tag. The same rules apply to it: SemVer, only forward, and never a released
+// version, so a merge to main can only publish a new version or skip.
+const packageFile = "packages/pm-docs-site/package.json";
+const packageTagged = (version: string) => tryGit("tag", "--list", `pm-docs-site-v${version}`) !== "";
+const packageHead = tryGit("show", `HEAD:${packageFile}`);
+let packageLine = "";
+if (packageHead) {
+  const pkgVersion = versionOf(packageHead);
+  const pkgBase = tryGit("show", `${base}:${packageFile}`);
+  const pkgWasVersion = pkgBase ? versionOf(pkgBase) : null;
+  const pkgNow = parse(pkgVersion);
+  const pkgWas = pkgWasVersion ? parse(pkgWasVersion) : null;
+  const pkgBumped = pkgVersion !== pkgWasVersion;
+  if (!pkgNow) errors.push(`${packageFile}: version "${pkgVersion}" is not SemVer (MAJOR.MINOR.PATCH, optionally -<prerelease>)`);
+  if (pkgNow && pkgWas && compare(pkgNow, pkgWas) < 0) errors.push(`${packageFile}: ${pkgVersion} is older than ${pkgWasVersion} on main.`);
+  if (pkgBumped && pkgNow && packageTagged(format(pkgNow))) errors.push(`${packageFile} is ${pkgVersion}, but tag pm-docs-site-v${pkgVersion} already exists.`);
+  if (pkgBumped && pkgNow && isPrerelease(pkgNow) && packageTagged(`${pkgNow.major}.${pkgNow.minor}.${pkgNow.patch}`)) {
+    errors.push(`pm-docs-site ${pkgNow.major}.${pkgNow.minor}.${pkgNow.patch} is already released, so the prerelease ${pkgVersion} comes before it.`);
+  }
+  packageLine = ` pm-docs-site ${pkgVersion}${pkgBumped && pkgWasVersion ? ` (was ${pkgWasVersion})` : ""}.`;
+}
+
 if (errors.length) {
   console.error(errors.map((e) => `- ${e}`).join("\n"));
   process.exit(1);
 }
 const kind = now && isPrerelease(now) ? " (prerelease)" : "";
 console.log(
-  skills
+  (skills
     ? `check-version: skills changed; v${merged.version} -> v${current.version}${kind}, rules v${merged.marker} -> v${current.marker}.`
-    : `check-version: no skills changed; v${current.version}${kind}${bumped ? ` (was v${merged.version})` : ""}.`,
+    : `check-version: no skills changed; v${current.version}${kind}${bumped ? ` (was v${merged.version})` : ""}.`) + packageLine,
 );

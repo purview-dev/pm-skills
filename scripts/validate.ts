@@ -248,6 +248,14 @@ if (existsSync(join(siteRoot, "pm-docs-site.json"))) {
   }
 }
 
+// npm packs only the package's own folder, so the pm-docs-site package ships
+// a copy of the repository's licence, which must not drift from it.
+const packageLicence = join("packages", "pm-docs-site", "LICENSE.md");
+if (existsSync(join(root, "packages", "pm-docs-site", "package.json"))) {
+  if (!existsSync(join(root, packageLicence))) fail(`${packageLicence}: missing (copy LICENSE.md)`);
+  else if (read(packageLicence) !== read("LICENSE.md")) fail(`${packageLicence}: differs from LICENSE.md (copy it again)`);
+}
+
 if (errors.length) {
   console.error(errors.map((e) => `- ${e}`).join("\n"));
   process.exit(1);
