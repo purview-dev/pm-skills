@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T08:30:08+00:00",
+  "generatedAt": "2026-11-18T08:34:59+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "main",
-    "head": "3f2e97b33238545d05432805a1d0dd50157d9caa"
+    "head": "2d434cf73666d63297d2d94130fad959542775ed"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -173,32 +173,7 @@
   },
   "plan": null,
   "roadmap": {
-    "next": [
-      {
-        "id": "R-014",
-        "title": "Create the npm @purview-dev scope and token",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "user",
-        "doneWhen": "the `@purview-dev` scope exists on npm, and an `NPM_TOKEN` secret is set on the repository.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-        "note": null,
-        "revisits": null,
-        "claimable": false
-      }
-    ],
+    "next": [],
     "later": [
       {
         "id": "R-010",
@@ -387,17 +362,18 @@
     "columns": {
       "now": [],
       "next": [],
-      "foryou": [
-        {
-          "id": "R-014",
-          "title": "Create the npm @purview-dev scope and token",
-          "owner": "user",
-          "size": "S",
-          "detail": "blocks R-013 Docs-site package: publish and migrate"
-        }
-      ],
+      "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-18",
+          "id": "R-014",
+          "title": "Create the npm @purview-dev scope and token",
+          "milestone": "M1",
+          "owner": "user",
+          "plan": null,
+          "result": "`Done when` restated in the brief (trusted publishing replaced the `NPM_TOKEN` secret); the `@purview-dev` scope exists, `npm view @purview-dev/pm-docs-site@0.1.0-pre.1 version` returns `0.1.0-pre.1`, tag `pm-docs-site-v0.1.0-pre.1` exists, and the trusted publisher for `publish-pm-docs-site.yml` has publish, stage publish, and manageDistTags"
+        },
         {
           "date": "2026-11-17",
           "id": "R-004",
@@ -437,6 +413,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-18",
+        "kind": "done",
+        "id": "R-014",
+        "title": "Create the npm @purview-dev scope and token",
+        "milestone": "M1",
+        "owner": "user",
+        "result": "`Done when` restated in the brief (trusted publishing replaced the `NPM_TOKEN` secret); the `@purview-dev` scope exists, `npm view @purview-dev/pm-docs-site@0.1.0-pre.1 version` returns `0.1.0-pre.1`, tag `pm-docs-site-v0.1.0-pre.1` exists, and the trusted publisher for `publish-pm-docs-site.yml` has publish, stage publish, and manageDistTags"
+      },
       {
         "date": "2026-11-17",
         "kind": "done",
@@ -513,6 +498,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-18",
+        "id": "R-014",
+        "title": "Create the npm @purview-dev scope and token",
+        "milestone": "M1",
+        "owner": "user",
+        "plan": null,
+        "result": "`Done when` restated in the brief (trusted publishing replaced the `NPM_TOKEN` secret); the `@purview-dev` scope exists, `npm view @purview-dev/pm-docs-site@0.1.0-pre.1 version` returns `0.1.0-pre.1`, tag `pm-docs-site-v0.1.0-pre.1` exists, and the trusted publisher for `publish-pm-docs-site.yml` has publish, stage publish, and manageDistTags"
+      },
       {
         "date": "2026-11-17",
         "id": "R-004",
@@ -722,13 +716,13 @@
     "removed": []
   },
   "counts": {
-    "next": 1,
+    "next": 0,
     "later": 7,
     "nextMax": 5,
     "openInbox": 8,
     "discuss": 1,
     "shapingBriefs": 0,
-    "done": 4,
+    "done": 5,
     "dropped": 4,
     "blockers": 0,
     "openRisks": 0,

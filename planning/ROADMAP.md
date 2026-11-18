@@ -14,17 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-014 Create the npm @purview-dev scope and token
-
-- Serves: V4
-- Milestone: M1
-- Owner: user
-- Done when: the `@purview-dev` scope exists on npm, and an `NPM_TOKEN` secret is set on the repository.
-- Size: S
-- Depends on: none
-- Status: ready
-- Brief: planning/briefs/2026-11-17-docs-site-package.md
-
 ## Later
 
 <!-- Grouped by milestone where one is set. Same item format. -->
