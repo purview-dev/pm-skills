@@ -98,8 +98,9 @@
 	background: var(--sl-color-bg);
 }
 
-/* Ungrouped, a column's header and its cards cell read as one column. */
-.plan-column--joined {
+/* Ungrouped, a column's header and its cards cell read as one column. The
+   doubled class outranks `.plan-column`, which is declared below. */
+.plan-column.plan-column--joined {
 	border-bottom: 0;
 	border-radius: 12px 12px 0 0;
 }

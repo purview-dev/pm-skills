@@ -15,7 +15,7 @@ for (const width of [1440, 1024, 700]) {
 
 test('a collapsed column stays collapsed after a reload, and expands again', async ({ page }) => {
 	await page.setViewportSize({ width: 1440, height: 900 });
-	await page.goto('/plan/board/');
+	await openBoard(page);
 	const done = page.locator('[data-column="done"]');
 	const toggle = done.locator('.plan-column__toggle');
 	const expandedWidth = (await done.boundingBox())!.width;
@@ -26,11 +26,14 @@ test('a collapsed column stays collapsed after a reload, and expands again', asy
 	expect((await done.boundingBox())!.width).toBeLessThan(64);
 
 	await page.reload();
+	await hydrated(page);
 	await expect(toggle).toHaveAttribute('aria-expanded', 'false');
 	expect((await done.boundingBox())!.width).toBeLessThan(64);
 
 	await toggle.click();
+	await expect(toggle).toHaveAttribute('aria-expanded', 'true');
 	await page.reload();
+	await hydrated(page);
 	await expect(toggle).toHaveAttribute('aria-expanded', 'true');
 	expect((await done.boundingBox())!.width).toBeGreaterThanOrEqual(expandedWidth - 1);
 });
@@ -40,16 +43,32 @@ test('a junk stored value leaves every column expanded and throws nothing', asyn
 
 	page.on('pageerror', (error) => errors.push(error));
 	await page.addInitScript((key) => localStorage.setItem(key, 'not json'), STORAGE_KEY);
-	await page.goto('/plan/board/');
+	await openBoard(page);
 
 	for (const name of COLUMNS) await expect(page.locator(`[data-column="${name}"] .plan-column__toggle`)).toHaveAttribute('aria-expanded', 'true');
 	expect(errors).toEqual([]);
 });
 
-/** Opens the board and waits for the island to hydrate (the filter bar shows). */
+test('ungrouped, each column header joins its cards cell', async ({ page }) => {
+	await openBoard(page);
+
+	for (const name of COLUMNS) {
+		const header = await page.locator(`[data-column="${name}"]`).evaluate((element) => getComputedStyle(element).borderBottomWidth);
+		const cell = await page.locator(`#col-${name}-cards`).evaluate((element) => getComputedStyle(element).borderTopWidth);
+
+		expect({ name, header, cell }).toEqual({ name, header: '0px', cell: '0px' });
+	}
+});
+
+/** Waits for the Board island to hydrate: the filter bar shows once it has. */
+async function hydrated(page: Page): Promise<void> {
+	await expect(page.locator('.plan-board__filters')).toBeVisible();
+}
+
+/** Opens the board and waits for the island to hydrate. */
 async function openBoard(page: Page): Promise<void> {
 	await page.goto('/plan/board/');
-	await expect(page.locator('.plan-board__filters')).toBeVisible();
+	await hydrated(page);
 }
 
 /** The visible cards' values of one data attribute, and their keys. */
