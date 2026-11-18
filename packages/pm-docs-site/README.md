@@ -94,6 +94,26 @@ with the filter bar hidden.
 The integration adds `@astrojs/react` itself, so a consumer site stays the
 three files above.
 
+## Roadmap timeline
+
+The Roadmap page opens with a timeline: a React island with one card per
+milestone, in strategy order, then a `No milestone` card when it has items
+that are not dropped. Each card shows the milestone ID and name (a link to
+its milestone page when the Milestones view is on), a `Focus` badge, its
+status (with the done date), its target or `No target`, and
+`<done> of <total> done` with a progress bar.
+
+The strip runs left to right by default and scrolls sideways inside itself;
+a plain vertical wheel scrolls it sideways until it reaches an end, then
+the page scrolls. `Top to bottom` lays it out vertically, and the choice is
+kept in the URL as `?layout=vertical`, alongside any other parameters, so a
+link opens the same layout.
+
+Zoom runs from 50% to 200% in steps of 25%: the `Zoom out`, `Zoom in`, and
+`Reset zoom` buttons, Ctrl or Cmd + wheel over the strip, or a trackpad
+pinch. Zoom resizes the cards rather than scaling the page, and it is not
+kept in the URL: every visit starts at 100%.
+
 ## CLI
 
 The CLI runs under Node 24 or later.

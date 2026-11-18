@@ -26,17 +26,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Paused checkpoint: 2026-11-18 17:02. Stopped at: design, approach 1 chosen (a `configResolved` plugin appends the package's real directory to the resolved `server.fs.allow` when no entry contains it), spec `docs/superpowers/specs/2026-11-18-docs-site-package-in-repo-dev-design.md` on branch `feat/r-017-docs-site-package-in-repo-dev-hydrates` (commits 4eaf974, 53c8730). Next action: after R-021 Docs-site package: TypeScript source with a build step merges, update the spec's Language line (the helper is a `.ts` source file in `lib/`, emitted by R-021's build) and its blocked decision, get the user's approval, then run writing-plans. Start with: the spec file. Decisions: TypeScript strongly preferred, JavaScript only where the runtime needs it (user, 2026-11-18, while shaping R-021); R-017 waits for R-021 so its helper is TypeScript. Context: Node refuses `.ts` under `node_modules` (`ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING`), Bun loads it (checked 2026-11-18). Open question: none.
 - Note: Vite refuses `packages/pm-docs-site/node_modules/@astrojs/react/dist/client.js` as outside `server.fs.allow`; allowing the package's own folder from the integration hydrated it in R-010's fix-wave experiment. A packed-install consumer is already fixed by R-010.
 
-### R-011 Docs-site package: milestone timeline
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: the Roadmap page shows each milestone with its target, status, and progress from `planning.json`, each linking to its milestone page, and the derivation has unit tests.
-- Size: M
-- Depends on: R-008
-- Status: ready
-- Brief: planning/briefs/2026-11-17-docs-site-package.md
-
 ### R-012 Docs-site package: dependency graph
 
 - Serves: V4
