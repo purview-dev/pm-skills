@@ -18,17 +18,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Grouped by milestone where one is set. Same item format. -->
 
-### R-010 Docs-site package: board filters and swimlanes
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: browser tests show that filtering the fixture Board by owner, milestone, size, and RAG leaves only matching cards, and that grouping by milestone and by owner renders one lane per group.
-- Size: M
-- Depends on: R-008
-- Status: ready
-- Brief: planning/briefs/2026-11-17-docs-site-package.md
-
 ### R-011 Docs-site package: milestone timeline
 
 - Serves: V4

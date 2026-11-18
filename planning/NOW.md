@@ -11,17 +11,19 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: idle
-- Item:
-- Session:
-- Stage:
-- Brief:
-- Milestone:
+- Status: active
+- Item: R-010 Docs-site package: board filters and swimlanes
+- Session: feat/r-010-docs-site-package-board-filters-and-swimlanes
+- Stage: design
+- Brief: planning/briefs/2026-11-17-docs-site-package.md
+- Milestone: M1
 - Spec:
 - Plan:
-- Started:
+- Started: 2026-11-18
 
 ## Done when
+
+- browser tests show that filtering the fixture Board by owner, milestone, size, and RAG leaves only matching cards, and that grouping by milestone and by owner renders one lane per group.
 
 ## Checkpoint
 
