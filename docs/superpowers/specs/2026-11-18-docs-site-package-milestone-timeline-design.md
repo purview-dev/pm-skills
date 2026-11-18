@@ -127,8 +127,10 @@ These follow from the brief and R-010 and are not reopened:
 - `roadmapGroups` takes each group's `progress` from `milestoneSummaries` for
   the same milestone, so every page counts the same features. Dropped items
   are left out. So that a section never lists more items than it counts, its
-  events are de-duplicated by ID in the same way `features()` does it, and
-  the most advanced state wins: done, then active, then pending. A `## Done`
+  events are de-duplicated by ID with the same precedence `features()` uses,
+  so the listed state is the counted one: Now, then Next/Later, then Done (an
+  ID in two places is invalid PM state; this only keeps the page
+  consistent). A `## Done`
   entry with no ID stays in the feed but is not counted (builder's call;
   `planning.test.ts` asserts the counted IDs match the summary's features).
   The `No milestone` section follows the card's rule above.
