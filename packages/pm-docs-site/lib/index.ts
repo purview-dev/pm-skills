@@ -1,5 +1,4 @@
-// @ts-check
-// The pm-docs-site Astro integration. The consumer's astro.config.mjs holds
+// The pm-docs-site Astro integration. The consumer's astro.config.ts holds
 // only `integrations: [pmDocsSite({ title, ... })]`: this points Astro's srcDir
 // at the package's own src/ (pages, components, content config), adds
 // Starlight with the plan sidebar, adds React so pages can render `.tsx` islands with
@@ -12,16 +11,19 @@ import { fileURLToPath } from 'node:url';
 
 import react from '@astrojs/react';
 import starlight from '@astrojs/starlight';
+import type { AstroIntegration } from 'astro';
 
-import { resolveOptions } from './lib/options.mjs';
-import { buildSidebar } from './lib/sidebar.mjs';
+import { resolveOptions } from './options.ts';
+import { buildSidebar } from './sidebar.ts';
+import type { PmDocsSiteOptions, ViewName } from './types.ts';
+
+export type * from './types.ts';
 
 /**
  * The pages each optional view owns, in src/routes/ so Astro routes them only
  * when the view is on. Home, Board, Roadmap, Log and Risks are in src/pages/.
- * @type {Record<import('./index').ViewName, [pattern: string, file: string][]>}
  */
-const VIEW_ROUTES = {
+const VIEW_ROUTES: Record<ViewName, [pattern: string, file: string][]> = {
 	now: [['/plan/now', 'plan/now.astro']],
 	milestones: [
 		['/plan/milestones', 'plan/milestones/index.astro'],
@@ -46,10 +48,8 @@ const SERVER_ENVIRONMENTS = ['ssr', 'astro', 'prerender'];
  * Whether `name` is installed in a node_modules folder at or above `root`,
  * walked as Vite resolves it: under Bun, `createRequire` also finds Bun's
  * global cache, which Vite never looks in.
- * @param {string} name
- * @param {string} root
  */
-function resolvesFrom(name, root) {
+function resolvesFrom(name: string, root: string): boolean {
 	for (let dir = resolve(root); ; dir = dirname(dir)) {
 		if (existsSync(join(dir, 'node_modules', name, 'package.json'))) return true;
 		if (dirname(dir) === dir) return false;
@@ -65,11 +65,8 @@ function resolvesFrom(name, root) {
  * the package by name (this repository's fixtures) names react-dom/client
  * plainly, since naming a package Vite cannot resolve breaks the optimizer.
  * Only missing entries: Vite's mergeConfig concatenates arrays.
- * @param {unknown} include
- * @param {string} root
- * @returns {string[]}
  */
-function optimizedDependencies(include, root) {
+function optimizedDependencies(include: unknown, root: string): string[] {
 	const existing = Array.isArray(include) ? include : [];
 	const entry = resolvesFrom(PACKAGE_NAME, root) ? `${PACKAGE_NAME} > react-dom/client` : 'react-dom/client';
 
@@ -79,11 +76,8 @@ function optimizedDependencies(include, root) {
 const VIRTUAL_ID = 'virtual:pm-docs-site/config';
 const RESOLVED_ID = `\0${VIRTUAL_ID}`;
 
-/**
- * @param {import('./index').PmDocsSiteOptions} options
- * @returns {import('astro').AstroIntegration & { pmDocsSiteOptions: import('./index').PmDocsSiteOptions }}
- */
-export default function pmDocsSite(options) {
+/** The pm-docs-site integration: the plan pages, Starlight, and the docs collection. */
+export default function pmDocsSite(options: PmDocsSiteOptions): AstroIntegration & { pmDocsSiteOptions: PmDocsSiteOptions } {
 	return {
 		name: 'pm-docs-site',
 		pmDocsSiteOptions: options,
@@ -95,22 +89,22 @@ export default function pmDocsSite(options) {
 				const hasReact = (config.integrations ?? []).some((integration) => integration.name === REACT_INTEGRATION);
 
 				for (const [view, routes] of Object.entries(VIEW_ROUTES)) {
-					if (!resolved.views[/** @type {import('./index').ViewName} */ (view)]) continue;
+					if (!resolved.views[view as ViewName]) continue;
 
 					for (const [pattern, file] of routes) {
-						injectRoute({ pattern, entrypoint: new URL(`./src/routes/${file}`, import.meta.url) });
+						injectRoute({ pattern, entrypoint: new URL(`../src/routes/${file}`, import.meta.url) });
 					}
 				}
 
 				updateConfig({
-					srcDir: new URL('./src/', import.meta.url),
+					srcDir: new URL('../src/', import.meta.url),
 					integrations: [
 						starlight({
 							title: resolved.title,
 							...(resolved.description ? { description: resolved.description } : {}),
 							sidebar: buildSidebar(resolved),
 							// Every page uses the full width (src/styles/width.css).
-							customCss: [fileURLToPath(new URL('./src/styles/width.css', import.meta.url))],
+							customCss: [fileURLToPath(new URL('../src/styles/width.css', import.meta.url))],
 						}),
 						...(hasReact ? [] : [react()]),
 					],
@@ -119,10 +113,8 @@ export default function pmDocsSite(options) {
 						plugins: [
 							{
 								name: 'pm-docs-site:config',
-								/** @param {string} id */
-								resolveId: (id) => (id === VIRTUAL_ID ? RESOLVED_ID : undefined),
-								/** @param {string} id */
-								load: (id) => (id === RESOLVED_ID ? `export default ${JSON.stringify(resolved)};` : undefined),
+								resolveId: (id: string) => (id === VIRTUAL_ID ? RESOLVED_ID : undefined),
+								load: (id: string) => (id === RESOLVED_ID ? `export default ${JSON.stringify(resolved)};` : undefined),
 							},
 							{
 								// Bundle Starlight and this package in every server environment, whatever
@@ -130,8 +122,7 @@ export default function pmDocsSite(options) {
 								// astro:middleware. Astro 7 renders static pages in its own `prerender`
 								// environment, which top-level `vite.ssr` does not reach.
 								name: 'pm-docs-site:no-external',
-								/** @param {string} name */
-								configEnvironment: (name) =>
+								configEnvironment: (name: string) =>
 									SERVER_ENVIRONMENTS.includes(name) ? { resolve: { noExternal: [...NO_EXTERNAL] } } : undefined,
 							},
 						],

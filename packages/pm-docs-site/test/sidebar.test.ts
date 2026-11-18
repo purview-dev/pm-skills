@@ -2,9 +2,9 @@ import { resolve } from 'node:path';
 
 import { describe, expect, it } from 'bun:test';
 
-import { resolveOptions } from '../lib/options.mjs';
-import { pagesOf } from '../lib/repo-docs.mjs';
-import { buildSidebar } from '../lib/sidebar.mjs';
+import { resolveOptions } from '../lib/options.ts';
+import { pagesOf } from '../lib/repo-docs.ts';
+import { buildSidebar } from '../lib/sidebar.ts';
 
 const site = resolve(import.meta.dir, 'fixtures', 'site');
 const guide = { label: 'Guide', base: '.', include: ['README.md', 'guide/*.md'], prefix: 'docs/' };

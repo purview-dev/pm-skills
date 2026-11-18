@@ -16,7 +16,7 @@
 
 - V1: `npx skills add https://github.com/purview-dev/pm-skills -y` followed by `pm-setup` leaves a repository with the rules merged, and every pm-* skill and every workflow skill reported installed.
 - V2: After compaction or a new session, `pm-resume` names the active item, its stage, and the next action from `planning/` alone.
-- V3: During an active workflow only `pm-park` (capture), the read-only views and checks, and `pm-revise` run; every other PM skill waits.
+- V3: During an active workflow, only the Non-interruption rules' exceptions run (capture, `pm-checkpoint` stage, done, push and pop, `pm-pause`, `pm-revise`, and the read-only views and checks); every other PM skill waits, and a capture replies in one line while the step in progress resumes.
 - V4: `pm-export` writes a schema-valid `planning.json`, and `pm-docs-site` builds a site from it whose `just docs-check` passes.
 
 ## Out of scope for v1

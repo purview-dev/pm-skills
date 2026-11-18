@@ -67,7 +67,7 @@ docs-check:
     bun run check
     bun run build
 
-# Test and type-check the pm-docs-site package (published from publish-pm-docs-site.yml), then run its browser tests in Chromium. Its builds need Node 22 or later.
+# Test and type-check the pm-docs-site package (published from publish-pm-docs-site.yml), then run its browser tests in Chromium. Its builds need Node 24 or later.
 [group('Docs')]
 [working-directory('packages/pm-docs-site')]
 package-test:

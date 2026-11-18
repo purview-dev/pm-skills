@@ -48,11 +48,13 @@ skills/
 packages/
   pm-docs-site/            the @purview-dev/pm-docs-site npm package
     package.json           its own version, tagged pm-docs-site-v<version>
-    index.mjs, index.d.ts  the Astro integration and its options
-    cli.mjs                the pm-docs-site dev, build, and check commands
-    lib/                   options, schemaVersion range, docs sources
+    lib/                   the TypeScript source Node loads: index.ts (the Astro
+                           integration), cli.ts (dev, build, check), types.ts (its
+                           options), options, schemaVersion range, docs sources
+    dist/                  lib/ built to JavaScript and declarations (gitignored,
+                           published; bun run build)
     src/                   the pages and components the integration serves
-    scripts/check-exports.mjs  refuses a publish with missing files
+    scripts/check-exports.ts   refuses a publish with missing or non-JavaScript entry points
     test/                  unit, build, packed-install, and browser tests
     LICENSE.md             a copy of the root licence, checked by validate
 docs/wiki/                 this documentation, published on purview.dev

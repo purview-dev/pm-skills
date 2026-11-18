@@ -1,8 +1,7 @@
-// @ts-check
 // The test consumer: everything a site needs is this call.
 import { defineConfig } from 'astro/config';
 
-import pmDocsSite from '../../../index.mjs';
+import pmDocsSite from '../../../lib/index.ts';
 
 export default defineConfig({
 	integrations: [

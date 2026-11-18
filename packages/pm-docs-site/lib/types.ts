@@ -1,4 +1,6 @@
-import type { AstroIntegration } from 'astro';
+// The integration's option types, re-exported by index.ts. A separate module
+// so the other lib/ modules and src/ can import them without importing the
+// integration itself.
 
 /** An optional plan view. Home, Board, Roadmap, Log and Risks are always on. */
 export type ViewName = 'now' | 'milestones' | 'features' | 'inbox' | 'briefs' | 'strategy';
@@ -44,6 +46,3 @@ export interface ResolvedOptions {
 	docs: { root: string; sources: DocsSource[] } | null;
 	views: Record<ViewName, boolean>;
 }
-
-/** The pm-docs-site integration: the plan pages, Starlight, and the docs collection. */
-export default function pmDocsSite(options: PmDocsSiteOptions): AstroIntegration & { pmDocsSiteOptions: PmDocsSiteOptions };

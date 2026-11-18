@@ -2,7 +2,7 @@ import { resolve } from 'node:path';
 
 import { describe, expect, it } from 'bun:test';
 
-import { resolveOptions, VIEW_NAMES } from '../lib/options.mjs';
+import { resolveOptions, VIEW_NAMES } from '../lib/options.ts';
 
 const root = resolve('/site');
 

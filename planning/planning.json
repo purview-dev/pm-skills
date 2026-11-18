@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T17:03:21+00:00",
+  "generatedAt": "2026-11-18T21:52:04+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-017-docs-site-package-in-repo-dev-hydrates",
-    "head": "53c87300524e5e1033841c62a9bdc69a8765569a"
+    "branch": "feat/r-021-docs-site-package-typescript-source-with-a-build-step",
+    "head": "25c8399c13b271dc717629a4e117eb6943cdfb53"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -30,7 +30,7 @@
       },
       {
         "id": "V3",
-        "text": "During an active workflow only `pm-park` (capture), the read-only views and checks, and `pm-revise` run; every other PM skill waits."
+        "text": "During an active workflow, only the Non-interruption rules' exceptions run (capture, `pm-checkpoint` stage, done, push and pop, `pm-pause`, `pm-revise`, and the read-only views and checks); every other PM skill waits, and a capture replies in one line while the step in progress resumes."
       },
       {
         "id": "V4",
@@ -59,7 +59,7 @@
         "serves": [
           "V4"
         ],
-        "exitCriteria": "`npm view @purview-dev/pm-docs-site version` returns a version, `docs-site/` holds only `package.json`, `astro.config.mjs`, `bun.lock`, and `.gitignore`, and `just docs-check` passes.",
+        "exitCriteria": "`npm view @purview-dev/pm-docs-site version` returns a version, `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore`, and `just docs-check` passes.",
         "target": null,
         "status": "active"
       },
@@ -134,6 +134,18 @@
     "decisions": [
       {
         "date": "2026-11-18",
+        "decision": "Vision V3 now reads: during an active workflow, only the Non-interruption rules' exceptions run (capture, `pm-checkpoint` stage, done, push and pop, `pm-pause`, `pm-revise`, and the read-only views and checks); every other PM skill waits, and a capture replies in one line while the step in progress resumes.",
+        "why": "the old line named only `pm-park`, the read-only views, and `pm-revise`, so it no longer matched Non-interruption rules 2, 3, and 10; pointing at the rules keeps it true as they change. R-016 Rehearse the lifecycle guards and M3 still serve it.",
+        "rejected": "listing every exception (goes stale each rules version); keeping the old line."
+      },
+      {
+        "date": "2026-11-18",
+        "decision": "Added R-021 Docs-site package: TypeScript source with a build step at the top of Next; R-017 in-repo dev hydrates and R-019 consumer-ready for 1.0.0 depend on it, and R-019 moved to the top of Later. M1's exit criterion and R-013's Done when name `astro.config.ts` instead of `astro.config.mjs`.",
+        "why": "TypeScript is strongly preferred, and JavaScript ships only where Node needs it (brief `planning/briefs/2026-11-18-pm-docs-site-typescript.md`).",
+        "rejected": "Bun-only runtime shipping `.ts`; converting only the non-published files; keeping it parked."
+      },
+      {
+        "date": "2026-11-18",
         "decision": "Re-planned roadmap.",
         "why": "Next was empty with M1 open; Next is now R-017 in-repo dev hydrates, R-011 milestone timeline, R-012 dependency graph, R-018 export the Now card's owner and size, R-019 consumer-ready for 1.0.0, with R-013 at the top of Later M1 depending on R-019, then R-020 rich demo planning fixture (user request); R-017, R-018, and R-019 fold seven inbox files. Kept \"returns a version\" in R-013 and the M1 exit criterion instead of naming `1.0.0`, at the user's choice.",
         "rejected": "absorbing the consumer fixes into R-013; naming `1.0.0` in both."
@@ -191,42 +203,18 @@
         ],
         "milestone": "M1",
         "owner": "agent",
-        "doneWhen": "from `packages/pm-docs-site`, `node cli.mjs dev test/fixtures/site` serves `/plan/board/?group=owner` with the Board island hydrated, and the dev server logs no `server.fs.allow` error.",
+        "doneWhen": "from `packages/pm-docs-site`, the package CLI's `dev test/fixtures/site` serves `/plan/board/?group=owner` with the Board island hydrated, and the dev server logs no `server.fs.allow` error.",
         "size": "S",
-        "dependsOn": [],
+        "dependsOn": [
+          "R-021"
+        ],
         "status": {
           "value": "paused",
           "reason": null,
           "since": null
         },
         "brief": null,
-        "note": "Vite refuses `packages/pm-docs-site/node_modules/@astrojs/react/dist/client.js` as outside `server.fs.allow`; allowing the package's own folder from the integration hydrated it in R-010's fix-wave experiment. A packed-install consumer is already fixed by R-010. Waits on the package's TypeScript conversion (inbox `2026-11-18-0925-pm-docs-site-mjs-to-typescript.md`, being shaped); add it to `Depends on` once it has an ID.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
-        "id": "R-011",
-        "title": "Docs-site package: milestone timeline",
-        "section": "next",
-        "position": 2,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "the Roadmap page shows each milestone with its target, status, and progress from `planning.json`, each linking to its milestone page, and the derivation has unit tests.",
-        "size": "M",
-        "dependsOn": [
-          "R-008"
-        ],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-        "note": null,
+        "note": "Vite refuses `packages/pm-docs-site/node_modules/@astrojs/react/dist/client.js` as outside `server.fs.allow`; allowing the package's own folder from the integration hydrated it in R-010's fix-wave experiment. A packed-install consumer is already fixed by R-010.",
         "revisits": null,
         "claimable": true
       },
@@ -234,7 +222,7 @@
         "id": "R-012",
         "title": "Docs-site package: dependency graph",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -260,7 +248,7 @@
         "id": "R-018",
         "title": "Export the Now card's owner and size",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -279,13 +267,15 @@
         "note": "`skills/pm-export/scripts/planning.ts:489` writes `owner: null, size: null`, so every real board shows the active item as \"No owner\" and the R-010 owner and size filters hide it.",
         "revisits": null,
         "claimable": true
-      },
+      }
+    ],
+    "later": [
       {
         "id": "R-019",
         "title": "Docs-site package: consumer-ready for 1.0.0",
-        "section": "next",
-        "position": 5,
-        "label": "next",
+        "section": "later",
+        "position": 1,
+        "label": "later",
         "serves": [
           "V4"
         ],
@@ -293,31 +283,31 @@
         "owner": "agent",
         "doneWhen": "the package home page has no `just docs-preview`; a build without the `docs` option logs no Starlight missing-folder or empty-collection warning; `docsHref` returns no link for a spec or plan path no docs source maps (and honours a source `prefix`); RefLink prints fallback text (the entry title, \"No milestone\") for an unknown key; `linkify` uses the link scanner's boundaries, so an ID inside a path is not linked; the CLI warns when `--title` or `--planning` is ignored, a `planning.json` holding `null` prints the pm-export hint, `check` loads an `astro.config.ts` on the `engines` Node floor, `dev` has an automated test, and the README names the same-drive requirement on Windows.",
         "size": "M",
-        "dependsOn": [],
+        "dependsOn": [
+          "R-021"
+        ],
         "status": {
           "value": "ready",
           "reason": null,
           "since": null
         },
         "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-        "note": "Folds five inbox files from the R-008 and R-009 final reviews (CLI gaps, consumer text, dead doc links, RefLink fallbacks, IDs linked inside paths). Affects `packages/pm-docs-site/cli.mjs`, `lib/site-options.mjs`, `README.md`, `src/pages/index.astro`, `src/content.config.ts`, `src/lib/planning.ts`, `src/components/RefLink.astro`, `src/lib/references.ts`.",
+        "note": "Folds five inbox files from the R-008 and R-009 final reviews (CLI gaps, consumer text, dead doc links, RefLink fallbacks, IDs linked inside paths). Affects `packages/pm-docs-site/cli.mjs`, `lib/site-options.mjs`, `README.md`, `src/pages/index.astro`, `src/content.config.ts`, `src/lib/planning.ts`, `src/components/RefLink.astro`, `src/lib/references.ts` (the `.mjs` files become `.ts` source in R-021 Docs-site package: TypeScript source with a build step). Moved from Next 5 to the top of Later on 2026-11-18 when R-021 took the top of Next.",
         "revisits": null,
-        "claimable": true
-      }
-    ],
-    "later": [
+        "claimable": false
+      },
       {
         "id": "R-013",
         "title": "Docs-site package: publish and migrate",
         "section": "later",
-        "position": 1,
+        "position": 2,
         "label": "waiting",
         "serves": [
           "V4"
         ],
         "milestone": "M1",
         "owner": "both",
-        "doneWhen": "`npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.mjs`, `bun.lock`, and `.gitignore` and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; and a scratch export at schemaVersion 4 fails the build until the package's range includes it.",
+        "doneWhen": "`npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore` and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; and a scratch export at schemaVersion 4 fails the build until the package's range includes it.",
         "size": "M",
         "dependsOn": [
           "R-009",
@@ -341,7 +331,7 @@
         "id": "R-020",
         "title": "Docs-site package: rich demo planning fixture",
         "section": "later",
-        "position": 2,
+        "position": 3,
         "label": "later",
         "serves": [
           "V4"
@@ -365,7 +355,7 @@
         "id": "R-006",
         "title": "Check pm-setup's skill counts in validate",
         "section": "later",
-        "position": 3,
+        "position": 4,
         "label": "later",
         "serves": [
           "V1"
@@ -389,7 +379,7 @@
         "id": "R-015",
         "title": "Rehearse a fresh install in a scratch repository",
         "section": "later",
-        "position": 4,
+        "position": 5,
         "label": "later",
         "serves": [
           "V1"
@@ -413,7 +403,7 @@
         "id": "R-016",
         "title": "Rehearse the lifecycle guards",
         "section": "later",
-        "position": 5,
+        "position": 6,
         "label": "later",
         "serves": [
           "V2",
@@ -448,13 +438,6 @@
           "detail": "paused"
         },
         {
-          "id": "R-011",
-          "title": "Docs-site package: milestone timeline",
-          "owner": "agent",
-          "size": "M",
-          "detail": "ready"
-        },
-        {
           "id": "R-012",
           "title": "Docs-site package: dependency graph",
           "owner": "agent",
@@ -467,18 +450,29 @@
           "owner": "agent",
           "size": "S",
           "detail": "ready"
-        },
-        {
-          "id": "R-019",
-          "title": "Docs-site package: consumer-ready for 1.0.0",
-          "owner": "agent",
-          "size": "M",
-          "detail": "ready"
         }
       ],
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-18",
+          "id": "R-021",
+          "title": "Docs-site package: TypeScript source with a build step",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-18-docs-site-package-typescript.md",
+          "result": "branch feat/r-021-docs-site-package-typescript-source-with-a-build-step"
+        },
+        {
+          "date": "2026-11-18",
+          "id": "R-011",
+          "title": "Docs-site package: milestone timeline",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-18-docs-site-package-milestone-timeline.md",
+          "result": "branch feat/r-011-docs-site-package-milestone-timeline"
+        },
         {
           "date": "2026-11-18",
           "id": "R-010",
@@ -536,6 +530,24 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-18",
+        "kind": "done",
+        "id": "R-021",
+        "title": "Docs-site package: TypeScript source with a build step",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-021-docs-site-package-typescript-source-with-a-build-step"
+      },
+      {
+        "date": "2026-11-18",
+        "kind": "done",
+        "id": "R-011",
+        "title": "Docs-site package: milestone timeline",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-011-docs-site-package-milestone-timeline"
+      },
       {
         "date": "2026-11-18",
         "kind": "done",
@@ -630,6 +642,24 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-18",
+        "id": "R-021",
+        "title": "Docs-site package: TypeScript source with a build step",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-18-docs-site-package-typescript.md",
+        "result": "branch feat/r-021-docs-site-package-typescript-source-with-a-build-step"
+      },
+      {
+        "date": "2026-11-18",
+        "id": "R-011",
+        "title": "Docs-site package: milestone timeline",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-18-docs-site-package-milestone-timeline.md",
+        "result": "branch feat/r-011-docs-site-package-milestone-timeline"
+      },
       {
         "date": "2026-11-18",
         "id": "R-010",
@@ -798,21 +828,6 @@
       "idea": "The brief (2026-11-18) decided R-013 releases stable `1.0.0`, but R-013's `Done when` says \"returns the released version\" and M1 Reproducible docs site's exit criterion says \"`npm view @purview-dev/pm-docs-site version` returns a version\", which `0.1.0-pre.1` already satisfies. Name `1.0.0` in both: `pm-item edit R-013` and `pm-strategy` for M1."
     },
     {
-      "file": "planning/inbox/2026-11-18-0925-pm-docs-site-mjs-to-typescript.md",
-      "title": "Convert the pm-docs-site package's .mjs files to TypeScript",
-      "captured": "2026-11-18 09:25",
-      "source": "agent (R-010 plan)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "packages/pm-docs-site",
-      "context": "R-010 plan",
-      "discuss": "yes",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "The user's rule (2026-11-18): TypeScript always, never JavaScript. The package still has ten JavaScript files: `index.mjs`, `cli.mjs`, `lib/options.mjs`, `lib/repo-docs.mjs`, `lib/schema-version.mjs`, `lib/sidebar.mjs`, `lib/site-options.mjs`, `scripts/check-exports.mjs`, `test/browser/serve.mjs`, and `test/fixtures/site/astro.config.mjs` (all `// @ts-check`). R-010 edits `index.mjs` in place and adds only `.ts`/`.tsx`. Converting the rest needs a decision: Node refuses to strip types from files under `node_modules` (`ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING`), so a published `cli.ts`/`index.ts` needs a build step that emits JavaScript into the tarball (and `files`, `exports`, `bin`, the packed-install test, and `check-exports` change with it), or a supported loader. The repository's own `scripts/` are already `.ts` run by Bun."
-    },
-    {
       "file": "planning/inbox/2026-11-18-1222-r-010-deferred-board-polish.md",
       "title": "R-010 deferred board polish",
       "captured": "2026-11-18 12:22",
@@ -829,19 +844,106 @@
       "brief": "planning/briefs/2026-11-17-docs-site-package.md",
       "reviewed": "never",
       "idea": "Minor findings from R-010's task and final reviews, triaged \"can wait\":\n\n- The 3s reveal of a pending board also fires on a slow but successful hydration (brief unfiltered view, then the filtered one); say so in `components.css` and the `useBoardUrlState.ts` header, or tune it.\n- The pending mark is also set on `/plan/roadmap/?owner=...` (inert today); scope it to the Board page when R-011 adds Roadmap filters.\n- `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`.\n- The lane header is a plain `div`; an `h3` or `role=\"heading\"` would make lanes navigable.\n- Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed.\n- The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page; watch it for R-011 and R-012.\n- A collapsed column's vertical title stretches the shared header row.\n- `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab` (suggests drag and drop); its header comment lists only some changes.\n- `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array.\n- `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id` (key fallback, `href: null`, and the Done-tag rule untested); `tagHref` never asserted.\n- `integration.test.ts` asserts the integration names two ways.\n- `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`.\n- The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP."
+    },
+    {
+      "file": "planning/inbox/2026-11-18-1455-milestones-page-empty-no-milestone-card.md",
+      "title": "Milestones page shows empty No milestone card",
+      "captured": "2026-11-18 14:55",
+      "source": "agent (R-011 design)",
+      "kind": "bug",
+      "severity": "cosmetic",
+      "affects": "packages/pm-docs-site/src/routes/plan/milestones/index.astro",
+      "context": "R-011 design",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "`features()` gives dropped items `milestone: null`, so `milestoneSummaries` keeps the `No milestone` group whenever anything was dropped, and the Milestones page shows a `No milestone` card reading `0 of 0 done`. R-011 hides that card on the timeline and the Roadmap page only; the Milestones page keeps it."
+    },
+    {
+      "file": "planning/inbox/2026-11-18-1524-docs-site-demo-site.md",
+      "title": "Demo site showing every docs-site feature",
+      "captured": "2026-11-18 15:24",
+      "source": "user",
+      "kind": "feature",
+      "severity": null,
+      "affects": "packages/pm-docs-site",
+      "context": "R-011 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "This needs a demo site in repo, that shows all of the various features off"
+    },
+    {
+      "file": "planning/inbox/2026-11-18-1637-docs-site-dev-webserver-flaky-start.md",
+      "title": "Package dev web server start is intermittent",
+      "captured": "2026-11-18 16:37",
+      "source": "agent (R-011 execute, verification)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site/playwright.config.ts",
+      "context": "R-011 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "`just lint-check` failed twice on 2026-11-18 at `package-test`: the `dev` web server (`test/browser/dev-server.ts`) logged `Listen method has been called more than once without closing` and `transport invoke timed out after 60000ms`, then Playwright timed out after 300000ms. `bun run test:browser --project=dev` alone passed, and a third full run passed, so the start is intermittent when both web servers start together. Playwright starts both servers even with `--project=chromium`. Separately, `bun run test:browser -- --project chromium <file>` fails under Bun (Playwright reads the path as a project name), while `--project=chromium` works."
+    },
+    {
+      "file": "planning/inbox/2026-11-18-1638-timeline-polish-follow-ups.md",
+      "title": "Milestone timeline polish follow-ups",
+      "captured": "2026-11-18 16:38",
+      "source": "agent (R-011 execute, final review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site/src/components/timeline/Timeline.tsx",
+      "context": "R-011 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+      "reviewed": "never",
+      "idea": "Minor findings from R-011's task and final reviews, triaged \"can wait\":\n\n- Keyboard focus drops to `<body>` when `Zoom in`, `Zoom out`, or `Reset zoom` becomes disabled at its limit; `aria-disabled` with a no-op guard would keep focus.\n- The plain-wheel path scrolls by `deltaY` without scaling line-mode (`deltaMode` 1) deltas.\n- The zoom-anchor browser test covers a single click, not two zoom changes before one render.\n- The `planned` and `other` card markers are never rendered in a browser test: the fixture has no planned milestone, because adding one adds a milestone page and the spec said no page is added.\n- Event de-duplication assumes the Now item is not also logged done or queued under another milestone; untested."
+    },
+    {
+      "file": "planning/inbox/2026-11-18-1830-r-021-deferred-build-polish.md",
+      "title": "R-021 deferred build and docs polish",
+      "captured": "2026-11-18 18:30",
+      "source": "agent (R-021 execute, final review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site",
+      "context": "R-021 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": "planning/briefs/2026-11-18-pm-docs-site-typescript.md",
+      "reviewed": "never",
+      "idea": "Minor findings from R-021's final review, deferred:\n\n- `tsconfig.build.json` sets `types: [\"node\"]`, but `@types/node` arrives only through `@types/bun`; add it to `devDependencies` so a lockfile change cannot break `prepack`.\n- `scripts/build.ts` rewrites `.ts` specifiers only in the top level of `dist/`, and the install-test guard reads only the top level; a nested `lib/` folder would escape both (use `readdirSync(..., { recursive: true })`).\n- `scripts/check-exports.ts` rejects valid `.mjs`/`.cjs` entry points and accepts a `.d.ts` outside a `types` condition.\n- Shipped `src/` type-imports `../lib/types.ts`, which the tarball omits (runtime unaffected); ship it or note why not.\n- The `astro.config.ts` examples in `packages/pm-docs-site/README.md` and `docs/wiki/guide/Docs-Site-Package.md` are fenced as `js`.\n- `README.md:69` and `.config/purview-docs.yml:23` say `0.1.0-pre.1` is on npm; stale once `0.1.0-pre.2` publishes."
     }
   ],
   "briefs": [
     {
       "path": "planning/briefs/2026-11-17-docs-site-package.md",
-      "id": "R-011",
+      "id": "R-012",
       "title": "Docs site as a versioned package",
-      "status": "on roadmap (R-011, R-012, R-013)",
+      "status": "on roadmap (R-012, R-013)",
       "origin": "user request",
       "updated": "2026-11-18",
       "decision": "2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.",
       "problem": "The docs site is chaotic to maintain and builds non-deterministically: each consumer carries its own copy of the templates, resolves its own package versions, and any template change forces a rules-major bump on every consumer.",
       "doneWhen": "`docs-site/` contains only `package.json`, `astro.config.mjs`, and `bun.lock` (plus `.gitignore`), and `just docs-check` passes.",
+      "revisions": []
+    },
+    {
+      "path": "planning/briefs/2026-11-18-pm-docs-site-typescript.md",
+      "id": null,
+      "title": "pm-docs-site package in TypeScript only",
+      "status": "done",
+      "origin": "planning/inbox/2026-11-18-0925-pm-docs-site-mjs-to-typescript.md",
+      "updated": "2026-11-18",
+      "decision": "2026-11-18 Added to Next (top) as R-021 Docs-site package: TypeScript source with a build step (agent, M, serves V4, M1). R-017 Docs-site package: in-repo dev hydrates and R-019 Docs-site package: consumer-ready for 1.0.0 depend on it; R-019 moved to the top of Later. Why: the user chose a build step so the source is TypeScript and Node consumers keep working.",
+      "problem": "The user's rule (2026-11-18): TypeScript only (`.mts`/`.ts`/`.tsx`, run with Bun), never `.js` or `.mjs`. The `@purview-dev/pm-docs-site` package still has ten JavaScript files, and R-017 Docs-site package: in-repo dev hydrates cannot add its helper until the package can load TypeScript.",
+      "doneWhen": "`git ls-files packages/pm-docs-site` lists no `.js`, `.mjs`, or `.cjs` file.",
       "revisions": []
     }
   ],
@@ -851,13 +953,13 @@
     "removed": []
   },
   "counts": {
-    "next": 5,
-    "later": 5,
+    "next": 3,
+    "later": 6,
     "nextMax": 5,
-    "openInbox": 7,
-    "discuss": 2,
+    "openInbox": 11,
+    "discuss": 1,
     "shapingBriefs": 0,
-    "done": 6,
+    "done": 8,
     "dropped": 4,
     "blockers": 0,
     "openRisks": 0,
@@ -866,14 +968,12 @@
     "greenRisks": 0
   },
   "checks": {
-    "reviewDue": false,
+    "reviewDue": true,
     "lastReview": "never",
     "claimable": [
       "R-017",
-      "R-011",
       "R-012",
-      "R-018",
-      "R-019"
+      "R-018"
     ],
     "drift": true
   }

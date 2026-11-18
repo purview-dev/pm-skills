@@ -1,9 +1,17 @@
 ---
 // The roadmap by milestone, in strategy order: what is done, what is in
-// progress, and what is queued, all from planning.json.
+// progress, and what is queued, all from planning.json. The milestone
+// timeline (src/components/timeline/Timeline.tsx) sits above the sections.
+// Its inline script runs as the page is parsed, before the strip paints: a
+// `?layout=vertical` link hides the strip until the island has rendered it
+// vertical and deleted the mark (useTimelineLayout.ts), so it never flashes
+// horizontal first. The mark is set on this page only; timeline.css reveals
+// the strip after 3s if the island never loads. It must stay in step with
+// parseTimelineQuery in src/lib/timeline.ts.
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
 import ExportStamp from '../../components/ExportStamp.astro';
+import Timeline from '../../components/timeline/Timeline';
 import ItemDetail from '../../components/ItemDetail.astro';
 import ItemDialog from '../../components/ItemDialog.astro';
 import LinkedText from '../../components/LinkedText.astro';
@@ -12,10 +20,14 @@ import PlanInteractions from '../../components/PlanInteractions.astro';
 import RefLink from '../../components/RefLink.astro';
 import { loadPlanning, roadmapGroups } from '../../lib/planning';
 import { siteRefs } from '../../lib/references';
+import { timelineMilestones } from '../../lib/timeline';
 import '../../styles/components.css';
+import '../../styles/timeline.css';
 
 const { known } = siteRefs();
-const groups = roadmapGroups(loadPlanning()).map((group) => ({
+const planning = loadPlanning();
+const milestones = timelineMilestones(planning, known);
+const groups = roadmapGroups(planning).map((group) => ({
 	...group,
 	events: group.events.map((event) => {
 		const href = event.id ? known.get(event.id)?.href : null;
@@ -28,6 +40,11 @@ const groups = roadmapGroups(loadPlanning()).map((group) => ({
 <StarlightPage frontmatter={{ title: 'Roadmap', description: 'Milestones in order, with what is done, in progress and queued.', tableOfContents: false }}>
 	<ExportStamp />
 
+	<script is:inline>
+		if (new URLSearchParams(location.search).get('layout') === 'vertical') document.documentElement.dataset.timelinePending = '';
+	</script>
+	<Timeline client:load milestones={milestones} />
+
 	{
 		groups.map((group) => (
 			<section class="roadmap-group">
@@ -37,6 +54,7 @@ const groups = roadmapGroups(loadPlanning()).map((group) => ({
 				</h2>
 				<p class="roadmap-meta">
 					{group.milestone && <strong>{group.milestone.status}</strong>}
+					{group.milestone?.target && ` · target ${group.milestone.target}`}
 					{group.milestone && ' · '}
 					{group.progress.done} of {group.progress.total} done
 					{group.milestone?.exitCriteria && (

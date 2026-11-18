@@ -4,7 +4,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 export const PACKAGE = fileURLToPath(new URL('..', import.meta.url));
 export const FIXTURES = join(PACKAGE, 'test', 'fixtures');
-export const CLI = join(PACKAGE, 'cli.mjs');
+export const CLI = join(PACKAGE, 'lib', 'cli.ts');
 
 /** Run the CLI under Node, as a consumer would. */
 export function runCli(args: string[], cwd: string = PACKAGE): { code: number; stdout: string; stderr: string } {
@@ -49,9 +49,9 @@ export function scratchFixture(prefix: string): string {
 	return dir;
 }
 
-/** An astro.config.mjs for a scratch site, importing the package by file URL. */
+/** An astro.config.ts for a scratch site, importing the package source by file URL. */
 export function siteConfig(options: string): string {
-	const index = pathToFileURL(join(PACKAGE, 'index.mjs')).href;
+	const index = pathToFileURL(join(PACKAGE, 'lib', 'index.ts')).href;
 
 	return `import pmDocsSite from '${index}';\nexport default { integrations: [pmDocsSite(${options})] };\n`;
 }

@@ -1,6 +1,6 @@
 {
 	"name": "@purview-dev/pm-docs-site",
-	"version": "0.1.0-pre.1",
+	"version": "0.1.0-pre.2",
 	"type": "module",
 	"description": "A local, searchable project site for pm-skills: the board, roadmap, milestones, features, log, and risks from pm-export's planning.json, with the repository's Markdown, as an Astro and Starlight integration.",
 	"license": "MIT",
@@ -32,20 +32,21 @@
 		"access": "public"
 	},
 	"engines": {
-		"node": ">=22"
+		"node": ">=24"
 	},
 	"bin": {
-		"pm-docs-site": "./cli.mjs"
+		"pm-docs-site": "./dist/cli.js"
 	},
 	"exports": {
 		".": {
-			"types": "./index.d.ts",
-			"default": "./index.mjs"
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
 		}
 	},
-	"files": ["index.mjs", "index.d.ts", "cli.mjs", "lib", "src", "README.md", "LICENSE.md"],
+	"files": ["dist", "src", "lib/repo-docs.ts", "lib/schema-version.ts", "README.md", "LICENSE.md"],
 	"scripts": {
-		"prepublishOnly": "node scripts/check-exports.mjs",
+		"build": "node scripts/build.ts",
+		"prepack": "node scripts/build.ts && node scripts/check-exports.ts",
 		"test": "bun test",
 		"check": "astro-check --root .",
 		"test:browser": "playwright test"

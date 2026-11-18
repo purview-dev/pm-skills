@@ -1,0 +1,210 @@
+/* The Roadmap page's milestone timeline (src/components/timeline/Timeline.tsx).
+   Zoom is one custom property, --timeline-zoom, set on the strip: every size
+   below that should grow with it is written as calc(<base> * zoom), so text
+   stays sharp and the strip's scroll extent matches its content. Colours come
+   from Starlight's variables only, so light and dark themes both work. */
+
+.plan-timeline {
+	margin-block: 1rem 2rem;
+}
+
+.plan-timeline__toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem 1rem;
+	margin-bottom: 0.75rem;
+}
+
+.plan-timeline__toolbar[hidden] {
+	display: none;
+}
+
+.plan-timeline__group {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.plan-timeline__toolbar button {
+	padding: 0.2rem 0.6rem;
+	border: 1px solid var(--sl-color-gray-5);
+	border-radius: 0.375rem;
+	background: var(--sl-color-bg);
+	color: var(--sl-color-text);
+	font-size: var(--sl-text-sm);
+	cursor: pointer;
+}
+
+.plan-timeline__toolbar button[aria-pressed='true'] {
+	border-color: var(--sl-color-accent);
+	background: var(--sl-color-accent-low);
+	color: var(--sl-color-accent-high);
+}
+
+.plan-timeline__toolbar button:disabled {
+	cursor: default;
+	opacity: 0.5;
+}
+
+.plan-timeline__zoom {
+	min-width: 3.5em;
+	color: var(--sl-color-gray-2);
+	font-size: var(--sl-text-sm);
+	font-variant-numeric: tabular-nums;
+	text-align: center;
+}
+
+/* The sizes are declared here, where --timeline-zoom is set, so they follow it. */
+.plan-timeline__strip {
+	--timeline-gap: calc(1.5rem * var(--timeline-zoom, 1));
+	--timeline-pad: calc(0.75rem * var(--timeline-zoom, 1));
+	--timeline-marker: calc(0.75rem * var(--timeline-zoom, 1));
+
+	position: relative;
+	display: flex;
+	gap: var(--timeline-gap);
+	margin: 0;
+	padding: 0.25rem;
+	list-style: none;
+}
+
+.plan-timeline__strip:focus-visible {
+	outline: 2px solid var(--sl-color-accent);
+	outline-offset: 2px;
+}
+
+/* Left to right: one row of a fixed height, scrolling sideways inside itself. */
+.plan-timeline__strip[data-layout='horizontal'] {
+	flex-wrap: nowrap;
+	align-items: stretch;
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+
+/* Top to bottom: no height limit and no scroll box, so the page's own scroll moves through it. */
+.plan-timeline__strip[data-layout='vertical'] {
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.plan-timeline__card {
+	position: relative;
+	box-sizing: border-box;
+	flex: 0 0 auto;
+	width: calc(14rem * var(--timeline-zoom, 1));
+	margin: 0;
+	padding: var(--timeline-pad);
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: calc(0.5rem * var(--timeline-zoom, 1));
+	background: var(--sl-color-bg-nav);
+	color: var(--sl-color-text);
+	font-size: calc(var(--sl-text-sm) * var(--timeline-zoom, 1));
+	line-height: 1.4;
+}
+
+.plan-timeline__strip[data-layout='vertical'] .plan-timeline__card {
+	max-width: 100%;
+}
+
+/* The connector: a line from the previous card's marker to this one's. */
+.plan-timeline__card + .plan-timeline__card::before {
+	position: absolute;
+	content: '';
+	background: var(--sl-color-gray-4);
+}
+
+.plan-timeline__strip[data-layout='horizontal'] .plan-timeline__card + .plan-timeline__card::before {
+	top: calc(var(--timeline-pad) + var(--timeline-marker) / 2 - 1px);
+	left: calc(-1 * var(--timeline-gap) - 1px);
+	width: var(--timeline-gap);
+	height: 2px;
+}
+
+.plan-timeline__strip[data-layout='vertical'] .plan-timeline__card + .plan-timeline__card::before {
+	top: calc(-1 * var(--timeline-gap) - 1px);
+	left: calc(var(--timeline-pad) + var(--timeline-marker) / 2 - 1px);
+	width: 2px;
+	height: var(--timeline-gap);
+}
+
+/* The marker, by state: filled for done, ringed and accented for active, hollow for planned and any other status. */
+.plan-timeline__marker {
+	display: block;
+	box-sizing: border-box;
+	width: var(--timeline-marker);
+	height: var(--timeline-marker);
+	margin-bottom: calc(0.5rem * var(--timeline-zoom, 1));
+	border: 2px solid var(--sl-color-gray-3);
+	border-radius: 50%;
+	background: transparent;
+}
+
+.plan-timeline__card[data-state='done'] .plan-timeline__marker {
+	border-color: var(--sl-color-gray-2);
+	background: var(--sl-color-gray-2);
+}
+
+.plan-timeline__card[data-state='active'] .plan-timeline__marker {
+	border-color: var(--sl-color-accent);
+	background: var(--sl-color-bg);
+	box-shadow: 0 0 0 3px var(--sl-color-accent-low);
+}
+
+.plan-timeline__card p {
+	margin: 0;
+}
+
+.plan-timeline__card p + p,
+.plan-timeline__bar {
+	margin-top: calc(0.25rem * var(--timeline-zoom, 1));
+}
+
+.plan-timeline__title {
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
+
+.plan-timeline__title a {
+	color: var(--sl-color-text-accent);
+}
+
+.plan-timeline__focus {
+	margin-left: 0.4em;
+	padding: 0.05em 0.5em;
+	border-radius: 999px;
+	background: var(--sl-color-accent-low);
+	color: var(--sl-color-accent-high);
+	font-size: 0.85em;
+	font-weight: 400;
+	white-space: nowrap;
+}
+
+.plan-timeline__status,
+.plan-timeline__target,
+.plan-timeline__count {
+	color: var(--sl-color-gray-2);
+}
+
+.plan-timeline__bar {
+	display: block;
+	width: 100%;
+	height: calc(0.5rem * var(--timeline-zoom, 1));
+	accent-color: var(--sl-color-accent);
+}
+
+/* While <html> has the pending mark (`?layout=vertical`, the inline script in
+   roadmap.astro) the strip is hidden until the island has rendered the
+   vertical layout, so a vertical link never flashes horizontal. If the island
+   never loads and so never clears the mark, the strip shows anyway after 3s,
+   horizontally: never a blank strip. */
+:root[data-timeline-pending] .plan-timeline__strip {
+	visibility: hidden;
+	animation: plan-timeline-reveal 0s 3s forwards;
+}
+
+@keyframes plan-timeline-reveal {
+	to {
+		visibility: visible;
+	}
+}

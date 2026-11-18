@@ -22,7 +22,7 @@ Requires [`bun`](https://bun.sh) and, for the git hooks,
   it.
 - `just package-test` installs, tests, and type-checks the
   `@purview-dev/pm-docs-site` package in `packages/pm-docs-site/`, then runs
-  its browser tests in Chromium (Node 22 or later).
+  its browser tests in Chromium (Node 24 or later).
 - `just lint-check` runs `just validate`, the tests, `pm-lint`, and
   `just package-test`, and lints all Markdown;
   `just lint-fix` applies Markdown fixes.

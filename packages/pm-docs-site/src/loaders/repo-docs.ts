@@ -1,5 +1,5 @@
 // Markdown from anywhere in the repository as Starlight's `docs` collection,
-// read in place. The matching and parsing live in lib/repo-docs.mjs, shared with
+// read in place. The matching and parsing live in lib/repo-docs.ts, shared with
 // the sidebar.
 
 import { readFile } from 'node:fs/promises';
@@ -8,8 +8,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import type { Loader } from 'astro/loaders';
 
-import type { DocsSource } from '../../index';
-import { pagesOf, readPage } from '../../lib/repo-docs.mjs';
+import type { DocsSource } from '../../lib/types.ts';
+import { pagesOf, readPage } from '../../lib/repo-docs.ts';
 
 /** Starlight's `docs` collection over every source; `root` is the docs root, absolute or relative to the site root. */
 export function repoDocsLoader(options: { root: string; sources: DocsSource[] }): Loader {
