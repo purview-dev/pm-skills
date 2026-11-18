@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T17:57:50+00:00",
+  "generatedAt": "2026-11-18T18:31:14+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-021-docs-site-package-typescript-source-with-a-build-step",
-    "head": "203fca828e86b248b04178a133a2012ab9696a4c"
+    "head": "8ca006888b7504b501a70d7685a6ced2a06fa4e3"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -171,174 +171,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-021",
-      "title": "Docs-site package: TypeScript source with a build step"
-    },
-    "stage": "execute",
-    "session": "feat/r-021-docs-site-package-typescript-source-with-a-build-step",
-    "brief": "planning/briefs/2026-11-18-pm-docs-site-typescript.md",
-    "milestone": "M1",
-    "spec": "docs/superpowers/specs/2026-11-18-docs-site-package-typescript-design.md",
-    "plan": "docs/superpowers/plans/2026-11-18-docs-site-package-typescript.md",
-    "started": "2026-11-18",
-    "doneWhen": [
-      "`git ls-files packages/pm-docs-site` lists no `.js`, `.mjs`, or `.cjs` file; the package build emits JavaScript and declarations for `cli`, `index`, and `lib/`, and the packed tarball contains them and no `.ts` entry point that Node loads; the packed-install test runs the installed CLI with `node` and passes, and `just package-test` passes; the fixture site uses `astro.config.ts`; and `publish-pm-docs-site.yml` builds before `check-exports` and `npm publish`, pinned by `scripts/workflows.test.ts`."
-    ],
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
+    "brief": null,
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-18-docs-site-package-typescript.md",
-    "checked": 0,
-    "total": 26,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "Convert the source to TypeScript and move the entry points into `lib/`",
-        "checked": 0,
-        "total": 6,
-        "steps": [
-          {
-            "text": "**Step 1: Point the tests at the TypeScript paths**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run the tests to see them fail**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Rename and convert the ten files**",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Update `tsconfig.json`**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Run the source tests and the type-check**",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 2,
-        "title": "Build `dist/`, repoint the package, and test the tarball",
-        "checked": 0,
-        "total": 8,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing build test**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Extend the install test**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Run them to see them fail**",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Add the build**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Run the tests**",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Check the exports guard rejects a `.ts` target**",
-            "checked": false
-          },
-          {
-            "text": "**Step 7: Run the browser tests**",
-            "checked": false
-          },
-          {
-            "text": "**Step 8: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 3,
-        "title": "Build before the publish checks, pinned",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Update the pins**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run them to see them fail**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Edit the workflow**",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run the test**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 4,
-        "title": "Documentation",
-        "checked": 0,
-        "total": 4,
-        "steps": [
-          {
-            "text": "**Step 1: Edit**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Check no stale names remain**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Lint**",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 5,
-        "title": "Verify the Done when",
-        "checked": 0,
-        "total": 3,
-        "steps": [
-          {
-            "text": "**Step 1: No JavaScript tracked**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Package checks**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Fixture config**",
-            "checked": false
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [
       {
@@ -346,7 +191,7 @@
         "title": "Docs-site package: in-repo dev hydrates",
         "section": "next",
         "position": 1,
-        "label": "waiting",
+        "label": "next",
         "serves": [
           "V4"
         ],
@@ -365,7 +210,7 @@
         "brief": null,
         "note": "Vite refuses `packages/pm-docs-site/node_modules/@astrojs/react/dist/client.js` as outside `server.fs.allow`; allowing the package's own folder from the integration hydrated it in R-010's fix-wave experiment. A packed-install consumer is already fixed by R-010.",
         "revisits": null,
-        "claimable": false
+        "claimable": true
       },
       {
         "id": "R-011",
@@ -450,7 +295,7 @@
         "title": "Docs-site package: consumer-ready for 1.0.0",
         "section": "later",
         "position": 1,
-        "label": "waiting",
+        "label": "later",
         "serves": [
           "V4"
         ],
@@ -603,16 +448,15 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-021",
-          "title": "Docs-site package: TypeScript source with a build step",
-          "owner": null,
-          "size": null,
-          "detail": "execute, 0/26 plan steps"
-        }
-      ],
+      "now": [],
       "next": [
+        {
+          "id": "R-017",
+          "title": "Docs-site package: in-repo dev hydrates",
+          "owner": "agent",
+          "size": "S",
+          "detail": "paused"
+        },
         {
           "id": "R-011",
           "title": "Docs-site package: milestone timeline",
@@ -636,16 +480,17 @@
         }
       ],
       "foryou": [],
-      "waiting": [
-        {
-          "id": "R-017",
-          "title": "Docs-site package: in-repo dev hydrates",
-          "owner": "agent",
-          "size": "S",
-          "detail": "needs R-021 Docs-site package: TypeScript source with a build step"
-        }
-      ],
+      "waiting": [],
       "done": [
+        {
+          "date": "2026-11-18",
+          "id": "R-021",
+          "title": "Docs-site package: TypeScript source with a build step",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-18-docs-site-package-typescript.md",
+          "result": "branch feat/r-021-docs-site-package-typescript-source-with-a-build-step"
+        },
         {
           "date": "2026-11-18",
           "id": "R-010",
@@ -703,6 +548,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-18",
+        "kind": "done",
+        "id": "R-021",
+        "title": "Docs-site package: TypeScript source with a build step",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-021-docs-site-package-typescript-source-with-a-build-step"
+      },
       {
         "date": "2026-11-18",
         "kind": "done",
@@ -797,6 +651,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-18",
+        "id": "R-021",
+        "title": "Docs-site package: TypeScript source with a build step",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-18-docs-site-package-typescript.md",
+        "result": "branch feat/r-021-docs-site-package-typescript-source-with-a-build-step"
+      },
       {
         "date": "2026-11-18",
         "id": "R-010",
@@ -981,6 +844,21 @@
       "brief": "planning/briefs/2026-11-17-docs-site-package.md",
       "reviewed": "never",
       "idea": "Minor findings from R-010's task and final reviews, triaged \"can wait\":\n\n- The 3s reveal of a pending board also fires on a slow but successful hydration (brief unfiltered view, then the filtered one); say so in `components.css` and the `useBoardUrlState.ts` header, or tune it.\n- The pending mark is also set on `/plan/roadmap/?owner=...` (inert today); scope it to the Board page when R-011 adds Roadmap filters.\n- `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`.\n- The lane header is a plain `div`; an `h3` or `role=\"heading\"` would make lanes navigable.\n- Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed.\n- The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page; watch it for R-011 and R-012.\n- A collapsed column's vertical title stretches the shared header row.\n- `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab` (suggests drag and drop); its header comment lists only some changes.\n- `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array.\n- `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id` (key fallback, `href: null`, and the Done-tag rule untested); `tagHref` never asserted.\n- `integration.test.ts` asserts the integration names two ways.\n- `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`.\n- The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP."
+    },
+    {
+      "file": "planning/inbox/2026-11-18-1830-r-021-deferred-build-polish.md",
+      "title": "R-021 deferred build and docs polish",
+      "captured": "2026-11-18 18:30",
+      "source": "agent (R-021 execute, final review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site",
+      "context": "R-021 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": "planning/briefs/2026-11-18-pm-docs-site-typescript.md",
+      "reviewed": "never",
+      "idea": "Minor findings from R-021's final review, deferred:\n\n- `tsconfig.build.json` sets `types: [\"node\"]`, but `@types/node` arrives only through `@types/bun`; add it to `devDependencies` so a lockfile change cannot break `prepack`.\n- `scripts/build.ts` rewrites `.ts` specifiers only in the top level of `dist/`, and the install-test guard reads only the top level; a nested `lib/` folder would escape both (use `readdirSync(..., { recursive: true })`).\n- `scripts/check-exports.ts` rejects valid `.mjs`/`.cjs` entry points and accepts a `.d.ts` outside a `types` condition.\n- Shipped `src/` type-imports `../lib/types.ts`, which the tarball omits (runtime unaffected); ship it or note why not.\n- The `astro.config.ts` examples in `packages/pm-docs-site/README.md` and `docs/wiki/guide/Docs-Site-Package.md` are fenced as `js`.\n- `README.md:69` and `.config/purview-docs.yml:23` say `0.1.0-pre.1` is on npm; stale once `0.1.0-pre.2` publishes."
     }
   ],
   "briefs": [
@@ -998,9 +876,9 @@
     },
     {
       "path": "planning/briefs/2026-11-18-pm-docs-site-typescript.md",
-      "id": "R-021",
+      "id": null,
       "title": "pm-docs-site package in TypeScript only",
-      "status": "on roadmap (R-021), active",
+      "status": "done",
       "origin": "planning/inbox/2026-11-18-0925-pm-docs-site-mjs-to-typescript.md",
       "updated": "2026-11-18",
       "decision": "2026-11-18 Added to Next (top) as R-021 Docs-site package: TypeScript source with a build step (agent, M, serves V4, M1). R-017 Docs-site package: in-repo dev hydrates and R-019 Docs-site package: consumer-ready for 1.0.0 depend on it; R-019 moved to the top of Later. Why: the user chose a build step so the source is TypeScript and Node consumers keep working.",
@@ -1018,10 +896,10 @@
     "next": 4,
     "later": 6,
     "nextMax": 5,
-    "openInbox": 6,
+    "openInbox": 7,
     "discuss": 1,
     "shapingBriefs": 0,
-    "done": 6,
+    "done": 7,
     "dropped": 4,
     "blockers": 0,
     "openRisks": 0,
@@ -1033,10 +911,11 @@
     "reviewDue": false,
     "lastReview": "never",
     "claimable": [
+      "R-017",
       "R-011",
       "R-012",
       "R-018"
     ],
-    "drift": false
+    "drift": true
   }
 }

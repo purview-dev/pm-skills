@@ -1,6 +1,6 @@
 # pm-docs-site package in TypeScript only
 
-- Status: on roadmap (R-021), active
+- Status: done
 - Origin: planning/inbox/2026-11-18-0925-pm-docs-site-mjs-to-typescript.md
 - Updated: 2026-11-18
 
