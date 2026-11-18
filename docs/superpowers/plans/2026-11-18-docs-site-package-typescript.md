@@ -47,7 +47,7 @@ All paths are relative to `packages/pm-docs-site/`.
 - Produces: `lib/index.ts` default export `pmDocsSite(options: PmDocsSiteOptions): AstroIntegration & { pmDocsSiteOptions: PmDocsSiteOptions }`, and exported types `ViewName`, `DocsSource`, `PmDocsSiteOptions`, `ResolvedOptions` (same shapes as today's `index.d.ts`). `lib/cli.ts` keeps `#!/usr/bin/env node` and today's commands. Every other `lib/*.ts` keeps its current exported names.
 - `test/helpers.ts`: `CLI = join(PACKAGE, 'lib', 'cli.ts')`; `siteConfig()` imports `lib/index.ts` by file URL.
 
-- [ ] **Step 1: Point the tests at the TypeScript paths**
+- [x] **Step 1: Point the tests at the TypeScript paths**
 
 Change every test import from `../lib/<name>.mjs` to `../lib/<name>.ts` and `../index.mjs` to `../lib/index.ts`; set `CLI` and `siteConfig` as in Interfaces; scratch sites in `cli.test.ts` and `links.test.ts` write `astro.config.ts`. Keep one `cli.test.ts` case writing `astro.config.mjs`:
 
@@ -61,25 +61,25 @@ it('still reads a site whose config is astro.config.mjs', () => {
 });
 ```
 
-- [ ] **Step 2: Run the tests to see them fail**
+- [x] **Step 2: Run the tests to see them fail**
 
 Run: `bun test test/options.test.ts test/cli.test.ts`
 Expected: FAIL, `Cannot find module '../lib/options.ts'`.
 
-- [ ] **Step 3: Rename and convert the ten files**
+- [x] **Step 3: Rename and convert the ten files**
 
 `git mv` each file to its new path, then turn JSDoc types into TypeScript types and drop `// @ts-check`. Relative imports name `.ts` (`./options.ts`, `import('./index.ts')`). In `lib/index.ts`, every `new URL('./src/…', import.meta.url)` becomes `new URL('../src/…', import.meta.url)`. `test/browser/serve.ts` sets `PACKAGE` from `../../` as today, writes `astro.config.ts`, imports `lib/index.ts`, and runs `lib/cli.ts` with `process.execPath`. The fixture config imports `'../../../lib/index.ts'`. `install.test.ts` and `dev-server.ts` replace the string `'../../../lib/index.ts'` with the package name and write `astro.config.ts`. `playwright.config.ts` runs `node test/browser/serve.ts`. `src/` imports `../../lib/repo-docs.ts` and `../../lib/schema-version.ts`, plus types from `../../lib/index.ts` (`import type`). `src/env.d.ts` uses `import('../lib/index.ts').ResolvedOptions`. Update comments that name the old files.
 
-- [ ] **Step 4: Update `tsconfig.json`**
+- [x] **Step 4: Update `tsconfig.json`**
 
 Remove `allowJs` and `checkJs`. Add `erasableSyntaxOnly: true` and `allowImportingTsExtensions: true` (if the Astro strict base does not already set it). Add `dist` to `exclude` (already present).
 
-- [ ] **Step 5: Run the source tests and the type-check**
+- [x] **Step 5: Run the source tests and the type-check**
 
 Run: `bun test` then `bun run check`
 Expected: every test passes except `test/install.test.ts`, which still packs the old `package.json` entries and is restored in Task 2; `astro-check` reports 0 errors.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add -A packages/pm-docs-site
@@ -99,7 +99,7 @@ git commit -m "refactor(pm-docs-site): TypeScript source, entry points in lib/ (
 - Consumes: Task 1's `lib/*.ts`.
 - Produces: `dist/index.js`, `dist/index.d.ts`, `dist/cli.js`, `dist/<module>.js` and `.d.ts` for each `lib/*.ts`; `scripts/build.ts` (empties `dist/`, then runs `tsc -p tsconfig.build.json`, exits with its code).
 
-- [ ] **Step 1: Write the failing build test**
+- [x] **Step 1: Write the failing build test**
 
 `test/build.test.ts`:
 
@@ -119,16 +119,16 @@ it('emits JavaScript and declarations for every lib module and nothing stale', (
 
 If `tsc` emits `.d.ts.map` or `.js.map`, turn maps off in `tsconfig.build.json` rather than widening the test.
 
-- [ ] **Step 2: Extend the install test**
+- [x] **Step 2: Extend the install test**
 
 In `test/install.test.ts`, after `bun pm pack`, list the tarball (`tar -tzf <tarball>`) and assert: it has `package/dist/cli.js`, `package/dist/index.js`, `package/dist/index.d.ts`, `package/lib/repo-docs.ts`, `package/lib/schema-version.ts`; it has no `package/lib/index.ts` and no `package/lib/cli.ts`. After install, for each `dist/*.d.ts` in the installed package, every relative specifier (`from './x.ext'`) resolves to `dist/x.d.ts`. Then run `node node_modules/@purview-dev/pm-docs-site/dist/cli.js build .` in the consumer once, in addition to the existing `bun run build`, and compare pages to `expectedPages()` both times.
 
-- [ ] **Step 3: Run them to see them fail**
+- [x] **Step 3: Run them to see them fail**
 
 Run: `bun test test/build.test.ts test/install.test.ts`
 Expected: FAIL. `scripts/build.ts` is missing, and the tarball has no `dist/`.
 
-- [ ] **Step 4: Add the build**
+- [x] **Step 4: Add the build**
 
 - `tsconfig.build.json` extends `./tsconfig.json`: `include: ["lib"]`, `compilerOptions`: `rootDir: "lib"`, `outDir: "dist"`, `declaration: true`, `noEmit: false`, `rewriteRelativeImportExtensions: true`, `sourceMap: false`, `declarationMap: false`. Add any `allowImportingTsExtensions` or `noEmit` override that `tsc` needs to emit.
 - `scripts/build.ts`: `rmSync(dist, { recursive: true, force: true })`, then `spawnSync(process.execPath, [<package>/node_modules/typescript/bin/tsc, '-p', 'tsconfig.build.json'], { stdio: 'inherit' })`, and exit with its status. Plain Node.
@@ -137,22 +137,22 @@ Expected: FAIL. `scripts/build.ts` is missing, and the tarball has no `dist/`.
 - `.gitignore`: add `/dist/`.
 - `test/browser/dev-server.ts`: spawn `…/@purview-dev/pm-docs-site/dist/cli.js`.
 
-- [ ] **Step 5: Run the tests**
+- [x] **Step 5: Run the tests**
 
 Run: `bun test` then `bun run check`
 Expected: all pass, including `build.test.ts` and `install.test.ts`. If the tarball has no `dist/` (`bun pm pack` skipped `prepack`), make the install test run `bun run build` before packing, and record that in a comment.
 
-- [ ] **Step 6: Check the exports guard rejects a `.ts` target**
+- [x] **Step 6: Check the exports guard rejects a `.ts` target**
 
 Run: temporarily set `bin` to `./lib/cli.ts`, then `node scripts/check-exports.ts`, then restore it.
 Expected: exit 1 and `./lib/cli.ts` listed; after the restore, exit 0.
 
-- [ ] **Step 7: Run the browser tests**
+- [x] **Step 7: Run the browser tests**
 
 Run: `bunx playwright test`
 Expected: both projects (`chromium` and `dev`) pass.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add -A packages/pm-docs-site
@@ -170,7 +170,7 @@ git commit -m "build(pm-docs-site): emit dist/ with tsc and publish it (R-021)"
 
 - Consumes: Task 2's `build` and `prepack` scripts.
 
-- [ ] **Step 1: Update the pins**
+- [x] **Step 1: Update the pins**
 
 ```ts
 it('tests, checks, and builds before it checks the exports and publishes', () => {
@@ -185,21 +185,21 @@ it('builds and checks the exports on every pack, so a local publish cannot ship 
 });
 ```
 
-- [ ] **Step 2: Run them to see them fail**
+- [x] **Step 2: Run them to see them fail**
 
 Run (repository root): `bun test scripts/workflows.test.ts`
 Expected: FAIL on `run: bun run build` and `node scripts/check-exports.ts` (`indexOf` is -1).
 
-- [ ] **Step 3: Edit the workflow**
+- [x] **Step 3: Edit the workflow**
 
 Add a step `- name: Build` with `run: bun run build` after `Type-check`. Change the exports step to `run: node scripts/check-exports.ts`. Change the line 119 comment to Node 24.
 
-- [ ] **Step 4: Run the test**
+- [x] **Step 4: Run the test**
 
 Run: `bun test scripts/workflows.test.ts`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add .github/workflows/publish-pm-docs-site.yml scripts/workflows.test.ts
@@ -212,7 +212,7 @@ git commit -m "ci(pm-docs-site): build before the publish checks (R-021)"
 
 - Modify: `packages/pm-docs-site/README.md` (lines 11, 18, 36, 99, 110, 157-160, and the Releasing section), `README.md:74,99`, `docs/wiki/guide/Docs-Site-Package.md:22,40,82`, `docs/wiki/contributing/Repository-Layout.md:51-55`, `docs/wiki/contributing/Development.md:25`, `.config/purview-docs.yml:125,133`, `justfile:70`
 
-- [ ] **Step 1: Edit**
+- [x] **Step 1: Edit**
 
 - Consumer config: `astro.config.mjs` → `astro.config.ts`.
 - Node: "Node 22 or later" → "Node 24 or later".
@@ -221,17 +221,17 @@ git commit -m "ci(pm-docs-site): build before the publish checks (R-021)"
 - Repository-Layout: `lib/index.ts` (the integration and its types), `lib/cli.ts`, `dist/` (built, gitignored, published).
 - Package README line 11: keep the history (`0.1.0-pre.1` is on npm) unless the sentence names the current version; then say `0.1.0-pre.2`.
 
-- [ ] **Step 2: Check no stale names remain**
+- [x] **Step 2: Check no stale names remain**
 
 Run (repository root): `git grep -nE "cli\.mjs|index\.mjs|index\.d\.ts|lib/[a-z-]+\.mjs|check-exports\.mjs|serve\.mjs|Node 22" -- . ':!docs/superpowers' ':!planning' ':!skills' ':!**/bun.lock'`
 Expected: no output, except `astro.config.mjs` lines that describe the template site under `skills/` (excluded) and the `cli.test.ts` back-compat case.
 
-- [ ] **Step 3: Lint**
+- [x] **Step 3: Lint**
 
 Run: `just lint-check`
 Expected: exit 0 (Markdown, validate, tests, pm-lint, package-test).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add -A README.md docs/wiki .config/purview-docs.yml justfile packages/pm-docs-site/README.md
@@ -240,17 +240,17 @@ git commit -m "docs(pm-docs-site): TypeScript config, Node 24, and the build ste
 
 ### Task 5: Verify the Done when
 
-- [ ] **Step 1: No JavaScript tracked**
+- [x] **Step 1: No JavaScript tracked**
 
 Run: `git ls-files packages/pm-docs-site | Select-String -Pattern '\.(js|mjs|cjs)$'`
 Expected: no output.
 
-- [ ] **Step 2: Package checks**
+- [x] **Step 2: Package checks**
 
 Run: `just package-test` then `just version-check`
 Expected: both exit 0; `version-check` accepts `0.1.0-pre.2` as forward and untagged.
 
-- [ ] **Step 3: Fixture config**
+- [x] **Step 3: Fixture config**
 
 Run: `git ls-files packages/pm-docs-site/test/fixtures/site`
 Expected: lists `astro.config.ts` and no `astro.config.mjs`.

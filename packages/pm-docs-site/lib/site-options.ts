@@ -23,7 +23,17 @@ export async function loadSiteOptions(
 		};
 	}
 
-	const config = (await import(pathToFileURL(configFile).href)).default ?? {};
+	// Plain Node loads the config, so a TypeScript config may only use what Node
+	// strips: erasable syntax and relative imports that name their file.
+	let config;
+	try {
+		config = (await import(pathToFileURL(configFile).href)).default ?? {};
+	} catch (error) {
+		throw new Error(
+			`pm-docs-site: could not load ${configFile} under Node (${(error as Error).message.trim()}). ` +
+				'Keep astro.config.ts to erasable TypeScript, with explicit .ts extensions on relative imports.',
+		);
+	}
 	const integrations: unknown[] = (Array.isArray(config.integrations) ? config.integrations : []).flat(Infinity);
 	const ours = integrations.find((entry) => (entry as { name?: string } | null)?.name === 'pm-docs-site') as
 		| { pmDocsSiteOptions?: PmDocsSiteOptions }

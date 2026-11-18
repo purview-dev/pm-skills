@@ -122,6 +122,20 @@ describe('pm-docs-site check', () => {
 		expect(result.stdout + result.stderr).toContain('no pm-docs-site integration in');
 	}, CHECK);
 
+	it('names the config and the rule when Node cannot load an astro.config.ts', () => {
+		const dir = scratchFixture('unloadable-');
+		writeFileSync(join(dir, 'site', 'options.ts'), "export const title = 'Unloadable';\n");
+		writeFileSync(join(dir, 'site', 'astro.config.ts'), "import { title } from './options';\nexport default { title };\n");
+
+		const result = runCli(['check', join(dir, 'site')]);
+		const output = result.stdout + result.stderr;
+
+		expect(result.code).toBe(1);
+		expect(output).toContain('pm-docs-site: could not load');
+		expect(output).toContain('astro.config.ts');
+		expect(output).toContain('explicit .ts extensions');
+	}, CHECK);
+
 	it('fails when a docs source folder is missing', () => {
 		const dir = scratchFixture('docs-');
 		writeFileSync(
