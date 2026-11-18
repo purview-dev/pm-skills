@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T22:32:21+00:00",
+  "generatedAt": "2026-11-18T22:48:29+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-017-docs-site-package-in-repo-dev-hydrates",
-    "head": "0508d37cd09da03f090dd97b90ceff24bb81c611"
+    "head": "7549c81fc15722d022d4cb89ef7e359b91ed5c48"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -177,98 +177,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-017",
-      "title": "Docs-site package: in-repo dev hydrates"
-    },
-    "stage": "execute",
-    "session": "feat/r-017-docs-site-package-in-repo-dev-hydrates",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
     "brief": null,
-    "milestone": "M1",
-    "spec": "docs/superpowers/specs/2026-11-18-docs-site-package-in-repo-dev-design.md",
-    "plan": "docs/superpowers/plans/2026-11-18-docs-site-package-in-repo-dev.md",
-    "started": "2026-11-18",
-    "doneWhen": [
-      "From `packages/pm-docs-site`, the package CLI's `dev test/fixtures/site` serves `/plan/board/?group=owner` with the Board island hydrated, and the dev server logs no `server.fs.allow` error."
-    ],
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-18-docs-site-package-in-repo-dev.md",
-    "checked": 0,
-    "total": 13,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "Containment helper",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing test** `test/fs-allow.test.ts`, `describe('containsPath')`:",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run it to see it fail**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement `containsPath` in `lib/fs-allow.ts`** with a one-line header comment saying why it exists (Vite's `server.fs.allow` in linked and in-repo sites).",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run it to see it pass**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 2,
-        "title": "The `pm-docs-site:fs-allow` plugin, and the Done when check",
-        "checked": 0,
-        "total": 8,
-        "steps": [
-          {
-            "text": "**Step 1: Reproduce the bug.** From `packages/pm-docs-site`, run `bun lib/cli.ts dev test/fixtures/site` in the background, open `http://localhost:4321/plan/board/?group=owner` (playwright-cli), and confirm the server log shows a `server.fs.allow` refusal for `node_modules/@astrojs/react/dist/client.js` and the Board does not hydrate. Stop the server. If it does not reproduce, stop and report: the item may already be fixed by R-021.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Write the failing tests** in `test/integration.test.ts`, `describe('pm-docs-site:fs-allow')`. Add `configResolved?: (config: { server: { fs: { allow: string[] } } }) => void` to the local `Plugin` type. Expected package dir: `realpathSync(fileURLToPath(new URL('../', import.meta.url))).replaceAll('\\\\', '/')`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Run them to see them fail**",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Implement.** In `lib/index.ts` add `const PACKAGE_DIR = realpathSync(fileURLToPath(new URL('../', import.meta.url))).replaceAll('\\\\', '/');` with a comment that `lib/index.ts` (in the repository) and `dist/index.js` (installed) both sit one level below the package folder, and that Vite stores allow entries with forward slashes. Append the plugin last in `vite.plugins`; its `configResolved` pushes `PACKAGE_DIR` onto `config.server.fs.allow` unless `some(entry => containsPath(entry, PACKAGE_DIR))`. Comment why: the in-repo fixture and linked consumers resolve the package outside the site's workspace root. Do not skip when `server.fs.strict` is `false` (appending is harmless; one code path).",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Run the package tests and checks**",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Verify the Done when.** Run `bun lib/cli.ts dev test/fixtures/site` in the background, open `http://localhost:4321/plan/board/?group=owner` with playwright-cli, and confirm the Board island hydrated (its `astro-island` has no `ssr` attribute and changing the group control re-renders the columns) and the server log has no `server.fs.allow` line. Stop the server.",
-            "checked": false
-          },
-          {
-            "text": "**Step 7: Run the repository checks** from the repository root.",
-            "checked": false
-          },
-          {
-            "text": "**Step 8: Commit**",
-            "checked": false
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [
       {
@@ -481,15 +402,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-017",
-          "title": "Docs-site package: in-repo dev hydrates",
-          "owner": null,
-          "size": null,
-          "detail": "execute, 0/13 plan steps"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-012",
@@ -509,6 +422,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-18",
+          "id": "R-017",
+          "title": "Docs-site package: in-repo dev hydrates",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-18-docs-site-package-in-repo-dev.md",
+          "result": "branch feat/r-017-docs-site-package-in-repo-dev-hydrates"
+        },
         {
           "date": "2026-11-18",
           "id": "R-021",
@@ -584,6 +506,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-18",
+        "kind": "done",
+        "id": "R-017",
+        "title": "Docs-site package: in-repo dev hydrates",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-017-docs-site-package-in-repo-dev-hydrates"
+      },
       {
         "date": "2026-11-18",
         "kind": "done",
@@ -696,6 +627,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-18",
+        "id": "R-017",
+        "title": "Docs-site package: in-repo dev hydrates",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-18-docs-site-package-in-repo-dev.md",
+        "result": "branch feat/r-017-docs-site-package-in-repo-dev-hydrates"
+      },
       {
         "date": "2026-11-18",
         "id": "R-021",
@@ -973,6 +913,21 @@
       "brief": "planning/briefs/2026-11-18-pm-docs-site-typescript.md",
       "reviewed": "never",
       "idea": "Minor findings from R-021's final review, deferred:\n\n- `tsconfig.build.json` sets `types: [\"node\"]`, but `@types/node` arrives only through `@types/bun`; add it to `devDependencies` so a lockfile change cannot break `prepack`.\n- `scripts/build.ts` rewrites `.ts` specifiers only in the top level of `dist/`, and the install-test guard reads only the top level; a nested `lib/` folder would escape both (use `readdirSync(..., { recursive: true })`).\n- `scripts/check-exports.ts` rejects valid `.mjs`/`.cjs` entry points and accepts a `.d.ts` outside a `types` condition.\n- Shipped `src/` type-imports `../lib/types.ts`, which the tarball omits (runtime unaffected); ship it or note why not.\n- The `astro.config.ts` examples in `packages/pm-docs-site/README.md` and `docs/wiki/guide/Docs-Site-Package.md` are fenced as `js`.\n- `README.md:69` and `.config/purview-docs.yml:23` say `0.1.0-pre.1` is on npm; stale once `0.1.0-pre.2` publishes."
+    },
+    {
+      "file": "planning/inbox/2026-11-18-2248-r-017-fs-allow-review-follow-ups.md",
+      "title": "R-017 fs-allow review follow-ups",
+      "captured": "2026-11-18 22:48",
+      "source": "agent (R-017 execute, final review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site/lib/index.ts, packages/pm-docs-site/test/integration.test.ts",
+      "context": "R-017 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Deferred minors from the R-017 final review: (1) the `pm-docs-site:fs-allow` tests find the plugin by position (`.at(-1)`) instead of by name, so adding a later plugin breaks them; (2) the appended entry serves the whole package folder (test/, .astro/, scripts/, node_modules/) in in-repo and linked dev, which `fs.deny` still guards, and the comment could say so; (3) on case-insensitive macOS a case-only difference appends a harmless duplicate entry."
     }
   ],
   "briefs": [
@@ -1010,10 +965,10 @@
     "next": 2,
     "later": 6,
     "nextMax": 5,
-    "openInbox": 11,
+    "openInbox": 12,
     "discuss": 1,
     "shapingBriefs": 0,
-    "done": 8,
+    "done": 9,
     "dropped": 4,
     "blockers": 0,
     "openRisks": 0,
@@ -1028,6 +983,6 @@
       "R-012",
       "R-018"
     ],
-    "drift": false
+    "drift": true
   }
 }
