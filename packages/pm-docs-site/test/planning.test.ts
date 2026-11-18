@@ -181,6 +181,50 @@ describe('roadmapGroups', () => {
 		expect(m9.progress).toEqual({ done: 0, total: 1 });
 	});
 
+	it('leaves out the no-milestone group when it counts no item', () => {
+		const minimal = {
+			strategy: { focus: { milestone: null }, milestones: [{ id: 'M9', name: 'Empty milestone', serves: [], exitCriteria: null, target: null, status: null }] },
+			now: { item: null, milestone: null, stage: null },
+			board: { columns: { now: [] } },
+			roadmap: { next: [], later: [] },
+			log: {
+				done: [{ date: '2026-11-10', id: null, title: 'Review note', milestone: null, owner: null, plan: null, result: 'Housekeeping only.' }],
+				dropped: [],
+			},
+		} as unknown as Planning;
+
+		expect(roadmapGroups(minimal).map((group) => group.milestone?.id ?? null)).toEqual(['M9']);
+	});
+
+	it('lists an ID only in the group that counts it, across the page', () => {
+		const milestone = (id: string) => ({ id, name: `Milestone ${id}`, serves: [], exitCriteria: null, target: null, status: null });
+		const minimal = {
+			strategy: { focus: { milestone: null }, milestones: [milestone('M1'), milestone('M2')] },
+			now: { item: null, milestone: null, stage: null },
+			board: { columns: { now: [] } },
+			roadmap: {
+				next: [],
+				later: [
+					{ id: 'R-060', title: 'Moved item', section: 'later', position: 1, label: 'later', serves: [], milestone: 'M2', owner: 'agent', doneWhen: 'Some done when.', size: 'S', dependsOn: [], status: { value: 'ready', reason: null, since: null }, brief: null, note: null, revisits: null, claimable: false },
+				],
+			},
+			log: {
+				done: [{ date: '2026-11-09', id: 'R-060', title: 'Moved item', milestone: 'M1', owner: 'agent', plan: null, result: 'Merged.' }],
+				dropped: [],
+			},
+		} as unknown as Planning;
+
+		const groups = roadmapGroups(minimal);
+		const m1 = groups.find((group) => group.milestone?.id === 'M1')!;
+		const m2 = groups.find((group) => group.milestone?.id === 'M2')!;
+		const summaries = milestoneSummaries(minimal);
+
+		expect(m1.events.map((event) => event.id)).not.toContain('R-060');
+		expect(m2.events.map((event) => [event.id, event.status])).toEqual([['R-060', 'pending']]);
+		expect(m1.progress).toEqual(summaries.find((summary) => summary.id === 'M1')!.progress);
+		expect(m2.progress).toEqual(summaries.find((summary) => summary.id === 'M2')!.progress);
+	});
+
 	it('exposes the target', () => {
 		expect(groups.find((group) => group.milestone?.id === 'M2')?.milestone?.target).toBe('2026-12-15');
 		expect(groups.find((group) => group.milestone?.id === 'M1')?.milestone?.target).toBeNull();
