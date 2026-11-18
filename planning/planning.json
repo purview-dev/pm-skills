@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T18:31:14+00:00",
+  "generatedAt": "2026-11-18T21:45:30+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-021-docs-site-package-typescript-source-with-a-build-step",
-    "head": "8ca006888b7504b501a70d7685a6ced2a06fa4e3"
+    "head": "f76196f788f575d6419ca14e2322d6dc7cde8091"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -30,7 +30,7 @@
       },
       {
         "id": "V3",
-        "text": "During an active workflow only `pm-park` (capture), the read-only views and checks, and `pm-revise` run; every other PM skill waits."
+        "text": "During an active workflow, only the Non-interruption rules' exceptions run (capture, `pm-checkpoint` stage, done, push and pop, `pm-pause`, `pm-revise`, and the read-only views and checks); every other PM skill waits, and a capture replies in one line while the step in progress resumes."
       },
       {
         "id": "V4",
@@ -132,6 +132,12 @@
       }
     ],
     "decisions": [
+      {
+        "date": "2026-11-18",
+        "decision": "Vision V3 now reads: during an active workflow, only the Non-interruption rules' exceptions run (capture, `pm-checkpoint` stage, done, push and pop, `pm-pause`, `pm-revise`, and the read-only views and checks); every other PM skill waits, and a capture replies in one line while the step in progress resumes.",
+        "why": "the old line named only `pm-park`, the read-only views, and `pm-revise`, so it no longer matched Non-interruption rules 2, 3, and 10; pointing at the rules keeps it true as they change. R-016 Rehearse the lifecycle guards and M3 still serve it.",
+        "rejected": "listing every exception (goes stale each rules version); keeping the old line."
+      },
       {
         "date": "2026-11-18",
         "decision": "Added R-021 Docs-site package: TypeScript source with a build step at the top of Next; R-017 in-repo dev hydrates and R-019 consumer-ready for 1.0.0 depend on it, and R-019 moved to the top of Later. M1's exit criterion and R-013's Done when name `astro.config.ts` instead of `astro.config.mjs`.",
