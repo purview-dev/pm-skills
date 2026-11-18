@@ -67,6 +67,19 @@ stages, and `pm-checkpoint` records each stage and closes the item on its
 branch before the pull request opens. The diagram and the role of every
 other skill are in [The loop](docs/wiki/guide/The-Loop.md).
 
+## The docs-site package
+
+[`@purview-dev/pm-docs-site`](packages/pm-docs-site/README.md) renders
+the project site from `planning.json` as an npm package, so a site is
+`package.json`, a lockfile, and `astro.config.mjs`, with Astro and
+Starlight pinned by the package, instead of a copy of the `pm-docs-site`
+templates. It is in development: its first version is the prerelease
+`0.1.0-pre.1`, not yet on npm, and until it ships `pm-docs-site` still
+renders the templates. It is versioned and tagged on its own
+(`pm-docs-site-v<version>`) and published from
+`.github/workflows/publish-pm-docs-site.yml`. See
+[The docs-site package](docs/wiki/guide/Docs-Site-Package.md).
+
 ## Documentation
 
 - [Installation](docs/wiki/guide/Installation.md)
@@ -74,6 +87,7 @@ other skill are in [The loop](docs/wiki/guide/The-Loop.md).
 - [Non-interruption guarantee](docs/wiki/guide/Non-Interruption.md)
 - [Using a different workflow framework](docs/wiki/guide/Other-Workflow-Frameworks.md)
 - [Upgrading](docs/wiki/guide/Upgrading.md)
+- [The docs-site package](docs/wiki/guide/Docs-Site-Package.md)
 - [Planning files](docs/wiki/reference/Planning-Files.md) and the
   [version history](docs/wiki/reference/Version-History.md)
 - [Development](docs/wiki/contributing/Development.md) and the

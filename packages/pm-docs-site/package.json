@@ -9,7 +9,7 @@
 		"name": "Kieron Lanning",
 		"url": "https://kieronlanning.dev/"
 	},
-	"homepage": "https://github.com/purview-dev/pm-skills/tree/main/packages/pm-docs-site#readme",
+	"homepage": "https://purview.dev/projects/pm-skills/",
 	"bugs": {
 		"url": "https://github.com/purview-dev/pm-skills/issues"
 	},
@@ -44,7 +44,7 @@
 			"default": "./index.mjs"
 		}
 	},
-	"files": ["index.mjs", "index.d.ts", "cli.mjs", "lib", "src", "README.md"],
+	"files": ["index.mjs", "index.d.ts", "cli.mjs", "lib", "src", "README.md", "LICENSE.md"],
 	"scripts": {
 		"prepublishOnly": "node scripts/check-exports.mjs",
 		"test": "bun test",
