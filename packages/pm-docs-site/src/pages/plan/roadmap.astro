@@ -37,6 +37,7 @@ const groups = roadmapGroups(loadPlanning()).map((group) => ({
 				</h2>
 				<p class="roadmap-meta">
 					{group.milestone && <strong>{group.milestone.status}</strong>}
+					{group.milestone?.target && ` · target ${group.milestone.target}`}
 					{group.milestone && ' · '}
 					{group.progress.done} of {group.progress.total} done
 					{group.milestone?.exitCriteria && (

@@ -63,6 +63,7 @@ export interface RoadmapGroup {
 		id: string;
 		name: string;
 		status: string | null;
+		target: string | null;
 		exitCriteria: string | null;
 		isFocus: boolean;
 	} | null;
@@ -71,64 +72,85 @@ export interface RoadmapGroup {
 	progress: { done: number; total: number };
 }
 
+/** Lower wins: a non-null ID keeps only the event in this state, the same precedence `features()` uses. */
+const EVENT_PRECEDENCE: Record<TimelineEvent['status'], number> = { active: 0, pending: 1, done: 2 };
+
+/** Each non-null ID kept once, in the higher-precedence state, at its original position. */
+function dedupeEvents(events: TimelineEvent[]): TimelineEvent[] {
+	const best = new Map<string, TimelineEvent>();
+
+	for (const event of events) {
+		if (event.id === null) continue;
+
+		const current = best.get(event.id);
+
+		if (!current || EVENT_PRECEDENCE[event.status] < EVENT_PRECEDENCE[current.status]) best.set(event.id, event);
+	}
+
+	return events.filter((event) => event.id === null || best.get(event.id) === event);
+}
+
 /**
  * One group per milestone in strategy order, then "no milestone": the Done log
- * (newest first), the Now item, then Next and Later in roadmap order.
+ * (newest first), the Now item, then Next and Later in roadmap order. An ID
+ * that appears more than once (for example done and still queued) is listed
+ * once, in the state `features()` counts it in.
  */
 export function roadmapGroups(planning: Planning): RoadmapGroup[] {
 	const groupOf = (milestone: string | null) => milestoneId(milestone, planning.strategy.milestones);
 	const focus = planning.strategy.focus.milestone ?? '';
+	const summaries = milestoneSummaries(planning);
+	const progressFor = (id: string | null) => summaries.find((summary) => summary.id === id)?.progress ?? { done: 0, total: 0 };
 
-	const eventsFor = (id: string | null): TimelineEvent[] => [
-		...planning.log.done
-			.filter((entry) => groupOf(entry.milestone) === id)
-			.map((entry) => ({
-				id: entry.id,
-				title: label(entry.id, entry.title),
-				desc: entry.result ?? '',
-				time: entry.date,
-				status: 'done' as const,
-			})),
-		...(planning.now.item && groupOf(planning.now.milestone) === id
-			? [
-					{
-						id: planning.now.item.id,
-						title: label(planning.now.item.id, planning.now.item.title),
-						desc: planning.now.stage ? `In progress: ${planning.now.stage}` : 'In progress',
-						time: 'Now',
-						status: 'active' as const,
-					},
-				]
-			: []),
-		...[...planning.roadmap.next, ...planning.roadmap.later]
-			.filter((item) => groupOf(item.milestone) === id)
-			.map((item) => ({
-				id: item.id,
-				title: label(item.id, item.title),
-				desc: item.doneWhen,
-				time: item.section === 'next' ? 'Next' : 'Later',
-				status: 'pending' as const,
-			})),
-	];
+	const eventsFor = (id: string | null): TimelineEvent[] =>
+		dedupeEvents([
+			...planning.log.done
+				.filter((entry) => groupOf(entry.milestone) === id)
+				.map((entry) => ({
+					id: entry.id,
+					title: label(entry.id, entry.title),
+					desc: entry.result ?? '',
+					time: entry.date,
+					status: 'done' as const,
+				})),
+			...(planning.now.item && groupOf(planning.now.milestone) === id
+				? [
+						{
+							id: planning.now.item.id,
+							title: label(planning.now.item.id, planning.now.item.title),
+							desc: planning.now.stage ? `In progress: ${planning.now.stage}` : 'In progress',
+							time: 'Now',
+							status: 'active' as const,
+						},
+					]
+				: []),
+			...[...planning.roadmap.next, ...planning.roadmap.later]
+				.filter((item) => groupOf(item.milestone) === id)
+				.map((item) => ({
+					id: item.id,
+					title: label(item.id, item.title),
+					desc: item.doneWhen,
+					time: item.section === 'next' ? 'Next' : 'Later',
+					status: 'pending' as const,
+				})),
+		]);
 
 	const groups: RoadmapGroup[] = planning.strategy.milestones.map((milestone) => ({
 		milestone: {
 			id: milestone.id,
 			name: milestone.name,
 			status: milestone.status,
+			target: normaliseTarget(milestone.target),
 			exitCriteria: milestone.exitCriteria,
 			isFocus: milestoneId(focus, [milestone]) !== null,
 		},
-		...withProgress(eventsFor(milestone.id)),
+		events: eventsFor(milestone.id),
+		progress: progressFor(milestone.id),
 	}));
 
-	const unassigned = eventsFor(null);
+	const unassignedEvents = eventsFor(null);
 
-	return unassigned.length > 0 ? [...groups, { milestone: null, ...withProgress(unassigned) }] : groups;
-}
-
-function withProgress(events: TimelineEvent[]): Pick<RoadmapGroup, 'events' | 'progress'> {
-	return { events, progress: { done: events.filter((event) => event.status === 'done').length, total: events.length } };
+	return unassignedEvents.length > 0 ? [...groups, { milestone: null, events: unassignedEvents, progress: progressFor(null) }] : groups;
 }
 
 const LEVELS: Level[] = ['low', 'medium', 'high'];
