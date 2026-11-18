@@ -71,7 +71,7 @@ other skill are in [The loop](docs/wiki/guide/The-Loop.md).
 
 [`@purview-dev/pm-docs-site`](packages/pm-docs-site/README.md) renders
 the project site from `planning.json` as an npm package, so a site is
-`package.json`, a lockfile, and `astro.config.mjs`, with Astro and
+`package.json`, a lockfile, and `astro.config.ts`, with Astro and
 Starlight pinned by the package, instead of a copy of the `pm-docs-site`
 templates. It is in prerelease: `0.1.0-pre.1` is on npm under the
 `prerelease` dist-tag, and until R-013 migrates the skill onto it,

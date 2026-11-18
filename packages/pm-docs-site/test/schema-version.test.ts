@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test';
 
-import { checkSchemaVersion, PlanningExportError, SUPPORTED_SCHEMA_VERSIONS } from '../lib/schema-version.mjs';
+import { checkSchemaVersion, PlanningExportError, SUPPORTED_SCHEMA_VERSIONS } from '../lib/schema-version.ts';
 
 describe('checkSchemaVersion', () => {
 	it('supports schemaVersion 3 only', () => {

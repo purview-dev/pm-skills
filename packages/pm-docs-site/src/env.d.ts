@@ -1,7 +1,7 @@
 /// <reference types="astro/client" />
 
-// The integration's options, resolved and served by index.mjs.
+// The integration's options, resolved and served by lib/index.ts.
 declare module 'virtual:pm-docs-site/config' {
-	const config: import('../index').ResolvedOptions;
+	const config: import('../lib/types.ts').ResolvedOptions;
 	export default config;
 }

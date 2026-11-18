@@ -4,6 +4,7 @@
 
 ## Done
 
+- 2026-11-18 R-021 Docs-site package: TypeScript source with a build step. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-18-docs-site-package-typescript.md. Result: branch feat/r-021-docs-site-package-typescript-source-with-a-build-step.
 - 2026-11-18 R-011 Docs-site package: milestone timeline. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-18-docs-site-package-milestone-timeline.md. Result: branch feat/r-011-docs-site-package-milestone-timeline.
 - 2026-11-18 R-010 Docs-site package: board filters and swimlanes. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-18-docs-site-package-board-filters.md. Result: branch feat/r-010-docs-site-package-board-filters-and-swimlanes.
 - 2026-11-18 R-014 Create the npm @purview-dev scope and token. Milestone: M1. Owner: user. Plan: none. Result: `Done when` restated in the brief (trusted publishing replaced the `NPM_TOKEN` secret); the `@purview-dev` scope exists, `npm view @purview-dev/pm-docs-site@0.1.0-pre.1 version` returns `0.1.0-pre.1`, tag `pm-docs-site-v0.1.0-pre.1` exists, and the trusted publisher for `publish-pm-docs-site.yml` has publish, stage publish, and manageDistTags.

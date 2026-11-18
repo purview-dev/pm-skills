@@ -5,7 +5,7 @@ import { pathToFileURL } from 'node:url';
 
 import { describe, expect, it, mock } from 'bun:test';
 
-import { globToRegExp, pageId, pagesOf, readPage, splitFrontmatter, splitTitle } from '../lib/repo-docs.mjs';
+import { globToRegExp, pageId, pagesOf, readPage, splitFrontmatter, splitTitle } from '../lib/repo-docs.ts';
 import { repoDocsLoader } from '../src/loaders/repo-docs';
 
 async function repository() {

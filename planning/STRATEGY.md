@@ -29,7 +29,7 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 ### M1 Reproducible docs site
 
 - Serves: V4
-- Exit criteria: `npm view @purview-dev/pm-docs-site version` returns a version, `docs-site/` holds only `package.json`, `astro.config.mjs`, `bun.lock`, and `.gitignore`, and `just docs-check` passes.
+- Exit criteria: `npm view @purview-dev/pm-docs-site version` returns a version, `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore`, and `just docs-check` passes.
 - Target: none
 - Status: active
 
@@ -92,6 +92,9 @@ Newest first. Nothing in this file changes without a line here.
 - <YYYY-MM-DD> <decision>. Why: <reason>. Rejected: <alternatives>.
 -->
 
+- 2026-11-18 Vision V3 now reads: during an active workflow, only the Non-interruption rules' exceptions run (capture, `pm-checkpoint` stage, done, push and pop, `pm-pause`, `pm-revise`, and the read-only views and checks); every other PM skill waits, and a capture replies in one line while the step in progress resumes. Why: the old line named only `pm-park`, the read-only views, and `pm-revise`, so it no longer matched Non-interruption rules 2, 3, and 10; pointing at the rules keeps it true as they change. R-016 Rehearse the lifecycle guards and M3 still serve it. Rejected: listing every exception (goes stale each rules version); keeping the old line.
+- 2026-11-18 Added R-021 Docs-site package: TypeScript source with a build step at the top of Next; R-017 in-repo dev hydrates and R-019 consumer-ready for 1.0.0 depend on it, and R-019 moved to the top of Later. M1's exit criterion and R-013's Done when name `astro.config.ts` instead of `astro.config.mjs`. Why: TypeScript is strongly preferred, and JavaScript ships only where Node needs it (brief `planning/briefs/2026-11-18-pm-docs-site-typescript.md`). Rejected: Bun-only runtime shipping `.ts`; converting only the non-published files; keeping it parked.
+- 2026-11-18 Re-planned roadmap. Why: Next was empty with M1 open; Next is now R-017 in-repo dev hydrates, R-011 milestone timeline, R-012 dependency graph, R-018 export the Now card's owner and size, R-019 consumer-ready for 1.0.0, with R-013 at the top of Later M1 depending on R-019, then R-020 rich demo planning fixture (user request); R-017, R-018, and R-019 fold seven inbox files. Kept "returns a version" in R-013 and the M1 exit criterion instead of naming `1.0.0`, at the user's choice. Rejected: absorbing the consumer fixes into R-013; naming `1.0.0` in both.
 - 2026-11-17 Re-planned roadmap. Why: assign every item to M1, M2, or M3, and order Next for the M1 focus (R-014 first as a blocking user task, then R-008, R-003, R-009, R-004); added R-015 and R-016 for the M2 and M3 exit criteria. Rejected: leaving items without milestones.
 - 2026-11-17 Not doing: new template views or modules, hosting the docs site, writing PM state from the site. Why: the package replaces the templates, the site stays local and read-only. Rejected: none.
 - 2026-11-17 Current focus M1 Reproducible docs site, with bet B1 and assumptions A1 to A3. Why: every item in Next serves it. Rejected: focus on M2 Verified install and upgrade.

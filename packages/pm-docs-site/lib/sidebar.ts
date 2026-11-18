@@ -1,23 +1,15 @@
-// @ts-check
 // The Starlight sidebar: the plan, its optional views switched on in the
 // options, then one group per docs source that has pages.
 
-import { pagesOf } from './repo-docs.mjs';
+import { pagesOf } from './repo-docs.ts';
+import type { ResolvedOptions } from './types.ts';
 
-/** @typedef {import('../index').ResolvedOptions} ResolvedOptions */
-/**
- * @typedef {string | { label: string; link: string } | { label: string; items: SidebarItem[]; collapsed?: boolean }} SidebarItem
- */
+export type SidebarItem = string | { label: string; link: string } | { label: string; items: SidebarItem[]; collapsed?: boolean };
 
-/**
- * @param {ResolvedOptions} options
- * @returns {SidebarItem[]}
- */
-export function buildSidebar(options) {
+export function buildSidebar(options: ResolvedOptions): SidebarItem[] {
 	const { views, docs } = options;
 
-	/** @type {(SidebarItem | false)[]} */
-	const plan = [
+	const plan: (SidebarItem | false)[] = [
 		views.now && { label: 'Now', link: '/plan/now/' },
 		{ label: 'Board', link: '/plan/board/' },
 		{ label: 'Roadmap', link: '/plan/roadmap/' },
@@ -30,8 +22,7 @@ export function buildSidebar(options) {
 		views.strategy && { label: 'Strategy', link: '/plan/strategy/' },
 	];
 
-	/** @type {SidebarItem[]} */
-	const groups = docs
+	const groups: SidebarItem[] = docs
 		? docs.sources
 				.filter((source) => !source.hidden)
 				.map((source) => ({

@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 import { mock } from 'bun:test';
 
-import { resolveOptions } from '../lib/options.mjs';
+import { resolveOptions } from '../lib/options.ts';
 
 const site = fileURLToPath(new URL('./fixtures/site/', import.meta.url));
 

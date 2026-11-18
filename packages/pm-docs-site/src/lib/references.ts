@@ -5,7 +5,7 @@
 
 import config from 'virtual:pm-docs-site/config';
 
-import type { ViewName } from '../../index';
+import type { ViewName } from '../../lib/types.ts';
 import { briefAnchor, briefOf, featureHref, features, loadPlanning, milestoneHref, milestoneSummaries, roadmapGroups, type Feature } from './planning';
 import type { Planning } from './planning-types';
 
