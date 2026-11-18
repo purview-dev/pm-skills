@@ -11,9 +11,11 @@ and lockfile render the same pages.
 
 ## Status
 
-The package is in development and is not published to npm yet. Its first version is the prerelease
-`0.1.0-pre.1`. Until roadmap item R-013 (publish and migrate) ships it, `pm-docs-site` still renders
-the templates, and this repository's own `docs-site/` is rendered from them.
+The package is in prerelease: `0.1.0-pre.1` is on npm under the `prerelease` dist-tag, so install it
+with `bun add @purview-dev/pm-docs-site@prerelease`. Board filters, the milestone timeline, and the
+dependency graph are still being built. Until roadmap item R-013 (publish and migrate) moves the
+`pm-docs-site` skill onto the package, the skill still renders the templates, and this repository's
+own `docs-site/` is rendered from them.
 
 ## A site in three files
 

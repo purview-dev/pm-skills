@@ -8,9 +8,10 @@ optionally, the repository's Markdown, rendered by Astro and Starlight.
 on purview.dev (the *Docs-site package* guide page), part of the
 [PM Skills](https://purview.dev/projects/pm-skills/) project.
 
-Unpublished: version `0.1.0-pre.1` and `private` until roadmap item R-013 publishes
-it to npm. Until then the repository's `docs-site/` still renders the
-`pm-docs-site` skill's templates.
+Prerelease: `0.1.0-pre.1` is on npm under the `prerelease` dist-tag
+(`bun add @purview-dev/pm-docs-site@prerelease`). Until roadmap item R-013
+migrates the `pm-docs-site` skill to it, the skill and this repository's
+`docs-site/` still render the skill's templates.
 
 ## A consumer site
 

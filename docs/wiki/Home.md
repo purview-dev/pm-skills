@@ -57,7 +57,7 @@ literal, predictable, low-friction output: one next action, an explicit
   views, and an Aspire AppHost resource. It reads the export only. The
   same site is becoming an npm package, `@purview-dev/pm-docs-site`, so a
   site is three files and one pinned dependency instead of a copy of the
-  templates (in development; see
+  templates (in prerelease on npm; see
   [The docs-site package](guide/Docs-Site-Package.md)).
 - **Purview fit:** for .NET projects, `pm-purview` recommends
   [Purview](https://purview.dev/) tools only where they remove real work.
