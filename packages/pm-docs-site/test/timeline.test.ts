@@ -5,7 +5,18 @@ import { describe, expect, it } from 'bun:test';
 import { loadPlanning } from '../src/lib/planning';
 import type { Planning } from '../src/lib/planning-types';
 import { targets } from '../src/lib/references';
-import { normaliseTarget, parseMilestoneStatus, timelineMilestones } from '../src/lib/timeline';
+import {
+	normaliseTarget,
+	parseMilestoneStatus,
+	parseTimelineQuery,
+	PINCH_STEP,
+	timelineMilestones,
+	timelineQuery,
+	wheelScrollsStrip,
+	ZOOM,
+	zoomFromWheel,
+	zoomStep,
+} from '../src/lib/timeline';
 
 // A synthetic export, never the project's own: the tests must not change when the plan does.
 const FIXTURE = fileURLToPath(new URL('./fixtures/planning.json', import.meta.url));
@@ -105,5 +116,111 @@ describe('timelineMilestones', () => {
 
 		expect(result.map((milestone) => milestone.key)).toEqual(['M9']);
 		expect(result[0]!.progress).toEqual({ done: 0, total: 0, percent: 0 });
+	});
+});
+
+describe('parseTimelineQuery', () => {
+	it('is horizontal by default, and for any value other than exactly vertical', () => {
+		expect(parseTimelineQuery('')).toBe('horizontal');
+		expect(parseTimelineQuery('?layout=horizontal')).toBe('horizontal');
+		expect(parseTimelineQuery('?layout=VERTICAL&x=1')).toBe('horizontal');
+	});
+
+	it('is vertical only for the exact value, in any position', () => {
+		expect(parseTimelineQuery('?layout=vertical')).toBe('vertical');
+		expect(parseTimelineQuery('?x=1&layout=vertical')).toBe('vertical');
+	});
+});
+
+describe('timelineQuery', () => {
+	it('appends layout=vertical last, keeping other params', () => {
+		expect(timelineQuery('vertical', '?x=1')).toBe('?x=1&layout=vertical');
+	});
+
+	it('drops layout, keeping other params, when horizontal', () => {
+		expect(timelineQuery('horizontal', '?x=1&layout=vertical')).toBe('?x=1');
+	});
+
+	it('returns the empty string when no parameters remain', () => {
+		expect(timelineQuery('horizontal', '?layout=vertical')).toBe('');
+	});
+
+	it('writes just the layout when there is nothing else', () => {
+		expect(timelineQuery('vertical', '')).toBe('?layout=vertical');
+	});
+});
+
+describe('zoomStep', () => {
+	it('steps up by one increment', () => {
+		expect(zoomStep(1, 1)).toBe(1.25);
+	});
+
+	it('holds at the max', () => {
+		expect(zoomStep(2, 1)).toBe(2);
+	});
+
+	it('holds at the min', () => {
+		expect(zoomStep(0.5, -1)).toBe(0.5);
+	});
+
+	it('snaps an off-grid value to the step before moving', () => {
+		expect(zoomStep(1.1, 1)).toBe(1.25);
+	});
+});
+
+describe('zoomFromWheel', () => {
+	it('steps once on a mouse notch in pixels', () => {
+		expect(zoomFromWheel(1, 0, -100, 0)).toEqual({ zoom: 1.25, pending: 0 });
+	});
+
+	it('steps once on a line-mode notch, regardless of magnitude', () => {
+		expect(zoomFromWheel(1, 0, 3, 1)).toEqual({ zoom: 0.75, pending: 0 });
+	});
+
+	it('accumulates a pinch below the threshold without stepping', () => {
+		expect(zoomFromWheel(1, 0, -20, 0)).toEqual({ zoom: 1, pending: -20 });
+	});
+
+	it('steps once and keeps the remainder once pending crosses the threshold', () => {
+		expect(zoomFromWheel(1, -40, -20, 0)).toEqual({ zoom: 1.25, pending: -10 });
+	});
+
+	it('holds at the limit but still consumes pending', () => {
+		expect(zoomFromWheel(2, -40, -20, 0)).toEqual({ zoom: 2, pending: -10 });
+	});
+
+	it('returns the input unchanged when deltaY is 0', () => {
+		expect(zoomFromWheel(1, 5, 0, 0)).toEqual({ zoom: 1, pending: 5 });
+	});
+});
+
+describe('wheelScrollsStrip', () => {
+	const strip = { scrollLeft: 0, scrollWidth: 1000, clientWidth: 500 };
+
+	it('scrolls the strip forward when there is room ahead', () => {
+		expect(wheelScrollsStrip({ deltaX: 0, deltaY: 100 }, { ...strip, scrollLeft: 0 })).toBe(true);
+	});
+
+	it('does not scroll the strip forward at its end', () => {
+		expect(wheelScrollsStrip({ deltaX: 0, deltaY: 100 }, { ...strip, scrollLeft: 500 })).toBe(false);
+	});
+
+	it('does not scroll the strip backward at its start', () => {
+		expect(wheelScrollsStrip({ deltaX: 0, deltaY: -100 }, { ...strip, scrollLeft: 0 })).toBe(false);
+	});
+
+	it('never scrolls the strip without overflow', () => {
+		expect(wheelScrollsStrip({ deltaX: 0, deltaY: 100 }, { scrollLeft: 0, scrollWidth: 500, clientWidth: 500 })).toBe(false);
+	});
+
+	it('leaves a mostly sideways gesture to native scrolling', () => {
+		expect(wheelScrollsStrip({ deltaX: 100, deltaY: 10 }, strip)).toBe(false);
+	});
+});
+
+describe('ZOOM and PINCH_STEP', () => {
+	it('fixes the documented constants', () => {
+		expect(ZOOM).toEqual({ min: 0.5, max: 2, step: 0.25, default: 1 });
+		expect(PINCH_STEP).toBe(50);
 	});
 });
