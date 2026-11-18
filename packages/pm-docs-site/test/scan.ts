@@ -3,7 +3,7 @@
 // and its `Linked from` section. Uses Bun's built-in HTMLRewriter.
 
 export interface PageScan {
-	/** Known keys found in text with no `<a>` ancestor (the page's own `<h1>` is exempt). */
+	/** Known keys found in text with no `<a>` ancestor (the page's own `<h1>`, scripts, styles, and `<option>`s are exempt). */
 	unlinked: string[];
 	/** Internal links (`href` starting `/`) inside `<main>`; `derived` inside `Linked from` or a `<template>`. */
 	links: { href: string; derived: boolean }[];
@@ -66,7 +66,8 @@ export async function scanPage(html: string, known: Set<string>): Promise<PageSc
 				h1: parent.h1 || tag === 'h1',
 				derived: parent.derived || tag === 'template' || element.hasAttribute('data-linked-from'),
 				linkedFrom: parent.linkedFrom || element.hasAttribute('data-linked-from'),
-				code: parent.code || tag === 'script' || tag === 'style',
+				// Not prose: scripts, styles, and a <select>'s options (the Board's filters), which cannot hold a link.
+				code: parent.code || tag === 'script' || tag === 'style' || tag === 'option',
 			};
 
 			if (element.hasAttribute('data-linked-from')) scan.hasLinkedFrom = true;
