@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T16:51:49+00:00",
+  "generatedAt": "2026-11-18T17:03:21+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-017-docs-site-package-in-repo-dev-hydrates",
-    "head": "f47dcfaf3c580235bf659e69ee1ef8624a3d5310"
+    "head": "53c87300524e5e1033841c62a9bdc69a8765569a"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -165,31 +165,50 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-017",
-      "title": "Docs-site package: in-repo dev hydrates"
-    },
-    "stage": "design",
-    "session": "feat/r-017-docs-site-package-in-repo-dev-hydrates",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
     "brief": null,
-    "milestone": "M1",
+    "milestone": null,
     "spec": null,
     "plan": null,
-    "started": "2026-11-18",
-    "doneWhen": [
-      "From `packages/pm-docs-site`, `node cli.mjs dev test/fixtures/site` serves `/plan/board/?group=owner` with the Board island hydrated, and the dev server logs no `server.fs.allow` error."
-    ],
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
+        "id": "R-017",
+        "title": "Docs-site package: in-repo dev hydrates",
+        "section": "next",
+        "position": 1,
+        "label": "next",
+        "serves": [
+          "V4"
+        ],
+        "milestone": "M1",
+        "owner": "agent",
+        "doneWhen": "from `packages/pm-docs-site`, `node cli.mjs dev test/fixtures/site` serves `/plan/board/?group=owner` with the Board island hydrated, and the dev server logs no `server.fs.allow` error.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "paused",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "Vite refuses `packages/pm-docs-site/node_modules/@astrojs/react/dist/client.js` as outside `server.fs.allow`; allowing the package's own folder from the integration hydrated it in R-010's fix-wave experiment. A packed-install consumer is already fixed by R-010. Waits on the package's TypeScript conversion (inbox `2026-11-18-0925-pm-docs-site-mjs-to-typescript.md`, being shaped); add it to `Depends on` once it has an ID.",
+        "revisits": null,
+        "claimable": true
+      },
+      {
         "id": "R-011",
         "title": "Docs-site package: milestone timeline",
         "section": "next",
-        "position": 1,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -215,7 +234,7 @@
         "id": "R-012",
         "title": "Docs-site package: dependency graph",
         "section": "next",
-        "position": 2,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -241,7 +260,7 @@
         "id": "R-018",
         "title": "Export the Now card's owner and size",
         "section": "next",
-        "position": 3,
+        "position": 4,
         "label": "next",
         "serves": [
           "V4"
@@ -265,7 +284,7 @@
         "id": "R-019",
         "title": "Docs-site package: consumer-ready for 1.0.0",
         "section": "next",
-        "position": 4,
+        "position": 5,
         "label": "next",
         "serves": [
           "V4"
@@ -419,16 +438,15 @@
   },
   "board": {
     "columns": {
-      "now": [
+      "now": [],
+      "next": [
         {
           "id": "R-017",
           "title": "Docs-site package: in-repo dev hydrates",
-          "owner": null,
-          "size": null,
-          "detail": "design"
-        }
-      ],
-      "next": [
+          "owner": "agent",
+          "size": "S",
+          "detail": "paused"
+        },
         {
           "id": "R-011",
           "title": "Docs-site package: milestone timeline",
@@ -833,7 +851,7 @@
     "removed": []
   },
   "counts": {
-    "next": 4,
+    "next": 5,
     "later": 5,
     "nextMax": 5,
     "openInbox": 7,
@@ -851,6 +869,7 @@
     "reviewDue": false,
     "lastReview": "never",
     "claimable": [
+      "R-017",
       "R-011",
       "R-012",
       "R-018",

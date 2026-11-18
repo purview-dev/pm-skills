@@ -11,19 +11,17 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: active
-- Item: R-017 Docs-site package: in-repo dev hydrates
-- Session: feat/r-017-docs-site-package-in-repo-dev-hydrates
-- Stage: design
+- Status: idle
+- Item:
+- Session:
+- Stage:
 - Brief:
-- Milestone: M1
+- Milestone:
 - Spec:
 - Plan:
-- Started: 2026-11-18
+- Started:
 
 ## Done when
-
-- From `packages/pm-docs-site`, `node cli.mjs dev test/fixtures/site` serves `/plan/board/?group=owner` with the Board island hydrated, and the dev server logs no `server.fs.allow` error.
 
 ## Checkpoint
 
