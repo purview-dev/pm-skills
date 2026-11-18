@@ -27,6 +27,7 @@ import {
 	sizeToPriority,
 	sourceInitials,
 } from '../src/lib/planning';
+import type { Planning } from '../src/lib/planning-types';
 
 // A synthetic export, never the project's own: the tests must not change when the plan does.
 const FIXTURE = fileURLToPath(new URL('./fixtures/planning.json', import.meta.url));
@@ -107,6 +108,7 @@ describe('roadmapGroups', () => {
 			{ id: 'R-010', title: 'R-010 Choose the invoice format', desc: 'CSV with one row per line item.', time: '2026-11-04', status: 'done' },
 			{ id: 'R-013', title: 'R-013 Email invoices to tenants', desc: 'A tenant receives its invoice by email.', time: 'Next', status: 'pending' },
 			{ id: 'R-014', title: 'R-014 Retry failed invoice emails', desc: 'A failed email is retried three times.', time: 'Next', status: 'pending' },
+			{ id: 'R-023', title: 'R-023 Approve the pricing copy', desc: 'Marketing approves the pricing page copy for the new tiers.', time: 'Next', status: 'pending' },
 		]);
 
 		const none = groups.at(-1)!;
@@ -114,18 +116,29 @@ describe('roadmapGroups', () => {
 			['R-011', 'done'],
 			['R-003', 'done'],
 			['R-012', 'active'],
+			['R-024', 'pending'],
 			['R-020', 'pending'],
 		]);
 	});
 
 	it("counts each milestone's progress: done items of all its items", () => {
-		expect(groups.find((group) => group.milestone?.id === 'M2')?.progress).toEqual({ done: 1, total: 3 });
-		expect(groups.find((group) => group.milestone?.id === 'M1')?.progress).toEqual({ done: 0, total: 0 });
-		expect(groups.at(-1)?.progress).toEqual({ done: 2, total: 4 });
+		expect(groups.find((group) => group.milestone?.id === 'M2')?.progress).toEqual({ done: 1, total: 4 });
+		expect(groups.find((group) => group.milestone?.id === 'M1')?.progress).toEqual({ done: 1, total: 3 });
+		expect(groups.at(-1)?.progress).toEqual({ done: 2, total: 5 });
 	});
 
 	it('keeps milestones with no items', () => {
-		expect(groups.find((group) => group.milestone?.id === 'M1')?.events).toEqual([]);
+		// The fixture's own milestones (M1, M2) now both carry items (R-010 added M1 and
+		// M2 roadmap work), so this behaviour is shown with a minimal planning object
+		// instead of relying on an accidental gap in the shared fixture.
+		const empty = {
+			strategy: { focus: { milestone: null }, milestones: [{ id: 'M9', name: 'Empty milestone', serves: [], exitCriteria: null, target: null, status: null }] },
+			now: { item: null, milestone: null, stage: null },
+			log: { done: [] },
+			roadmap: { next: [], later: [] },
+		} as unknown as Planning;
+
+		expect(roadmapGroups(empty).find((group) => group.milestone?.id === 'M9')?.events).toEqual([]);
 	});
 });
 
@@ -165,8 +178,12 @@ describe('riskMatrix', () => {
 
 		expect(placed).toEqual([
 			['RK-002', 'high', 'high'],
+			['RK-008', 'high', 'high'],
 			['RK-004', 'low', 'medium'],
+			['RK-006', 'low', 'medium'],
+			['RK-007', 'medium', 'medium'],
 			['RK-005', 'low', 'low'],
+			['RK-009', 'low', 'low'],
 		]);
 	});
 });
@@ -193,7 +210,12 @@ describe('features', () => {
 			['R-012', 'now'],
 			['R-013', 'next'],
 			['R-014', 'next'],
+			['R-021', 'next'],
+			['R-022', 'next'],
+			['R-023', 'next'],
+			['R-024', 'next'],
 			['R-020', 'later'],
+			['R-025', 'done'],
 			['R-011', 'done'],
 			['R-010', 'done'],
 			['R-003', 'done'],
@@ -231,11 +253,11 @@ describe('milestoneSummaries', () => {
 
 	it('counts done items against every item that is not dropped', () => {
 		expect(summaries.map((summary) => summary.progress)).toEqual([
-			{ done: 0, total: 0 },
 			{ done: 1, total: 3 },
-			{ done: 2, total: 4 },
+			{ done: 1, total: 4 },
+			{ done: 2, total: 5 },
 		]);
-		expect(summaries[2]!.features.map((feature) => feature.id)).toEqual(['R-012', 'R-020', 'R-011', 'R-003', 'R-009']);
+		expect(summaries[2]!.features.map((feature) => feature.id)).toEqual(['R-012', 'R-024', 'R-020', 'R-011', 'R-003', 'R-009']);
 	});
 });
 

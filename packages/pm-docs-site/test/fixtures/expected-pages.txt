@@ -14,6 +14,11 @@ plan/features/r-012/index.html
 plan/features/r-013/index.html
 plan/features/r-014/index.html
 plan/features/r-020/index.html
+plan/features/r-021/index.html
+plan/features/r-022/index.html
+plan/features/r-023/index.html
+plan/features/r-024/index.html
+plan/features/r-025/index.html
 plan/inbox/index.html
 plan/log/index.html
 plan/milestones/index.html
@@ -26,5 +31,10 @@ plan/risks/rk-001/index.html
 plan/risks/rk-002/index.html
 plan/risks/rk-004/index.html
 plan/risks/rk-005/index.html
+plan/risks/rk-006/index.html
+plan/risks/rk-007/index.html
+plan/risks/rk-008/index.html
+plan/risks/rk-009/index.html
+plan/risks/rk-010/index.html
 plan/roadmap/index.html
 plan/strategy/index.html
