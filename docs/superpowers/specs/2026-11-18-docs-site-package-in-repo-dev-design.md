@@ -59,11 +59,23 @@ The user picked 1.
   option helpers): an entry contains a path when `path.relative(entry,
   path)` is empty or neither starts with `..` nor is absolute (covers
   Windows drives and case through `path`).
-- Language: the helper is `.mjs` with `// @ts-check`, like the rest of
-  `lib/`. It runs from `index.mjs` at install time under `node_modules`,
-  where Node refuses to strip types, and the package has no build step yet
-  (the parked inbox file `2026-11-18-0925-pm-docs-site-mjs-to-typescript.md`
-  owns that conversion). The unit test is `.ts`.
+- Language: TypeScript only (`.mts`/`.ts`/`.tsx`, run with Bun); no new
+  `.js` or `.mjs` (user, 2026-11-18). Node refuses to strip types under
+  `node_modules` (`ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING`; Bun loads
+  them, checked 2026-11-18), and the package runs under Node today
+  (`cli.mjs` shebang, `test/browser/dev-server.ts`). So the helper is a
+  plain `.ts` file in `lib/`, written after the package is converted.
+
+## Decision 2026-11-18: blocked on the TypeScript conversion
+
+- The user chose to convert the package to TypeScript first, as its own
+  roadmap item before R-017 (inbox
+  `planning/inbox/2026-11-18-0925-pm-docs-site-mjs-to-typescript.md`).
+- Rejected: putting the plugin into the existing `index.mjs` (adds
+  JavaScript); `lib/fs-allow.ts` plus a Bun runtime switch inside R-017
+  (scope change to M).
+- This design stays approved-pending: once the conversion lands, review it
+  against the converted layout and then plan it.
 - Tests: a `bun test` unit test for the helper (inside, equal, outside,
   sibling with a shared prefix, other drive on Windows) and for the plugin
   hook appending once and not when covered. Confirm the `Done when` check
