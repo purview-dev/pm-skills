@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T22:31:59+00:00",
+  "generatedAt": "2026-11-18T22:32:21+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-017-docs-site-package-in-repo-dev-hydrates",
-    "head": "94781ac3a055cbe2e6b91bbf82a187f850574e60"
+    "head": "0508d37cd09da03f090dd97b90ceff24bb81c611"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -187,14 +187,88 @@
     "brief": null,
     "milestone": "M1",
     "spec": "docs/superpowers/specs/2026-11-18-docs-site-package-in-repo-dev-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-18-docs-site-package-in-repo-dev.md",
     "started": "2026-11-18",
     "doneWhen": [
       "From `packages/pm-docs-site`, the package CLI's `dev test/fixtures/site` serves `/plan/board/?group=owner` with the Board island hydrated, and the dev server logs no `server.fs.allow` error."
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-18-docs-site-package-in-repo-dev.md",
+    "checked": 0,
+    "total": 13,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "Containment helper",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing test** `test/fs-allow.test.ts`, `describe('containsPath')`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run it to see it fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement `containsPath` in `lib/fs-allow.ts`** with a one-line header comment saying why it exists (Vite's `server.fs.allow` in linked and in-repo sites).",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run it to see it pass**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "The `pm-docs-site:fs-allow` plugin, and the Done when check",
+        "checked": 0,
+        "total": 8,
+        "steps": [
+          {
+            "text": "**Step 1: Reproduce the bug.** From `packages/pm-docs-site`, run `bun lib/cli.ts dev test/fixtures/site` in the background, open `http://localhost:4321/plan/board/?group=owner` (playwright-cli), and confirm the server log shows a `server.fs.allow` refusal for `node_modules/@astrojs/react/dist/client.js` and the Board does not hydrate. Stop the server. If it does not reproduce, stop and report: the item may already be fixed by R-021.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Write the failing tests** in `test/integration.test.ts`, `describe('pm-docs-site:fs-allow')`. Add `configResolved?: (config: { server: { fs: { allow: string[] } } }) => void` to the local `Plugin` type. Expected package dir: `realpathSync(fileURLToPath(new URL('../', import.meta.url))).replaceAll('\\\\', '/')`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Run them to see them fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Implement.** In `lib/index.ts` add `const PACKAGE_DIR = realpathSync(fileURLToPath(new URL('../', import.meta.url))).replaceAll('\\\\', '/');` with a comment that `lib/index.ts` (in the repository) and `dist/index.js` (installed) both sit one level below the package folder, and that Vite stores allow entries with forward slashes. Append the plugin last in `vite.plugins`; its `configResolved` pushes `PACKAGE_DIR` onto `config.server.fs.allow` unless `some(entry => containsPath(entry, PACKAGE_DIR))`. Comment why: the in-repo fixture and linked consumers resolve the package outside the site's workspace root. Do not skip when `server.fs.strict` is `false` (appending is harmless; one code path).",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Run the package tests and checks**",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Verify the Done when.** Run `bun lib/cli.ts dev test/fixtures/site` in the background, open `http://localhost:4321/plan/board/?group=owner` with playwright-cli, and confirm the Board island hydrated (its `astro-island` has no `ssr` attribute and changing the group control re-renders the columns) and the server log has no `server.fs.allow` line. Stop the server.",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Run the repository checks** from the repository root.",
+            "checked": false
+          },
+          {
+            "text": "**Step 8: Commit**",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -413,7 +487,7 @@
           "title": "Docs-site package: in-repo dev hydrates",
           "owner": null,
           "size": null,
-          "detail": "execute"
+          "detail": "execute, 0/13 plan steps"
         }
       ],
       "next": [

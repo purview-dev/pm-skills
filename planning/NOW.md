@@ -18,7 +18,7 @@ Milestone: optional; the item's milestone while it is active
 - Brief:
 - Milestone: M1
 - Spec: docs/superpowers/specs/2026-11-18-docs-site-package-in-repo-dev-design.md
-- Plan:
+- Plan: docs/superpowers/plans/2026-11-18-docs-site-package-in-repo-dev.md
 - Started: 2026-11-18
 
 ## Done when
@@ -33,7 +33,7 @@ Active example:
 - Status: active
 - Item: R-007 Tenant billing
 - Session: feat/r-007-tenant-billing (worktree ../saas-r-007)
-- Stage: execute
+- Stage: design
 - Brief: planning/briefs/R-007-tenant-billing.md
 - Milestone: M1
 - Spec: docs/superpowers/specs/<file>.md
