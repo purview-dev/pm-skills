@@ -5,7 +5,7 @@
 // no consumer config, and serves the resolved options to the pages as
 // `virtual:pm-docs-site/config`.
 
-import { existsSync } from 'node:fs';
+import { existsSync, realpathSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -13,6 +13,7 @@ import react from '@astrojs/react';
 import starlight from '@astrojs/starlight';
 import type { AstroIntegration } from 'astro';
 
+import { containsPath } from './fs-allow.ts';
 import { resolveOptions } from './options.ts';
 import { buildSidebar } from './sidebar.ts';
 import type { PmDocsSiteOptions, ViewName } from './types.ts';
@@ -39,6 +40,13 @@ const VIEW_ROUTES: Record<ViewName, [pattern: string, file: string][]> = {
 };
 
 const PACKAGE_NAME = '@purview-dev/pm-docs-site';
+
+/**
+ * The package folder, real path, with forward slashes as Vite stores its
+ * `server.fs.allow` entries. lib/index.ts (in this repository) and
+ * dist/index.js (installed) both sit one level below it.
+ */
+const PACKAGE_DIR = realpathSync(fileURLToPath(new URL('../', import.meta.url))).replaceAll('\\', '/');
 const REACT_INTEGRATION = '@astrojs/react';
 
 const NO_EXTERNAL = ['@astrojs/starlight', PACKAGE_NAME];
@@ -124,6 +132,18 @@ export default function pmDocsSite(options: PmDocsSiteOptions): AstroIntegration
 								name: 'pm-docs-site:no-external',
 								configEnvironment: (name: string) =>
 									SERVER_ENVIRONMENTS.includes(name) ? { resolve: { noExternal: [...NO_EXTERNAL] } } : undefined,
+							},
+							{
+								// Serve the package's own files in dev. The in-repo fixture and a linked
+								// consumer resolve the package outside the site's workspace root, so Vite
+								// refuses its node_modules (the React island client) and nothing hydrates.
+								// Append only: Vite's defaults and the consumer's entries stay.
+								name: 'pm-docs-site:fs-allow',
+								configResolved: (resolvedConfig: { server: { fs: { allow: string[] } } }) => {
+									const { allow } = resolvedConfig.server.fs;
+
+									if (!allow.some((entry) => containsPath(entry, PACKAGE_DIR))) allow.push(PACKAGE_DIR);
+								},
 							},
 						],
 					},
