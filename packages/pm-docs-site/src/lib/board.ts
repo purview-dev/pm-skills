@@ -28,6 +28,7 @@ export interface BoardCard {
 	titleRuns: LinkRun[]; // linked title text, used when href is null
 	column: ColumnName;
 	owner: Owner | null;
+	initials: string | null; // the owner as the card's initials; null with no owner, which every owner filter hides
 	milestone: string | null; // a known milestone ID, or null
 	tag: string; // milestone ID or "No milestone"
 	tagHref: string | null;

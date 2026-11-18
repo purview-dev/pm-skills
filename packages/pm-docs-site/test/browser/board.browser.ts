@@ -135,6 +135,14 @@ test('counts follow the filter', async ({ page }) => {
 	expect(counts).toEqual(['1', '2', '2', '2', '2']);
 });
 
+test('a card with no owner shows no initials, since every owner filter hides it', async ({ page }) => {
+	await openBoard(page);
+
+	await expect(page.locator('[data-card="now:R-012"]')).toHaveAttribute('data-owner', 'none');
+	await expect(page.locator('[data-card="now:R-012"] .task-card__assignee')).toHaveCount(0);
+	await expect(page.locator('[data-card="next:R-013"] .k-item__assignee')).toHaveText(/^(AG|YOU|AG\+U)$/);
+});
+
 test('a card opens its popup', async ({ page }) => {
 	await openBoard(page);
 	await page.locator('a.plan-item-link[data-item="R-013"]').click();

@@ -7,8 +7,8 @@
  * dark-theme colours use Starlight theme variables, so the card reads in light and dark themes;
  * the task can be a link, for the site's item popup and backlinks (href, itemId), and a task that
  * is not a link links known IDs; the tag shows the item's size (S, M, L as the kit's low, med,
- * high) and is omitted without one; a RAG dot sits beside it; and the card has no role. Its
- * styles are in src/styles/kanban.css.
+ * high) and is omitted without one; a RAG dot sits beside it; the assignee chip is omitted for a card with no
+ * owner; and the card has no role. Its styles are in src/styles/kanban.css.
  */
 import type { CardRag, LinkRun } from '../../lib/board';
 import type { Size } from '../../lib/planning-types';
@@ -18,7 +18,8 @@ interface Props {
 	task: string;
 	taskRuns: LinkRun[];
 	date: string;
-	assigneeInitials: string;
+	/** Null with no owner: no chip, as the owner filter hides the card. */
+	assigneeInitials: string | null;
 	size: Size | null;
 	rag: CardRag;
 	progress: number;
@@ -69,9 +70,11 @@ export default function TaskKanbanCard({ task, taskRuns, date, assigneeInitials,
 					<span>{date}</span>
 				</div>
 
-				<div className="task-card__assignee" title={`Assigned to ${assigneeInitials}`}>
-					{assigneeInitials}
-				</div>
+				{assigneeInitials && (
+					<div className="task-card__assignee" title={`Assigned to ${assigneeInitials}`}>
+						{assigneeInitials}
+					</div>
+				)}
 			</div>
 		</div>
 	);

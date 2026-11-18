@@ -13,6 +13,7 @@ function card(overrides: Partial<BoardCard> = {}): BoardCard {
 		titleRuns: [{ text: 'R-1 Title', href: null, label: null }],
 		column: 'next',
 		owner: 'agent',
+		initials: 'AG',
 		milestone: 'M1',
 		tag: 'M1',
 		tagHref: null,

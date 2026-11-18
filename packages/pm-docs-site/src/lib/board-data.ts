@@ -5,7 +5,7 @@
 
 import { cardRag, COLUMNS } from './board';
 import type { BoardCard, ColumnName, LinkRun } from './board';
-import { features, milestoneId, planProgress } from './planning';
+import { features, initials, milestoneId, planProgress } from './planning';
 import type { Owner, Planning } from './planning-types';
 import { linkify } from './references';
 import type { Target } from './references';
@@ -15,6 +15,14 @@ function tagOf(milestone: string | null, known: Map<string, Target>): { tag: str
 	const key = milestone ?? 'none';
 
 	return { tag: key === 'none' ? 'No milestone' : key, tagHref: known.get(key)?.href ?? null };
+}
+
+/**
+ * The card's owner as initials. No owner shows none: the owner filter and the
+ * Owner lanes treat it as "No owner", so an AG label would disagree with them.
+ */
+function initialsOf(owner: Owner | null): string | null {
+	return owner === null ? null : initials(owner);
 }
 
 /** Every board card, flat, in `COLUMNS` order and export order, for the Board island. */
@@ -27,6 +35,7 @@ export function boardCards(planning: Planning, known: Map<string, Target>): Boar
 		const feature = items.get(card.id);
 		const milestone = feature?.milestone ?? null;
 		const title = `${card.id} ${card.title}`;
+		const owner = card.owner ?? ((feature?.owner ?? null) as Owner | null);
 
 		return {
 			key: `${column}:${card.id}`,
@@ -34,7 +43,8 @@ export function boardCards(planning: Planning, known: Map<string, Target>): Boar
 			title,
 			titleRuns: runsOf(title),
 			column,
-			owner: card.owner ?? ((feature?.owner ?? null) as Owner | null),
+			owner,
+			initials: initialsOf(owner),
 			milestone,
 			...tagOf(milestone, known),
 			size: card.size ?? feature?.size ?? null,
@@ -49,6 +59,7 @@ export function boardCards(planning: Planning, known: Map<string, Target>): Boar
 	const doneCard = (entry: Planning['board']['columns']['done'][number], index: number): BoardCard => {
 		const title = entry.id ? `${entry.id} ${entry.title}` : entry.title;
 		const milestone = milestoneId(entry.milestone, planning.strategy.milestones);
+		const owner = (entry.owner ?? null) as Owner | null;
 
 		return {
 			key: `done:${entry.id ?? index}`,
@@ -56,7 +67,8 @@ export function boardCards(planning: Planning, known: Map<string, Target>): Boar
 			title,
 			titleRuns: runsOf(title),
 			column: 'done',
-			owner: (entry.owner ?? null) as Owner | null,
+			owner,
+			initials: initialsOf(owner),
 			milestone,
 			...tagOf(milestone, known),
 			size: null,

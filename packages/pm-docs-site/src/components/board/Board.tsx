@@ -10,7 +10,6 @@ import { useEffect, useState } from 'react';
 
 import { COLUMNS, DEFAULT_STATE, isFiltered, lanes, matches } from '../../lib/board';
 import type { BoardCard, BoardFilters, ColumnName, GroupBy } from '../../lib/board';
-import type { Owner } from '../../lib/planning-types';
 import KanbanItemCard from './KanbanItemCard';
 import TaskKanbanCard from './TaskKanbanCard';
 import { useBoardUrlState } from './useBoardUrlState';
@@ -47,11 +46,6 @@ function applyCollapsed(names: ReadonlySet<string>): void {
 	document.documentElement.dataset.boardCollapsed = [...names].join(' ');
 }
 
-/** The owner as a card's initials, as `initials` in planning.ts (which cannot load in the browser). A missing owner means `agent`. */
-function initials(owner: Owner | null): string {
-	return owner === 'user' ? 'YOU' : owner === 'both' ? 'AG+U' : 'AG';
-}
-
 /** The id of a column's cell in a lane: `col-x-cards` in the ungrouped lane, `col-x-cards-<lane>` otherwise. */
 function cellId(column: ColumnName, lane: string): string {
 	return lane === 'all' ? `col-${column}-cards` : `col-${column}-cards-${lane}`;
@@ -65,7 +59,7 @@ function Card({ card }: { card: BoardCard }) {
 					task={card.title}
 					taskRuns={card.titleRuns}
 					date={card.started ?? ''}
-					assigneeInitials={initials(card.owner)}
+					assigneeInitials={card.initials}
 					size={card.size}
 					rag={card.rag}
 					progress={card.progress ?? 0}
@@ -80,7 +74,7 @@ function Card({ card }: { card: BoardCard }) {
 					rag={card.rag}
 					tag={card.tag}
 					tagHref={card.tagHref}
-					assignee={initials(card.owner)}
+					assignee={card.initials}
 					detail={card.detail}
 					href={card.href}
 					itemId={card.id}

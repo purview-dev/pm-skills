@@ -39,6 +39,14 @@ describe('boardCards', () => {
 		expect(card.progress).toBe(planProgress(planning.plan));
 	});
 
+	it('labels each card with its owner\'s initials, and a card with no owner with none, as the owner filter treats it', () => {
+		expect(cards.map((card) => [card.key, card.owner, card.initials])).toEqual(
+			cards.map((card) => [card.key, card.owner, card.owner === 'user' ? 'YOU' : card.owner === 'both' ? 'AG+U' : card.owner === 'agent' ? 'AG' : null]),
+		);
+		expect(cards.find((card) => card.id === 'R-012')!.initials).toBeNull();
+		expect(new Set(cards.map((card) => card.initials))).toEqual(new Set(['AG', 'YOU', 'AG+U', null]));
+	});
+
 	it('never lets a closed risk colour a card, even when it names it', () => {
 		const card = cards.find((candidate) => candidate.id === 'R-021')!;
 

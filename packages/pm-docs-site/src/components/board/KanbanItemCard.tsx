@@ -8,8 +8,8 @@
  * the title (and tag) can be a link, for the site's item popup and backlinks (href, itemId,
  * tagHref), and the due-date line (and a title that is not a link) links known IDs; the pill
  * shows the item's size (S, M, L in the kit's low, medium, high colours) and is omitted without
- * one; a RAG dot sits beside it; and the card is not focusable and has no role. Its styles are
- * in src/styles/kanban.css.
+ * one; a RAG dot sits beside it; the assignee chip is omitted for a card with no owner; and the
+ * card is not focusable and has no role. Its styles are in src/styles/kanban.css.
  */
 import type { CardRag, LinkRun } from '../../lib/board';
 import type { Size } from '../../lib/planning-types';
@@ -22,7 +22,8 @@ interface Props {
 	rag: CardRag;
 	tag: string;
 	tagHref: string | null;
-	assignee: string;
+	/** Null with no owner: no chip, as the owner filter hides the card. */
+	assignee: string | null;
 	detail: LinkRun[];
 	commentsCount?: number;
 	attachmentsCount?: number;
@@ -117,9 +118,11 @@ export default function KanbanItemCard({ title, titleRuns, size, rag, tag, tagHr
 					)}
 				</div>
 
-				<div className="k-item__assignee" title={`Assigned to ${assignee}`}>
-					{assignee}
-				</div>
+				{assignee && (
+					<div className="k-item__assignee" title={`Assigned to ${assignee}`}>
+						{assignee}
+					</div>
+				)}
 			</div>
 		</div>
 	);
