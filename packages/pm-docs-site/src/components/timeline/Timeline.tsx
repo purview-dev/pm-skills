@@ -57,7 +57,11 @@ export default function Timeline({ milestones }: { milestones: TimelineMilestone
 
 		const element = strip.current;
 
-		anchor.current = element && layout === 'horizontal' ? { scrollLeft: element.scrollLeft, prev: zoomRef.current } : null;
+		// Keep the earliest snapshot: a second zoom before the render must not read the
+		// old scroll position against the new zoom. The layout effect clears it once applied.
+		if (element && layout === 'horizontal') anchor.current ??= { scrollLeft: element.scrollLeft, prev: zoomRef.current };
+		// Back at the rendered zoom before the render: the layout effect will not run, so drop the snapshot.
+		if (anchor.current?.prev === next) anchor.current = null;
 		zoomRef.current = next;
 		setZoom(next);
 	};
