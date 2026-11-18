@@ -73,7 +73,8 @@ test('a vertical link with no island script still shows the strip', async ({ pag
 	await page.route('**/_astro/**/*.js', (route) => route.abort());
 	await page.goto('/plan/roadmap/?layout=vertical');
 
-	await expect(strip(page)).not.toBeVisible();
+	// The pending mark stays set when the island script never runs; the CSS reveal shows the strip anyway.
+	await expect(page.locator('html')).toHaveAttribute('data-timeline-pending', '');
 	await expect(strip(page)).toBeVisible({ timeout: 5_000 });
 	await expect(strip(page)).toHaveAttribute('data-layout', 'horizontal');
 	await expect(page.locator('.plan-timeline__toolbar')).not.toBeVisible();
@@ -105,13 +106,35 @@ test('zoom buttons resize cards and stop at the limits', async ({ page }) => {
 
 test('Ctrl + wheel over the strip zooms the strip, not the page', async ({ page }) => {
 	await openRoadmap(page);
+	// A bubbling listener on window sees whether the strip cancelled the browser's page zoom.
+	await page.evaluate(() => {
+		window.addEventListener('wheel', (event) => {
+			(window as unknown as { wheelPrevented?: boolean }).wheelPrevented = event.defaultPrevented;
+		});
+	});
 	await strip(page).hover();
 	await page.keyboard.down('Control');
 	await page.mouse.wheel(0, -100);
 	await page.keyboard.up('Control');
 
 	await expect(readout(page)).toHaveText('125%');
-	expect(await page.evaluate(() => visualViewport!.scale)).toBe(1);
+	await expect.poll(() => page.evaluate(() => (window as unknown as { wheelPrevented?: boolean }).wheelPrevented)).toBe(true);
+});
+
+test('zooming keeps the point at the centre of the strip', async ({ page }) => {
+	await page.setViewportSize({ width: 700, height: 900 });
+	await openRoadmap(page);
+	await press(page, 'Zoom in', 2);
+	await expect(readout(page)).toHaveText('150%');
+	await strip(page).evaluate((element) => (element.scrollLeft = (element.scrollWidth - element.clientWidth) / 2));
+
+	const ratio = () => strip(page).evaluate((element) => (element.scrollLeft + element.clientWidth / 2) / element.scrollWidth);
+	const before = await ratio();
+
+	expect(await strip(page).evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
+	await press(page, 'Zoom in');
+	await expect(readout(page)).toHaveText('175%');
+	expect(Math.abs((await ratio()) - before)).toBeLessThanOrEqual(0.02);
 });
 
 /** At 700×900, zooms to 200% so the strip overflows, and hovers it. */
