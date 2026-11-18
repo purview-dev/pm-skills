@@ -14,11 +14,11 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-011 Docs-site package: milestone timeline
 - Session: feat/r-011-docs-site-package-milestone-timeline
-- Stage: plan
+- Stage: execute
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 - Milestone: M1
 - Spec: docs/superpowers/specs/2026-11-18-docs-site-package-milestone-timeline-design.md
-- Plan:
+- Plan: docs/superpowers/plans/2026-11-18-docs-site-package-milestone-timeline.md
 - Started: 2026-11-18
 
 ## Done when

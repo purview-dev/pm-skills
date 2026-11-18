@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T14:55:42+00:00",
+  "generatedAt": "2026-11-18T15:20:45+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-011-docs-site-package-milestone-timeline",
-    "head": "54fa85c7650ec66e37cb7fa4ecad63a07c36b2c1"
+    "head": "611706cc563ff5802705a7be53b134b956f22b9a"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -164,19 +164,169 @@
       "id": "R-011",
       "title": "Docs-site package: milestone timeline"
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-011-docs-site-package-milestone-timeline",
     "brief": "planning/briefs/2026-11-17-docs-site-package.md",
     "milestone": "M1",
     "spec": "docs/superpowers/specs/2026-11-18-docs-site-package-milestone-timeline-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-18-docs-site-package-milestone-timeline.md",
     "started": "2026-11-18",
     "doneWhen": [
       "the Roadmap page shows each milestone with its target, status, and progress from `planning.json`, each linking to its milestone page, and the derivation has unit tests."
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-18-docs-site-package-milestone-timeline.md",
+    "checked": 0,
+    "total": 26,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "Timeline milestone derivation",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** in `test/timeline.test.ts`. Load the fixture the way `test/planning.test.ts` does (`FIXTURE`). Build `known` with `targets(planning, ALL_VIEWS)`; take `ALL_VIEWS` from `test/links.test.ts`, or define every view `true`. Tests:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run the tests and check they fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement the three functions in `src/lib/timeline.ts`.**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run the tests and check they pass**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "One progress derivation for the Roadmap sections",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** in the `roadmapGroups` describe block:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run the tests and check they fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Change `roadmapGroups`.**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run the tests and check they pass**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "Layout URL state, zoom maths, and the wheel rule",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests:**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run the tests and check they fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement the functions.**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run the tests and check they pass**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "The Timeline island on the Roadmap page",
+        "checked": 0,
+        "total": 8,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing browser tests** in `test/browser/timeline.browser.ts`. Follow `board.browser.ts`. Add a `hydrated(page)` helper that waits for `.plan-timeline__toolbar` to be visible. Tests:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Build the fixture site and run the tests to check they fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement `useTimelineLayout`.**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Implement `Timeline.tsx`.**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Write `timeline.css`.**",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Wire `roadmap.astro`.**",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Run every check and confirm it passes**",
+            "checked": false
+          },
+          {
+            "text": "**Step 8: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 5,
+        "title": "Whole-repository verification",
+        "checked": 0,
+        "total": 3,
+        "steps": [
+          {
+            "text": "**Step 1: Run the full package suite, including the `dev` project.**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run the repository checks.**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Check the Done when by hand.**",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [],
     "later": [
@@ -319,7 +469,7 @@
           "title": "Docs-site package: milestone timeline",
           "owner": null,
           "size": null,
-          "detail": "plan"
+          "detail": "execute, 0/26 plan steps"
         }
       ],
       "next": [],
