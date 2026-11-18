@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T22:48:29+00:00",
+  "generatedAt": "2026-11-18T23:00:04+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-017-docs-site-package-in-repo-dev-hydrates",
-    "head": "7549c81fc15722d022d4cb89ef7e359b91ed5c48"
+    "branch": "feat/r-012-docs-site-package-dependency-graph",
+    "head": "18c93a9ab6edcaa24fa4776667df8666b6881d53"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -177,52 +177,31 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
-    "brief": null,
-    "milestone": null,
+    "status": "active",
+    "item": {
+      "id": "R-012",
+      "title": "Docs-site package: dependency graph"
+    },
+    "stage": "design",
+    "session": "feat/r-012-docs-site-package-dependency-graph",
+    "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+    "milestone": "M1",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-18",
+    "doneWhen": [
+      "the graph page shows one node per open item and one edge per `Depends on` and `Revisits`, each node links to its feature page, and the layout is computed at build time."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-012",
-        "title": "Docs-site package: dependency graph",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "the graph page shows one node per open item and one edge per `Depends on` and `Revisits`, each node links to its feature page, and the layout is computed at build time.",
-        "size": "M",
-        "dependsOn": [
-          "R-008"
-        ],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-        "note": null,
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-018",
         "title": "Export the Now card's owner and size",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4"
@@ -402,15 +381,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-012",
           "title": "Docs-site package: dependency graph",
-          "owner": "agent",
-          "size": "M",
-          "detail": "ready"
-        },
+          "owner": null,
+          "size": null,
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-018",
           "title": "Export the Now card's owner and size",
@@ -935,7 +915,7 @@
       "path": "planning/briefs/2026-11-17-docs-site-package.md",
       "id": "R-012",
       "title": "Docs site as a versioned package",
-      "status": "on roadmap (R-012, R-013)",
+      "status": "on roadmap (R-012, R-013), R-012 active",
       "origin": "user request",
       "updated": "2026-11-18",
       "decision": "2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.",
@@ -962,7 +942,7 @@
     "removed": []
   },
   "counts": {
-    "next": 2,
+    "next": 1,
     "later": 6,
     "nextMax": 5,
     "openInbox": 12,
@@ -980,7 +960,6 @@
     "reviewDue": true,
     "lastReview": "never",
     "claimable": [
-      "R-012",
       "R-018"
     ],
     "drift": true

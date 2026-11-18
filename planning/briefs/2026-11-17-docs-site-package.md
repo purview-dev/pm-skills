@@ -1,6 +1,6 @@
 # Docs site as a versioned package
 
-- Status: on roadmap (R-012, R-013)
+- Status: on roadmap (R-012, R-013), R-012 active
 - Origin: user request
 - Updated: 2026-11-18
 

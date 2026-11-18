@@ -11,17 +11,19 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: idle
-- Item:
-- Session:
-- Stage:
-- Brief:
-- Milestone:
+- Status: active
+- Item: R-012 Docs-site package: dependency graph
+- Session: feat/r-012-docs-site-package-dependency-graph
+- Stage: design
+- Brief: planning/briefs/2026-11-17-docs-site-package.md
+- Milestone: M1
 - Spec:
 - Plan:
-- Started:
+- Started: 2026-11-18
 
 ## Done when
+
+- the graph page shows one node per open item and one edge per `Depends on` and `Revisits`, each node links to its feature page, and the layout is computed at build time.
 
 ## Checkpoint
 

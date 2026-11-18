@@ -14,17 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-012 Docs-site package: dependency graph
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: the graph page shows one node per open item and one edge per `Depends on` and `Revisits`, each node links to its feature page, and the layout is computed at build time.
-- Size: M
-- Depends on: R-008
-- Status: ready
-- Brief: planning/briefs/2026-11-17-docs-site-package.md
-
 ### R-018 Export the Now card's owner and size
 
 - Serves: V4
