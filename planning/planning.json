@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T17:23:07+00:00",
+  "generatedAt": "2026-11-18T17:29:30+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "main",
-    "head": "ca07c87860e9cf33e875d052f3c91c1793a1ba71"
+    "branch": "feat/r-021-docs-site-package-typescript-source-with-a-build-step",
+    "head": "ec11ec868f435a50886d370bb8990480d62ac4af"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -171,50 +171,31 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
-    "brief": null,
-    "milestone": null,
+    "status": "active",
+    "item": {
+      "id": "R-021",
+      "title": "Docs-site package: TypeScript source with a build step"
+    },
+    "stage": "design",
+    "session": "feat/r-021-docs-site-package-typescript-source-with-a-build-step",
+    "brief": "planning/briefs/2026-11-18-pm-docs-site-typescript.md",
+    "milestone": "M1",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-18",
+    "doneWhen": [
+      "`git ls-files packages/pm-docs-site` lists no `.js`, `.mjs`, or `.cjs` file; the package build emits JavaScript and declarations for `cli`, `index`, and `lib/`, and the packed tarball contains them and no `.ts` entry point that Node loads; the packed-install test runs the installed CLI with `node` and passes, and `just package-test` passes; the fixture site uses `astro.config.ts`; and `publish-pm-docs-site.yml` builds before `check-exports` and `npm publish`, pinned by `scripts/workflows.test.ts`."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-021",
-        "title": "Docs-site package: TypeScript source with a build step",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "`git ls-files packages/pm-docs-site` lists no `.js`, `.mjs`, or `.cjs` file; the package build emits JavaScript and declarations for `cli`, `index`, and `lib/`, and the packed tarball contains them and no `.ts` entry point that Node loads; the packed-install test runs the installed CLI with `node` and passes, and `just package-test` passes; the fixture site uses `astro.config.ts`; and `publish-pm-docs-site.yml` builds before `check-exports` and `npm publish`, pinned by `scripts/workflows.test.ts`.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-18-pm-docs-site-typescript.md",
-        "note": null,
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-017",
         "title": "Docs-site package: in-repo dev hydrates",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "waiting",
         "serves": [
           "V4"
@@ -240,7 +221,7 @@
         "id": "R-011",
         "title": "Docs-site package: milestone timeline",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -266,7 +247,7 @@
         "id": "R-012",
         "title": "Docs-site package: dependency graph",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -292,7 +273,7 @@
         "id": "R-018",
         "title": "Export the Now card's owner and size",
         "section": "next",
-        "position": 5,
+        "position": 4,
         "label": "next",
         "serves": [
           "V4"
@@ -472,15 +453,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-021",
           "title": "Docs-site package: TypeScript source with a build step",
-          "owner": "agent",
-          "size": "M",
-          "detail": "ready"
-        },
+          "owner": null,
+          "size": null,
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-011",
           "title": "Docs-site package: milestone timeline",
@@ -868,7 +850,7 @@
       "path": "planning/briefs/2026-11-18-pm-docs-site-typescript.md",
       "id": "R-021",
       "title": "pm-docs-site package in TypeScript only",
-      "status": "on roadmap (R-021)",
+      "status": "on roadmap (R-021), active",
       "origin": "planning/inbox/2026-11-18-0925-pm-docs-site-mjs-to-typescript.md",
       "updated": "2026-11-18",
       "decision": "2026-11-18 Added to Next (top) as R-021 Docs-site package: TypeScript source with a build step (agent, M, serves V4, M1). R-017 Docs-site package: in-repo dev hydrates and R-019 Docs-site package: consumer-ready for 1.0.0 depend on it; R-019 moved to the top of Later. Why: the user chose a build step so the source is TypeScript and Node consumers keep working.",
@@ -883,7 +865,7 @@
     "removed": []
   },
   "counts": {
-    "next": 5,
+    "next": 4,
     "later": 6,
     "nextMax": 5,
     "openInbox": 6,
@@ -901,11 +883,10 @@
     "reviewDue": false,
     "lastReview": "never",
     "claimable": [
-      "R-021",
       "R-011",
       "R-012",
       "R-018"
     ],
-    "drift": false
+    "drift": true
   }
 }

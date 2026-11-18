@@ -14,17 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-021 Docs-site package: TypeScript source with a build step
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: `git ls-files packages/pm-docs-site` lists no `.js`, `.mjs`, or `.cjs` file; the package build emits JavaScript and declarations for `cli`, `index`, and `lib/`, and the packed tarball contains them and no `.ts` entry point that Node loads; the packed-install test runs the installed CLI with `node` and passes, and `just package-test` passes; the fixture site uses `astro.config.ts`; and `publish-pm-docs-site.yml` builds before `check-exports` and `npm publish`, pinned by `scripts/workflows.test.ts`.
-- Size: M
-- Depends on: none
-- Status: ready
-- Brief: planning/briefs/2026-11-18-pm-docs-site-typescript.md
-
 ### R-017 Docs-site package: in-repo dev hydrates
 
 - Serves: V4

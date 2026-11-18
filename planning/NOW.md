@@ -11,17 +11,19 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: idle
-- Item:
-- Session:
-- Stage:
-- Brief:
-- Milestone:
+- Status: active
+- Item: R-021 Docs-site package: TypeScript source with a build step
+- Session: feat/r-021-docs-site-package-typescript-source-with-a-build-step
+- Stage: design
+- Brief: planning/briefs/2026-11-18-pm-docs-site-typescript.md
+- Milestone: M1
 - Spec:
 - Plan:
-- Started:
+- Started: 2026-11-18
 
 ## Done when
+
+- `git ls-files packages/pm-docs-site` lists no `.js`, `.mjs`, or `.cjs` file; the package build emits JavaScript and declarations for `cli`, `index`, and `lib/`, and the packed tarball contains them and no `.ts` entry point that Node loads; the packed-install test runs the installed CLI with `node` and passes, and `just package-test` passes; the fixture site uses `astro.config.ts`; and `publish-pm-docs-site.yml` builds before `check-exports` and `npm publish`, pinned by `scripts/workflows.test.ts`.
 
 ## Checkpoint
 
