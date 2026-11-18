@@ -60,7 +60,7 @@ writeFileSync(
 );
 
 // Through the installed package's CLI under Node, as a consumer's `dev` script runs it.
-const dev = spawn(process.platform === 'win32' ? 'node.exe' : 'node', [join(CONSUMER, 'node_modules', '@purview-dev', 'pm-docs-site', 'cli.mjs'), 'dev'], {
+const dev = spawn(process.platform === 'win32' ? 'node.exe' : 'node', [join(CONSUMER, 'node_modules', '@purview-dev', 'pm-docs-site', 'dist', 'cli.js'), 'dev'], {
 	cwd: CONSUMER,
 	stdio: 'inherit',
 });
