@@ -11,17 +11,19 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: idle
-- Item:
-- Session:
-- Stage:
-- Brief:
-- Milestone:
+- Status: active
+- Item: R-011 Docs-site package: milestone timeline
+- Session: feat/r-011-docs-site-package-milestone-timeline
+- Stage: design
+- Brief: planning/briefs/2026-11-17-docs-site-package.md
+- Milestone: M1
 - Spec:
 - Plan:
-- Started:
+- Started: 2026-11-18
 
 ## Done when
+
+- the Roadmap page shows each milestone with its target, status, and progress from `planning.json`, each linking to its milestone page, and the derivation has unit tests.
 
 ## Checkpoint
 

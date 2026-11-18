@@ -18,17 +18,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Grouped by milestone where one is set. Same item format. -->
 
-### R-011 Docs-site package: milestone timeline
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: the Roadmap page shows each milestone with its target, status, and progress from `planning.json`, each linking to its milestone page, and the derivation has unit tests.
-- Size: M
-- Depends on: R-008
-- Status: ready
-- Brief: planning/briefs/2026-11-17-docs-site-package.md
-
 ### R-012 Docs-site package: dependency graph
 
 - Serves: V4
