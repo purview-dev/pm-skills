@@ -19,7 +19,7 @@ own `docs-site/` is rendered from them.
 
 ## A site in three files
 
-A consumer site holds `package.json`, a lockfile, and `astro.config.mjs`. It has no `src/` folder:
+A consumer site holds `package.json`, a lockfile, and `astro.config.ts`. It has no `src/` folder:
 the integration points Astro at the package's pages.
 
 ```json
@@ -37,7 +37,7 @@ the integration points Astro at the package's pages.
 ```
 
 ```js
-// astro.config.mjs
+// astro.config.ts
 import pmDocsSite from '@purview-dev/pm-docs-site';
 
 export default {
@@ -79,7 +79,7 @@ Home, Board, Roadmap, Log, and Risks are always rendered. A docs source has `lab
 
 ## Commands
 
-The CLI runs under Node 22 or later.
+The CLI runs under Node 24 or later.
 
 | Command | Does |
 | --- | --- |

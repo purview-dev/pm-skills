@@ -8,14 +8,14 @@ optionally, the repository's Markdown, rendered by Astro and Starlight.
 on purview.dev (the *Docs-site package* guide page), part of the
 [PM Skills](https://purview.dev/projects/pm-skills/) project.
 
-Prerelease: `0.1.0-pre.1` is on npm under the `prerelease` dist-tag
+Prerelease: builds are on npm under the `prerelease` dist-tag
 (`bun add @purview-dev/pm-docs-site@prerelease`). Until roadmap item R-013
 migrates the `pm-docs-site` skill to it, the skill and this repository's
 `docs-site/` still render the skill's templates.
 
 ## A consumer site
 
-Three files: `package.json`, a lockfile, and `astro.config.mjs`. No `src/`
+Three files: `package.json`, a lockfile, and `astro.config.ts`. No `src/`
 folder: the integration points Astro's `srcDir` at the package.
 
 ```json
@@ -33,7 +33,7 @@ folder: the integration points Astro's `srcDir` at the package.
 ```
 
 ```js
-// astro.config.mjs
+// astro.config.ts
 import pmDocsSite from '@purview-dev/pm-docs-site';
 
 export default {
@@ -62,7 +62,7 @@ export default {
 
 Home, Board, Roadmap, Log and Risks are always rendered. A docs source has
 `label`, `base`, `include`, and optionally `prefix`, `indexFile`, `order`,
-`collapsed`, and `hidden` (see `index.d.ts`).
+`collapsed`, and `hidden` (see `lib/types.ts`).
 
 ## Board
 
@@ -96,7 +96,7 @@ three files above.
 
 ## CLI
 
-The CLI runs under Node 22 or later.
+The CLI runs under Node 24 or later.
 
 - `pm-docs-site build [site-dir]` and `pm-docs-site dev [site-dir]` run Astro
   on the site. A site with no `astro.config.*` builds from
@@ -107,7 +107,7 @@ The CLI runs under Node 22 or later.
 
 ## Supported exports
 
-`SUPPORTED_SCHEMA_VERSIONS` in `lib/schema-version.mjs`: pm-export
+`SUPPORTED_SCHEMA_VERSIONS` in `lib/schema-version.ts`: pm-export
 `schemaVersion` 3. Any other version fails the build and `check`, and the
 message says to run the `pm-export` skill.
 
@@ -154,9 +154,10 @@ the purview-dev release rules:
 | REL003 | a stable version runs from `main` | fails |
 
 While `package.json` sets `"private": true` it also skips, green. Then it
-installs, tests, type-checks, and runs `scripts/check-exports.mjs`, which is
-also the `prepublishOnly` script, so a local `npm publish` cannot burn a
-version on a package with missing files. It publishes a prerelease
+installs, tests, type-checks, builds `dist/`, and runs `scripts/check-exports.ts`.
+The `prepack` script runs the same build and check, so every pack and a local
+`npm publish` build first and cannot burn a version on a package with missing
+or non-JavaScript entry points. It publishes a prerelease
 (`0.1.0-pre.1`) under the `prerelease` dist-tag and a stable version under
 `latest`, skips a version already on the registry, and keeps `latest` on the
 newest prerelease until a stable release exists. Only then does it create the

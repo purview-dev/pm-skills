@@ -122,15 +122,15 @@ useCases:
       You want the board, roadmap, milestones, and features as a local, searchable site, and you do
       not want to carry a copy of the site's templates that drifts each time they change.
     code: |
-      // astro.config.mjs
+      // astro.config.ts
       import pmDocsSite from '@purview-dev/pm-docs-site';
 
       export default {
         integrations: [pmDocsSite({ title: 'My project', planning: '../planning/planning.json' })],
       };
-    language: js
+    language: ts
     outcome: >-
-      The site is package.json, a lockfile, and astro.config.mjs; pm-docs-site build renders every
+      The site is package.json, a lockfile, and astro.config.ts; pm-docs-site build renders every
       plan page and its search index from planning.json, and pm-docs-site check reports an export
       in a format the package does not read before anything is built. The package is in
       prerelease on npm (0.1.0-pre.1, under the prerelease dist-tag).
