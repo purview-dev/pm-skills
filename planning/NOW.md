@@ -14,10 +14,10 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-021 Docs-site package: TypeScript source with a build step
 - Session: feat/r-021-docs-site-package-typescript-source-with-a-build-step
-- Stage: design
+- Stage: plan
 - Brief: planning/briefs/2026-11-18-pm-docs-site-typescript.md
 - Milestone: M1
-- Spec:
+- Spec: docs/superpowers/specs/2026-11-18-docs-site-package-typescript-design.md
 - Plan:
 - Started: 2026-11-18
 

@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T17:29:30+00:00",
+  "generatedAt": "2026-11-18T17:54:10+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-021-docs-site-package-typescript-source-with-a-build-step",
-    "head": "ec11ec868f435a50886d370bb8990480d62ac4af"
+    "head": "d7885489e8776ca141dbfdf3bd102cf768753ee8"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -176,11 +176,11 @@
       "id": "R-021",
       "title": "Docs-site package: TypeScript source with a build step"
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-021-docs-site-package-typescript-source-with-a-build-step",
     "brief": "planning/briefs/2026-11-18-pm-docs-site-typescript.md",
     "milestone": "M1",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-18-docs-site-package-typescript-design.md",
     "plan": null,
     "started": "2026-11-18",
     "doneWhen": [
@@ -459,7 +459,7 @@
           "title": "Docs-site package: TypeScript source with a build step",
           "owner": null,
           "size": null,
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
@@ -887,6 +887,6 @@
       "R-012",
       "R-018"
     ],
-    "drift": true
+    "drift": false
   }
 }
