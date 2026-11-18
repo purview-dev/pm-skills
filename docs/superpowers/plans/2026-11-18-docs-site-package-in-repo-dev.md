@@ -31,10 +31,12 @@
 ### Task 1: Containment helper
 
 **Files:**
+
 - Create: `lib/fs-allow.ts`
 - Test: `test/fs-allow.test.ts`
 
 **Interfaces:**
+
 - Produces: `export function containsPath(entry: string, path: string): boolean` — true when `relative(entry, path)` is `''`, or neither starts with `..` nor is absolute (`node:path`).
 
 - [ ] **Step 1: Write the failing test** `test/fs-allow.test.ts`, `describe('containsPath')`:
@@ -67,10 +69,12 @@ git commit -m "feat(pm-docs-site): fs.allow containment helper (R-017)"
 ### Task 2: The `pm-docs-site:fs-allow` plugin, and the Done when check
 
 **Files:**
+
 - Modify: `lib/index.ts` (constants near `PACKAGE_NAME`; the `vite.plugins` list in `astro:config:setup`)
 - Test: `test/integration.test.ts`
 
 **Interfaces:**
+
 - Consumes: `containsPath(entry, path)` from Task 1.
 - Produces: a plugin `{ name: 'pm-docs-site:fs-allow', configResolved(config: { server: { fs: { allow: string[] } } }): void }`, last in `vite.plugins`.
 
