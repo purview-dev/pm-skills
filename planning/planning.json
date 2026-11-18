@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T21:52:04+00:00",
+  "generatedAt": "2026-11-18T22:48:29+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-021-docs-site-package-typescript-source-with-a-build-step",
-    "head": "25c8399c13b271dc717629a4e117eb6943cdfb53"
+    "branch": "feat/r-017-docs-site-package-in-repo-dev-hydrates",
+    "head": "7549c81fc15722d022d4cb89ef7e359b91ed5c48"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -193,36 +193,10 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-017",
-        "title": "Docs-site package: in-repo dev hydrates",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "from `packages/pm-docs-site`, the package CLI's `dev test/fixtures/site` serves `/plan/board/?group=owner` with the Board island hydrated, and the dev server logs no `server.fs.allow` error.",
-        "size": "S",
-        "dependsOn": [
-          "R-021"
-        ],
-        "status": {
-          "value": "paused",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "Vite refuses `packages/pm-docs-site/node_modules/@astrojs/react/dist/client.js` as outside `server.fs.allow`; allowing the package's own folder from the integration hydrated it in R-010's fix-wave experiment. A packed-install consumer is already fixed by R-010.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-012",
         "title": "Docs-site package: dependency graph",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4"
@@ -248,7 +222,7 @@
         "id": "R-018",
         "title": "Export the Now card's owner and size",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -431,13 +405,6 @@
       "now": [],
       "next": [
         {
-          "id": "R-017",
-          "title": "Docs-site package: in-repo dev hydrates",
-          "owner": "agent",
-          "size": "S",
-          "detail": "paused"
-        },
-        {
           "id": "R-012",
           "title": "Docs-site package: dependency graph",
           "owner": "agent",
@@ -455,6 +422,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-18",
+          "id": "R-017",
+          "title": "Docs-site package: in-repo dev hydrates",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-18-docs-site-package-in-repo-dev.md",
+          "result": "branch feat/r-017-docs-site-package-in-repo-dev-hydrates"
+        },
         {
           "date": "2026-11-18",
           "id": "R-021",
@@ -530,6 +506,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-18",
+        "kind": "done",
+        "id": "R-017",
+        "title": "Docs-site package: in-repo dev hydrates",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-017-docs-site-package-in-repo-dev-hydrates"
+      },
       {
         "date": "2026-11-18",
         "kind": "done",
@@ -642,6 +627,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-18",
+        "id": "R-017",
+        "title": "Docs-site package: in-repo dev hydrates",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-18-docs-site-package-in-repo-dev.md",
+        "result": "branch feat/r-017-docs-site-package-in-repo-dev-hydrates"
+      },
       {
         "date": "2026-11-18",
         "id": "R-021",
@@ -919,6 +913,21 @@
       "brief": "planning/briefs/2026-11-18-pm-docs-site-typescript.md",
       "reviewed": "never",
       "idea": "Minor findings from R-021's final review, deferred:\n\n- `tsconfig.build.json` sets `types: [\"node\"]`, but `@types/node` arrives only through `@types/bun`; add it to `devDependencies` so a lockfile change cannot break `prepack`.\n- `scripts/build.ts` rewrites `.ts` specifiers only in the top level of `dist/`, and the install-test guard reads only the top level; a nested `lib/` folder would escape both (use `readdirSync(..., { recursive: true })`).\n- `scripts/check-exports.ts` rejects valid `.mjs`/`.cjs` entry points and accepts a `.d.ts` outside a `types` condition.\n- Shipped `src/` type-imports `../lib/types.ts`, which the tarball omits (runtime unaffected); ship it or note why not.\n- The `astro.config.ts` examples in `packages/pm-docs-site/README.md` and `docs/wiki/guide/Docs-Site-Package.md` are fenced as `js`.\n- `README.md:69` and `.config/purview-docs.yml:23` say `0.1.0-pre.1` is on npm; stale once `0.1.0-pre.2` publishes."
+    },
+    {
+      "file": "planning/inbox/2026-11-18-2248-r-017-fs-allow-review-follow-ups.md",
+      "title": "R-017 fs-allow review follow-ups",
+      "captured": "2026-11-18 22:48",
+      "source": "agent (R-017 execute, final review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site/lib/index.ts, packages/pm-docs-site/test/integration.test.ts",
+      "context": "R-017 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Deferred minors from the R-017 final review: (1) the `pm-docs-site:fs-allow` tests find the plugin by position (`.at(-1)`) instead of by name, so adding a later plugin breaks them; (2) the appended entry serves the whole package folder (test/, .astro/, scripts/, node_modules/) in in-repo and linked dev, which `fs.deny` still guards, and the comment could say so; (3) on case-insensitive macOS a case-only difference appends a harmless duplicate entry."
     }
   ],
   "briefs": [
@@ -953,13 +962,13 @@
     "removed": []
   },
   "counts": {
-    "next": 3,
+    "next": 2,
     "later": 6,
     "nextMax": 5,
-    "openInbox": 11,
+    "openInbox": 12,
     "discuss": 1,
     "shapingBriefs": 0,
-    "done": 8,
+    "done": 9,
     "dropped": 4,
     "blockers": 0,
     "openRisks": 0,
@@ -971,7 +980,6 @@
     "reviewDue": true,
     "lastReview": "never",
     "claimable": [
-      "R-017",
       "R-012",
       "R-018"
     ],

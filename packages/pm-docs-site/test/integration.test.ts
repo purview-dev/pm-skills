@@ -14,6 +14,7 @@ type Plugin = {
 	resolveId: (id: string) => string | undefined;
 	load: (id: string) => string | undefined;
 	configEnvironment?: (name: string) => unknown;
+	configResolved?: (config: { server: { fs: { allow: string[] } } }) => void;
 };
 type Update = {
 	srcDir: URL;
@@ -165,5 +166,52 @@ describe('pmDocsSite', () => {
 	it('throws on invalid options before Astro starts', () => {
 		// @ts-expect-error the title is missing on purpose
 		expect(() => setup({})).toThrow('pm-docs-site: title is required');
+	});
+});
+
+describe('pm-docs-site:fs-allow', () => {
+	// The package folder, as the integration computes it from lib/ (one level below it).
+	const packageDir = realpathSync(fileURLToPath(new URL('../', import.meta.url))).replaceAll('\\', '/');
+	const plugin = () => setup({ title: 'T' })[0]!.vite.plugins.at(-1)!;
+	const resolvedWith = (allow: string[]) => ({ server: { fs: { allow: [...allow] } } });
+
+	it('is the last plugin', () => {
+		expect(plugin().name).toBe('pm-docs-site:fs-allow');
+	});
+
+	it('appends the package folder after the existing entries', () => {
+		const config = resolvedWith(['/site']);
+
+		plugin().configResolved!(config);
+
+		expect(config.server.fs.allow).toEqual(['/site', packageDir]);
+	});
+
+	it('appends it once when the hook runs twice', () => {
+		const config = resolvedWith(['/site']);
+		const { configResolved } = plugin();
+
+		configResolved!(config);
+		configResolved!(config);
+
+		expect(config.server.fs.allow).toEqual(['/site', packageDir]);
+	});
+
+	it('leaves the list alone when an entry contains the package', () => {
+		const parent = packageDir.slice(0, packageDir.lastIndexOf('/'));
+		const config = resolvedWith([parent]);
+
+		plugin().configResolved!(config);
+
+		expect(config.server.fs.allow).toEqual([parent]);
+	});
+
+	it.if(process.platform === 'win32')('recognises an entry with backslashes', () => {
+		const entry = packageDir.replaceAll('/', '\\');
+		const config = resolvedWith([entry]);
+
+		plugin().configResolved!(config);
+
+		expect(config.server.fs.allow).toEqual([entry]);
 	});
 });
