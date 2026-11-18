@@ -1,19 +1,24 @@
 name: Publish pm-docs-site
 
+# Modelled on purview-dev/astroc4's release.yml: trusted publishing, idempotent,
+# and the publish before the tag. The package is versioned on its own by
+# `version` in packages/pm-docs-site/package.json; the repository's root
+# package.json versions the skills (release.yml, tags v{version}), so this
+# package's tag is pm-docs-site-v{version}.
+
 on:
   push:
     branches: [main]
-    # A publish is driven by a version bump of the package, so the pipeline only
-    # wakes when its package.json changes. The package is versioned on its own:
-    # the repository's package.json versions the skills (release.yml).
+    # A release is driven by a version bump, so the pipeline only wakes when the
+    # package's package.json changes.
     paths:
       - packages/pm-docs-site/package.json
   # Manual re-run for whatever version is on the branch. Every step is
-  # idempotent: the job skips when the pm-docs-site-v{version} tag exists, and
-  # the publish skips a version already on the registry.
+  # idempotent: the eligibility step skips a tagged version, and the publish
+  # step skips a version already on the registry.
   workflow_dispatch:
 
-# Serialize publishes; the job skips when the pm-docs-site-v{version} tag exists.
+# Serialize releases: two runs must never both decide a version is untagged.
 concurrency:
   group: publish-pm-docs-site-${{ github.ref }}
   cancel-in-progress: false
@@ -38,8 +43,8 @@ jobs:
     permissions:
       # Push the tag and create the GitHub release after the publish.
       contents: write
-      # npm trusted publishing: the registry exchanges this OIDC token for a
-      # short-lived publish credential, so no token has to be stored.
+      # npm trusted publishing. The registry exchanges this OIDC token for a
+      # short-lived publish credential, so no npm token is stored anywhere.
       id-token: write
     defaults:
       run:
@@ -48,9 +53,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
+          # Every tag, so the eligibility check sees the released versions.
           fetch-depth: 0
 
-      - name: Read the version
+      # The release eligibility rules of purview-dev/build's shared release
+      # workflow, which cannot run here: it reads the root package.json and
+      # tags v{version}, and both belong to the skills.
+      #   REL001 the version is SemVer.
+      #   REL002 pm-docs-site-v{version} is not tagged; a tagged version is
+      #          released, so the run skips, green.
+      #   REL003 a stable version is published only from main.
+      # Tags are written only by this workflow, never by hand: a hand-pushed tag
+      # makes the release of that version skip.
+      - name: Check release eligibility
         id: version
         shell: bash
         run: |
@@ -61,26 +76,39 @@ jobs:
           TAG="${TAG_PREFIX}${VERSION}"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
-          echo "Read ${PACKAGE} ${VERSION} (tag ${TAG}) from package.json."
+          echo "Read ${PACKAGE} ${VERSION} from package.json."
 
-          # A prerelease must not take the `latest` dist-tag, or it becomes what
-          # every bare `bun add @purview-dev/pm-docs-site` installs.
-          case "$VERSION" in
+          if ! [[ "${VERSION}" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$ ]]; then
+            echo "::error::REL001: ${VERSION} is not SemVer (MAJOR.MINOR.PATCH, optionally -<prerelease>)."
+            exit 1
+          fi
+
+          # A prerelease must not take the `latest` dist-tag on publish, or it
+          # becomes what every bare `bun add @purview-dev/pm-docs-site` installs.
+          case "${VERSION}" in
             *-*) echo "dist-tag=prerelease" >> "$GITHUB_OUTPUT" ;;
             *)   echo "dist-tag=latest" >> "$GITHUB_OUTPUT" ;;
           esac
 
-          # The tag is written after a successful publish, so an existing tag
-          # means this version has been released: ignore the run.
           if git rev-parse -q --verify "refs/tags/${TAG}" > /dev/null; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "::notice::Tag ${TAG} already exists; nothing to publish."
-          elif [ "$PRIVATE" = "true" ]; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "::notice::${PACKAGE} is private in package.json; nothing to publish. Remove \"private\" to publish it (R-013)."
-          else
-            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::REL002: tag ${TAG} already exists, so ${VERSION} is released; nothing to publish."
+            exit 0
           fi
+
+          if [[ "${VERSION}" != *-* && "${GITHUB_REF}" != "refs/heads/main" ]]; then
+            echo "::error::REL003: the stable version ${VERSION} is published only from main, not ${GITHUB_REF}."
+            exit 1
+          fi
+
+          if [ "${PRIVATE}" = "true" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::${PACKAGE} is private in package.json; nothing to publish. Remove \"private\" to publish it."
+            exit 0
+          fi
+
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+          echo "Eligible: ${PACKAGE} ${VERSION} under the ${TAG} tag."
 
       - name: Set up Bun
         if: steps.version.outputs.skip != 'true'
@@ -88,10 +116,11 @@ jobs:
         with:
           bun-version: latest
 
-      # Trusted publishing needs npm >= 11.5.1, and the package's builds need
-      # Node 22 or later. Deliberately no `registry-url`: setup-node would write
-      # an `_authToken=${NODE_AUTH_TOKEN}` line into .npmrc, which stands
-      # between npm and the OIDC exchange when no token is set.
+      # The package's builds need Node 22 or later, and trusted publishing an npm
+      # CLI that Node 24 can install. Deliberately no `registry-url`: setup-node
+      # would write `//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}` into
+      # .npmrc, and with no token defined that placeholder is the one thing that
+      # would stand between npm and the OIDC exchange.
       - name: Set up Node
         if: steps.version.outputs.skip != 'true'
         uses: actions/setup-node@v7
@@ -112,25 +141,25 @@ jobs:
         if: steps.version.outputs.skip != 'true'
         run: bun run check
 
-      - name: The tarball carries the entry points
+      # The same check `prepublishOnly` runs, so a version number is never burnt
+      # on a package whose exports point at missing files.
+      - name: The package carries its entry points
+        if: steps.version.outputs.skip != 'true'
+        run: node scripts/check-exports.mjs
+
+      # Two preconditions of trusted publishing, checked before anything is
+      # published: the OIDC endpoint exists only on GitHub-hosted runners, and the
+      # CLI has to be new enough to use it.
+      - name: Check trusted publishing preconditions
         if: steps.version.outputs.skip != 'true'
         shell: bash
         run: |
           set -euo pipefail
 
-          FILES="$(npm pack --dry-run --json | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>console.log(JSON.parse(s)[0].files.map(f=>f.path).join("\n")))')"
-          for file in package.json README.md index.mjs index.d.ts cli.mjs; do
-            grep -qx "$file" <<< "$FILES" || { echo "::error::The tarball is missing ${file}; refusing to publish."; exit 1; }
-          done
-          grep -q '^lib/' <<< "$FILES" || { echo "::error::The tarball has no lib/; refusing to publish."; exit 1; }
-          grep -q '^src/' <<< "$FILES" || { echo "::error::The tarball has no src/; refusing to publish."; exit 1; }
-          echo "The tarball carries the entry points, lib/ and src/."
-
-      - name: Check the npm CLI
-        if: steps.version.outputs.skip != 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
+          if [ -z "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" ]; then
+            echo "::error::No OIDC endpoint. Trusted publishing needs a GitHub-hosted runner and 'id-token: write'."
+            exit 1
+          fi
 
           npm install -g 'npm@^11.5.1'
           NPM_VERSION="$(npm --version)"
@@ -145,6 +174,7 @@ jobs:
 
       # A re-run after a publish whose tag step failed must still finish: the
       # version is on the registry, so skip the publish and write the tag.
+      # Reading a public package needs no credential.
       - name: Is this version already published?
         if: steps.version.outputs.skip != 'true'
         id: registry
@@ -159,37 +189,64 @@ jobs:
             echo "published=false" >> "$GITHUB_OUTPUT"
           fi
 
-      # With the NPM_TOKEN secret set, npm publishes with it; without it, npm
-      # authenticates through OIDC (trusted publishing). Both attach provenance.
+      # No auth token and no provenance flag: with trusted publishing the CLI
+      # authenticates through OIDC and attaches provenance by default. Without a
+      # trusted publisher npm exits ENEEDAUTH, which reads like a missing secret;
+      # there is no secret by design, so translate it.
       - name: Publish
         if: steps.version.outputs.skip != 'true' && steps.registry.outputs.published != 'true'
         shell: bash
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           set -uo pipefail
 
-          if [ -n "${NPM_TOKEN}" ]; then
-            echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > "$RUNNER_TEMP/.npmrc"
-            export NPM_CONFIG_USERCONFIG="$RUNNER_TEMP/.npmrc"
-            echo "Publishing with the NPM_TOKEN secret."
-          else
-            echo "Publishing through npm trusted publishing (OIDC)."
-          fi
-
           LOG="$(mktemp)"
           STATUS=0
-          npm publish --access public --provenance --tag "${{ steps.version.outputs.dist-tag }}" 2>&1 | tee "$LOG" || STATUS=$?
+          npm publish --access public --tag "${{ steps.version.outputs.dist-tag }}" 2>&1 | tee "$LOG" || STATUS=$?
 
           if [ "$STATUS" -ne 0 ] && grep -q 'ENEEDAUTH' "$LOG"; then
-            echo "::error::npm found no credential. Set the NPM_TOKEN secret, or add a trusted publisher: npm trust github ${PACKAGE} --repo ${GITHUB_REPOSITORY} --file publish-pm-docs-site.yml --allow-publish"
+            echo "::error::npm found no publish-capable trusted publisher for this workflow. Add one with 'Allow npm publish' ticked: npm trust github @purview-dev/pm-docs-site --repo purview-dev/pm-skills --file publish-pm-docs-site.yml --allow-publish. Check with: npm trust list @purview-dev/pm-docs-site"
           fi
 
           exit "$STATUS"
 
-      # The tag is written after the publish, so a failed publish never leaves a
-      # tag that would make the next run skip a version nobody can install.
-      - name: Create the tag and GitHub release
+      # A package always has a `latest` tag (the registry refuses to delete it),
+      # so while no stable version exists it points at the newest prerelease.
+      # Once a stable release exists, its publish owns `latest` and this step
+      # stands down. Moving a tag needs the "Allow npm dist-tag" permission on
+      # the trusted publisher, so a missing grant warns and never fails a release.
+      - name: Keep latest on the newest prerelease
+        if: steps.version.outputs.skip != 'true'
+        shell: bash
+        run: |
+          set -uo pipefail
+
+          VERSION="${{ steps.version.outputs.version }}"
+          CURRENT="$(npm view "${PACKAGE}" dist-tags.latest 2>/dev/null || true)"
+          echo "version released: ${VERSION}"
+          echo "latest is currently: ${CURRENT:-(none)}"
+
+          case "${VERSION}" in
+            *-*)
+              case "${CURRENT}" in
+                '' | *-*)
+                  echo "No stable release yet; pointing latest at ${VERSION}."
+                  npm dist-tag add "@purview-dev/pm-docs-site@$VERSION" latest ||
+                    echo "::warning::Could not move latest to ${VERSION}. Grant the 'Allow npm dist-tag' permission to the trusted publisher, or run: npm dist-tag add @purview-dev/pm-docs-site@${VERSION} latest"
+                  ;;
+                *)
+                  echo "latest is the stable ${CURRENT}; leaving it alone."
+                  ;;
+              esac
+              ;;
+            *)
+              echo "${VERSION} is stable, so publishing already set latest."
+              ;;
+          esac
+
+      # The tag is written only after a successful publish, so a failed publish
+      # never leaves a tag that would make the next run skip a version nobody can
+      # install. Never the repository's latest release: that is the skills' v{version}.
+      - name: Tag and GitHub release
         if: steps.version.outputs.skip != 'true'
         shell: bash
         env:
@@ -203,7 +260,6 @@ jobs:
           if [[ "${VERSION}" == *-* ]]; then
             prerelease=(--prerelease)
           fi
-          # Never the repository's latest release: that is the skills release (v{version}).
           gh release create "${TAG}" --target "${GITHUB_SHA}" --title "${PACKAGE} ${VERSION}" \
             --notes "Published to npm: https://www.npmjs.com/package/${PACKAGE}/v/${VERSION}" \
             --latest=false "${prerelease[@]}"

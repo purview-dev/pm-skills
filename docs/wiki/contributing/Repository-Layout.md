@@ -53,11 +53,13 @@ scripts/
   setup-skills.ts
   bump-version.ts
   check-version.ts
+  workflows.test.ts        pins the publish workflow's release rules
 .github/
   copilot-instructions.md
   workflows/
     ci.yml
     release.yml
+    publish-pm-docs-site.yml  publishes @purview-dev/pm-docs-site to npm
 package.json
 LICENSE.md
 ```
