@@ -4,7 +4,7 @@ A local, searchable project site for [pm-skills](https://github.com/purview-dev/
 the plan from `planning.json` (written by the `pm-export` skill) and,
 optionally, the repository's Markdown, rendered by Astro and Starlight.
 
-Unpublished: version `0.0.0` and `private` until roadmap item R-013 publishes
+Unpublished: version `0.1.0-pre.1` and `private` until roadmap item R-013 publishes
 it to npm. Until then the repository's `docs-site/` still renders the
 `pm-docs-site` skill's templates.
 
@@ -23,7 +23,7 @@ folder: the integration points Astro's `srcDir` at the package.
     "build": "pm-docs-site build",
     "check": "pm-docs-site check"
   },
-  "dependencies": { "@purview-dev/pm-docs-site": "0.0.0" }
+  "dependencies": { "@purview-dev/pm-docs-site": "0.1.0-pre.1" }
 }
 ```
 
