@@ -184,6 +184,12 @@ as `18.x.y`, and a prerelease of rules 19 as `19.0.0-pre.N`.
   already exists. A prerelease version (`19.0.0-pre.1`) becomes a GitHub
   prerelease, never the latest release. Consumers who install from `main`
   get whatever `main` holds, prerelease or not.
+- `.github/workflows/publish-pm-docs-site.yml` publishes
+  `@purview-dev/pm-docs-site` to npm when `packages/pm-docs-site/package.json`
+  changes on `main`, then creates the `pm-docs-site-v{version}` tag and a
+  GitHub release. It skips when that tag already exists or while the package
+  is `private`. The package has its own version, outside the rules version
+  and `scripts/check-version.ts`.
 - Versions only move forward in SemVer order: `2.4.2` → `2.4.3-pre.1` →
   `2.4.3-pre.2` → `2.4.3`, or `2.4.2` → `2.5.0-pre.1` or `3.0.0-pre.1`.
   From a stable version: `patch`, `minor`, `major` give the next stable

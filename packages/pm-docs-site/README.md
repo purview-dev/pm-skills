@@ -85,3 +85,23 @@ just package-test   # bun install --frozen-lockfile, bun test, bun run check
 `bun test` includes a build of the fixture site whose page list must equal
 `test/fixtures/expected-pages.txt`, and a build from the packed tarball
 installed into a temporary folder.
+
+## Releasing
+
+The package is versioned on its own, by `version` in this `package.json`,
+not by the repository's skills version. A change to this file on `main`
+runs `.github/workflows/publish-pm-docs-site.yml`, which:
+
+1. Skips when the `pm-docs-site-v<version>` tag exists, or while
+   `package.json` sets `"private": true`.
+2. Installs, tests, type-checks, and checks the tarball's entry points.
+3. Publishes to npm with provenance: a prerelease (`0.1.0-pre.1`) under the
+   `prerelease` dist-tag, a stable version under `latest`. A version already
+   on the registry is not published again.
+4. Creates the `pm-docs-site-v<version>` tag and a GitHub release, never
+   marked as the repository's latest release.
+
+It authenticates with the `NPM_TOKEN` repository secret when it is set,
+otherwise through npm trusted publishing, and runs in the `npm` environment.
+Re-run it from the Actions tab (`workflow_dispatch`); every step is
+idempotent.
