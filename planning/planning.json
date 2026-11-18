@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T08:38:54+00:00",
+  "generatedAt": "2026-11-18T09:11:48+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-010-docs-site-package-board-filters-and-swimlanes",
-    "head": "a4da8786b0c3d9a0b1f7249ef467a8a0a611c603"
+    "head": "af9736e482ed659dab1de26e01c782c93d312e57"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -164,11 +164,11 @@
       "id": "R-010",
       "title": "Docs-site package: board filters and swimlanes"
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-010-docs-site-package-board-filters-and-swimlanes",
     "brief": "planning/briefs/2026-11-17-docs-site-package.md",
     "milestone": "M1",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-18-docs-site-package-board-filters-design.md",
     "plan": null,
     "started": "2026-11-18",
     "doneWhen": [
@@ -345,7 +345,7 @@
           "title": "Docs-site package: board filters and swimlanes",
           "owner": null,
           "size": null,
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [],
@@ -681,6 +681,42 @@
       "brief": null,
       "reviewed": "never",
       "idea": "The TUnit example in the aspire MODULE.md calls `BuildAsync` and `Named` without defining them, and uses `Resources.DocsSite`, which a test project reaches only when the constant is visible to it. Verifying R-004 needed `using Aspire.Hosting;` for `DistributedApplicationExecutionContext` and the literal `\"docs\"`. Show the two helpers and say when to use the literal."
+    },
+    {
+      "file": "planning/inbox/2026-11-18-0911-brief-static-first-superseded.md",
+      "title": "Brief still says docs-site views are static first",
+      "captured": "2026-11-18 09:11",
+      "source": "agent (R-010 design)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "planning/briefs/2026-11-17-docs-site-package.md",
+      "context": "R-010 design",
+      "discuss": "no",
+      "related": [
+        "R-010",
+        "R-011",
+        "R-012"
+      ],
+      "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+      "reviewed": "never",
+      "idea": "In R-010 design (2026-11-18) the user chose rich interactive components for every docs-site view, with React islands (React over Preact, so R-011 and R-012 can use React-first libraries such as React Flow). The brief's Performance ramification still says \"Render static HTML first and enhance with small islands\", and its Ramifications do not mention the React runtime dependency every consumer now gets. Update the brief (pm-shape) so R-011 and R-012 design from the new direction."
+    },
+    {
+      "file": "planning/inbox/2026-11-18-0912-r-013-and-m1-name-1-0-0.md",
+      "title": "R-013 and M1 exit criteria should name 1.0.0",
+      "captured": "2026-11-18 09:12",
+      "source": "agent (R-010 design)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "R-013",
+      "context": "R-010 design",
+      "discuss": "no",
+      "related": [
+        "R-013"
+      ],
+      "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+      "reviewed": "never",
+      "idea": "The brief (2026-11-18) decided R-013 releases stable `1.0.0`, but R-013's `Done when` says \"returns the released version\" and M1 Reproducible docs site's exit criterion says \"`npm view @purview-dev/pm-docs-site version` returns a version\", which `0.1.0-pre.1` already satisfies. Name `1.0.0` in both: `pm-item edit R-013` and `pm-strategy` for M1."
     }
   ],
   "briefs": [
@@ -706,7 +742,7 @@
     "next": 0,
     "later": 6,
     "nextMax": 5,
-    "openInbox": 8,
+    "openInbox": 10,
     "discuss": 1,
     "shapingBriefs": 0,
     "done": 5,
@@ -718,9 +754,9 @@
     "greenRisks": 0
   },
   "checks": {
-    "reviewDue": false,
+    "reviewDue": true,
     "lastReview": "never",
     "claimable": [],
-    "drift": true
+    "drift": false
   }
 }
