@@ -14,9 +14,16 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-## Later
+### R-017 Docs-site package: in-repo dev hydrates
 
-<!-- Grouped by milestone where one is set. Same item format. -->
+- Serves: V4
+- Milestone: M1
+- Owner: agent
+- Done when: from `packages/pm-docs-site`, `node cli.mjs dev test/fixtures/site` serves `/plan/board/?group=owner` with the Board island hydrated, and the dev server logs no `server.fs.allow` error.
+- Size: S
+- Depends on: none
+- Status: ready
+- Note: Vite refuses `packages/pm-docs-site/node_modules/@astrojs/react/dist/client.js` as outside `server.fs.allow`; allowing the package's own folder from the integration hydrated it in R-010's fix-wave experiment. A packed-install consumer is already fixed by R-010.
 
 ### R-011 Docs-site package: milestone timeline
 
@@ -40,6 +47,33 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Status: ready
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 
+### R-018 Export the Now card's owner and size
+
+- Serves: V4
+- Milestone: M1
+- Owner: agent
+- Done when: `bun skills/pm-export/scripts/export.ts write` gives the active item's Now card its roadmap `owner` and `size` instead of `null`, the schema field docs, `planning.example.json`, and the docs-site fixture agree, and `just test` covers it.
+- Size: S
+- Depends on: none
+- Status: ready
+- Note: `skills/pm-export/scripts/planning.ts:489` writes `owner: null, size: null`, so every real board shows the active item as "No owner" and the R-010 owner and size filters hide it.
+
+### R-019 Docs-site package: consumer-ready for 1.0.0
+
+- Serves: V4
+- Milestone: M1
+- Owner: agent
+- Done when: the package home page has no `just docs-preview`; a build without the `docs` option logs no Starlight missing-folder or empty-collection warning; `docsHref` returns no link for a spec or plan path no docs source maps (and honours a source `prefix`); RefLink prints fallback text (the entry title, "No milestone") for an unknown key; `linkify` uses the link scanner's boundaries, so an ID inside a path is not linked; the CLI warns when `--title` or `--planning` is ignored, a `planning.json` holding `null` prints the pm-export hint, `check` loads an `astro.config.ts` on the `engines` Node floor, `dev` has an automated test, and the README names the same-drive requirement on Windows.
+- Size: M
+- Depends on: none
+- Status: ready
+- Brief: planning/briefs/2026-11-17-docs-site-package.md
+- Note: Folds five inbox files from the R-008 and R-009 final reviews (CLI gaps, consumer text, dead doc links, RefLink fallbacks, IDs linked inside paths). Affects `packages/pm-docs-site/cli.mjs`, `lib/site-options.mjs`, `README.md`, `src/pages/index.astro`, `src/content.config.ts`, `src/lib/planning.ts`, `src/components/RefLink.astro`, `src/lib/references.ts`.
+
+## Later
+
+<!-- Grouped by milestone where one is set. Same item format. -->
+
 ### R-013 Docs-site package: publish and migrate
 
 - Serves: V4
@@ -47,10 +81,20 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Owner: both
 - Done when: `npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.mjs`, `bun.lock`, and `.gitignore` and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; and a scratch export at schemaVersion 4 fails the build until the package's range includes it.
 - Size: M
-- Depends on: R-009, R-010, R-011, R-012, R-014
+- Depends on: R-009, R-010, R-011, R-012, R-014, R-019
 - Status: ready
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 - Note: Rewrites `pm-docs-site` and Non-interruption rule 9, so it bumps the rules major.
+
+### R-020 Docs-site package: rich demo planning fixture
+
+- Serves: V4
+- Milestone: M1
+- Owner: agent
+- Done when: a synthetic, schema-valid `planning.json` in the package's fixture site fills every view (at least 3 milestones with targets, `Depends on` and `Revisits` edges, risks in all three RAG states, inbox files, briefs, Done and Dropped log lines, an active Now item), `bun skills/pm-export/scripts/export.ts validate` passes on it, and the fixture site's build and browser tests render every page with content.
+- Size: M
+- Depends on: none
+- Status: ready
 
 ### R-006 Check pm-setup's skill counts in validate
 

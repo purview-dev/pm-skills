@@ -92,6 +92,7 @@ Newest first. Nothing in this file changes without a line here.
 - <YYYY-MM-DD> <decision>. Why: <reason>. Rejected: <alternatives>.
 -->
 
+- 2026-11-18 Re-planned roadmap. Why: Next was empty with M1 open; Next is now R-017 in-repo dev hydrates, R-011 milestone timeline, R-012 dependency graph, R-018 export the Now card's owner and size, R-019 consumer-ready for 1.0.0, with R-013 at the top of Later M1 depending on R-019, then R-020 rich demo planning fixture (user request); R-017, R-018, and R-019 fold seven inbox files. Kept "returns a version" in R-013 and the M1 exit criterion instead of naming `1.0.0`, at the user's choice. Rejected: absorbing the consumer fixes into R-013; naming `1.0.0` in both.
 - 2026-11-17 Re-planned roadmap. Why: assign every item to M1, M2, or M3, and order Next for the M1 focus (R-014 first as a blocking user task, then R-008, R-003, R-009, R-004); added R-015 and R-016 for the M2 and M3 exit criteria. Rejected: leaving items without milestones.
 - 2026-11-17 Not doing: new template views or modules, hosting the docs site, writing PM state from the site. Why: the package replaces the templates, the site stays local and read-only. Rejected: none.
 - 2026-11-17 Current focus M1 Reproducible docs site, with bet B1 and assumptions A1 to A3. Why: every item in Next serves it. Rejected: focus on M2 Verified install and upgrade.
