@@ -111,6 +111,6 @@
     ],
     "removed": [{ "date": "2026-11-06", "id": "RK-003", "title": "Mail provider limits", "reason": "duplicate of RK-002" }]
   },
-  "counts": { "next": 6, "later": 1, "nextMax": 5, "openInbox": 2, "discuss": 1, "shapingBriefs": 1, "done": 4, "dropped": 2, "blockers": 0, "openRisks": 7, "redRisks": 2, "amberRisks": 2, "greenRisks": 3 },
+  "counts": { "next": 6, "later": 1, "nextMax": 6, "openInbox": 2, "discuss": 1, "shapingBriefs": 1, "done": 4, "dropped": 2, "blockers": 0, "openRisks": 7, "redRisks": 2, "amberRisks": 2, "greenRisks": 3 },
   "checks": { "reviewDue": false, "lastReview": "2026-11-04", "claimable": ["R-013", "R-022"], "drift": false }
 }
