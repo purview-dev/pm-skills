@@ -3,14 +3,17 @@
 // board.astro, components.css). It is server-rendered, so without JavaScript
 // every card shows and the filter bar stays hidden. The item popup is not
 // here: a card's title keeps `a.plan-item-link[data-item]`, which
-// src/scripts/plan.ts opens from the page's ItemDetail templates.
+// src/scripts/plan.ts opens from the page's ItemDetail templates. The filter
+// and group state lives in the URL (useBoardUrlState.ts); `.plan-board__body`
+// (the header row and the lanes) is hidden while <html> has the pending mark.
 import { useEffect, useState } from 'react';
 
 import { COLUMNS, DEFAULT_STATE, isFiltered, lanes, matches } from '../../lib/board';
-import type { BoardCard, BoardFilters, BoardState, ColumnName } from '../../lib/board';
+import type { BoardCard, BoardFilters, ColumnName, GroupBy } from '../../lib/board';
 import type { Owner } from '../../lib/planning-types';
 import KanbanItemCard from './KanbanItemCard';
 import TaskKanbanCard from './TaskKanbanCard';
+import { useBoardUrlState } from './useBoardUrlState';
 
 interface Props {
 	cards: BoardCard[];
@@ -111,9 +114,14 @@ function Filter({ id, label, value, options, onChange }: FilterProps) {
 	);
 }
 
+const GROUPS: { value: GroupBy; label: string }[] = [
+	{ value: 'none', label: 'None' },
+	{ value: 'milestone', label: 'Milestone' },
+	{ value: 'owner', label: 'Owner' },
+];
+
 export default function Board({ cards, milestones }: Props) {
-	const [state, setState] = useState<BoardState>(DEFAULT_STATE);
-	const [hydrated, setHydrated] = useState(false);
+	const [state, setState, hydrated] = useBoardUrlState(milestones.map((milestone) => milestone.id));
 	const [collapsed, setCollapsed] = useState<ReadonlySet<string>>(() => new Set());
 
 	useEffect(() => {
@@ -121,7 +129,6 @@ export default function Board({ cards, milestones }: Props) {
 
 		applyCollapsed(stored);
 		setCollapsed(stored);
-		setHydrated(true);
 	}, []);
 
 	const toggle = (name: ColumnName) => {
@@ -185,46 +192,58 @@ export default function Board({ cards, milestones }: Props) {
 					]}
 					onChange={setFilter('rag')}
 				/>
+				<div className="plan-board__filter">
+					<label htmlFor="board-group">Group by</label>
+					<select id="board-group" value={state.group} onChange={(event) => setState((current) => ({ ...current, group: event.target.value as GroupBy }))}>
+						{GROUPS.map((group) => (
+							<option key={group.value} value={group.value}>
+								{group.label}
+							</option>
+						))}
+					</select>
+				</div>
 				<button type="button" id="board-clear" className="plan-board__clear" disabled={!filtered} onClick={() => setState((current) => ({ ...current, filters: DEFAULT_STATE.filters }))}>
 					Clear
 				</button>
 			</div>
 
-			{COLUMNS.map(({ name, title }) => {
-				const shut = collapsed.has(name);
+			<div className="plan-board__body">
+				{COLUMNS.map(({ name, title }) => {
+					const shut = collapsed.has(name);
 
-				return (
-					<section key={name} className={grouped ? 'plan-column' : 'plan-column plan-column--joined'} data-column={name} data-collapsed={shut ? '' : undefined} aria-labelledby={`col-${name}`}>
-						<h2 id={`col-${name}`}>
-							<button type="button" className="plan-column__toggle" aria-expanded={!shut} aria-controls={rows.map((lane) => cellId(name, lane.key)).join(' ')} onClick={() => toggle(name)}>
-								<span className="plan-column__name">{title}</span> <span className="plan-column__count">{visible.filter((card) => card.column === name).length}</span>
-							</button>
-						</h2>
-					</section>
-				);
-			})}
+					return (
+						<section key={name} className={grouped ? 'plan-column' : 'plan-column plan-column--joined'} data-column={name} data-collapsed={shut ? '' : undefined} aria-labelledby={`col-${name}`}>
+							<h2 id={`col-${name}`}>
+								<button type="button" className="plan-column__toggle" aria-expanded={!shut} aria-controls={rows.map((lane) => cellId(name, lane.key)).join(' ')} onClick={() => toggle(name)}>
+									<span className="plan-column__name">{title}</span> <span className="plan-column__count">{visible.filter((card) => card.column === name).length}</span>
+								</button>
+							</h2>
+						</section>
+					);
+				})}
 
-			{rows.map((lane) => (
-				<div key={lane.key} className="plan-lane" data-lane={lane.key}>
-					{grouped && (
-						<div className="plan-lane__header">
-							<span className="plan-lane__name">{lane.label}</span> <span className="plan-lane__count">{lane.cards.length}</span>
-						</div>
-					)}
-					{COLUMNS.map(({ name }) => {
-						const inCell = lane.cards.filter((card) => card.column === name);
-
-						return (
-							<div key={name} className="plan-column__cards" data-lane-column={name} id={cellId(name, lane.key)}>
-								{!grouped && inCell.length === 0 && <p className="plan-empty">{filtered ? 'Nothing matches' : 'Nothing here'}</p>}
-								{inCell.map((card) => (
-									<Card key={card.key} card={card} />
-								))}
+				{rows.map((lane) => (
+					<div key={lane.key} className="plan-lane" data-lane={lane.key}>
+						{grouped && (
+							<div className="plan-lane__header">
+								<span className="plan-lane__name">{lane.label}</span> <span className="plan-lane__count">{lane.cards.length}</span>
 							</div>
-						);
-					})}
-				</div>
-			))}
+						)}
+						{COLUMNS.map(({ name }) => {
+							const inCell = lane.cards.filter((card) => card.column === name);
+
+							return (
+								<div key={name} className="plan-column__cards" data-lane-column={name} id={cellId(name, lane.key)}>
+									{!grouped && inCell.length === 0 && <p className="plan-empty">{filtered ? 'Nothing matches' : 'Nothing here'}</p>}
+									{inCell.map((card) => (
+										<Card key={card.key} card={card} />
+									))}
+								</div>
+							);
+						})}
+					</div>
+				))}
+			</div>
 		</>
 	);
 }

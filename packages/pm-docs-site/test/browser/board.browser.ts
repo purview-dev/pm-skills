@@ -148,6 +148,143 @@ test('without JavaScript the full board renders', async ({ browser }) => {
 	await context.close();
 });
 
+/** The lanes' keys and their header counts, in page order. */
+async function laneSummary(page: Page): Promise<{ keys: string[]; counts: string[] }> {
+	const lanes = page.locator('[data-lane]');
+
+	return {
+		keys: await lanes.evaluateAll((elements) => elements.map((element) => element.getAttribute('data-lane')!)),
+		counts: await page.locator('[data-lane] .plan-lane__count').allTextContents(),
+	};
+}
+
+test('grouping by milestone renders one lane per milestone', async ({ page }) => {
+	await openBoard(page);
+	await page.selectOption('#board-group', 'milestone');
+
+	await expect(page.locator('[data-lane]')).toHaveCount(3);
+	expect(await laneSummary(page)).toEqual({ keys: ['M1', 'M2', 'none'], counts: ['3', '3', '3'] });
+	const inM1 = await page.locator('[data-lane="M1"] [data-card]').evaluateAll((elements) => elements.map((element) => element.getAttribute('data-milestone')));
+
+	expect(inM1).toEqual(['M1', 'M1', 'M1']);
+});
+
+test('grouping by owner renders one lane per owner', async ({ page }) => {
+	await openBoard(page);
+	await page.selectOption('#board-group', 'owner');
+
+	await expect(page.locator('[data-lane]')).toHaveCount(4);
+	expect(await laneSummary(page)).toEqual({ keys: ['agent', 'user', 'both', 'none'], counts: ['3', '3', '2', '1'] });
+});
+
+test('grouping and filtering together drop empty lanes', async ({ page }) => {
+	await openBoard(page);
+	await page.selectOption('#board-owner', 'user');
+	await page.selectOption('#board-group', 'milestone');
+
+	await expect(page.locator('[data-lane]')).toHaveCount(3);
+	expect(await laneSummary(page)).toEqual({ keys: ['M1', 'M2', 'none'], counts: ['1', '1', '1'] });
+
+	await page.click('#board-clear');
+	await page.selectOption('#board-rag', 'green');
+	await page.selectOption('#board-group', 'owner');
+
+	await expect(page.locator('[data-lane]')).toHaveCount(1);
+	expect(await laneSummary(page)).toEqual({ keys: ['both'], counts: ['2'] });
+});
+
+test('the URL carries the state', async ({ page }) => {
+	await openBoard(page);
+	await page.selectOption('#board-owner', 'user');
+	await page.selectOption('#board-group', 'owner');
+
+	await expect.poll(() => page.url()).toMatch(/\?owner=user&group=owner$/);
+
+	await page.reload();
+	await hydrated(page);
+	await expect(page.locator('#board-owner')).toHaveValue('user');
+	await expect(page.locator('#board-group')).toHaveValue('owner');
+	expect(await laneSummary(page)).toEqual({ keys: ['user'], counts: ['3'] });
+});
+
+test('a filtered link never shows the unfiltered board', async ({ page }) => {
+	// Hydration is async and may finish before or after DOMContentLoaded, so at
+	// DOMContentLoaded the board is either still marked pending and hidden, or
+	// already unmarked and showing only the filtered lane.
+	await page.addInitScript(() => {
+		document.addEventListener('DOMContentLoaded', () => {
+			const body = document.querySelector('.plan-board__body');
+
+			(window as unknown as { atReady: unknown }).atReady = {
+				body: body !== null,
+				pending: document.documentElement.hasAttribute('data-board-pending'),
+				visibility: body ? getComputedStyle(body).visibility : null,
+				lanes: [...document.querySelectorAll('[data-lane]')].map((element) => element.getAttribute('data-lane')),
+			};
+		});
+	});
+	await page.goto('/plan/board/?owner=user&group=owner');
+	await hydrated(page);
+
+	const atReady = (await page.evaluate(() => (window as unknown as { atReady: unknown }).atReady)) as { body: boolean; pending: boolean; visibility: string | null; lanes: string[] };
+
+	expect(atReady.body).toBe(true);
+	if (atReady.pending) expect(atReady.visibility).toBe('hidden');
+	else expect(atReady.lanes).toEqual(['user']);
+
+	await expect(page.locator('html')).not.toHaveAttribute('data-board-pending');
+	expect(await laneSummary(page)).toEqual({ keys: ['user'], counts: ['3'] });
+	await expect(page.locator('[data-card]:visible')).toHaveCount(3);
+	await expect(page.locator('.plan-board__body')).toHaveCSS('visibility', 'visible');
+});
+
+test('junk in the URL gives the default board', async ({ page }) => {
+	const errors: Error[] = [];
+
+	page.on('pageerror', (error) => errors.push(error));
+	await page.goto('/plan/board/?owner=boss&size=XL&group=sideways&milestone=M9');
+	await hydrated(page);
+
+	await expect(page.locator('html')).not.toHaveAttribute('data-board-pending');
+	await expect(page.locator('[data-card]:visible')).toHaveCount(9);
+	await expect(page.locator('.plan-lane__header')).toHaveCount(0);
+	await expect(page.locator('#board-group')).toHaveValue('none');
+	expect(errors).toEqual([]);
+});
+
+test('a collapsed column collapses in every lane', async ({ page }) => {
+	await page.setViewportSize({ width: 1440, height: 900 });
+	await openBoard(page);
+	await page.selectOption('#board-group', 'owner');
+	await page.locator('[data-column="done"] .plan-column__toggle').click();
+
+	const check = async () => {
+		const cells = page.locator('[data-lane-column="done"]');
+
+		await expect(cells).toHaveCount(4);
+		for (const cell of await cells.all()) {
+			await expect(cell.locator('[data-card]:visible')).toHaveCount(0);
+			expect((await cell.boundingBox())!.width).toBeLessThan(64);
+		}
+	};
+
+	await check();
+	await page.reload();
+	await hydrated(page);
+	await expect(page.locator('#board-group')).toHaveValue('owner');
+	await check();
+});
+
+test('a card in a lane opens its popup', async ({ page }) => {
+	await openBoard(page);
+	await page.selectOption('#board-group', 'milestone');
+	await page.locator('[data-lane="M1"] a.plan-item-link[data-item="R-022"]').click();
+	const dialog = page.locator('dialog[data-item-dialog]');
+
+	await expect(dialog).toHaveAttribute('open', '');
+	await expect(dialog.locator('#plan-dialog-title')).toHaveText('R-022 Usage-based pricing tiers');
+});
+
 test('the board hydrates with no page errors', async ({ page }) => {
 	const errors: Error[] = [];
 
