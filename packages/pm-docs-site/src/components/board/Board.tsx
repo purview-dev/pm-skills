@@ -183,7 +183,7 @@ export default function Board({ cards, milestones }: Props) {
 				/>
 				<Filter
 					id="board-rag"
-					label="Risk"
+					label="RAG"
 					value={state.filters.rag}
 					options={[
 						{ value: 'red', label: 'red' },

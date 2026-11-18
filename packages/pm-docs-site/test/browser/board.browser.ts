@@ -106,6 +106,12 @@ for (const { filter, attribute, counts } of FILTERS) {
 	});
 }
 
+test('the filter labels name what they filter, as the docs do', async ({ page }) => {
+	await openBoard(page);
+
+	expect(await page.locator('.plan-board__filter label').allTextContents()).toEqual(['Owner', 'Milestone', 'Size', 'RAG', 'Group by']);
+});
+
 test('filters combine', async ({ page }) => {
 	await openBoard(page);
 	await page.selectOption('#board-owner', 'user');
