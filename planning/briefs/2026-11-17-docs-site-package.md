@@ -1,6 +1,6 @@
 # Docs site as a versioned package
 
-- Status: on roadmap (R-010, R-011, R-012, R-013), active (R-010)
+- Status: on roadmap (R-011, R-012, R-013)
 - Origin: user request
 - Updated: 2026-11-18
 
@@ -111,3 +111,4 @@ Proposed: Serves V4. Milestone: none (no milestones exist until R-001 Set milest
 - 2026-11-17 R-008 Docs-site package: skeleton at parity done on branch feat/r-008-docs-site-package-skeleton. Scope agreed during it: parity is the same page set, not the same content (page content may change as the package improves); a pack-and-install test proves an installed consumer builds. Design: docs/superpowers/specs/2026-11-17-docs-site-package-skeleton-design.md.
 - 2026-11-17 R-009 Docs-site package: backlinks everywhere done on branch feat/r-009-docs-site-package-backlinks. Scope agreed during it: Board and Roadmap cards open a detail popup whose `Open page` link (and ctrl-click) reaches the item page; any Board column collapses and is remembered in localStorage; every page is full width; each open and closed risk has its own page; `Linked from` groups by relation, with index views under `Listed on`. Design: docs/superpowers/specs/2026-11-17-docs-site-package-backlinks-design.md.
 - 2026-11-18 Keep the slices on the roadmap as revised. R-010, R-011, and R-012 stay in Later and do not bump the package version; R-013 migrates `docs-site/` and the `pm-docs-site` skill and releases `1.0.0`; R-014 closes with its restated `Done when` (with `pm-item`). Reason: `0.1.0-pre.1` was published early to set up trusted publishing, and the user chose to hold every further release until the views are complete.
+- 2026-11-18 R-010 Docs-site package: board filters and swimlanes done on branch feat/r-010-docs-site-package-board-filters-and-swimlanes. Scope agreed during it: every docs-site view is a rich interactive component, so the Board is a server-rendered React island (React, not Preact, so R-011 and R-012 can use React-first libraries), replacing the Performance row's "static HTML first"; new code is TypeScript only; a card's RAG is the worst of the open, mitigating, or accepted risks whose `Affects` names it; filter and group state live in the URL; a filtered link hides the board until the island applies it, with a 3s reveal so it is never blank; the integration pre-bundles `react-dom/client` so `pm-docs-site dev` hydrates on a packed install. Design: docs/superpowers/specs/2026-11-18-docs-site-package-board-filters-design.md.
