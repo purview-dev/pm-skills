@@ -2,8 +2,9 @@
 // The pm-docs-site Astro integration. The consumer's astro.config.mjs holds
 // only `integrations: [pmDocsSite({ title, ... })]`: this points Astro's srcDir
 // at the package's own src/ (pages, components, content config), adds
-// Starlight with the plan sidebar, and serves the resolved options to the pages
-// as `virtual:pm-docs-site/config`.
+// Starlight with the plan sidebar, adds React so pages can render `.tsx` islands with
+// no consumer config, and serves the resolved options to the pages as
+// `virtual:pm-docs-site/config`.
 
 import { fileURLToPath } from 'node:url';
 
