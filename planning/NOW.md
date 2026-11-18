@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-017 Docs-site package: in-repo dev hydrates
 - Session: feat/r-017-docs-site-package-in-repo-dev-hydrates
-- Stage: plan
+- Stage: execute
 - Brief:
 - Milestone: M1
 - Spec: docs/superpowers/specs/2026-11-18-docs-site-package-in-repo-dev-design.md
@@ -33,7 +33,7 @@ Active example:
 - Status: active
 - Item: R-007 Tenant billing
 - Session: feat/r-007-tenant-billing (worktree ../saas-r-007)
-- Stage: plan
+- Stage: execute
 - Brief: planning/briefs/R-007-tenant-billing.md
 - Milestone: M1
 - Spec: docs/superpowers/specs/<file>.md

@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T22:27:15+00:00",
+  "generatedAt": "2026-11-18T22:31:59+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-017-docs-site-package-in-repo-dev-hydrates",
-    "head": "249cb60110603db55b3441c4220851bd7d0c5452"
+    "head": "94781ac3a055cbe2e6b91bbf82a187f850574e60"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -182,7 +182,7 @@
       "id": "R-017",
       "title": "Docs-site package: in-repo dev hydrates"
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-017-docs-site-package-in-repo-dev-hydrates",
     "brief": null,
     "milestone": "M1",
@@ -413,7 +413,7 @@
           "title": "Docs-site package: in-repo dev hydrates",
           "owner": null,
           "size": null,
-          "detail": "plan"
+          "detail": "execute"
         }
       ],
       "next": [
