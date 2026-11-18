@@ -57,6 +57,13 @@ export default {
 Write `planning.json` with `pm-export` first; the site reads the export only, never the Markdown
 planning files.
 
+## The board
+
+The Board is a React island: filter it by owner, milestone, size, and RAG, and group it into lanes
+by milestone or by owner. Filter and group state live in the URL
+(`/plan/board/?owner=user&milestone=M2&group=milestone`), so a filtered or grouped board can be
+linked. The integration adds `@astrojs/react` itself, so a site is still three files.
+
 ## Options
 
 | Option | Default | Meaning |
