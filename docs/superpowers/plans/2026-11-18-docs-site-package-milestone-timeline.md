@@ -1,6 +1,6 @@
 # R-011 Docs-site package: milestone timeline — Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Add a milestone timeline to the Roadmap page of `@purview-dev/pm-docs-site`. It is a strip of milestone cards in strategy order, with status, target, progress, and a link per card. The strip has a horizontal or vertical layout kept in the URL, scrolls natively, and zooms from 50% to 200%. The Roadmap, timeline, and Milestones pages share one progress derivation.
 
@@ -91,7 +91,7 @@
   export function timelineMilestones(planning: Planning, known: Map<string, { href: string | null }>): TimelineMilestone[];
   ```
 
-- [ ] **Step 1: Write the failing tests** in `test/timeline.test.ts`. Load the fixture the way `test/planning.test.ts` does (`FIXTURE`). Build `known` with `targets(planning, ALL_VIEWS)`; take `ALL_VIEWS` from `test/links.test.ts`, or define every view `true`. Tests:
+- [x] **Step 1: Write the failing tests** in `test/timeline.test.ts`. Load the fixture the way `test/planning.test.ts` does (`FIXTURE`). Build `known` with `targets(planning, ALL_VIEWS)`; take `ALL_VIEWS` from `test/links.test.ts`, or define every view `true`. Tests:
   - `parseMilestoneStatus`:
     - `'active'` → `{ state: 'active', label: 'active', doneOn: null }`
     - `'planned'` → `{ state: 'planned', label: 'planned', doneOn: null }`
@@ -110,12 +110,12 @@
   - "has no href when the milestone has no page": with `targets(planning, { …ALL_VIEWS, milestones: false })`, every `href` is `null`.
   - "hides No milestone when its only items are dropped": use a minimal planning object, shaped like `keeps milestones with no items` in `planning.test.ts` but with every field `features()` reads. It has M9 with no items and `log.dropped: [{ id: 'R-099', … }]`. The keys are `['M9']`, and M9's progress is `{ done: 0, total: 0, percent: 0 }`.
 
-- [ ] **Step 2: Run the tests and check they fail**
+- [x] **Step 2: Run the tests and check they fail**
 
   Run: `bun test test/timeline.test.ts`
   Expected: FAIL, because the module `../src/lib/timeline` is not found.
 
-- [ ] **Step 3: Implement the three functions in `src/lib/timeline.ts`.**
+- [x] **Step 3: Implement the three functions in `src/lib/timeline.ts`.**
   - `timelineMilestones` maps `milestoneSummaries(planning)`.
   - It drops the summary with `id === null` when `progress.total === 0`.
   - `href` is `known.get(key)?.href ?? null`.
@@ -123,12 +123,12 @@
   - The status regex for done is `/^done(?:\s*\((\d{4}-\d{2}-\d{2})\))?$/i`.
   - Set M2's fixture target to `2026-12-15`.
 
-- [ ] **Step 4: Run the tests and check they pass**
+- [x] **Step 4: Run the tests and check they pass**
 
   Run: `bun test`
   Expected: all PASS. The fixture target change must not break `links`, `references`, or `board-data`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
   ```bash
   git add packages/pm-docs-site/src/lib/timeline.ts packages/pm-docs-site/test/timeline.test.ts packages/pm-docs-site/test/fixtures/planning.json
@@ -148,18 +148,18 @@
 - Consumes: `milestoneSummaries` (same file).
 - Produces: `RoadmapGroup.milestone` gains `target: string | null`, already normalised with `normaliseTarget` (Task 1; it lives in `planning.ts`, so there is no import cycle). `progress` equals the matching `MilestoneSummary.progress`.
 
-- [ ] **Step 1: Write the failing tests** in the `roadmapGroups` describe block:
+- [x] **Step 1: Write the failing tests** in the `roadmapGroups` describe block:
   - "takes progress from milestoneSummaries": for every group, `group.progress` equals `milestoneSummaries(planning).find(s => s.id === (group.milestone?.id ?? null))!.progress`.
   - "lists an item once, in the state features() counts": take a minimal planning object with M9. It has `log.done` R-050 (milestone M9), `roadmap.later` R-050 (milestone M9), and `log.done` with an ID-less entry (milestone M9). `features()` keeps Now, then Next/Later, then Done (planning.ts:314), so M9's events are the ID-less entry (`done`) and R-050 (`pending`, time `Later`), in that order, and its progress is `{ done: 0, total: 1 }`.
   - "exposes the target": M2's group has `milestone.target === '2026-12-15'`, and M1's is `null`.
   - Keep the existing tests unchanged. They must still pass: `{1,4}`, `{1,3}`, `{2,5}`, and the event lists.
 
-- [ ] **Step 2: Run the tests and check they fail**
+- [x] **Step 2: Run the tests and check they fail**
 
   Run: `bun test test/planning.test.ts`
   Expected: FAIL on de-duplication and `target`.
 
-- [ ] **Step 3: Change `roadmapGroups`.**
+- [x] **Step 3: Change `roadmapGroups`.**
   - Build `eventsFor` as today.
   - Filter it so that each non-null `id` appears once, keeping the event whose state matches `features()` precedence: Now (`active`), then Next/Later (`pending`), then Done (`done`).
   - Keep the event order otherwise: Done, then Now, then queued.
@@ -168,12 +168,12 @@
   - Delete `withProgress` if nothing else uses it.
   - In `roadmap.astro`, add `· target {group.milestone.target}` (with a leading space) after the status when the target is set.
 
-- [ ] **Step 4: Run the tests and check they pass**
+- [x] **Step 4: Run the tests and check they pass**
 
   Run: `bun test`
   Expected: all PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
   ```bash
   git add packages/pm-docs-site/src/lib/planning.ts packages/pm-docs-site/src/pages/plan/roadmap.astro packages/pm-docs-site/test/planning.test.ts
@@ -202,7 +202,7 @@
   export function wheelScrollsStrip(e: { deltaX: number; deltaY: number }, s: { scrollLeft: number; scrollWidth: number; clientWidth: number }): boolean;
   ```
 
-- [ ] **Step 1: Write the failing tests:**
+- [x] **Step 1: Write the failing tests:**
   - `parseTimelineQuery`:
     - `''`, `'?layout=horizontal'`, and `'?layout=VERTICAL&x=1'` → `'horizontal'`. Only the exact `vertical` counts.
     - `'?layout=vertical'` and `'?x=1&layout=vertical'` → `'vertical'`.
@@ -230,22 +230,22 @@
     - no overflow (`scrollWidth` 500) → `false`;
     - a mostly sideways gesture (`deltaX` 100, `deltaY` 10) → `false`, because native scrolling already handles it.
 
-- [ ] **Step 2: Run the tests and check they fail**
+- [x] **Step 2: Run the tests and check they fail**
 
   Run: `bun test test/timeline.test.ts`
   Expected: FAIL, because the new exports are missing.
 
-- [ ] **Step 3: Implement the functions.**
+- [x] **Step 3: Implement the functions.**
   - `timelineQuery` uses `URLSearchParams`, deletes `layout`, then appends it last when the layout is vertical.
   - `zoomFromWheel`: when `deltaMode !== 0` or `|deltaY| >= PINCH_STEP`, step once in the direction `deltaY < 0 ? 1 : -1` and reset `pending` to 0. Otherwise add `deltaY` to `pending`. While `|pending| >= PINCH_STEP`, step once and subtract `sign * PINCH_STEP`. At a limit, `zoomStep` simply holds the value.
   - Allow `±1px` of tolerance at the end in `wheelScrollsStrip`.
 
-- [ ] **Step 4: Run the tests and check they pass**
+- [x] **Step 4: Run the tests and check they pass**
 
   Run: `bun test`
   Expected: all PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
   ```bash
   git add packages/pm-docs-site/src/lib/timeline.ts packages/pm-docs-site/test/timeline.test.ts
@@ -281,7 +281,7 @@
   - one card per milestone, `li.plan-timeline__card`, with `data-milestone={key}` and `data-state={status.state}`;
   - the title is an `<a>` when `href` is set, or a `<span>` when it is not.
 
-- [ ] **Step 1: Write the failing browser tests** in `test/browser/timeline.browser.ts`. Follow `board.browser.ts`. Add a `hydrated(page)` helper that waits for `.plan-timeline__toolbar` to be visible. Tests:
+- [x] **Step 1: Write the failing browser tests** in `test/browser/timeline.browser.ts`. Follow `board.browser.ts`. Add a `hydrated(page)` helper that waits for `.plan-timeline__toolbar` to be visible. Tests:
   - "each card links to its milestone page": the cards are `M1`, `M2`, and `none`, in order. M1's link `href` is `/plan/milestones/m1/`. M2 shows `Focus`, `active`, `2026-12-15`, and `1 of 4 done`. M1 shows `No target`.
   - "the toggle switches layout and keeps other parameters": go to `/plan/roadmap/?x=1#top`. Click `Top to bottom`. Then:
     - the strip has `data-layout="vertical"`;
@@ -304,18 +304,18 @@
   - "a plain wheel at the strip's end scrolls the page": in the same setup, set the strip's `scrollLeft` to its maximum, then `mouse.wheel(0, 200)`. `window.scrollY` increases.
   - "usable at 320px": at viewport `320×800`, `document.documentElement.scrollWidth <= 320`, and the strip and toolbar are visible.
 
-- [ ] **Step 2: Build the fixture site and run the tests to check they fail**
+- [x] **Step 2: Build the fixture site and run the tests to check they fail**
 
   Run: `bun run test:browser -- --project chromium test/browser/timeline.browser.ts`
   Expected: FAIL, because `.plan-timeline` is not found.
 
-- [ ] **Step 3: Implement `useTimelineLayout`.**
+- [x] **Step 3: Implement `useTimelineLayout`.**
   - It mirrors `useBoardUrlState`. The first render is `'horizontal'` and `applied` starts `false`.
   - On mount, it reads `parseTimelineQuery(location.search)` and sets `applied`.
   - After each applied render, it deletes `document.documentElement.dataset.timelinePending`.
   - When the URL differs, it runs `history.replaceState(history.state, '', location.pathname + timelineQuery(layout, location.search) + location.hash)`.
 
-- [ ] **Step 4: Implement `Timeline.tsx`.**
+- [x] **Step 4: Implement `Timeline.tsx`.**
   - Zoom is `useState(ZOOM.default)`, and `pending` is a `useRef(0)`.
   - Attach the wheel listener to the strip in an effect with `addEventListener('wheel', fn, { passive: false })`:
     - with `ctrlKey || metaKey`, call `preventDefault()` and run `zoomFromWheel`;
@@ -332,7 +332,7 @@
     - `<progress max={total} value={done}>`, rendered only when `total > 0`.
   - Hide the status and target lines for the `none` card.
 
-- [ ] **Step 5: Write `timeline.css`.**
+- [x] **Step 5: Write `timeline.css`.**
   - Size the card width (base `14rem`), padding, font size, and bar height with `calc(<base> * var(--timeline-zoom, 1))`.
   - `[data-layout="horizontal"]`: `display: flex; overflow-x: auto`, a connector line between cards, and fixed height (no `max-height` on vertical).
   - `[data-layout="vertical"]`: `flex-direction: column`, no overflow box.
@@ -340,13 +340,13 @@
   - Add `:root[data-timeline-pending] .plan-timeline__strip { visibility: hidden; animation: plan-timeline-reveal 0s 3s forwards; }` with its keyframes to `visibility: visible`.
   - Use Starlight colour variables only.
 
-- [ ] **Step 6: Wire `roadmap.astro`.**
+- [x] **Step 6: Wire `roadmap.astro`.**
   - Import `timeline.css` and `Timeline`.
   - Compute `timelineMilestones(loadPlanning(), siteRefs().known)` and render `<Timeline client:load milestones={…} />` after `<ExportStamp />`.
   - Add an `<script is:inline>` that sets `document.documentElement.dataset.timelinePending = ''` when `new URLSearchParams(location.search).get('layout') === 'vertical'`. It lives in this page only, so the mark is scoped to the Roadmap page.
   - Add the README section: what the strip shows, `?layout=vertical`, the zoom controls (buttons, Ctrl/Cmd + wheel, pinch), and that zoom is not kept in the URL.
 
-- [ ] **Step 7: Run every check and confirm it passes**
+- [x] **Step 7: Run every check and confirm it passes**
 
   Run each of these:
   - `bun run test:browser -- --project chromium`
@@ -355,7 +355,7 @@
 
   Expected: all PASS, including the existing `board`, `popup`, and `width` browser tests, and `0 errors` from astro-check.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
   ```bash
   git add packages/pm-docs-site/src/components/timeline packages/pm-docs-site/src/styles/timeline.css packages/pm-docs-site/src/pages/plan/roadmap.astro packages/pm-docs-site/README.md packages/pm-docs-site/test/browser/timeline.browser.ts
@@ -366,16 +366,16 @@
 
 **Files:** none, unless a check fails.
 
-- [ ] **Step 1: Run the full package suite, including the `dev` project.**
+- [x] **Step 1: Run the full package suite, including the `dev` project.**
 
   Run: `cd packages/pm-docs-site && bun run test:browser`
   Expected: all PASS. This includes `dev.browser.ts`, which checks that the island hydrates on a packed install.
 
-- [ ] **Step 2: Run the repository checks.**
+- [x] **Step 2: Run the repository checks.**
 
   Run: `just lint-check` and `just docs-check`
   Expected: both PASS (Markdown lint, validate, `bun test`, pm-lint, and the docs-site test, check, and build).
 
-- [ ] **Step 3: Check the Done when by hand.**
+- [x] **Step 3: Check the Done when by hand.**
 
   Build the package's fixture site the way `test/browser/serve.mjs` does, then open `/plan/roadmap/`. Every milestone card shows its target, status, and progress, and links to its milestone page. Record the command and its result in the commit body, if a fix commit is needed.
