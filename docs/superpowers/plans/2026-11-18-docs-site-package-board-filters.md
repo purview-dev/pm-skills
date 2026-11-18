@@ -14,6 +14,7 @@
 
 - Work in `packages/pm-docs-site/` on `feat/r-010-docs-site-package-board-filters-and-swimlanes`; no new branch or worktree.
 - Do not change the package `version` (`0.1.0-pre.1`).
+- TypeScript always: every new file is `.ts` or `.tsx` (modules, components, tests); never add `.js`, `.mjs`, or `.jsx`. Two existing exceptions are edited in place, not converted: `index.mjs` (a published entry point Node loads with no build step, kept `// @ts-check` with JSDoc types) and the `is:inline` script in `PlanInteractions.astro` (Astro does not process inline scripts, and it must run before paint).
 - Exact-pin new dependencies (no `^` or `~`), like the existing ones; update `bun.lock` with `bun install`.
 - `planning.json` `schemaVersion` 3 unchanged; derive everything from fields the export already has.
 - Card RAG = worst of `red` > `amber` > `green` over `planning.risks.open` (statuses open, mitigating, accepted) whose `affects === card id`; otherwise `none`. Closed risks and milestone-level risks never colour a card.
