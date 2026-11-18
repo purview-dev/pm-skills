@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T14:31:44+00:00",
+  "generatedAt": "2026-11-18T14:55:42+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-011-docs-site-package-milestone-timeline",
-    "head": "91fc97a0e22c57acf7c2dffd180e5b749d4101d1"
+    "head": "54fa85c7650ec66e37cb7fa4ecad63a07c36b2c1"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -164,11 +164,11 @@
       "id": "R-011",
       "title": "Docs-site package: milestone timeline"
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-011-docs-site-package-milestone-timeline",
     "brief": "planning/briefs/2026-11-17-docs-site-package.md",
     "milestone": "M1",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-18-docs-site-package-milestone-timeline-design.md",
     "plan": null,
     "started": "2026-11-18",
     "doneWhen": [
@@ -319,7 +319,7 @@
           "title": "Docs-site package: milestone timeline",
           "owner": null,
           "size": null,
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [],
@@ -781,6 +781,21 @@
       "brief": "planning/briefs/2026-11-17-docs-site-package.md",
       "reviewed": "never",
       "idea": "Minor findings from R-010's task and final reviews, triaged \"can wait\":\n\n- The 3s reveal of a pending board also fires on a slow but successful hydration (brief unfiltered view, then the filtered one); say so in `components.css` and the `useBoardUrlState.ts` header, or tune it.\n- The pending mark is also set on `/plan/roadmap/?owner=...` (inert today); scope it to the Board page when R-011 adds Roadmap filters.\n- `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`.\n- The lane header is a plain `div`; an `h3` or `role=\"heading\"` would make lanes navigable.\n- Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed.\n- The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page; watch it for R-011 and R-012.\n- A collapsed column's vertical title stretches the shared header row.\n- `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab` (suggests drag and drop); its header comment lists only some changes.\n- `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array.\n- `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id` (key fallback, `href: null`, and the Done-tag rule untested); `tagHref` never asserted.\n- `integration.test.ts` asserts the integration names two ways.\n- `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`.\n- The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP."
+    },
+    {
+      "file": "planning/inbox/2026-11-18-1455-milestones-page-empty-no-milestone-card.md",
+      "title": "Milestones page shows empty No milestone card",
+      "captured": "2026-11-18 14:55",
+      "source": "agent (R-011 design)",
+      "kind": "bug",
+      "severity": "cosmetic",
+      "affects": "packages/pm-docs-site/src/routes/plan/milestones/index.astro",
+      "context": "R-011 design",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "`features()` gives dropped items `milestone: null`, so `milestoneSummaries` keeps the `No milestone` group whenever anything was dropped, and the Milestones page shows a `No milestone` card reading `0 of 0 done`. R-011 hides that card on the timeline and the Roadmap page only; the Milestones page keeps it."
     }
   ],
   "briefs": [
@@ -806,7 +821,7 @@
     "next": 0,
     "later": 5,
     "nextMax": 5,
-    "openInbox": 14,
+    "openInbox": 15,
     "discuss": 2,
     "shapingBriefs": 0,
     "done": 6,
@@ -821,6 +836,6 @@
     "reviewDue": true,
     "lastReview": "never",
     "claimable": [],
-    "drift": true
+    "drift": false
   }
 }
