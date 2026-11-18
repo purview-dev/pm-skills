@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T09:11:48+00:00",
+  "generatedAt": "2026-11-18T09:19:46+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-010-docs-site-package-board-filters-and-swimlanes",
-    "head": "af9736e482ed659dab1de26e01c782c93d312e57"
+    "head": "273c880a0714131f772a7e2ca1bc0cae3d11fb60"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -164,19 +164,233 @@
       "id": "R-010",
       "title": "Docs-site package: board filters and swimlanes"
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-010-docs-site-package-board-filters-and-swimlanes",
     "brief": "planning/briefs/2026-11-17-docs-site-package.md",
     "milestone": "M1",
     "spec": "docs/superpowers/specs/2026-11-18-docs-site-package-board-filters-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-18-docs-site-package-board-filters.md",
     "started": "2026-11-18",
     "doneWhen": [
       "browser tests show that filtering the fixture Board by owner, milestone, size, and RAG leaves only matching cards, and that grouping by milestone and by owner renders one lane per group."
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-18-docs-site-package-board-filters.md",
+    "checked": 0,
+    "total": 38,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "React in the integration",
+        "checked": 0,
+        "total": 6,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing test** `it('adds React with Starlight, so islands need no consumer config')` in `test/integration.test.ts`: call `pmDocsSite({ title: 'T' }).hooks['astro:config:setup']` with a fake `{ config: { root: <fixture site URL> }, updateConfig, injectRoute }`, capture the object passed to `updateConfig`, and assert `integrations.map((i) => i.name)` contains both `'@astrojs/starlight'` and `'@astrojs/react'`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run** `bun test test/integration.test.ts` — expected FAIL (no `@astrojs/react`).",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Add dependencies** `@astrojs/react`, `react`, `react-dom` (dependencies) and `@types/react`, `@types/react-dom` (devDependencies), exact versions compatible with `astro` 7.4.8 (purview-dev/astroc4 uses `@astrojs/react` 7.x with Astro 7.4); run `bun install`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Add** `\"jsx\": \"react-jsx\"` and `\"jsxImportSource\": \"react\"` to `compilerOptions` in `tsconfig.json`; in `index.mjs` import `react` from `@astrojs/react` and append `react()` after `starlight(...)` in the same `integrations` array.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Run** `bun test` and `bun run check` — expected PASS, 0 errors. `test/install.test.ts` (packed tarball outside the repo) must pass, proving React resolves from the package; if it fails on resolution, add the React packages to the integration's Vite `ssr.noExternal` handling next to `NO_EXTERNAL`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Commit** `build(pm-docs-site): add React islands to the integration`",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "Board model (pure)",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** in `test/board.test.ts`, with a small inline `card()` factory:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run** `bun test test/board.test.ts` — expected FAIL (module missing).",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement** `src/lib/board.ts` to the interface above.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run** `bun test test/board.test.ts` and `bun run check` — expected PASS, 0 errors.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit** `feat(pm-docs-site): board filter, lane, and query model`",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "Fixture coverage",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Add** R-021 to R-024 to `roadmap.next` (R-021, R-023 `owner: user`; R-024 `label: waiting`, `dependsOn: ['R-022']`) and to `board.columns` as above; add R-025 to `log.done` (newest first) and `board.columns.done`; add RK-006 to RK-009 to `risks.open` and RK-010 to `risks.closed`, each with `rag` equal to its derived value; update every `counts` field the additions change.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Validate** `bun ../../skills/pm-export/scripts/export.ts validate test/fixtures/planning.json` — expected: valid.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Add** the new pages to `expected-pages.txt` (`plan/features/r-021/index.html` … `r-025`, `plan/risks/rk-006/index.html` … `rk-010`), sorted like the existing lines.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run** `bun test` — expected PASS (existing assertions on the fixture that count items or risks are updated to the new totals, not weakened).",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit** `test(pm-docs-site): fixture board covers every owner, milestone, size, and RAG`",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "Board data at build time",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** against the Task 3 fixture: 9 cards; per column the IDs of the table in Task 3; R-012 has `owner: null`, `size: null`, `milestone: null`, `tag: 'No milestone'`, `rag: 'amber'`, `progress` equal to `planProgress(fixture.plan)`; R-021 `rag: 'none'`; R-025 `milestone: 'M1'`, `size: null`, `rag: 'green'`; R-024's `detail` has a run with text `R-022` and a non-null `href`; every `key` is unique.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run** `bun test test/board-data.test.ts` — expected FAIL.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement** `boardCards`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run** `bun test` and `bun run check` — expected PASS, 0 errors.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit** `feat(pm-docs-site): build the board's cards from planning.json`",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 5,
+        "title": "The Board island (filters, collapse, popup)",
+        "checked": 0,
+        "total": 7,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing browser tests** in `board.browser.ts` (keep the three existing tests):",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run** `bun run test:browser` — expected the new tests FAIL, the three existing ones PASS.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Port** `KanbanItemCard.astro` and `TaskKanbanCard.astro` to `KanbanItemCard.tsx` and `TaskKanbanCard.tsx` with the same class names and markup, except: the pill shows the size (`S`, `M`, `L`; colours S `#059669`, M `#d97706`, L `#dc2626` from the kit's low/medium/high) and is omitted when size is null; a RAG dot (`.k-item__rag[data-rag]`, `aria-label=\"RAG <value>\"`) beside it, omitted for `none`; the wrapper has no `tabindex` and no `role`. Move their styles into `src/styles/kanban.css` (plus the RAG dot, using `--sl-color-red`, `--sl-color-orange`, `--sl-color-green`). `LinkRuns.tsx` renders `LinkRun[]` as text and `<a href title>` like `LinkedText.astro`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Implement** `Board.tsx` to the DOM contract (lane `all` only in this task). Collapse: read the stored set on mount with the same junk tolerance as `readCollapsed` in `plan.ts`, toggle on header click, write storage, and set `document.documentElement.dataset.boardCollapsed`; extend the collapse selectors in `components.css` to `[data-lane-column]` cells (cards hidden, narrow) alongside `[data-column]`. Ungrouped, the header cell and its cards cell read as one column (shared border and background).",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Wire** `board.astro`: render `<Board client:load cards={boardCards(planning, known)} milestones={…} />` inside `.plan-columns not-content`, keep `ExportStamp`, `PlanInteractions`, `ItemDialog`, and one `ItemDetail` per card with an `href` outside the island; import `kanban.css`. Remove the collapse code from `src/scripts/plan.ts`, keeping the popup handling (the Roadmap and Board share it) and `STORAGE_KEY` export if `PlanInteractions.astro`'s comment references it.",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Run** `bun run test:browser`, `bun test`, `bun run check` — expected all PASS, 0 errors (including the 1440/1024/700px one-row test and the collapse tests).",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Commit** `feat(pm-docs-site): board filters in a React island`",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 6,
+        "title": "Lanes, URL state, and no flash",
+        "checked": 0,
+        "total": 6,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing browser tests:**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run** `bun run test:browser` — expected the new tests FAIL.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement** lanes in `Board.tsx` (`lanes(visibleCards, state.group, milestones)`; lane header and count only when grouped), state from `parseBoardQuery(location.search, …)` on mount, and `history.replaceState(null, '', location.pathname + boardQuery(state) + location.hash)` on change.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Add the pending mark:** in `PlanInteractions.astro`'s inline script, set `document.documentElement.dataset.boardPending = ''` when `location.search` has any of `owner`, `milestone`, `size`, `rag`, `group`; in `components.css`, `:root[data-board-pending] .plan-board__body { visibility: hidden; }` (`.plan-board__body` wraps the header row and lanes); the island deletes the mark after its first render with the parsed state (in `useEffect`, after the state is applied).",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Run** `bun run test:browser`, `bun test`, `bun run check` — expected all PASS, 0 errors.",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Commit** `feat(pm-docs-site): board swimlanes and shareable filter URLs`",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 7,
+        "title": "Docs and whole-package verification",
+        "checked": 0,
+        "total": 4,
+        "steps": [
+          {
+            "text": "**Step 1: Document** the Board's filters, grouping, and URL parameters (`owner`, `milestone`, `size`, `rag`, `group`, `none`) in both files; note that the integration adds `@astrojs/react`, so consumer sites stay three files.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run** from the repository root: `just package-test` — expected PASS (install, `bun test` including the packed-install test, `bun run check`, browser tests); `bunx markdownlint-cli2 packages/pm-docs-site/README.md docs/wiki/guide/Docs-Site-Package.md` — 0 issues; `bun scripts/validate.ts` — OK; `bun scripts/check-version.ts origin/main` — `pm-docs-site 0.1.0-pre.1`, unchanged.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Check dev hydration by hand:** in a scratch copy of the fixture site (as `test/browser/serve.mjs` builds it), run `pm-docs-site dev`, open `/plan/board/?group=owner`, and confirm lanes render and a filter works with no console error. Record the result in the commit body.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Commit** `docs(pm-docs-site): board filters, lanes, and linkable views`",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [],
     "later": [
@@ -345,7 +559,7 @@
           "title": "Docs-site package: board filters and swimlanes",
           "owner": null,
           "size": null,
-          "detail": "plan"
+          "detail": "execute, 0/38 plan steps"
         }
       ],
       "next": [],
@@ -717,6 +931,21 @@
       "brief": "planning/briefs/2026-11-17-docs-site-package.md",
       "reviewed": "never",
       "idea": "The brief (2026-11-18) decided R-013 releases stable `1.0.0`, but R-013's `Done when` says \"returns the released version\" and M1 Reproducible docs site's exit criterion says \"`npm view @purview-dev/pm-docs-site version` returns a version\", which `0.1.0-pre.1` already satisfies. Name `1.0.0` in both: `pm-item edit R-013` and `pm-strategy` for M1."
+    },
+    {
+      "file": "planning/inbox/2026-11-18-0925-pm-docs-site-mjs-to-typescript.md",
+      "title": "Convert the pm-docs-site package's .mjs files to TypeScript",
+      "captured": "2026-11-18 09:25",
+      "source": "agent (R-010 plan)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site",
+      "context": "R-010 plan",
+      "discuss": "yes",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "The user's rule (2026-11-18): TypeScript always, never JavaScript. The package still has ten JavaScript files: `index.mjs`, `cli.mjs`, `lib/options.mjs`, `lib/repo-docs.mjs`, `lib/schema-version.mjs`, `lib/sidebar.mjs`, `lib/site-options.mjs`, `scripts/check-exports.mjs`, `test/browser/serve.mjs`, and `test/fixtures/site/astro.config.mjs` (all `// @ts-check`). R-010 edits `index.mjs` in place and adds only `.ts`/`.tsx`. Converting the rest needs a decision: Node refuses to strip types from files under `node_modules` (`ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING`), so a published `cli.ts`/`index.ts` needs a build step that emits JavaScript into the tarball (and `files`, `exports`, `bin`, the packed-install test, and `check-exports` change with it), or a supported loader. The repository's own `scripts/` are already `.ts` run by Bun."
     }
   ],
   "briefs": [
@@ -742,8 +971,8 @@
     "next": 0,
     "later": 6,
     "nextMax": 5,
-    "openInbox": 10,
-    "discuss": 1,
+    "openInbox": 11,
+    "discuss": 2,
     "shapingBriefs": 0,
     "done": 5,
     "dropped": 4,
