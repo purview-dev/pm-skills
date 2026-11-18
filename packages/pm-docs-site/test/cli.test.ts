@@ -33,7 +33,7 @@ describe('pm-docs-site build', () => {
 		'leaves out the pages of views that are off',
 		() => {
 			const dir = scratchFixture('views-');
-			writeFileSync(join(dir, 'site', 'astro.config.mjs'), siteConfig(`{ title: 'Views', planning: '../planning.json', views: ['now'] }`));
+			writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'Views', planning: '../planning.json', views: ['now'] }`));
 
 			const result = runCli(['build', join(dir, 'site')]);
 			const pages = htmlPages(join(dir, 'site', 'dist'));
@@ -44,6 +44,20 @@ describe('pm-docs-site build', () => {
 				expect(pages.filter((page) => page.startsWith(`plan/${view}/`))).toEqual([]);
 			}
 			expect(pages.filter((page) => page.startsWith('docs/'))).toEqual([]);
+		},
+		BUILD,
+	);
+
+	it(
+		'still reads a site whose config is astro.config.mjs',
+		() => {
+			const dir = scratchFixture('cli-mjs-');
+			writeFileSync(join(dir, 'site', 'astro.config.mjs'), siteConfig(`{ title: 'Legacy', planning: '../planning.json', views: ['now'] }`));
+
+			const result = runCli(['build', join(dir, 'site')]);
+
+			expect(result.code, result.stderr).toBe(0);
+			expect(existsSync(join(dir, 'site', 'dist', 'plan', 'now', 'index.html'))).toBe(true);
 		},
 		BUILD,
 	);
@@ -64,7 +78,7 @@ describe('pm-docs-site build', () => {
 		'fails with the export message when the planning file is missing',
 		() => {
 			const dir = scratchFixture('missing-');
-			writeFileSync(join(dir, 'site', 'astro.config.mjs'), siteConfig(`{ title: 'Missing', planning: './nope.json' }`));
+			writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'Missing', planning: './nope.json' }`));
 
 			const result = runCli(['build', join(dir, 'site')]);
 			const output = result.stdout + result.stderr;
@@ -89,7 +103,7 @@ describe('pm-docs-site check', () => {
 		const dir = scratchFixture('v4-');
 		const planning = JSON.parse(readFileSync(join(dir, 'planning.json'), 'utf8'));
 		writeFileSync(join(dir, 'planning.json'), JSON.stringify({ ...planning, schemaVersion: 4 }));
-		writeFileSync(join(dir, 'site', 'astro.config.mjs'), siteConfig(`{ title: 'V4', planning: '../planning.json' }`));
+		writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'V4', planning: '../planning.json' }`));
 
 		const result = runCli(['check', join(dir, 'site')]);
 
@@ -100,7 +114,7 @@ describe('pm-docs-site check', () => {
 
 	it('fails when the config has no pm-docs-site integration', () => {
 		const dir = scratchFixture('none-');
-		writeFileSync(join(dir, 'site', 'astro.config.mjs'), 'export default {};\n');
+		writeFileSync(join(dir, 'site', 'astro.config.ts'), 'export default {};\n');
 
 		const result = runCli(['check', join(dir, 'site')]);
 
@@ -111,7 +125,7 @@ describe('pm-docs-site check', () => {
 	it('fails when a docs source folder is missing', () => {
 		const dir = scratchFixture('docs-');
 		writeFileSync(
-			join(dir, 'site', 'astro.config.mjs'),
+			join(dir, 'site', 'astro.config.ts'),
 			siteConfig(`{ title: 'Docs', planning: '../planning.json', docs: { root: '../docs', sources: [{ label: 'Gone', base: 'gone', include: ['*.md'] }] } }`),
 		);
 

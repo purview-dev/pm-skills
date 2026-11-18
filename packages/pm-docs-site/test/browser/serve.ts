@@ -20,11 +20,11 @@ cpSync(join(FIXTURES, 'planning.json'), join(DIR, 'planning.json'));
 cpSync(join(FIXTURES, 'docs'), join(DIR, 'docs'), { recursive: true });
 cpSync(join(FIXTURES, 'site', 'package.json'), join(SITE, 'package.json'));
 writeFileSync(
-	join(SITE, 'astro.config.mjs'),
-	readFileSync(join(FIXTURES, 'site', 'astro.config.mjs'), 'utf8').replace("'../../../index.mjs'", `'${pathToFileURL(join(PACKAGE, 'index.mjs')).href}'`),
+	join(SITE, 'astro.config.ts'),
+	readFileSync(join(FIXTURES, 'site', 'astro.config.ts'), 'utf8').replace("'../../../lib/index.ts'", `'${pathToFileURL(join(PACKAGE, 'lib', 'index.ts')).href}'`),
 );
 
-const build = spawnSync(process.execPath, [join(PACKAGE, 'cli.mjs'), 'build', SITE], { stdio: 'inherit' });
+const build = spawnSync(process.execPath, [join(PACKAGE, 'lib', 'cli.ts'), 'build', SITE], { stdio: 'inherit' });
 
 if (build.status !== 0) process.exit(build.status ?? 1);
 
@@ -40,5 +40,5 @@ createServer((request, response) => {
 		return;
 	}
 
-	response.writeHead(200, { 'content-type': TYPES[/** @type {keyof typeof TYPES} */ (extname(file))] ?? 'application/octet-stream' }).end(readFileSync(file));
+	response.writeHead(200, { 'content-type': TYPES[extname(file) as keyof typeof TYPES] ?? 'application/octet-stream' }).end(readFileSync(file));
 }).listen(PORT, () => console.log(`serving ${DIST} on http://localhost:${PORT}`));

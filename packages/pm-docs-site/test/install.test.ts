@@ -48,12 +48,12 @@ describe('an installed package', () => {
 
 			cpSync(join(FIXTURES, 'planning.json'), join(tmp, 'planning.json'));
 			cpSync(join(FIXTURES, 'docs'), join(tmp, 'docs'), { recursive: true });
-			const config = readFileSync(join(FIXTURES, 'site', 'astro.config.mjs'), 'utf8').replace(
-				"'../../../index.mjs'",
+			const config = readFileSync(join(FIXTURES, 'site', 'astro.config.ts'), 'utf8').replace(
+				"'../../../lib/index.ts'",
 				"'@purview-dev/pm-docs-site'",
 			);
 			expect(config).toContain("from '@purview-dev/pm-docs-site'");
-			writeFileSync(join(consumer, 'astro.config.mjs'), config);
+			writeFileSync(join(consumer, 'astro.config.ts'), config);
 
 			// Through the package's bin, as a consumer's own build script runs it.
 			run(['bun', 'run', 'build'], consumer);

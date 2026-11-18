@@ -12,7 +12,7 @@ import { FIXTURES, htmlPages, runCli, scratchFixture, siteConfig } from './helpe
 import { scanPage, type PageScan } from './scan';
 
 const BUILD = 180_000;
-// The fixture site's own options (test/fixtures/site/astro.config.mjs), every view on.
+// The fixture site's own options (test/fixtures/site/astro.config.ts), every view on.
 export const FIXTURE_OPTIONS = `{ title: 'Fixture plan', planning: '../planning.json', docs: { root: '../docs', sources: [{ label: 'Guide', base: '.', include: ['README.md', 'guide/*.md'], prefix: 'docs/' }] } }`;
 const ALL_VIEWS = { now: true, milestones: true, features: true, inbox: true, briefs: true, strategy: true };
 const planning = loadPlanning(join(FIXTURES, 'planning.json'));
@@ -30,7 +30,7 @@ async function build(prefix: string, options: string, known: Set<string>): Promi
 	const dir = scratchFixture(prefix);
 
 	scratches.push(dir);
-	writeFileSync(join(dir, 'site', 'astro.config.mjs'), siteConfig(options));
+	writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(options));
 	const result = runCli(['build', join(dir, 'site')]);
 
 	if (result.code !== 0) throw new Error(result.stderr);

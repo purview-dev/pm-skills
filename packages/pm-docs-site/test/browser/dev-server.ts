@@ -53,9 +53,9 @@ run(['bun', 'install'], CONSUMER);
 cpSync(join(FIXTURES, 'planning.json'), join(DIR, 'planning.json'));
 cpSync(join(FIXTURES, 'docs'), join(DIR, 'docs'), { recursive: true });
 writeFileSync(
-	join(CONSUMER, 'astro.config.mjs'),
-	readFileSync(join(FIXTURES, 'site', 'astro.config.mjs'), 'utf8')
-		.replace("'../../../index.mjs'", "'@purview-dev/pm-docs-site'")
+	join(CONSUMER, 'astro.config.ts'),
+	readFileSync(join(FIXTURES, 'site', 'astro.config.ts'), 'utf8')
+		.replace("'../../../lib/index.ts'", "'@purview-dev/pm-docs-site'")
 		.replace('integrations: [', `server: { port: ${PORT} },\n\tintegrations: [`),
 );
 

@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// @ts-check
 // pm-docs-site <dev | build | check> [site-dir] [--title <t>] [--planning <p>]
 //
 // dev and build run Astro on the site folder: with its astro.config file when it
@@ -9,24 +8,26 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import { resolveOptions } from './lib/options.mjs';
-import { checkSchemaVersion } from './lib/schema-version.mjs';
-import { loadSiteOptions } from './lib/site-options.mjs';
+import type { AstroInlineConfig } from 'astro';
+
+import { resolveOptions } from './options.ts';
+import { checkSchemaVersion } from './schema-version.ts';
+import { loadSiteOptions } from './site-options.ts';
+import type { ResolvedOptions } from './types.ts';
+
+interface Flags {
+	title?: string;
+	planning?: string;
+}
 
 const USAGE = 'usage: pm-docs-site <dev | build | check> [site-dir] [--title <title>] [--planning <path>]';
 
-/**
- * @param {string[]} argv
- * @returns {{ command: string | undefined; siteDir: string; flags: { title?: string; planning?: string } }}
- */
-function parse(argv) {
-	/** @type {{ title?: string; planning?: string }} */
-	const flags = {};
-	/** @type {string[]} */
-	const positional = [];
+function parse(argv: string[]): { command: string | undefined; siteDir: string; flags: Flags } {
+	const flags: Flags = {};
+	const positional: string[] = [];
 
 	for (let index = 0; index < argv.length; index++) {
-		const arg = /** @type {string} */ (argv[index]);
+		const arg = argv[index] as string;
 
 		if (arg === '--title' || arg === '--planning') {
 			const value = argv[++index];
@@ -40,14 +41,9 @@ function parse(argv) {
 	return { command: positional[0], siteDir: resolve(positional[1] ?? process.cwd()), flags };
 }
 
-/**
- * The problems check finds, one line each.
- * @param {import('./index').ResolvedOptions} options
- * @returns {string[]}
- */
-function problems(options) {
-	/** @type {string[]} */
-	const found = [];
+/** The problems check finds, one line each. */
+function problems(options: ResolvedOptions): string[] {
+	const found: string[] = [];
 
 	if (!existsSync(options.planning)) {
 		found.push(`No plan export at ${options.planning}. Run the pm-export skill to write planning.json.`);
@@ -56,7 +52,7 @@ function problems(options) {
 			const planning = JSON.parse(readFileSync(options.planning, 'utf8'));
 			checkSchemaVersion(planning.schemaVersion, options.planning);
 		} catch (error) {
-			found.push(/** @type {Error} */ (error).message);
+			found.push((error as Error).message);
 		}
 	}
 
@@ -68,7 +64,7 @@ function problems(options) {
 	return found;
 }
 
-async function main() {
+async function main(): Promise<number | null> {
 	const { command, siteDir, flags } = parse(process.argv.slice(2));
 
 	if (command !== 'dev' && command !== 'build' && command !== 'check') {
@@ -91,11 +87,10 @@ async function main() {
 	}
 
 	const astro = await import('astro');
-	/** @type {import('astro').AstroInlineConfig} */
-	const inline = { root: siteDir };
+	const inline: AstroInlineConfig = { root: siteDir };
 
 	if (!configFile) {
-		const { default: pmDocsSite } = await import('./index.mjs');
+		const { default: pmDocsSite } = await import('./index.ts');
 		Object.assign(inline, { configFile: false, integrations: [pmDocsSite(options)] });
 	}
 

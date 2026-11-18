@@ -9,9 +9,9 @@ import { relative, sep } from 'node:path';
 
 import config from 'virtual:pm-docs-site/config';
 
-import type { DocsSource } from '../../index';
-import { pagesOf } from '../../lib/repo-docs.mjs';
-import { checkSchemaVersion, PlanningExportError, SUPPORTED_SCHEMA_VERSIONS } from '../../lib/schema-version.mjs';
+import type { DocsSource } from '../../lib/types.ts';
+import { pagesOf } from '../../lib/repo-docs.ts';
+import { checkSchemaVersion, PlanningExportError, SUPPORTED_SCHEMA_VERSIONS } from '../../lib/schema-version.ts';
 import type { Brief, InboxEntry, Level, Milestone, Owner, Planning, Rag, Risk, RoadmapItem, Size, Stage } from './planning-types';
 
 export { PlanningExportError, SUPPORTED_SCHEMA_VERSIONS };

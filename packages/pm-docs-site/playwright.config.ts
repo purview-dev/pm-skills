@@ -18,7 +18,7 @@ export default defineConfig({
 	],
 	webServer: [
 		{
-			command: 'node test/browser/serve.mjs',
+			command: 'node test/browser/serve.ts',
 			url: `http://localhost:${PORT}/`,
 			timeout: 180_000,
 			reuseExistingServer: false,

@@ -5,7 +5,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { describe, expect, it } from 'bun:test';
 
-import pmDocsSite from '../index.mjs';
+import pmDocsSite from '../lib/index.ts';
 
 const fixtureSite = new URL('./fixtures/site/', import.meta.url);
 
