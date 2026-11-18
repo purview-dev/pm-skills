@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-17T19:29:24+00:00",
+  "generatedAt": "2026-11-17T23:52:52+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-009-docs-site-package-backlinks",
-    "head": "eca9106996614276fdc85d42ec10e1f63490430c"
+    "branch": "feat/r-004-verify-the-aspire-module",
+    "head": "9c7c6c83d2f521b2e213abc327236de2e0fb7134"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -197,54 +197,6 @@
         "note": null,
         "revisits": null,
         "claimable": false
-      },
-      {
-        "id": "R-003",
-        "title": "Fix pm-export's ajv validation command",
-        "section": "next",
-        "position": 2,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "the command in `pm-export`'s guard exits 0 on `planning/planning.json`, instead of failing on the unknown `date-time` format.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": null,
-        "revisits": null,
-        "claimable": true
-      },
-      {
-        "id": "R-004",
-        "title": "Verify the aspire module against a real AppHost",
-        "section": "next",
-        "position": 3,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "both",
-        "doneWhen": "in an Aspire AppHost, `pm-docs-site extend aspire` adds the `docs` resource, it serves the Home page, and both composition tests pass.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": null,
-        "revisits": null,
-        "claimable": true
       }
     ],
     "later": [
@@ -434,22 +386,7 @@
   "board": {
     "columns": {
       "now": [],
-      "next": [
-        {
-          "id": "R-003",
-          "title": "Fix pm-export's ajv validation command",
-          "owner": "agent",
-          "size": "S",
-          "detail": "ready"
-        },
-        {
-          "id": "R-004",
-          "title": "Verify the aspire module against a real AppHost",
-          "owner": "both",
-          "size": "M",
-          "detail": "ready"
-        }
-      ],
+      "next": [],
       "foryou": [
         {
           "id": "R-014",
@@ -461,6 +398,15 @@
       ],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-17",
+          "id": "R-004",
+          "title": "Verify the aspire module against a real AppHost",
+          "milestone": "M1",
+          "owner": "both",
+          "plan": null,
+          "result": "branch feat/r-004-verify-the-aspire-module"
+        },
         {
           "date": "2026-11-17",
           "id": "R-009",
@@ -494,6 +440,15 @@
       {
         "date": "2026-11-17",
         "kind": "done",
+        "id": "R-004",
+        "title": "Verify the aspire module against a real AppHost",
+        "milestone": "M1",
+        "owner": "both",
+        "result": "branch feat/r-004-verify-the-aspire-module"
+      },
+      {
+        "date": "2026-11-17",
+        "kind": "done",
         "id": "R-009",
         "title": "Docs-site package: backlinks everywhere",
         "milestone": "M1",
@@ -517,6 +472,15 @@
         "milestone": null,
         "owner": "both",
         "result": "branch feat/r-001-set-milestones-and-focus"
+      },
+      {
+        "date": "2026-11-17",
+        "kind": "dropped",
+        "id": "R-003",
+        "title": "Fix pm-export's ajv validation command",
+        "milestone": null,
+        "owner": null,
+        "result": "Reason: v19.0.0 replaced the ajv command in pm-export's guard with `bun scripts/export.ts validate`, which exits 0 on `planning/planning.json`"
       },
       {
         "date": "2026-11-17",
@@ -551,6 +515,15 @@
     "done": [
       {
         "date": "2026-11-17",
+        "id": "R-004",
+        "title": "Verify the aspire module against a real AppHost",
+        "milestone": "M1",
+        "owner": "both",
+        "plan": null,
+        "result": "branch feat/r-004-verify-the-aspire-module"
+      },
+      {
+        "date": "2026-11-17",
         "id": "R-009",
         "title": "Docs-site package: backlinks everywhere",
         "milestone": "M1",
@@ -578,6 +551,12 @@
       }
     ],
     "dropped": [
+      {
+        "date": "2026-11-17",
+        "id": "R-003",
+        "title": "Fix pm-export's ajv validation command",
+        "reason": "v19.0.0 replaced the ajv command in pm-export's guard with `bun scripts/export.ts validate`, which exits 0 on `planning/planning.json`"
+      },
       {
         "date": "2026-11-17",
         "id": "R-007",
@@ -706,6 +685,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "linkify uses \\b boundaries, so an upper-case ID inside a path in prose that is not a known brief path (docs/plans/R-009-x.md) gets a link in the middle of the path. The link test's scanner uses a stricter lookbehind, so the two disagree. Match the scanner's boundaries in linkify."
+    },
+    {
+      "file": "planning/inbox/2026-11-17-2352-aspire-module-tunit-example-helpers.md",
+      "title": "Make the aspire MODULE.md test example self-contained",
+      "captured": "2026-11-17 23:52",
+      "source": "agent (R-004 execute)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "skills/pm-docs-site/templates/aspire/MODULE.md",
+      "context": "R-004 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "The TUnit example in the aspire MODULE.md calls `BuildAsync` and `Named` without defining them, and uses `Resources.DocsSite`, which a test project reaches only when the constant is visible to it. Verifying R-004 needed `using Aspire.Hosting;` for `DistributedApplicationExecutionContext` and the literal `\"docs\"`. Show the two helpers and say when to use the literal."
     }
   ],
   "briefs": [
@@ -728,14 +722,14 @@
     "removed": []
   },
   "counts": {
-    "next": 3,
+    "next": 1,
     "later": 7,
     "nextMax": 5,
-    "openInbox": 7,
+    "openInbox": 8,
     "discuss": 1,
     "shapingBriefs": 0,
-    "done": 3,
-    "dropped": 3,
+    "done": 4,
+    "dropped": 4,
     "blockers": 0,
     "openRisks": 0,
     "redRisks": 0,
@@ -745,10 +739,7 @@
   "checks": {
     "reviewDue": false,
     "lastReview": "never",
-    "claimable": [
-      "R-003",
-      "R-004"
-    ],
+    "claimable": [],
     "drift": true
   }
 }
