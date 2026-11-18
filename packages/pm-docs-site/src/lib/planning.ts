@@ -214,6 +214,13 @@ export function planProgress(plan: { checked: number; total: number } | null): n
 	return plan && plan.total > 0 ? Math.round((plan.checked / plan.total) * 100) : 0;
 }
 
+/** A milestone's target, written as given; `null`, empty, or `none` (any case) is no target. */
+export function normaliseTarget(target: string | null): string | null {
+	const text = target?.trim() ?? '';
+
+	return text === '' || text.toLowerCase() === 'none' ? null : text;
+}
+
 /** Inbox severity as a card priority: the inbox has no priority of its own. */
 export function severityToPriority(severity: InboxEntry['severity']): 'low' | 'medium' | 'high' | 'urgent' {
 	return severity === 'blocker' ? 'urgent' : severity === 'major' ? 'high' : severity === 'minor' ? 'medium' : 'low';

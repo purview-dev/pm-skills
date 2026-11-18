@@ -16,7 +16,7 @@
     "focus": { "milestone": "M2 Billing", "whyNow": "Tenants ask for their invoices every month." },
     "milestones": [
       { "id": "M1", "name": "First release", "serves": ["V1"], "exitCriteria": "A tenant signs up without help.", "target": "none", "status": "done (2026-11-03)" },
-      { "id": "M2", "name": "Billing", "serves": ["V2", "V1"], "exitCriteria": "A tenant sees and downloads its invoices.", "target": "none", "status": "active" }
+      { "id": "M2", "name": "Billing", "serves": ["V2", "V1"], "exitCriteria": "A tenant sees and downloads its invoices.", "target": "2026-12-15", "status": "active" }
     ],
     "bets": [{ "id": "B1", "statement": "We believe CSV export ends the invoice emails.", "evidence": "Nine requests in October.", "signal": "No invoice request for a month.", "status": "open" }],
     "assumptions": [{ "id": "A1", "statement": "Accountants open CSV.", "test": "Ask three tenants.", "status": "holds" }],
