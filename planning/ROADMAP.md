@@ -14,17 +14,28 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
+### R-021 Docs-site package: TypeScript source with a build step
+
+- Serves: V4
+- Milestone: M1
+- Owner: agent
+- Done when: `git ls-files packages/pm-docs-site` lists no `.js`, `.mjs`, or `.cjs` file; the package build emits JavaScript and declarations for `cli`, `index`, and `lib/`, and the packed tarball contains them and no `.ts` entry point that Node loads; the packed-install test runs the installed CLI with `node` and passes, and `just package-test` passes; the fixture site uses `astro.config.ts`; and `publish-pm-docs-site.yml` builds before `check-exports` and `npm publish`, pinned by `scripts/workflows.test.ts`.
+- Size: M
+- Depends on: none
+- Status: ready
+- Brief: planning/briefs/2026-11-18-pm-docs-site-typescript.md
+
 ### R-017 Docs-site package: in-repo dev hydrates
 
 - Serves: V4
 - Milestone: M1
 - Owner: agent
-- Done when: from `packages/pm-docs-site`, `node cli.mjs dev test/fixtures/site` serves `/plan/board/?group=owner` with the Board island hydrated, and the dev server logs no `server.fs.allow` error.
+- Done when: from `packages/pm-docs-site`, the package CLI's `dev test/fixtures/site` serves `/plan/board/?group=owner` with the Board island hydrated, and the dev server logs no `server.fs.allow` error.
 - Size: S
-- Depends on: none
+- Depends on: R-021
 - Status: paused
-- Paused checkpoint: 2026-11-18 17:02. Stopped at: design, approach 1 chosen (a `configResolved` plugin appends the package's real directory to the resolved `server.fs.allow` when no entry contains it), spec `docs/superpowers/specs/2026-11-18-docs-site-package-in-repo-dev-design.md` on branch `feat/r-017-docs-site-package-in-repo-dev-hydrates` (commits 4eaf974, 53c8730). Next action: once the package is TypeScript-only, review the spec against the converted layout, get the user's approval, then run writing-plans. Start with: the spec file. Decisions: TypeScript only (`.mts`/`.ts`/`.tsx`, run with Bun), no new `.js`/`.mjs`, so R-017 waits for the package's TypeScript conversion as its own item (user, 2026-11-18); rejected adding the plugin to `index.mjs` and a Bun runtime switch inside R-017. Context: Node refuses `.ts` under `node_modules` (`ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING`), Bun loads it (checked 2026-11-18); `cli.mjs` runs under Node today. Open question: none.
-- Note: Vite refuses `packages/pm-docs-site/node_modules/@astrojs/react/dist/client.js` as outside `server.fs.allow`; allowing the package's own folder from the integration hydrated it in R-010's fix-wave experiment. A packed-install consumer is already fixed by R-010. Waits on the package's TypeScript conversion (inbox `2026-11-18-0925-pm-docs-site-mjs-to-typescript.md`, being shaped); add it to `Depends on` once it has an ID.
+- Paused checkpoint: 2026-11-18 17:02. Stopped at: design, approach 1 chosen (a `configResolved` plugin appends the package's real directory to the resolved `server.fs.allow` when no entry contains it), spec `docs/superpowers/specs/2026-11-18-docs-site-package-in-repo-dev-design.md` on branch `feat/r-017-docs-site-package-in-repo-dev-hydrates` (commits 4eaf974, 53c8730). Next action: after R-021 Docs-site package: TypeScript source with a build step merges, update the spec's Language line (the helper is a `.ts` source file in `lib/`, emitted by R-021's build) and its blocked decision, get the user's approval, then run writing-plans. Start with: the spec file. Decisions: TypeScript strongly preferred, JavaScript only where the runtime needs it (user, 2026-11-18, while shaping R-021); R-017 waits for R-021 so its helper is TypeScript. Context: Node refuses `.ts` under `node_modules` (`ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING`), Bun loads it (checked 2026-11-18). Open question: none.
+- Note: Vite refuses `packages/pm-docs-site/node_modules/@astrojs/react/dist/client.js` as outside `server.fs.allow`; allowing the package's own folder from the integration hydrated it in R-010's fix-wave experiment. A packed-install consumer is already fixed by R-010.
 
 ### R-011 Docs-site package: milestone timeline
 
@@ -59,6 +70,10 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Status: ready
 - Note: `skills/pm-export/scripts/planning.ts:489` writes `owner: null, size: null`, so every real board shows the active item as "No owner" and the R-010 owner and size filters hide it.
 
+## Later
+
+<!-- Grouped by milestone where one is set. Same item format. -->
+
 ### R-019 Docs-site package: consumer-ready for 1.0.0
 
 - Serves: V4
@@ -66,21 +81,17 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Owner: agent
 - Done when: the package home page has no `just docs-preview`; a build without the `docs` option logs no Starlight missing-folder or empty-collection warning; `docsHref` returns no link for a spec or plan path no docs source maps (and honours a source `prefix`); RefLink prints fallback text (the entry title, "No milestone") for an unknown key; `linkify` uses the link scanner's boundaries, so an ID inside a path is not linked; the CLI warns when `--title` or `--planning` is ignored, a `planning.json` holding `null` prints the pm-export hint, `check` loads an `astro.config.ts` on the `engines` Node floor, `dev` has an automated test, and the README names the same-drive requirement on Windows.
 - Size: M
-- Depends on: none
+- Depends on: R-021
 - Status: ready
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
-- Note: Folds five inbox files from the R-008 and R-009 final reviews (CLI gaps, consumer text, dead doc links, RefLink fallbacks, IDs linked inside paths). Affects `packages/pm-docs-site/cli.mjs`, `lib/site-options.mjs`, `README.md`, `src/pages/index.astro`, `src/content.config.ts`, `src/lib/planning.ts`, `src/components/RefLink.astro`, `src/lib/references.ts`.
-
-## Later
-
-<!-- Grouped by milestone where one is set. Same item format. -->
+- Note: Folds five inbox files from the R-008 and R-009 final reviews (CLI gaps, consumer text, dead doc links, RefLink fallbacks, IDs linked inside paths). Affects `packages/pm-docs-site/cli.mjs`, `lib/site-options.mjs`, `README.md`, `src/pages/index.astro`, `src/content.config.ts`, `src/lib/planning.ts`, `src/components/RefLink.astro`, `src/lib/references.ts` (the `.mjs` files become `.ts` source in R-021 Docs-site package: TypeScript source with a build step). Moved from Next 5 to the top of Later on 2026-11-18 when R-021 took the top of Next.
 
 ### R-013 Docs-site package: publish and migrate
 
 - Serves: V4
 - Milestone: M1
 - Owner: both
-- Done when: `npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.mjs`, `bun.lock`, and `.gitignore` and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; and a scratch export at schemaVersion 4 fails the build until the package's range includes it.
+- Done when: `npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore` and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; and a scratch export at schemaVersion 4 fails the build until the package's range includes it.
 - Size: M
 - Depends on: R-009, R-010, R-011, R-012, R-014, R-019
 - Status: ready

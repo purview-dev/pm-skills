@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T17:03:58+00:00",
+  "generatedAt": "2026-11-18T17:23:07+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "main",
-    "head": "f47dcfaf3c580235bf659e69ee1ef8624a3d5310"
+    "head": "ca07c87860e9cf33e875d052f3c91c1793a1ba71"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -59,7 +59,7 @@
         "serves": [
           "V4"
         ],
-        "exitCriteria": "`npm view @purview-dev/pm-docs-site version` returns a version, `docs-site/` holds only `package.json`, `astro.config.mjs`, `bun.lock`, and `.gitignore`, and `just docs-check` passes.",
+        "exitCriteria": "`npm view @purview-dev/pm-docs-site version` returns a version, `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore`, and `just docs-check` passes.",
         "target": null,
         "status": "active"
       },
@@ -134,6 +134,12 @@
     "decisions": [
       {
         "date": "2026-11-18",
+        "decision": "Added R-021 Docs-site package: TypeScript source with a build step at the top of Next; R-017 in-repo dev hydrates and R-019 consumer-ready for 1.0.0 depend on it, and R-019 moved to the top of Later. M1's exit criterion and R-013's Done when name `astro.config.ts` instead of `astro.config.mjs`.",
+        "why": "TypeScript is strongly preferred, and JavaScript ships only where Node needs it (brief `planning/briefs/2026-11-18-pm-docs-site-typescript.md`).",
+        "rejected": "Bun-only runtime shipping `.ts`; converting only the non-published files; keeping it parked."
+      },
+      {
+        "date": "2026-11-18",
         "decision": "Re-planned roadmap.",
         "why": "Next was empty with M1 open; Next is now R-017 in-repo dev hydrates, R-011 milestone timeline, R-012 dependency graph, R-018 export the Now card's owner and size, R-019 consumer-ready for 1.0.0, with R-013 at the top of Later M1 depending on R-019, then R-020 rich demo planning fixture (user request); R-017, R-018, and R-019 fold seven inbox files. Kept \"returns a version\" in R-013 and the M1 exit criterion instead of naming `1.0.0`, at the user's choice.",
         "rejected": "absorbing the consumer fixes into R-013; naming `1.0.0` in both."
@@ -181,8 +187,8 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-017",
-        "title": "Docs-site package: in-repo dev hydrates",
+        "id": "R-021",
+        "title": "Docs-site package: TypeScript source with a build step",
         "section": "next",
         "position": 1,
         "label": "next",
@@ -191,24 +197,50 @@
         ],
         "milestone": "M1",
         "owner": "agent",
-        "doneWhen": "from `packages/pm-docs-site`, `node cli.mjs dev test/fixtures/site` serves `/plan/board/?group=owner` with the Board island hydrated, and the dev server logs no `server.fs.allow` error.",
-        "size": "S",
+        "doneWhen": "`git ls-files packages/pm-docs-site` lists no `.js`, `.mjs`, or `.cjs` file; the package build emits JavaScript and declarations for `cli`, `index`, and `lib/`, and the packed tarball contains them and no `.ts` entry point that Node loads; the packed-install test runs the installed CLI with `node` and passes, and `just package-test` passes; the fixture site uses `astro.config.ts`; and `publish-pm-docs-site.yml` builds before `check-exports` and `npm publish`, pinned by `scripts/workflows.test.ts`.",
+        "size": "M",
         "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-18-pm-docs-site-typescript.md",
+        "note": null,
+        "revisits": null,
+        "claimable": true
+      },
+      {
+        "id": "R-017",
+        "title": "Docs-site package: in-repo dev hydrates",
+        "section": "next",
+        "position": 2,
+        "label": "waiting",
+        "serves": [
+          "V4"
+        ],
+        "milestone": "M1",
+        "owner": "agent",
+        "doneWhen": "from `packages/pm-docs-site`, the package CLI's `dev test/fixtures/site` serves `/plan/board/?group=owner` with the Board island hydrated, and the dev server logs no `server.fs.allow` error.",
+        "size": "S",
+        "dependsOn": [
+          "R-021"
+        ],
         "status": {
           "value": "paused",
           "reason": null,
           "since": null
         },
         "brief": null,
-        "note": "Vite refuses `packages/pm-docs-site/node_modules/@astrojs/react/dist/client.js` as outside `server.fs.allow`; allowing the package's own folder from the integration hydrated it in R-010's fix-wave experiment. A packed-install consumer is already fixed by R-010. Waits on the package's TypeScript conversion (inbox `2026-11-18-0925-pm-docs-site-mjs-to-typescript.md`, being shaped); add it to `Depends on` once it has an ID.",
+        "note": "Vite refuses `packages/pm-docs-site/node_modules/@astrojs/react/dist/client.js` as outside `server.fs.allow`; allowing the package's own folder from the integration hydrated it in R-010's fix-wave experiment. A packed-install consumer is already fixed by R-010.",
         "revisits": null,
-        "claimable": true
+        "claimable": false
       },
       {
         "id": "R-011",
         "title": "Docs-site package: milestone timeline",
         "section": "next",
-        "position": 2,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -234,7 +266,7 @@
         "id": "R-012",
         "title": "Docs-site package: dependency graph",
         "section": "next",
-        "position": 3,
+        "position": 4,
         "label": "next",
         "serves": [
           "V4"
@@ -260,7 +292,7 @@
         "id": "R-018",
         "title": "Export the Now card's owner and size",
         "section": "next",
-        "position": 4,
+        "position": 5,
         "label": "next",
         "serves": [
           "V4"
@@ -279,36 +311,12 @@
         "note": "`skills/pm-export/scripts/planning.ts:489` writes `owner: null, size: null`, so every real board shows the active item as \"No owner\" and the R-010 owner and size filters hide it.",
         "revisits": null,
         "claimable": true
-      },
-      {
-        "id": "R-019",
-        "title": "Docs-site package: consumer-ready for 1.0.0",
-        "section": "next",
-        "position": 5,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "the package home page has no `just docs-preview`; a build without the `docs` option logs no Starlight missing-folder or empty-collection warning; `docsHref` returns no link for a spec or plan path no docs source maps (and honours a source `prefix`); RefLink prints fallback text (the entry title, \"No milestone\") for an unknown key; `linkify` uses the link scanner's boundaries, so an ID inside a path is not linked; the CLI warns when `--title` or `--planning` is ignored, a `planning.json` holding `null` prints the pm-export hint, `check` loads an `astro.config.ts` on the `engines` Node floor, `dev` has an automated test, and the README names the same-drive requirement on Windows.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-        "note": "Folds five inbox files from the R-008 and R-009 final reviews (CLI gaps, consumer text, dead doc links, RefLink fallbacks, IDs linked inside paths). Affects `packages/pm-docs-site/cli.mjs`, `lib/site-options.mjs`, `README.md`, `src/pages/index.astro`, `src/content.config.ts`, `src/lib/planning.ts`, `src/components/RefLink.astro`, `src/lib/references.ts`.",
-        "revisits": null,
-        "claimable": true
       }
     ],
     "later": [
       {
-        "id": "R-013",
-        "title": "Docs-site package: publish and migrate",
+        "id": "R-019",
+        "title": "Docs-site package: consumer-ready for 1.0.0",
         "section": "later",
         "position": 1,
         "label": "waiting",
@@ -316,8 +324,34 @@
           "V4"
         ],
         "milestone": "M1",
+        "owner": "agent",
+        "doneWhen": "the package home page has no `just docs-preview`; a build without the `docs` option logs no Starlight missing-folder or empty-collection warning; `docsHref` returns no link for a spec or plan path no docs source maps (and honours a source `prefix`); RefLink prints fallback text (the entry title, \"No milestone\") for an unknown key; `linkify` uses the link scanner's boundaries, so an ID inside a path is not linked; the CLI warns when `--title` or `--planning` is ignored, a `planning.json` holding `null` prints the pm-export hint, `check` loads an `astro.config.ts` on the `engines` Node floor, `dev` has an automated test, and the README names the same-drive requirement on Windows.",
+        "size": "M",
+        "dependsOn": [
+          "R-021"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+        "note": "Folds five inbox files from the R-008 and R-009 final reviews (CLI gaps, consumer text, dead doc links, RefLink fallbacks, IDs linked inside paths). Affects `packages/pm-docs-site/cli.mjs`, `lib/site-options.mjs`, `README.md`, `src/pages/index.astro`, `src/content.config.ts`, `src/lib/planning.ts`, `src/components/RefLink.astro`, `src/lib/references.ts` (the `.mjs` files become `.ts` source in R-021 Docs-site package: TypeScript source with a build step). Moved from Next 5 to the top of Later on 2026-11-18 when R-021 took the top of Next.",
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-013",
+        "title": "Docs-site package: publish and migrate",
+        "section": "later",
+        "position": 2,
+        "label": "waiting",
+        "serves": [
+          "V4"
+        ],
+        "milestone": "M1",
         "owner": "both",
-        "doneWhen": "`npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.mjs`, `bun.lock`, and `.gitignore` and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; and a scratch export at schemaVersion 4 fails the build until the package's range includes it.",
+        "doneWhen": "`npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore` and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; and a scratch export at schemaVersion 4 fails the build until the package's range includes it.",
         "size": "M",
         "dependsOn": [
           "R-009",
@@ -341,7 +375,7 @@
         "id": "R-020",
         "title": "Docs-site package: rich demo planning fixture",
         "section": "later",
-        "position": 2,
+        "position": 3,
         "label": "later",
         "serves": [
           "V4"
@@ -365,7 +399,7 @@
         "id": "R-006",
         "title": "Check pm-setup's skill counts in validate",
         "section": "later",
-        "position": 3,
+        "position": 4,
         "label": "later",
         "serves": [
           "V1"
@@ -389,7 +423,7 @@
         "id": "R-015",
         "title": "Rehearse a fresh install in a scratch repository",
         "section": "later",
-        "position": 4,
+        "position": 5,
         "label": "later",
         "serves": [
           "V1"
@@ -413,7 +447,7 @@
         "id": "R-016",
         "title": "Rehearse the lifecycle guards",
         "section": "later",
-        "position": 5,
+        "position": 6,
         "label": "later",
         "serves": [
           "V2",
@@ -441,11 +475,11 @@
       "now": [],
       "next": [
         {
-          "id": "R-017",
-          "title": "Docs-site package: in-repo dev hydrates",
+          "id": "R-021",
+          "title": "Docs-site package: TypeScript source with a build step",
           "owner": "agent",
-          "size": "S",
-          "detail": "paused"
+          "size": "M",
+          "detail": "ready"
         },
         {
           "id": "R-011",
@@ -467,17 +501,18 @@
           "owner": "agent",
           "size": "S",
           "detail": "ready"
-        },
-        {
-          "id": "R-019",
-          "title": "Docs-site package: consumer-ready for 1.0.0",
-          "owner": "agent",
-          "size": "M",
-          "detail": "ready"
         }
       ],
       "foryou": [],
-      "waiting": [],
+      "waiting": [
+        {
+          "id": "R-017",
+          "title": "Docs-site package: in-repo dev hydrates",
+          "owner": "agent",
+          "size": "S",
+          "detail": "needs R-021 Docs-site package: TypeScript source with a build step"
+        }
+      ],
       "done": [
         {
           "date": "2026-11-18",
@@ -798,21 +833,6 @@
       "idea": "The brief (2026-11-18) decided R-013 releases stable `1.0.0`, but R-013's `Done when` says \"returns the released version\" and M1 Reproducible docs site's exit criterion says \"`npm view @purview-dev/pm-docs-site version` returns a version\", which `0.1.0-pre.1` already satisfies. Name `1.0.0` in both: `pm-item edit R-013` and `pm-strategy` for M1."
     },
     {
-      "file": "planning/inbox/2026-11-18-0925-pm-docs-site-mjs-to-typescript.md",
-      "title": "Convert the pm-docs-site package's .mjs files to TypeScript",
-      "captured": "2026-11-18 09:25",
-      "source": "agent (R-010 plan)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "packages/pm-docs-site",
-      "context": "R-010 plan",
-      "discuss": "yes",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "The user's rule (2026-11-18): TypeScript always, never JavaScript. The package still has ten JavaScript files: `index.mjs`, `cli.mjs`, `lib/options.mjs`, `lib/repo-docs.mjs`, `lib/schema-version.mjs`, `lib/sidebar.mjs`, `lib/site-options.mjs`, `scripts/check-exports.mjs`, `test/browser/serve.mjs`, and `test/fixtures/site/astro.config.mjs` (all `// @ts-check`). R-010 edits `index.mjs` in place and adds only `.ts`/`.tsx`. Converting the rest needs a decision: Node refuses to strip types from files under `node_modules` (`ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING`), so a published `cli.ts`/`index.ts` needs a build step that emits JavaScript into the tarball (and `files`, `exports`, `bin`, the packed-install test, and `check-exports` change with it), or a supported loader. The repository's own `scripts/` are already `.ts` run by Bun."
-    },
-    {
       "file": "planning/inbox/2026-11-18-1222-r-010-deferred-board-polish.md",
       "title": "R-010 deferred board polish",
       "captured": "2026-11-18 12:22",
@@ -843,6 +863,18 @@
       "problem": "The docs site is chaotic to maintain and builds non-deterministically: each consumer carries its own copy of the templates, resolves its own package versions, and any template change forces a rules-major bump on every consumer.",
       "doneWhen": "`docs-site/` contains only `package.json`, `astro.config.mjs`, and `bun.lock` (plus `.gitignore`), and `just docs-check` passes.",
       "revisions": []
+    },
+    {
+      "path": "planning/briefs/2026-11-18-pm-docs-site-typescript.md",
+      "id": "R-021",
+      "title": "pm-docs-site package in TypeScript only",
+      "status": "on roadmap (R-021)",
+      "origin": "planning/inbox/2026-11-18-0925-pm-docs-site-mjs-to-typescript.md",
+      "updated": "2026-11-18",
+      "decision": "2026-11-18 Added to Next (top) as R-021 Docs-site package: TypeScript source with a build step (agent, M, serves V4, M1). R-017 Docs-site package: in-repo dev hydrates and R-019 Docs-site package: consumer-ready for 1.0.0 depend on it; R-019 moved to the top of Later. Why: the user chose a build step so the source is TypeScript and Node consumers keep working.",
+      "problem": "The user's rule (2026-11-18): TypeScript only (`.mts`/`.ts`/`.tsx`, run with Bun), never `.js` or `.mjs`. The `@purview-dev/pm-docs-site` package still has ten JavaScript files, and R-017 Docs-site package: in-repo dev hydrates cannot add its helper until the package can load TypeScript.",
+      "doneWhen": "`git ls-files packages/pm-docs-site` lists no `.js`, `.mjs`, or `.cjs` file.",
+      "revisions": []
     }
   ],
   "risks": {
@@ -852,10 +884,10 @@
   },
   "counts": {
     "next": 5,
-    "later": 5,
+    "later": 6,
     "nextMax": 5,
-    "openInbox": 7,
-    "discuss": 2,
+    "openInbox": 6,
+    "discuss": 1,
     "shapingBriefs": 0,
     "done": 6,
     "dropped": 4,
@@ -869,11 +901,10 @@
     "reviewDue": false,
     "lastReview": "never",
     "claimable": [
-      "R-017",
+      "R-021",
       "R-011",
       "R-012",
-      "R-018",
-      "R-019"
+      "R-018"
     ],
     "drift": false
   }
