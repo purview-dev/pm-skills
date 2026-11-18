@@ -116,7 +116,7 @@ jobs:
         with:
           bun-version: latest
 
-      # The package's builds need Node 22 or later, and trusted publishing an npm
+      # The package's builds need Node 24 or later, and trusted publishing an npm
       # CLI that Node 24 can install. Deliberately no `registry-url`: setup-node
       # would write `//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}` into
       # .npmrc, and with no token defined that placeholder is the one thing that
@@ -141,11 +141,17 @@ jobs:
         if: steps.version.outputs.skip != 'true'
         run: bun run check
 
-      # The same check `prepublishOnly` runs, so a version number is never burnt
-      # on a package whose exports point at missing files.
+      # Emits dist/, the JavaScript Node loads from the installed package. npm
+      # publish builds again through `prepack`; this build is for the check below.
+      - name: Build
+        if: steps.version.outputs.skip != 'true'
+        run: bun run build
+
+      # The same check `prepack` runs, so a version number is never burnt on a
+      # package whose exports point at missing or non-JavaScript files.
       - name: The package carries its entry points
         if: steps.version.outputs.skip != 'true'
-        run: node scripts/check-exports.mjs
+        run: node scripts/check-exports.ts
 
       # Two preconditions of trusted publishing, checked before anything is
       # published: the OIDC endpoint exists only on GitHub-hosted runners, and the

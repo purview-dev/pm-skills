@@ -86,8 +86,8 @@ describe("the pm-docs-site publish workflow", () => {
     expect(publish).toMatch(/environment:\s*\n\s*name:\s*npm/);
   });
 
-  it("tests and checks the exports before it publishes", () => {
-    const order = ["run: bun test", "run: bun run check", "node scripts/check-exports.mjs", "npm publish"].map((step) => publish.indexOf(step));
+  it("tests, checks, and builds before it checks the exports and publishes", () => {
+    const order = ["run: bun test", "run: bun run check", "run: bun run build", "node scripts/check-exports.ts", "npm publish"].map((step) => publish.indexOf(step));
     expect(order.every((index) => index > -1)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
   });
@@ -105,8 +105,9 @@ describe("the pm-docs-site publish workflow", () => {
 });
 
 describe("the pm-docs-site package", () => {
-  it("refuses a local publish whose exports are missing", () => {
-    expect(pkg.scripts.prepublishOnly).toBe("node scripts/check-exports.mjs");
+  it("builds and checks the exports on every pack, so a local publish cannot ship a missing build", () => {
+    expect(pkg.scripts.prepack).toBe("node scripts/build.ts && node scripts/check-exports.ts");
+    expect(pkg.scripts.prepublishOnly).toBeUndefined();
   });
 });
 
