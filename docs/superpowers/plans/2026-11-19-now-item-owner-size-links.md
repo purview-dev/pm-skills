@@ -325,4 +325,4 @@ git add packages/pm-docs-site
 git commit -m "feat(pm-docs-site): draw the active item's links in the graph"
 ```
 
-- [ ] **Step 8: Check every Done when line** in `planning/NOW.md` against this evidence: Task 4 Step 3 (owner and size live), Task 6 Step 6 (edges, notice removed, tests), Task 5 Step 4 (fixtures agree). Then `pm-checkpoint done`.
+- [x] **Step 8: Check every Done when line** in `planning/NOW.md` against this evidence: Task 4 Step 3 (owner and size live), Task 6 Step 6 (edges, notice removed, tests), Task 5 Step 4 (fixtures agree). Then `pm-checkpoint done`.
