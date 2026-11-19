@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T22:48:29+00:00",
+  "generatedAt": "2026-11-19T14:58:33+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-017-docs-site-package-in-repo-dev-hydrates",
-    "head": "7549c81fc15722d022d4cb89ef7e359b91ed5c48"
+    "branch": "feat/r-018-export-the-now-cards-owner-and-size",
+    "head": "18c93a9ab6edcaa24fa4776667df8666b6881d53"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -177,16 +177,25 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
+    "status": "active",
+    "item": {
+      "id": "R-018",
+      "title": "Export the Now card's owner and size"
+    },
+    "stage": "design",
+    "session": "feat/r-018-export-the-now-cards-owner-and-size",
     "brief": null,
-    "milestone": null,
+    "milestone": "M1",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-19",
+    "doneWhen": [
+      "`bun skills/pm-export/scripts/export.ts write` gives the active item's Now card its roadmap `owner` and `size` instead of `null`.",
+      "The export gives the active item its own `dependsOn` and `revisits`, and the R-012 dependency graph draws those edges (for example R-008 -> R-012).",
+      "The graph's `Own links not exported yet` notice is removed.",
+      "The schema field docs, `planning.example.json`, and the docs-site fixture agree, and `just test` covers it.",
+      "Note: widened on 2026-11-19 at claim, from inbox `2026-11-19-1001-widen-r-018-now-item-links.md` (the user's choice in R-012 design). `skills/pm-export/scripts/planning.ts:489` writes `owner: null, size: null`, so every real board shows the active item as \"No owner\" and the R-010 owner and size filters hide it."
+    ],
     "checkpoint": null
   },
   "plan": null,
@@ -215,30 +224,6 @@
         },
         "brief": "planning/briefs/2026-11-17-docs-site-package.md",
         "note": null,
-        "revisits": null,
-        "claimable": true
-      },
-      {
-        "id": "R-018",
-        "title": "Export the Now card's owner and size",
-        "section": "next",
-        "position": 2,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "`bun skills/pm-export/scripts/export.ts write` gives the active item's Now card its roadmap `owner` and `size` instead of `null`, the schema field docs, `planning.example.json`, and the docs-site fixture agree, and `just test` covers it.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "`skills/pm-export/scripts/planning.ts:489` writes `owner: null, size: null`, so every real board shows the active item as \"No owner\" and the R-010 owner and size filters hide it.",
         "revisits": null,
         "claimable": true
       }
@@ -402,20 +387,21 @@
   },
   "board": {
     "columns": {
-      "now": [],
+      "now": [
+        {
+          "id": "R-018",
+          "title": "Export the Now card's owner and size",
+          "owner": null,
+          "size": null,
+          "detail": "design"
+        }
+      ],
       "next": [
         {
           "id": "R-012",
           "title": "Docs-site package: dependency graph",
           "owner": "agent",
           "size": "M",
-          "detail": "ready"
-        },
-        {
-          "id": "R-018",
-          "title": "Export the Now card's owner and size",
-          "owner": "agent",
-          "size": "S",
           "detail": "ready"
         }
       ],
@@ -962,7 +948,7 @@
     "removed": []
   },
   "counts": {
-    "next": 2,
+    "next": 1,
     "later": 6,
     "nextMax": 5,
     "openInbox": 12,
@@ -980,8 +966,7 @@
     "reviewDue": true,
     "lastReview": "never",
     "claimable": [
-      "R-012",
-      "R-018"
+      "R-012"
     ],
     "drift": true
   }

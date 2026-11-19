@@ -25,17 +25,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Status: ready
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 
-### R-018 Export the Now card's owner and size
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: `bun skills/pm-export/scripts/export.ts write` gives the active item's Now card its roadmap `owner` and `size` instead of `null`, the schema field docs, `planning.example.json`, and the docs-site fixture agree, and `just test` covers it.
-- Size: S
-- Depends on: none
-- Status: ready
-- Note: `skills/pm-export/scripts/planning.ts:489` writes `owner: null, size: null`, so every real board shows the active item as "No owner" and the R-010 owner and size filters hide it.
-
 ## Later
 
 <!-- Grouped by milestone where one is set. Same item format. -->

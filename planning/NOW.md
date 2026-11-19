@@ -11,17 +11,23 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: idle
-- Item:
-- Session:
-- Stage:
+- Status: active
+- Item: R-018 Export the Now card's owner and size
+- Session: feat/r-018-export-the-now-cards-owner-and-size
+- Stage: design
 - Brief:
-- Milestone:
+- Milestone: M1
 - Spec:
 - Plan:
-- Started:
+- Started: 2026-11-19
 
 ## Done when
+
+- `bun skills/pm-export/scripts/export.ts write` gives the active item's Now card its roadmap `owner` and `size` instead of `null`.
+- The export gives the active item its own `dependsOn` and `revisits`, and the R-012 dependency graph draws those edges (for example R-008 -> R-012).
+- The graph's `Own links not exported yet` notice is removed.
+- The schema field docs, `planning.example.json`, and the docs-site fixture agree, and `just test` covers it.
+- Note: widened on 2026-11-19 at claim, from inbox `2026-11-19-1001-widen-r-018-now-item-links.md` (the user's choice in R-012 design). `skills/pm-export/scripts/planning.ts:489` writes `owner: null, size: null`, so every real board shows the active item as "No owner" and the R-010 owner and size filters hide it.
 
 ## Checkpoint
 
