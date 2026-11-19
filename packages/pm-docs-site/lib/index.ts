@@ -30,6 +30,7 @@ const VIEW_ROUTES: Record<ViewName, [pattern: string, file: string][]> = {
 		['/plan/milestones', 'plan/milestones/index.astro'],
 		['/plan/milestones/[milestone]', 'plan/milestones/[milestone].astro'],
 	],
+	graph: [['/plan/graph', 'plan/graph.astro']],
 	features: [
 		['/plan/features', 'plan/features/index.astro'],
 		['/plan/features/[id]', 'plan/features/[id].astro'],
@@ -64,6 +65,9 @@ function resolvesFrom(name: string, root: string): boolean {
 	}
 }
 
+/** The islands' dependencies Vite's dev optimizer must pre-bundle (optimizedDependencies). */
+const BROWSER_DEPENDENCIES = ['react-dom/client', '@xyflow/react'];
+
 /**
  * The `optimizeDeps.include` entries the site lacks. The island's renderer
  * (@astrojs/react-renderer) imports react-dom/client from under node_modules,
@@ -72,13 +76,16 @@ function resolvesFrom(name: string, root: string): boolean {
  * through itself (`<package> > react-dom/client`); a site that cannot resolve
  * the package by name (this repository's fixtures) names react-dom/client
  * plainly, since naming a package Vite cannot resolve breaks the optimizer.
- * Only missing entries: Vite's mergeConfig concatenates arrays.
+ * The Graph island's @xyflow/react is imported from this package's own source
+ * under node_modules, which the optimizer does not scan either, and its
+ * react-compiler-runtime dependency is CommonJS, so it is pre-bundled the same
+ * way. Only missing entries: Vite's mergeConfig concatenates arrays.
  */
 function optimizedDependencies(include: unknown, root: string): string[] {
 	const existing = Array.isArray(include) ? include : [];
-	const entry = resolvesFrom(PACKAGE_NAME, root) ? `${PACKAGE_NAME} > react-dom/client` : 'react-dom/client';
+	const viaPackage = resolvesFrom(PACKAGE_NAME, root);
 
-	return existing.includes(entry) ? [] : [entry];
+	return BROWSER_DEPENDENCIES.map((name) => (viaPackage ? `${PACKAGE_NAME} > ${name}` : name)).filter((entry) => !existing.includes(entry));
 }
 
 const VIRTUAL_ID = 'virtual:pm-docs-site/config';

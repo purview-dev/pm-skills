@@ -1,0 +1,81 @@
+---
+// The dependency graph: open items and their Depends on and Revisits links,
+// grouped by milestone, then the same links as a plain Dependencies list for
+// search, screen readers, and pages without JavaScript. The graph's four
+// layouts are computed here, at build time (graph-layout.ts imports dagre,
+// which must never reach the browser); the island (Graph.tsx) only picks one.
+// Its inline script runs as the page is parsed, before the graph paints: a
+// `?lanes=off` or `?done=off` link hides the graph until the island has
+// rendered that layout and deleted the mark (useGraphUrlState.ts), so it never
+// flashes the default layout first. graph.css reveals the graph after 3s if
+// the island never loads. It must stay in step with parseGraphQuery in
+// src/lib/graph-state.ts.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import '@xyflow/react/dist/style.css';
+
+import ExportStamp from '../../components/ExportStamp.astro';
+import Graph from '../../components/graph/Graph';
+import { dependencyRows, graphData } from '../../lib/graph';
+import type { Ref } from '../../lib/graph';
+import { graphLayouts } from '../../lib/graph-layout';
+import { loadPlanning } from '../../lib/planning';
+import { siteRefs } from '../../lib/references';
+import '../../styles/components.css';
+import '../../styles/graph.css';
+
+const { known } = siteRefs();
+const planning = loadPlanning();
+const data = graphData(planning, known);
+const layouts = graphLayouts(data, planning);
+const rows = dependencyRows(data);
+// The milestone pages the lane labels and the item meta lines link to (references.ts lists the Graph in their Linked from).
+const milestoneKeys = new Set([...Object.values(layouts).flatMap((layout) => layout.lanes.map((lane) => lane.key)), ...data.nodes.flatMap((node) => (node.milestone ? [node.milestone] : []))]);
+const milestoneHrefs = Object.fromEntries([...milestoneKeys].flatMap((key) => (known.get(key)?.href ? [[key, known.get(key)!.href!]] : [])));
+
+/** A row's link lines, in order, with the empty ones left out. */
+const lines = (row: (typeof rows)[number]): { label: string; refs: Ref[] }[] =>
+	[
+		{ label: 'Waits on', refs: row.waitsOn },
+		{ label: 'Waited on by', refs: row.waitedOnBy },
+		{ label: 'Revisits', refs: row.revisits ? [row.revisits] : [] },
+		{ label: 'Revised by', refs: row.revisedBy },
+	].filter((line) => line.refs.length > 0);
+---
+
+<StarlightPage frontmatter={{ title: 'Graph', description: 'Open items and their Depends on and Revisits links, by milestone.', tableOfContents: false }}>
+	<ExportStamp />
+
+	<script is:inline>
+		(function (params) {
+			if (params.get('lanes') === 'off' || params.get('done') === 'off') document.documentElement.dataset.graphPending = '';
+		})(new URLSearchParams(location.search));
+	</script>
+	{data.nodes.length > 0 ? <Graph client:load nodes={data.nodes} edges={data.edges} layouts={layouts} milestoneHrefs={milestoneHrefs} /> : <p class="plan-empty">No open items</p>}
+
+	{
+		rows.length > 0 && (
+			<>
+				<h2>Dependencies</h2>
+				<ul class="plan-deps">
+					{rows.map((row) => (
+						<li>
+							<p>{row.href ? <a href={row.href}>{`${row.id} ${row.title}`}</a> : `${row.id} ${row.title}`}</p>
+							{lines(row).map((line) => (
+								<p class="plan-deps__links">
+									{line.label}:{' '}
+									{line.refs.map((ref, index) => (
+										<>
+											{index > 0 && ', '}
+											{ref.href ? <a href={ref.href}>{ref.label}</a> : ref.label}
+										</>
+									))}
+								</p>
+							))}
+							{row.linksNotExported && <p class="plan-deps__links">Own links not exported yet</p>}
+						</li>
+					))}
+				</ul>
+			</>
+		)
+	}
+</StarlightPage>

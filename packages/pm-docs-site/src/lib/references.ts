@@ -6,6 +6,7 @@
 import config from 'virtual:pm-docs-site/config';
 
 import type { ViewName } from '../../lib/types.ts';
+import { graphData } from './graph';
 import { briefAnchor, briefOf, featureHref, features, loadPlanning, milestoneHref, milestoneSummaries, roadmapGroups, type Feature } from './planning';
 import type { Planning } from './planning-types';
 
@@ -224,6 +225,16 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 		for (const event of group.events) {
 			roadmap.link(event.id, 'listed');
 			roadmap.prose(event.desc);
+		}
+	}
+
+	if (views.graph) {
+		const graph = source('/plan/graph/', 'Graph');
+
+		// Each node's ID (items, and the chips of the default layout); each item's milestone, in its meta line and its lane label.
+		for (const node of graphData(planning, known).nodes) {
+			graph.link(node.id, 'listed');
+			if (node.kind === 'item') graph.link(milestoneKey(node.milestone), 'listed');
 		}
 	}
 
