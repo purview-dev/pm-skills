@@ -165,9 +165,9 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   operations written by `pm-checkpoint` (`push`, `pop`). Optional: a missing
   file is an empty stack. It is session memory, not a plan, so `pm-export`
   does not export it. A **stack entry** holds the item, its `Done when`, the
-  branch, the stage, the brief, spec, plan, milestone, started date, the
-  reason it was suspended, its checkpoint block, and the item's `Serves`,
-  `Owner`, `Size`, `Depends on`, and `Revisits`.
+  branch, the stage, the brief, spec, plan, milestone, serves, owner, size,
+  depends on, and revisits, started date, the reason it was suspended, and
+  its checkpoint block.
 - **Pause file:** `<PM root>/PAUSE.md`, the session's position written by
   `pm-pause`: `Paused`, `Session` (a branch, matched like `NOW.md`),
   `Item`, `Running` (the skill or workflow and its step), `Files`, the
@@ -929,10 +929,11 @@ prints a pre-commit hook (lefthook, husky, or git) that runs `pm-lint
 check --staged`. Run `pm-lint check` once after upgrading; older files may
 need `pm-lint fix` and the owning skill. No setting is added.
 
-Version 20 has `NOW.md` carry the claimed item's `Serves`, `Owner`, `Size`,
-`Depends on`, and `Revisits`, and `pm-setup` fills them in for an item that
-was active before the upgrade. The export moves to `schemaVersion` 4: run
-`pm-export`, and `pm-docs-site upgrade` for an installed site.
+Version 20 adds the claimed item's `Serves`, `Owner`, `Size`,
+`Depends on`, and `Revisits` to `NOW.md`, and `pm-setup` fills them in for
+an item that was active before the upgrade. The export moves to
+`schemaVersion` 4: run `pm-export`, and `pm-docs-site upgrade` for an
+installed site.
 
 ## Asking the user (mandatory)
 

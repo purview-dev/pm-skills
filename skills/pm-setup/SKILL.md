@@ -22,9 +22,10 @@ installed. Existing content is never rewritten, reordered, or removed.
 - This skill is the fix for the upgrade check (rules: Upgrading before work
   resumes), so it never runs that check.
 - The only PM state this skill writes is the `Rules version` line and the
-  missing `Commits` settings in `<PM state directory>/config.md`. It never
-  creates or edits any other PM file, and never changes a setting that is
-  already written.
+  missing `Commits` settings in `<PM state directory>/config.md`, and,
+  during an upgrade, the item fields of an active `NOW.md` (Step 5, item
+  5). It never creates or edits any other PM file, and never changes a
+  setting that is already written.
 - The current folder must be inside a git repository. Work in the **main
   worktree**: the first path in `git worktree list`.
 - If `AGENTS.md` or `CLAUDE.md` has uncommitted changes, stop. Reply:
