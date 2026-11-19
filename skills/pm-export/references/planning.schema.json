@@ -30,7 +30,7 @@
       "const": "./planning.schema.json"
     },
     "schemaVersion": {
-      "const": 3
+      "const": 4
     },
     "generatedAt": {
       "type": "string",
@@ -774,7 +774,7 @@
         "item": {
           "oneOf": [
             {
-              "$ref": "#/$defs/itemRef"
+              "$ref": "#/$defs/nowItem"
             },
             {
               "type": "null"
@@ -836,6 +836,59 @@
         },
         "title": {
           "type": "string"
+        }
+      }
+    },
+    "nowItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "serves",
+        "owner",
+        "size",
+        "dependsOn",
+        "revisits"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string"
+        },
+        "serves": {
+          "$ref": "#/$defs/textList"
+        },
+        "owner": {
+          "enum": [
+            "agent",
+            "user",
+            "both",
+            null
+          ]
+        },
+        "size": {
+          "enum": [
+            "S",
+            "M",
+            "L",
+            null
+          ]
+        },
+        "dependsOn": {
+          "$ref": "#/$defs/idList"
+        },
+        "revisits": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       }
     },

@@ -145,7 +145,7 @@ else {
       fail("planning.schema.json: the top level must set additionalProperties: false");
     }
     const schemaVersion = schema.properties?.schemaVersion?.const;
-    if (schemaVersion !== 3) fail(`planning.schema.json: schemaVersion const must be 3 (got ${schemaVersion})`);
+    if (schemaVersion !== 4) fail(`planning.schema.json: schemaVersion const must be 4 (got ${schemaVersion})`);
     if (example.schemaVersion !== schemaVersion) {
       fail("planning.example.json: schemaVersion differs from the schema");
     }
