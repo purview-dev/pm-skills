@@ -111,6 +111,8 @@ const RAG_RANK: Record<string, number> = { red: 0, amber: 1, green: 2 };
 // The item fields NOW.md and the stack carry alongside the roadmap: optional
 // everywhere, checked like a roadmap item's fields when present.
 const NOW_ITEM_FIELDS = ["Serves", "Owner", "Size", "Depends on", "Revisits"];
+/** The rules 19 shape: `KEYS.now` without the item fields. */
+const NOW_LEGACY_FIELDS = KEYS.now.filter((key) => !NOW_ITEM_FIELDS.includes(key));
 const OWNER_VALUES = /^(agent|user|both)$/;
 const SIZE_VALUES = /^(S|M|L)$/;
 
@@ -120,19 +122,23 @@ const knownIds = (context: Context) => new Set([...context.items.map((i) => i.id
 /** Every ID in the LOG.md `## Done` lines, for `Revisits`. */
 const doneIdSet = (context: Context) => new Set(context.done.map((d) => d.id));
 
-/** `Owner` is agent, user, or both, when present. */
+/** `Owner` is agent, user, or both, when present. Exactly `checkRoadmap`'s original check, reused by `checkNow`. */
 function checkOwnerField(field: Field | undefined, add: Add, rule: string) {
-  if (field && !isPlaceholder(field.value) && !OWNER_VALUES.test(field.value)) add(field.n, rule, `Owner "${field.value}" is not agent, user, or both.`);
+  if (field && !OWNER_VALUES.test(field.value)) add(field.n, rule, `Owner "${field.value}" is not agent, user, or both.`);
 }
 
-/** `Size` is S, M, or L, when present. */
+/** `Size` is S, M, or L, when present. Exactly `checkRoadmap`'s original check, reused by `checkNow`. */
 function checkSizeField(field: Field | undefined, add: Add, rule: string) {
-  if (field && !isPlaceholder(field.value) && !SIZE_VALUES.test(field.value)) add(field.n, rule, `Size "${field.value}" is not S, M, or L.`);
+  if (field && !SIZE_VALUES.test(field.value)) add(field.n, rule, `Size "${field.value}" is not S, M, or L.`);
 }
 
-/** `Depends on`: every ID named exists, is not `selfId`, and the field names at least one when it is not `none`. */
+/**
+ * `Depends on`: every ID named exists, is not `selfId`, and the field names at least one when it
+ * is not `none`. A present-but-blank value is not `none`, so it reports too, exactly as
+ * `checkRoadmap`'s original inline check did; reused by `checkNow`.
+ */
 function checkDependsOnField(field: Field | undefined, selfId: string | undefined, known: Set<string>, add: Add, rule: string) {
-  if (!field || isPlaceholder(field.value) || /^none$/i.test(field.value)) return;
+  if (!field || /^none$/i.test(field.value)) return;
   const deps = field.value.match(ITEM_ID) ?? [];
   if (!deps.length) {
     add(field.n, rule, `Depends on "${field.value}" names no R-NNN ID.`);
@@ -144,9 +150,12 @@ function checkDependsOnField(field: Field | undefined, selfId: string | undefine
   }
 }
 
-/** `Revisits`: one ID in the LOG.md Done lines, when it is not empty or none. */
+/**
+ * `Revisits`: one ID in the LOG.md Done lines. A present-but-blank value is not `none`, so it
+ * reports too, exactly as `checkRoadmap`'s original inline check did; reused by `checkNow`.
+ */
 function checkRevisitsField(field: Field | undefined, doneIds: Set<string>, add: Add, rule: string) {
-  if (!field || isPlaceholder(field.value) || /^none$/i.test(field.value)) return;
+  if (!field || /^none$/i.test(field.value)) return;
   const ids = field.value.match(ITEM_ID) ?? [];
   if (!ids.length || ids.some((id) => !doneIds.has(id))) add(field.n, rule, `Revisits "${field.value}" is not an item in the LOG.md Done lines.`);
 }
@@ -470,8 +479,6 @@ function outOfOrder(list: { n: number; text: string }[], add: Add, rule: string,
   if (bad) add(bad.n, rule, message);
 }
 
-const NOW_LEGACY_FIELDS = KEYS.now.filter((key) => !NOW_ITEM_FIELDS.includes(key));
-
 function checkNow(doc: Doc, add: Add, context: Context) {
   const top = fields(doc.lines, doc.h2[0]!);
   const keys = top.map((field) => field.key);
@@ -519,7 +526,12 @@ function checkNow(doc: Doc, add: Add, context: Context) {
   checkSizeField(map.get("size"), add, "now/item");
   servesCheck(map.get("serves"), context, add, "now/item");
   checkDependsOnField(map.get("depends on"), selfId, knownIds(context), add, "now/item");
-  checkRevisitsField(map.get("revisits"), doneIdSet(context), add, "now/item");
+  // Unlike Depends on (default "none", literal), a roadmap item's Revisits is often absent rather
+  // than "none"; pm-next then has nothing to copy, so NOW.md leaves it blank for "not a revision".
+  // Blank is only valid here, on the NOW.md path: checkRevisitsField itself still reports a
+  // present-but-blank Revisits on a roadmap item (roadmap/revisits is unchanged).
+  const revisits = map.get("revisits");
+  if (revisits && !isPlaceholder(revisits.value)) checkRevisitsField(revisits, doneIdSet(context), add, "now/item");
 }
 
 function checkRoadmap(doc: Doc, add: Add, context: Context) {

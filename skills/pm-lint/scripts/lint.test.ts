@@ -109,6 +109,16 @@ describe("structure rules", () => {
     }
   });
 
+  it("reports a roadmap item's Depends on or Revisits when present but blank, not just when invalid", async () => {
+    const root = repo({
+      "ROADMAP.md": (text) =>
+        text.replace("- Depends on: none\n- Status: ready\n\n### R-009", "- Depends on:\n- Status: ready\n\n### R-009").replace("- Revisits: R-006 Tenant model", "- Revisits:"),
+    });
+    const rules = await rulesOf(root);
+    expect(rules).toContain("roadmap/depends");
+    expect(rules).toContain("roadmap/revisits");
+  });
+
   it("finds a reused ID, an active item still queued, and a full Next", async () => {
     const extra = (id: string) => `\n### ${id} Extra\n\n- Serves: V1\n- Done when: x\n- Size: S\n- Status: ready\n`;
     const root = repo({
