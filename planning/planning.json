@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-19T19:28:35+00:00",
+  "generatedAt": "2026-11-19T19:45:24+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 20,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-018-export-the-now-cards-owner-and-size",
-    "head": "9bc56055d34f50c06c3b96aed8942a21fbcdce66"
+    "head": "00e1bac92ecfd823291ccc2200c29e54d6c7b927"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -202,7 +202,15 @@
       "The graph's `Own links not exported yet` notice is removed.",
       "The schema field docs, `planning.example.json`, and the docs-site fixture agree, and `just test` covers it."
     ],
-    "checkpoint": null
+    "checkpoint": {
+      "at": "2026-11-19 19:45",
+      "stoppedAt": "Task 6 Step 1 of the plan (Tasks 1 to 5 done and reviewed, commits ed29d42..00e1bac)",
+      "nextAction": "When R-012 Docs-site package: dependency graph has merged, run `git merge origin/main` and execute Task 6",
+      "startWith": "docs/superpowers/plans/2026-11-19-now-item-owner-size-links.md (Task 6) and .superpowers/sdd/2026-11-19-now-item-owner-size-links/progress.md",
+      "decisions": "pm-setup's backfill read Size S from the claim commit; set to M because the user widened R-018 to size M in design. Task 4 ran in the main session because pm-setup asks the user to apply.",
+      "context": "origin/main gained R-021 (package TypeScript source with a build step) and R-017, so Task 6's package file paths (`lib/schema-version.ts` and others) may have moved to `.ts` source; re-check them after the merge. Deferred minors for the final review are in the progress ledger (unused `itemRef` def, `references/spec.md` still at schemaVersion 3, Stack file prose wording, switch on an un-backfilled legacy item). `pm-lint` is not linked into `.claude/skills/` (`just setup-skills`).",
+      "openQuestion": "R-012's pull request has not merged; Task 6 waits for it."
+    }
   },
   "plan": {
     "path": "docs/superpowers/plans/2026-11-19-now-item-owner-size-links.md",
