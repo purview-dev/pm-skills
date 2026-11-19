@@ -2,7 +2,10 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'bun:test';
 
-import { dependencyRows, graphData } from '../src/lib/graph';
+import { chainOf, dependencyRows, graphData, graphQuery, layoutKey, parseGraphQuery, resolveFocus } from '../src/lib/graph';
+import type { GraphEdge } from '../src/lib/graph';
+import { graphLayouts } from '../src/lib/graph-layout';
+import type { GraphLayout } from '../src/lib/graph-layout';
 import { loadPlanning } from '../src/lib/planning';
 import type { Planning } from '../src/lib/planning-types';
 import { targets } from '../src/lib/references';
@@ -145,5 +148,108 @@ describe('dependencyRows', () => {
 
 	it('marks R-012 as links-not-exported', () => {
 		expect(rowById.get('R-012')).toMatchObject({ linksNotExported: true });
+	});
+});
+
+describe('parseGraphQuery', () => {
+	it('defaults lanes and done on with no focus', () => {
+		expect(parseGraphQuery('')).toEqual({ lanes: true, done: true, focus: null });
+	});
+
+	it('reads lanes=off, done=off, and focus', () => {
+		expect(parseGraphQuery('?lanes=off&done=off&focus=R-013')).toEqual({ lanes: false, done: false, focus: 'R-013' });
+	});
+
+	it('treats any value other than the exact "off" as the default true', () => {
+		expect(parseGraphQuery('?lanes=no')).toMatchObject({ lanes: true });
+	});
+});
+
+describe('graphQuery', () => {
+	it('writes no key for every default, keeping other parameters', () => {
+		expect(graphQuery({ lanes: true, done: true, focus: null }, '?x=1&lanes=off')).toBe('?x=1');
+	});
+
+	it('writes lanes, then done, then focus, for non-default values', () => {
+		expect(graphQuery({ lanes: false, done: true, focus: 'R-013' }, '?x=1')).toBe('?x=1&lanes=off&focus=R-013');
+	});
+});
+
+describe('layoutKey', () => {
+	it('maps the four lanes/done combinations to the four layout keys', () => {
+		expect(layoutKey({ lanes: true, done: true })).toBe('lanes-done');
+		expect(layoutKey({ lanes: true, done: false })).toBe('lanes-open');
+		expect(layoutKey({ lanes: false, done: true })).toBe('flow-done');
+		expect(layoutKey({ lanes: false, done: false })).toBe('flow-open');
+	});
+});
+
+describe('resolveFocus', () => {
+	const data = graphData(planning, known);
+	const layouts = graphLayouts(data, planning);
+
+	it('drops a focus that is hidden in the current layout', () => {
+		expect(resolveFocus('R-010', layouts['flow-open'])).toBeNull();
+	});
+
+	it('keeps a focus that is drawn in the current layout', () => {
+		expect(resolveFocus('R-010', layouts['flow-done'])).toBe('R-010');
+	});
+
+	it('drops a focus naming a node that does not exist', () => {
+		expect(resolveFocus('R-777', layouts['flow-done'])).toBeNull();
+	});
+
+	it('is null with no focus', () => {
+		expect(resolveFocus(null, layouts['flow-done'])).toBeNull();
+	});
+});
+
+describe('chainOf', () => {
+	const data = graphData(planning, known);
+	const layouts = graphLayouts(data, planning);
+
+	it("traces R-013's chain through its done and dropped prerequisites and its dependant", () => {
+		const chain = chainOf(data.edges, 'R-013', layouts['lanes-done']);
+
+		for (const id of ['R-013', 'R-010', 'R-021', 'R-009', 'R-014']) expect(chain.has(id), id).toBe(true);
+		expect(chain.has('R-022')).toBe(false);
+
+		const edgeIds = [
+			'R-010>R-013:depends:0',
+			'R-021>R-013:depends:0',
+			'R-013>R-014:depends:0',
+			'R-009>R-021:depends:0',
+		];
+
+		for (const edgeId of edgeIds) expect(chain.has(edgeId), edgeId).toBe(true);
+		expect([...chain].filter((entry) => entry.includes(':depends:'))).toHaveLength(edgeIds.length);
+	});
+
+	it('drops the done and dropped prerequisites that are hidden in lanes-open', () => {
+		const chain = chainOf(data.edges, 'R-013', layouts['lanes-open']);
+
+		expect(chain.has('R-010')).toBe(false);
+		expect(chain.has('R-009')).toBe(false);
+	});
+
+	it('terminates on a two-item cycle and returns both nodes', () => {
+		const edges: GraphEdge[] = [
+			{ id: 'R-201>R-202:depends:0', source: 'R-201', target: 'R-202', kind: 'depends', fromChip: false },
+			{ id: 'R-202>R-201:depends:0', source: 'R-202', target: 'R-201', kind: 'depends', fromChip: false },
+		];
+		const layout: GraphLayout = {
+			boxes: { 'R-201': { x: 0, y: 0, width: 220, height: 64 }, 'R-202': { x: 300, y: 0, width: 220, height: 64 } },
+			lanes: [],
+			tray: null,
+			width: 520,
+			height: 64,
+		};
+		const chain = chainOf(edges, 'R-201', layout);
+
+		expect(chain.has('R-201')).toBe(true);
+		expect(chain.has('R-202')).toBe(true);
+		expect(chain.has('R-201>R-202:depends:0')).toBe(true);
+		expect(chain.has('R-202>R-201:depends:0')).toBe(true);
 	});
 });
