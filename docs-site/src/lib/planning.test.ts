@@ -188,6 +188,12 @@ describe('features', () => {
 		]);
 	});
 
+	it("gives the Now feature the item's owner, size, serves, and links", () => {
+		const now = all.find((feature) => feature.state === 'now')!;
+
+		expect(now).toMatchObject({ id: 'R-012', owner: 'agent', size: 'M', serves: ['V1'], dependsOn: ['R-010'], revisits: null });
+	});
+
 	it('keeps the fields each place holds, with a known milestone or none', () => {
 		const byId = new Map(all.map((feature) => [feature.id, feature]));
 

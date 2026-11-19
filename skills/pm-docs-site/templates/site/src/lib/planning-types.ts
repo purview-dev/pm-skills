@@ -1,4 +1,4 @@
-// The part of {{PM_ROOT}}planning.json (pm-export, schemaVersion 3) the site reads.
+// The part of {{PM_ROOT}}planning.json (pm-export, schemaVersion 4) the site reads.
 // The full shape is {{PM_ROOT}}planning.schema.json; only what the pages use is typed.
 
 export type Owner = 'agent' | 'user' | 'both';
@@ -10,6 +10,14 @@ export type Stage = 'design' | 'plan' | 'execute' | 'finish';
 export interface ItemRef {
 	id: string;
 	title: string;
+}
+
+export interface NowItem extends ItemRef {
+	serves: string[];
+	owner: Owner | null;
+	size: Size | null;
+	dependsOn: string[];
+	revisits: string | null;
 }
 
 export interface Milestone {
@@ -147,7 +155,7 @@ export interface RemovedRisk {
 }
 
 export interface Planning {
-	schemaVersion: 3;
+	schemaVersion: 4;
 	generatedAt: string;
 	source: { branch: string | null; head: string | null };
 	vision: {
@@ -167,7 +175,7 @@ export interface Planning {
 	};
 	now: {
 		status: 'idle' | 'active';
-		item: ItemRef | null;
+		item: NowItem | null;
 		stage: Stage | null;
 		session: string | null;
 		brief: string | null;
