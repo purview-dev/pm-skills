@@ -99,6 +99,18 @@ describe('graphLayouts', () => {
 			expect(inLane('R-025', 'none')).toBe(true);
 		});
 
+		it('puts an isolated item in the first column of its lane, inside the band', () => {
+			const firstX = Math.min(...linked(layout).map((id) => layout.boxes[id]!.x));
+
+			expect(firstX).toBe(0);
+			for (const id of ['R-012', 'R-023']) {
+				const node = data.nodes.find((candidate) => candidate.id === id)!;
+
+				expect(layout.boxes[id]!.x, id).toBe(firstX);
+				expect(inLane(id, node.milestone ?? 'none'), id).toBe(true);
+			}
+		});
+
 		it('keeps every linked node in the same column as in flow-done', () => {
 			const flow = layouts['flow-done'];
 
@@ -134,6 +146,34 @@ describe('graphLayouts', () => {
 		}
 	});
 
+	it('starts the flow linked graph and the tray at x 0', () => {
+		const layout = layouts['flow-done'];
+		const linkedIds = linked(layout);
+
+		expect(Math.min(...linkedIds.map((id) => layout.boxes[id]!.x))).toBe(0);
+		expect(Math.min(...linkedIds.map((id) => layout.boxes[id]!.y))).toBe(0);
+		expect(layout.boxes['R-012']!.x).toBe(0);
+	});
+
+	it('does not move the linked flow graph when isolated items are added', () => {
+		// IDs that sort before every fixture ID, so a layout that ranked them with the linked nodes would interleave them.
+		const extra = Array.from({ length: 20 }, (_, index) => item(`R-00${String(index).padStart(2, '0')}`, index % 2 === 0 ? 'M2' : null));
+		const padded = graphLayouts({ nodes: [...data.nodes, ...extra], edges: data.edges }, planning)['flow-done'];
+		const base = layouts['flow-done'];
+		const linkedIds = linked(base);
+		const linkedHeight = (layout: GraphLayout) => Math.max(...linkedIds.map((id) => layout.boxes[id]!.y + layout.boxes[id]!.height));
+
+		expect(linkedHeight(padded)).toBe(linkedHeight(base));
+		for (const id of linkedIds) expect(padded.boxes[id], id).toEqual(base.boxes[id]!);
+		for (const node of extra) expect(padded.boxes[node.id]!.y, node.id).toBeGreaterThanOrEqual(padded.tray!.y);
+
+		// The fixture's own isolated items leave no gap either: the linked graph is the same without them.
+		const bare = graphLayouts({ nodes: data.nodes.filter((node) => linkedIds.includes(node.id)), edges: data.edges }, planning)['flow-done'];
+
+		expect(bare.tray).toBeNull();
+		for (const id of linkedIds) expect(base.boxes[id], id).toEqual(bare.boxes[id]!);
+	});
+
 	it('lays out a two-item cycle and a self-dependency without throwing', () => {
 		const cyclic: GraphData = {
 			nodes: [item('R-201'), item('R-202'), item('R-203')],
@@ -148,6 +188,12 @@ describe('graphLayouts', () => {
 		for (const key of KEYS) {
 			expect(Object.keys(result[key].boxes).sort(), key).toEqual(['R-201', 'R-202', 'R-203']);
 		}
+
+		// dagre reverses one edge of a cycle to rank it, so exactly one of the two runs right to left.
+		const { boxes } = result['flow-done'];
+		const leftToRight = (source: string, target: string) => boxes[source]!.x + boxes[source]!.width <= boxes[target]!.x;
+
+		expect([leftToRight('R-201', 'R-202'), leftToRight('R-202', 'R-201')].filter(Boolean)).toHaveLength(1);
 	});
 
 	it('gives four empty layouts for empty data', () => {
