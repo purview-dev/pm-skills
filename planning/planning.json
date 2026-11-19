@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-18T23:00:04+00:00",
+  "generatedAt": "2026-11-19T10:09:48+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-012-docs-site-package-dependency-graph",
-    "head": "18c93a9ab6edcaa24fa4776667df8666b6881d53"
+    "head": "aee18c044e570d68ed1e897d9b14f177493c623a"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -182,11 +182,11 @@
       "id": "R-012",
       "title": "Docs-site package: dependency graph"
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-012-docs-site-package-dependency-graph",
     "brief": "planning/briefs/2026-11-17-docs-site-package.md",
     "milestone": "M1",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-19-docs-site-package-dependency-graph-design.md",
     "plan": null,
     "started": "2026-11-18",
     "doneWhen": [
@@ -387,7 +387,7 @@
           "title": "Docs-site package: dependency graph",
           "owner": null,
           "size": null,
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
@@ -908,6 +908,36 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Deferred minors from the R-017 final review: (1) the `pm-docs-site:fs-allow` tests find the plugin by position (`.at(-1)`) instead of by name, so adding a later plugin breaks them; (2) the appended entry serves the whole package folder (test/, .astro/, scripts/, node_modules/) in in-repo and linked dev, which `fs.deny` still guards, and the comment could say so; (3) on case-insensitive macOS a case-only difference appends a harmless duplicate entry."
+    },
+    {
+      "file": "planning/inbox/2026-11-19-1001-widen-r-018-now-item-links.md",
+      "title": "Widen R-018 to export Now item's links",
+      "captured": "2026-11-19 10:01",
+      "source": "agent (R-012 design)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "R-018",
+      "context": "R-012 design",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "The user chose (R-012 design, 2026-11-19) to widen R-018 Export the Now card's owner and size so the export also carries the active item's own `Depends on` and `Revisits`. Today `now.item` is an `ItemRef` (ID and title) and `features()` in `packages/pm-docs-site/src/lib/planning.ts` gives the Now feature empty links, so the R-012 dependency graph cannot draw them (for example R-008 -> R-012). Add to R-018's Done when: the export gives the active item its `dependsOn` and `revisits`, the schema docs, example, and fixtures agree, the graph draws those edges, and the graph's `Own links not exported yet` notice is removed. Apply with `pm-item` after R-012's design."
+    },
+    {
+      "file": "planning/inbox/2026-11-19-1006-feature-pages-miss-revisited-by.md",
+      "title": "Feature pages do not list revisions",
+      "captured": "2026-11-19 10:06",
+      "source": "agent (R-012 design)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "packages/pm-docs-site/src/lib/planning.ts",
+      "context": "R-012 design",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "The R-012 builder check found that `dependents()` in `packages/pm-docs-site/src/lib/planning.ts` looks only at `dependsOn`, so a feature page lists its dependants but not the items whose `Revisits` names it. The R-012 graph draws Revisits edges; the feature pages should list \"Revised by\" too. Out of R-012's scope (its spec, Non-goals)."
     }
   ],
   "briefs": [
@@ -945,7 +975,7 @@
     "next": 1,
     "later": 6,
     "nextMax": 5,
-    "openInbox": 12,
+    "openInbox": 14,
     "discuss": 1,
     "shapingBriefs": 0,
     "done": 9,
@@ -962,6 +992,6 @@
     "claimable": [
       "R-018"
     ],
-    "drift": true
+    "drift": false
   }
 }
