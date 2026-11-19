@@ -48,7 +48,7 @@
 
 - Produces: `doc.now.item: { id: string; title: string; serves: string[]; owner: "agent"|"user"|"both"|null; size: "S"|"M"|"L"|null; dependsOn: string[]; revisits: string|null } | null`; `board.columns.now[0].owner/size` equal `now.item.owner/size`. `SCHEMA_VERSION = 4` exported from `planning.ts`.
 
-- [ ] **Step 1: Add the fields to the fixture `NOW.md`** after `- Milestone: M1`:
+- [x] **Step 1: Add the fields to the fixture `NOW.md`** after `- Milestone: M1`:
 
 ```markdown
 - Serves: V1
@@ -58,7 +58,7 @@
 - Revisits:
 ```
 
-- [ ] **Step 2: Write the failing tests** in `export.test.ts`. Replace the `now.item` assertion in "reads NOW.md, its checkpoint, ..." and add one `it` under `describe("build")`:
+- [x] **Step 2: Write the failing tests** in `export.test.ts`. Replace the `now.item` assertion in "reads NOW.md, its checkpoint, ..." and add one `it` under `describe("build")`:
 
 ```ts
 expect(doc.now.item).toEqual({ id: "R-007", title: "Tenant billing", serves: ["V1"], owner: "both", size: "M", dependsOn: ["R-006"], revisits: null });
@@ -83,19 +83,19 @@ it("flags an invalid Owner or Size in NOW.md", () => {
 
 In "builds the board columns", add `expect(columns.now[0]).toMatchObject({ owner: "both", size: "M" });`.
 
-- [ ] **Step 3: Run to verify they fail**
+- [x] **Step 3: Run to verify they fail**
 
 Run: `bun test skills/pm-export/scripts/export.test.ts`
 Expected: FAIL on the `now.item` `toEqual` and `schemaVersion` 4.
 
-- [ ] **Step 4: Implement.** In the schema add `$defs/nowItem` (properties in the order `id, title, serves, owner, size, dependsOn, revisits`; reuse `#/$defs/idList`, `#/$defs/id`, and the `card` enums), point `now.item` at it, set the `schemaVersion` const to 4. In `planning.ts`, build `nowDoc.item` from `nowFields` using the existing helpers (`list` for `serves`, `ids` for `depends on`, `ids(...)[0] ?? null` for `revisits`, lowercase `owner`, uppercase `size`). A value outside `OWNERS`/`SIZES` exports `null` with an assumption in the roadmap's wording (`R-007 Owner "someone" is not agent, user, or both.`). A missing `Owner` or `Size` on an active item exports `null` with the assumption `NOW.md has no Owner; now.item.owner is null.` (same for Size). The Now card copies `owner` and `size` from `nowDoc.item`. Set `SCHEMA_VERSION = 4`. Update the example (`schemaVersion: 4`, a full `now.item`, matching Now card), the SKILL.md rows (`schemaVersion` `4`; `now` `item{id, title, serves, owner, size, dependsOn, revisits}`; replace line 165's "`owner` and `size` are `null`: `NOW.md` holds neither." with "`owner` and `size` come from `now.item`."), and `scripts/validate.ts:148`.
+- [x] **Step 4: Implement.** In the schema add `$defs/nowItem` (properties in the order `id, title, serves, owner, size, dependsOn, revisits`; reuse `#/$defs/idList`, `#/$defs/id`, and the `card` enums), point `now.item` at it, set the `schemaVersion` const to 4. In `planning.ts`, build `nowDoc.item` from `nowFields` using the existing helpers (`list` for `serves`, `ids` for `depends on`, `ids(...)[0] ?? null` for `revisits`, lowercase `owner`, uppercase `size`). A value outside `OWNERS`/`SIZES` exports `null` with an assumption in the roadmap's wording (`R-007 Owner "someone" is not agent, user, or both.`). A missing `Owner` or `Size` on an active item exports `null` with the assumption `NOW.md has no Owner; now.item.owner is null.` (same for Size). The Now card copies `owner` and `size` from `nowDoc.item`. Set `SCHEMA_VERSION = 4`. Update the example (`schemaVersion: 4`, a full `now.item`, matching Now card), the SKILL.md rows (`schemaVersion` `4`; `now` `item{id, title, serves, owner, size, dependsOn, revisits}`; replace line 165's "`owner` and `size` are `null`: `NOW.md` holds neither." with "`owner` and `size` come from `now.item`."), and `scripts/validate.ts:148`.
 
-- [ ] **Step 5: Run to verify they pass**
+- [x] **Step 5: Run to verify they pass**
 
 Run: `bun test skills/pm-export/scripts/export.test.ts`
 Expected: PASS. (`just validate` still fails on the docs-site templates until Task 5.)
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add skills/pm-export scripts/validate.ts
@@ -117,7 +117,7 @@ git commit -m "feat(pm-export): export the active item's owner, size, and links 
 - Consumes: the field order from Global Constraints.
 - Produces: rule `now/item` (error, not fixable): "When active, Serves lists V IDs from VISION.md, Owner is agent, user, or both, Size is S, M, or L, Depends on lists existing IDs or none, and Revisits is one existing ID or empty."
 
-- [ ] **Step 1: Write the failing tests** in `lint.test.ts`, using the existing `repo({...})` helper and `rulesOf`:
+- [x] **Step 1: Write the failing tests** in `lint.test.ts`, using the existing `repo({...})` helper and `rulesOf`:
 
 ```ts
 it("accepts NOW.md with or without the item fields", async () => {
@@ -138,19 +138,19 @@ it("keeps the item fields empty when idle", async () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `bun test skills/pm-lint/scripts/lint.test.ts`
 Expected: FAIL (`now/fields` on the fixture, no `now/item`).
 
-- [ ] **Step 3: Implement.** `KEYS.now` becomes the 14-field list; `checkNow` accepts the keys when they equal either the 9-field list (the rules 19 shape: the 14 minus the five) or the 14-field list, and the `now/fields` message names both. Add the `now/item` checks for an active `NOW.md` when the keys are present (reuse the roadmap's owner and size regexes and the `Serves`/`Depends on`/`Revisits` lookups `checkRoadmap` uses). Add the five keys to `KEYS.stack` after `Milestone`; `stack/entry`'s required keys are unchanged. Update `rules.ts`, `rules.md` (`now/fields` text names the optional five; new `now/item` row), and the `pm-init` NOW.md template (empty fields, and the five in the active example).
+- [x] **Step 3: Implement.** `KEYS.now` becomes the 14-field list; `checkNow` accepts the keys when they equal either the 9-field list (the rules 19 shape: the 14 minus the five) or the 14-field list, and the `now/fields` message names both. Add the `now/item` checks for an active `NOW.md` when the keys are present (reuse the roadmap's owner and size regexes and the `Serves`/`Depends on`/`Revisits` lookups `checkRoadmap` uses). Add the five keys to `KEYS.stack` after `Milestone`; `stack/entry`'s required keys are unchanged. Update `rules.ts`, `rules.md` (`now/fields` text names the optional five; new `now/item` row), and the `pm-init` NOW.md template (empty fields, and the five in the active example).
 
-- [ ] **Step 4: Run to verify they pass**
+- [x] **Step 4: Run to verify they pass**
 
 Run: `bun test skills/pm-lint/scripts/lint.test.ts`
 Expected: PASS, including the catalogue-equals-`rules.md` test and the fresh `pm-init` install test.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add skills/pm-lint skills/pm-init/templates/NOW.md
@@ -171,22 +171,22 @@ git commit -m "feat(pm-lint): check the active item's fields in NOW.md"
 
 - Consumes: the field order and the switch join rule from Global Constraints.
 
-- [ ] **Step 1: `pm-next` step 7.** After `Milestone (from the item, or empty)` add: `Serves`, `Owner` (from the item, or `agent`), `Size`, `Depends on` (from the item, or `none`), and `Revisits` (from the item, or empty). Add: `## Done when` holds the item's checks only; a held `Note:` goes on the item, never under `## Done when`.
+- [x] **Step 1: `pm-next` step 7.** After `Milestone (from the item, or empty)` add: `Serves`, `Owner` (from the item, or `agent`), `Size`, `Depends on` (from the item, or `none`), and `Revisits` (from the item, or empty). Add: `## Done when` holds the item's checks only; a held `Note:` goes on the item, never under `## Done when`.
 
-- [ ] **Step 2: `pm-checkpoint`.** `done`: the LOG line's `Owner` is `NOW.md`'s `Owner` (`agent` when missing). `switch`: the restored block gets `Serves`, `Owner`, `Size`, `Depends on`, `Revisits` from `NOW.md` and `Done when` from `## Done when`, its bullets joined with a semicolon and a space; omit a field `NOW.md` does not have. `push`: the stack entry template gains the five fields after `Milestone`. `pop`: writes them back to `NOW.md`.
+- [x] **Step 2: `pm-checkpoint`.** `done`: the LOG line's `Owner` is `NOW.md`'s `Owner` (`agent` when missing). `switch`: the restored block gets `Serves`, `Owner`, `Size`, `Depends on`, `Revisits` from `NOW.md` and `Done when` from `## Done when`, its bullets joined with a semicolon and a space; omit a field `NOW.md` does not have. `push`: the stack entry template gains the five fields after `Milestone`. `pop`: writes them back to `NOW.md`.
 
-- [ ] **Step 3: `pm-revise:113`.** Add the five fields to its `NOW.md` field list in the same order.
+- [x] **Step 3: `pm-revise:113`.** Add the five fields to its `NOW.md` field list in the same order.
 
-- [ ] **Step 4: `pm-setup`.** Add Step 5 item 5 **Active item fields (version 20)**: when `<PM root>/NOW.md` is active and lacks `Owner`, find the claim commit with `git log --format=%H --grep="^docs(pm): claim <ID>" -1 <Session branch>`, read `git show <commit>^:<PM root>/ROADMAP.md`, take that item's `Serves`, `Owner`, `Size`, `Depends on`, `Revisits`, and write them to `NOW.md` after `Milestone`. When the commit or block is missing, ask one choice question per missing `Owner`, `Size`, `Serves` (options drawn from the allowed values, the `V` lines in `VISION.md` for Serves), with `Depends on: none` and `Revisits:` empty. Show the five values. `pm-setup` does not commit; the next PM commit carries `NOW.md`, like the `Rules version` line. Step 6 item 2 and the Output diff-check line also allow those `NOW.md` lines.
+- [x] **Step 4: `pm-setup`.** Add Step 5 item 5 **Active item fields (version 20)**: when `<PM root>/NOW.md` is active and lacks `Owner`, find the claim commit with `git log --format=%H --grep="^docs(pm): claim <ID>" -1 <Session branch>`, read `git show <commit>^:<PM root>/ROADMAP.md`, take that item's `Serves`, `Owner`, `Size`, `Depends on`, `Revisits`, and write them to `NOW.md` after `Milestone`. When the commit or block is missing, ask one choice question per missing `Owner`, `Size`, `Serves` (options drawn from the allowed values, the `V` lines in `VISION.md` for Serves), with `Depends on: none` and `Revisits:` empty. Show the five values. `pm-setup` does not commit; the next PM commit carries `NOW.md`, like the `Rules version` line. Step 6 item 2 and the Output diff-check line also allow those `NOW.md` lines.
 
-- [ ] **Step 5: Rules section.** Non-interruption rule 6: `pm-setup` may also write the item fields of an active `NOW.md` during an upgrade (pm-setup Step 5, item 5). Stack file definition: the entry also holds the item's `Serves`, `Owner`, `Size`, `Depends on`, and `Revisits`. Add the `Version 20` note with the spec's wording (section 5).
+- [x] **Step 5: Rules section.** Non-interruption rule 6: `pm-setup` may also write the item fields of an active `NOW.md` during an upgrade (pm-setup Step 5, item 5). Stack file definition: the entry also holds the item's `Serves`, `Owner`, `Size`, `Depends on`, and `Revisits`. Add the `Version 20` note with the spec's wording (section 5).
 
-- [ ] **Step 6: Lint the Markdown**
+- [x] **Step 6: Lint the Markdown**
 
 Run: `bunx markdownlint-cli2 skills/pm-next/SKILL.md skills/pm-checkpoint/SKILL.md skills/pm-revise/SKILL.md skills/pm-setup/SKILL.md skills/pm-setup/references/AGENTS-section.md`
 Expected: `0 issues`.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add skills/pm-next skills/pm-checkpoint skills/pm-revise skills/pm-setup
@@ -200,24 +200,24 @@ git commit -m "feat(pm-next): carry the claimed item's fields in NOW.md"
 - Modify (by `just bump major`): `package.json`, `skills/pm-setup/references/AGENTS-section.md` marker, `skills/pm-init/templates/config.md`
 - Modify (by `pm-setup`): `AGENTS.md` managed section, `planning/config.md` `Rules version`, `planning/NOW.md` (backfill)
 
-- [ ] **Step 1: Bump**
+- [x] **Step 1: Bump**
 
 Run: `just bump major`
 Expected: `package.json` `20.0.0`, marker `version=20`.
 
-- [ ] **Step 2: Run `pm-setup`** (upgrade). Expected output: `upgraded to v20`, `Rules version: v20 recorded in planning/config.md`, and the backfill showing `Serves: V4`, `Owner: agent`, `Size: M`, `Depends on: none`, `Revisits:` (empty) for R-018, read from the parent of `ea9ea0d docs(pm): claim R-018 ...`.
+- [x] **Step 2: Run `pm-setup`** (upgrade). Expected output: `upgraded to v20`, `Rules version: v20 recorded in planning/config.md`, and the backfill showing `Serves: V4`, `Owner: agent`, `Size: M`, `Depends on: none`, `Revisits:` (empty) for R-018, read from the parent of `ea9ea0d docs(pm): claim R-018 ...`.
 
-- [ ] **Step 3: Verify the live export**
+- [x] **Step 3: Verify the live export**
 
 Run: `bun skills/pm-export/scripts/export.ts write; bun skills/pm-export/scripts/export.ts get now.item; bun skills/pm-export/scripts/export.ts get board.columns.now`
 Expected: `now.item` has `owner: "agent"`, `size: "M"`, `serves: ["V4"]`; the Now card shows `owner: "agent"`, `size: "M"`.
 
-- [ ] **Step 4: Verify**
+- [x] **Step 4: Verify**
 
 Run: `just pm-lint; bun test`
 Expected: `pm-lint: clean`, tests pass. (`just validate` still fails on the templates until Task 5.)
 
-- [ ] **Step 5: Commit** the code files, then the PM files as a PM commit:
+- [x] **Step 5: Commit** the code files, then the PM files as a PM commit:
 
 ```bash
 git add package.json skills/pm-setup/references/AGENTS-section.md skills/pm-init/templates/config.md AGENTS.md
@@ -242,7 +242,7 @@ git commit -m "docs(pm): record rules 20 and backfill R-018 fields" -- planning
 - Consumes: `nowItem` from Task 1.
 - Produces: `export interface NowItem extends ItemRef { serves: string[]; owner: Owner | null; size: Size | null; dependsOn: string[]; revisits: string | null }`; `Planning['now']['item']: NowItem | null`.
 
-- [ ] **Step 1: Write the failing test** in the template's `planning.test.ts`:
+- [x] **Step 1: Write the failing test** in the template's `planning.test.ts`:
 
 ```ts
 it("gives the Now feature the item's owner, size, serves, and links", () => {
@@ -253,19 +253,19 @@ it("gives the Now feature the item's owner, size, serves, and links", () => {
 
 Set the fixture to `schemaVersion: 4`, `now.item` = `{ id: "R-012", title: "Invoice export", serves: ["V1"], owner: "agent", size: "M", dependsOn: ["R-008"], revisits: null }` (use a `V` and a Done or roadmap `R-008` that already exist in the fixture; adjust the IDs to ones it holds), and the Now card's `owner`/`size` to match.
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `cd skills/pm-docs-site/templates/site && bun test src/lib/planning.test.ts`
 Expected: FAIL on `dependsOn` / `SCHEMA_VERSION`.
 
-- [ ] **Step 3: Implement.** `SCHEMA_VERSION = 4`, the types and the `schemaVersion: 4;` literal, and in `features()` take `owner`, `size`, `serves`, `dependsOn`, `revisits` from `planning.now.item` instead of the board card. Update the `pm-docs-site` SKILL.md sentence to "This skill reads schemaVersion 4." and its manifest example.
+- [x] **Step 3: Implement.** `SCHEMA_VERSION = 4`, the types and the `schemaVersion: 4;` literal, and in `features()` take `owner`, `size`, `serves`, `dependsOn`, `revisits` from `planning.now.item` instead of the board card. Update the `pm-docs-site` SKILL.md sentence to "This skill reads schemaVersion 4." and its manifest example.
 
-- [ ] **Step 4: Re-render and verify**
+- [x] **Step 4: Re-render and verify**
 
 Run: `bun skills/pm-docs-site/scripts/site.ts write docs-site; just validate; just docs-check; just lint-check`
 Expected: all pass.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add skills/pm-docs-site docs-site
@@ -286,17 +286,17 @@ git commit -m "feat(pm-docs-site): read schemaVersion 4 and the Now item's links
 - Consumes: `NowItem` (same shape as Task 5).
 - Produces: graph nodes and rows without `linksNotExported`.
 
-- [ ] **Step 1: Gate on R-012.**
+- [x] **Step 1: Gate on R-012.**
 
 Run: `git fetch origin --prune; git branch -r --merged origin/main | Select-String r-012`
 Expected: `origin/feat/r-012-docs-site-package-dependency-graph`. If it is not listed, run `pm-checkpoint pause` with `Open question: R-012's pull request has not merged; Task 6 waits for it.` and stop.
 
-- [ ] **Step 2: Bring `main` in.**
+- [x] **Step 2: Bring `main` in.**
 
 Run: `git merge origin/main`
 Expected: a merge without conflicts, or conflicts only in `planning/` resolved in favour of this branch's `NOW.md` and `main`'s `LOG.md`/`ROADMAP.md`, then `just pm-lint` clean.
 
-- [ ] **Step 3: Write the failing tests.** In `test/graph.test.ts` replace the `linksNotExported` assertions:
+- [x] **Step 3: Write the failing tests.** In `test/graph.test.ts` replace the `linksNotExported` assertions:
 
 ```ts
 expect(nodeById.get('R-012')).toMatchObject({ active: true, section: 'now' });
@@ -306,19 +306,19 @@ expect(rowById.get('R-012')).not.toHaveProperty('linksNotExported');
 
 Add one case where the Now item depends on a done ID and one on an unknown ID: the row shows the done chip and the missing chip, as for a roadmap item. In `test/cli.test.ts` the supported line becomes `schemaVersion 4` and the too-new export is 5 (`has schemaVersion 5; this site reads schemaVersion 4`). Update `test/fixtures/planning.json` as in Task 5.
 
-- [ ] **Step 4: Run to verify they fail**
+- [x] **Step 4: Run to verify they fail**
 
 Run: `cd packages/pm-docs-site && bun test`
 Expected: FAIL on the edge into R-012 and the CLI text.
 
-- [ ] **Step 5: Implement.** `SUPPORTED_SCHEMA_VERSIONS = [4]`, types and `SCHEMA_VERSION` as in Task 5, `features()` reads the five fields from `planning.now.item`, remove `linksNotExported` from `graph.ts` types and builders, the `GraphNodes.tsx` note, the `graph.astro` paragraph (and its `plan-deps__links` style if unused), the README paragraph at line 150, and update README line 130's version. Leave `package.json`'s version unchanged.
+- [x] **Step 5: Implement.** `SUPPORTED_SCHEMA_VERSIONS = [4]`, types and `SCHEMA_VERSION` as in Task 5, `features()` reads the five fields from `planning.now.item`, remove `linksNotExported` from `graph.ts` types and builders, the `GraphNodes.tsx` note, the `graph.astro` paragraph (and its `plan-deps__links` style if unused), the README paragraph at line 150, and update README line 130's version. Leave `package.json`'s version unchanged.
 
-- [ ] **Step 6: Verify**
+- [x] **Step 6: Verify**
 
 Run: `cd packages/pm-docs-site && bun test && bun run check && bun run build; cd ../..; just lint-check; just version-check`
 Expected: all pass; `version-check` reports the package version unchanged.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add packages/pm-docs-site
