@@ -36,11 +36,12 @@
 	cursor: pointer;
 }
 
+/* The "/ ''" alt text keeps the glyph out of the switch's accessible name (its own text already says checked or not). */
 .plan-graph__toolbar button[role='switch']::before {
 	display: inline-block;
 	width: 0.9em;
 	margin-right: 0.35em;
-	content: '○';
+	content: '○' / '';
 }
 
 .plan-graph__toolbar button[aria-checked='true'] {
@@ -50,7 +51,7 @@
 }
 
 .plan-graph__toolbar button[aria-checked='true']::before {
-	content: '●';
+	content: '●' / '';
 }
 
 /* A fixed height, so the page scrolls past the canvas. */
