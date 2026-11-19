@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-19T10:15:33+00:00",
+  "generatedAt": "2026-11-19T14:25:36+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-012-docs-site-package-dependency-graph",
-    "head": "1293f3de95415e304f415e98625afb679e6e620e"
+    "head": "eb433c9744473f4122df1aa1e1a59b51aeca6669"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -392,10 +392,34 @@
   "roadmap": {
     "next": [
       {
+        "id": "R-020",
+        "title": "Docs-site package: rich demo planning fixture",
+        "section": "next",
+        "position": 1,
+        "label": "next",
+        "serves": [
+          "V4"
+        ],
+        "milestone": "M1",
+        "owner": "agent",
+        "doneWhen": "a synthetic, schema-valid `planning.json` in the package's fixture site fills every view (at least 3 milestones with targets, `Depends on` and `Revisits` edges, risks in all three RAG states, inbox files, briefs, Done and Dropped log lines, an active Now item), `bun skills/pm-export/scripts/export.ts validate` passes on it, and the fixture site's build and browser tests render every page with content.",
+        "size": "M",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": null,
+        "revisits": null,
+        "claimable": true
+      },
+      {
         "id": "R-018",
         "title": "Export the Now card's owner and size",
         "section": "next",
-        "position": 1,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -475,34 +499,10 @@
         "claimable": false
       },
       {
-        "id": "R-020",
-        "title": "Docs-site package: rich demo planning fixture",
-        "section": "later",
-        "position": 3,
-        "label": "later",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "a synthetic, schema-valid `planning.json` in the package's fixture site fills every view (at least 3 milestones with targets, `Depends on` and `Revisits` edges, risks in all three RAG states, inbox files, briefs, Done and Dropped log lines, an active Now item), `bun skills/pm-export/scripts/export.ts validate` passes on it, and the fixture site's build and browser tests render every page with content.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": null,
-        "revisits": null,
-        "claimable": false
-      },
-      {
         "id": "R-006",
         "title": "Check pm-setup's skill counts in validate",
         "section": "later",
-        "position": 4,
+        "position": 3,
         "label": "later",
         "serves": [
           "V1"
@@ -526,7 +526,7 @@
         "id": "R-015",
         "title": "Rehearse a fresh install in a scratch repository",
         "section": "later",
-        "position": 5,
+        "position": 4,
         "label": "later",
         "serves": [
           "V1"
@@ -550,7 +550,7 @@
         "id": "R-016",
         "title": "Rehearse the lifecycle guards",
         "section": "later",
-        "position": 6,
+        "position": 5,
         "label": "later",
         "serves": [
           "V2",
@@ -585,6 +585,13 @@
         }
       ],
       "next": [
+        {
+          "id": "R-020",
+          "title": "Docs-site package: rich demo planning fixture",
+          "owner": "agent",
+          "size": "M",
+          "detail": "ready"
+        },
         {
           "id": "R-018",
           "title": "Export the Now card's owner and size",
@@ -1132,6 +1139,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "The R-012 builder check found that `dependents()` in `packages/pm-docs-site/src/lib/planning.ts` looks only at `dependsOn`, so a feature page lists its dependants but not the items whose `Revisits` names it. The R-012 graph draws Revisits edges; the feature pages should list \"Revised by\" too. Out of R-012's scope (its spec, Non-goals)."
+    },
+    {
+      "file": "planning/inbox/2026-11-19-1213-timeline-no-hydrate-in-dev.md",
+      "title": "Roadmap timeline fails to hydrate in dev",
+      "captured": "2026-11-19 12:13",
+      "source": "agent (R-012 execute)",
+      "kind": "bug",
+      "severity": "minor",
+      "affects": "packages/pm-docs-site/src/components/timeline/Timeline.tsx",
+      "context": "R-012 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Found while building R-012 (Task 5): under `pm-docs-site dev` in a packed-install consumer, the Roadmap Timeline island does not hydrate. It imports `src/lib/timeline.ts`, which imports `src/lib/planning.ts`, which imports `node:fs`, so the client bundle fails. `test/browser/dev.browser.ts` only checks the Board, so nothing caught it. R-012 fixed the same problem for the Graph island by moving its client functions into `src/lib/graph-state.ts`; the timeline needs the same split and a dev browser test."
     }
   ],
   "briefs": [
@@ -1166,10 +1188,10 @@
     "removed": []
   },
   "counts": {
-    "next": 1,
-    "later": 6,
+    "next": 2,
+    "later": 5,
     "nextMax": 5,
-    "openInbox": 14,
+    "openInbox": 15,
     "discuss": 1,
     "shapingBriefs": 0,
     "done": 9,
@@ -1184,6 +1206,7 @@
     "reviewDue": true,
     "lastReview": "never",
     "claimable": [
+      "R-020",
       "R-018"
     ],
     "drift": false
