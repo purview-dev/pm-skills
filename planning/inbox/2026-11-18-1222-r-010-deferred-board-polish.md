@@ -8,7 +8,7 @@
 - Discuss: no
 - Related: R-011, R-012
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
-- Reviewed: never
+- Reviewed: 2026-11-19
 
 ## Idea
 

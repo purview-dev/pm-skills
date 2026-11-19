@@ -5,7 +5,7 @@
 - Kind: tech-debt
 - Affects: planning/briefs/2026-11-17-docs-site-package.md
 - Context: R-010 design
-- Discuss: no
+- Discuss: yes
 - Related: R-010, R-011, R-012
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 - Reviewed: never

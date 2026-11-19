@@ -21,6 +21,7 @@
 
 ## Dropped
 
+- 2026-11-19 Name 1.0.0 in the publish item and the M1 exit criterion. Reason: decided on 2026-11-18 (STRATEGY.md Decisions) to keep "returns a version" in both.
 - 2026-11-17 R-003 Fix pm-export's ajv validation command. Reason: v19.0.0 replaced the ajv command in pm-export's guard with `bun scripts/export.ts validate`, which exits 0 on `planning/planning.json`.
 - 2026-11-17 R-007 Docs-site extension pages. Reason: the Now, Inbox, Briefs, and Strategy pages already exist in the pm-docs-site templates. Brief: planning/briefs/2026-11-17-docs-site-package.md.
 - 2026-11-17 R-005 Rehearse a schemaVersion bump through the docs site. Reason: folded into R-013's Done when. Brief: planning/briefs/2026-11-17-docs-site-package.md.
@@ -30,5 +31,7 @@
 <!-- Inbox items dropped before they became roadmap items have no ID. -->
 
 ## Reviews
+
+- 2026-11-19 Inbox 19 to 3. Added R-022, R-023, R-024, R-025, R-026; 9 files merged, 1 dropped, 2 to shape; R-019 promoted to Next for re-slicing; Next reordered.
 
 <!-- - 2026-10-29 Inbox 12 to 0. Next reordered. 1 item dropped. -->

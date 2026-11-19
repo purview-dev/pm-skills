@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-19T21:54:49+00:00",
+  "generatedAt": "2026-11-19T23:28:11+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 20,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-018-export-the-now-cards-owner-and-size",
-    "head": "a31acbfd5d1237f790c644f364993ad43b08366d"
+    "branch": "main",
+    "head": "d4b6637ddfd61b7ac9426ee51ca528af4c9ede42"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -193,10 +193,58 @@
   "roadmap": {
     "next": [
       {
+        "id": "R-022",
+        "title": "Docs-site package: timeline hydrates in dev",
+        "section": "next",
+        "position": 1,
+        "label": "next",
+        "serves": [
+          "V4"
+        ],
+        "milestone": "M1",
+        "owner": "agent",
+        "doneWhen": "under `pm-docs-site dev` in a packed-install consumer, `/plan/roadmap/` shows the timeline toolbar with no `node:fs` error in the browser console, and `test/browser/dev.browser.ts` asserts it.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "Bug (minor) from R-012 execute (2026-11-19): the Roadmap Timeline island imports `src/lib/timeline.ts`, which imports `src/lib/planning.ts`, which imports `node:fs`, so the client bundle fails in dev. R-012 fixed the same problem for the Graph island by moving its client functions into `src/lib/graph-state.ts`; the timeline needs the same split. Reproduce: pack and install into a consumer outside the repository (as `test/browser/dev-server.ts` does), run `pm-docs-site dev`, open `/plan/roadmap/`; every time.",
+        "revisits": null,
+        "claimable": true
+      },
+      {
+        "id": "R-023",
+        "title": "Docs-site package: stable browser tests",
+        "section": "next",
+        "position": 2,
+        "label": "next",
+        "serves": [
+          "V4"
+        ],
+        "milestone": "M1",
+        "owner": "agent",
+        "doneWhen": "`npx playwright test test/browser/graph.browser.ts --project chromium --repeat-each=10` in `packages/pm-docs-site` passes 10 of 10 runs.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "Bug (minor) from R-012 execute (2026-11-19): the both-switches-off no-flash test fails about 1 run in 10 on \"at least one pending frame\", because `sampleFrames` records its first frame after a fast hydration can set and clear `data-graph-pending`. Fix: push one frame synchronously when the init script runs, and record every `data-graph-pending` change with a MutationObserver on `document.documentElement`. Same re-review: the chip dedup assertion at `test/graph-layout.test.ts:498-500` cannot fail; `arrowheadFill` in `graph.browser.ts:392-407` depends on React Flow's `url('#<id>')` marker format. 2026-11-19 review, from R-011 verification (2026-11-18): `just lint-check` failed twice at `package-test` when both Playwright web servers started together; the `dev` server (`test/browser/dev-server.ts`) logged `Listen method has been called more than once without closing` and `transport invoke timed out after 60000ms`, then Playwright timed out after 300000ms. Playwright starts both servers even with `--project=chromium`. Separately, `bun run test:browser -- --project chromium <file>` fails under Bun (the path is read as a project name), while `--project=chromium` works. Affects `packages/pm-docs-site/playwright.config.ts`. 2026-11-19 review, from the R-017 final review: the `pm-docs-site:fs-allow` tests in `test/integration.test.ts` find the plugin by position (`.at(-1)`) instead of by name, so a later plugin breaks them; the appended entry in `lib/index.ts` serves the whole package folder in in-repo and linked dev, which `fs.deny` still guards, and the comment could say so; on case-insensitive macOS a case-only difference appends a harmless duplicate entry.",
+        "revisits": null,
+        "claimable": true
+      },
+      {
         "id": "R-020",
         "title": "Docs-site package: rich demo planning fixture",
         "section": "next",
-        "position": 1,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -212,18 +260,16 @@
           "since": null
         },
         "brief": null,
-        "note": null,
+        "note": "2026-11-19 review, from the user (2026-11-18): \"This needs a demo site in repo, that shows all of the various features off\". 2026-11-19 review, from the R-018 final re-review: `packages/pm-docs-site/src/routes/plan/now.astro` reads the active item's owner and size from `board.columns.now[0]` while `features()` reads `now.item` (equal by construction, two sources); `pm-board`'s Now card step does not say they come from `NOW.md`; the export schema's `$defs/itemRef` is unreferenced; `graph.test.ts` builds a partial `Planning` with `as unknown as Planning` instead of spreading the fixture; the shared package fixture draws no edge into the active node. Tidy these in one pass.",
         "revisits": null,
         "claimable": true
-      }
-    ],
-    "later": [
+      },
       {
         "id": "R-019",
         "title": "Docs-site package: consumer-ready for 1.0.0",
-        "section": "later",
-        "position": 1,
-        "label": "later",
+        "section": "next",
+        "position": 4,
+        "label": "next",
         "serves": [
           "V4"
         ],
@@ -240,15 +286,41 @@
           "since": null
         },
         "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-        "note": "Folds five inbox files from the R-008 and R-009 final reviews (CLI gaps, consumer text, dead doc links, RefLink fallbacks, IDs linked inside paths). Affects `packages/pm-docs-site/cli.mjs`, `lib/site-options.mjs`, `README.md`, `src/pages/index.astro`, `src/content.config.ts`, `src/lib/planning.ts`, `src/components/RefLink.astro`, `src/lib/references.ts` (the `.mjs` files become `.ts` source in R-021 Docs-site package: TypeScript source with a build step). Moved from Next 5 to the top of Later on 2026-11-18 when R-021 took the top of Next.",
+        "note": "Folds five inbox files from the R-008 and R-009 final reviews (CLI gaps, consumer text, dead doc links, RefLink fallbacks, IDs linked inside paths). Affects `packages/pm-docs-site/cli.mjs`, `lib/site-options.mjs`, `README.md`, `src/pages/index.astro`, `src/content.config.ts`, `src/lib/planning.ts`, `src/components/RefLink.astro`, `src/lib/references.ts` (the `.mjs` files become `.ts` source in R-021 Docs-site package: TypeScript source with a build step). Moved from Next 5 to the top of Later on 2026-11-18 when R-021 took the top of Next. 2026-11-19 review: the Milestones page (`src/routes/plan/milestones/index.astro`) shows a `No milestone` card reading `0 of 0 done` whenever anything was dropped, because `features()` gives dropped items `milestone: null`; R-011 hid it on the timeline and Roadmap page only (bug, cosmetic). 2026-11-19 review, accessibility from the R-009 final review: card links do not say they open a popup (`aria-haspopup=\"dialog\"`); a backdrop click does not close the item dialog; popup section headings share the dialog title's h2 level; Board collapse toggles render without JavaScript and do nothing (render them hidden, let `plan.ts` reveal them); `KanbanItemCard` keeps `tabindex=0` around a card that holds links, so each card costs extra tab stops; no browser test for a `localStorage` that throws. 2026-11-19 review, timeline follow-ups from the R-011 final review (`src/components/timeline/Timeline.tsx`): keyboard focus drops to `<body>` when `Zoom in`, `Zoom out`, or `Reset zoom` becomes disabled at its limit (`aria-disabled` with a no-op guard keeps focus); the plain-wheel path scrolls by `deltaY` without scaling line-mode (`deltaMode` 1) deltas; the zoom-anchor browser test covers a single click, not two zoom changes before one render; the `planned` and `other` card markers are never rendered in a browser test (the fixture has no planned milestone); event de-duplication assumes the Now item is not also logged done or queued under another milestone, untested. 2026-11-19 review, build and docs from the R-021 final review: `tsconfig.build.json` sets `types: [\"node\"]` but `@types/node` arrives only through `@types/bun` (add it to `devDependencies` so a lockfile change cannot break `prepack`); `scripts/build.ts` rewrites `.ts` specifiers only in the top level of `dist/`, and the install-test guard reads only the top level (use `readdirSync(..., { recursive: true })`); `scripts/check-exports.ts` rejects valid `.mjs`/`.cjs` entry points and accepts a `.d.ts` outside a `types` condition; shipped `src/` type-imports `../lib/types.ts`, which the tarball omits (ship it or note why not); the `astro.config.ts` examples in `packages/pm-docs-site/README.md` and `docs/wiki/guide/Docs-Site-Package.md` are fenced as `js`; `README.md:69` and `.config/purview-docs.yml:23` say `0.1.0-pre.1` is on npm. 2026-11-19 review: promoted from Later 1 to Next 4. Its `Done when` does not cover the four Notes merged today, and it has outgrown size M; re-slice it with `pm-shape` before it is claimed, and make R-013 depend on the slices.",
         "revisits": null,
-        "claimable": false
+        "claimable": true
       },
+      {
+        "id": "R-026",
+        "title": "pm-checkpoint keeps every item field through switch, push, and pop",
+        "section": "next",
+        "position": 5,
+        "label": "next",
+        "serves": [
+          "V2"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "an item claimed with a `Note` and then moved with `pm-checkpoint` `switch`, or `push` then `pop`, returns to `ROADMAP.md` with every field it had before the claim, including `Note`, and `just test` covers the field list.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "From R-018 design (2026-11-19): R-018's design keeps `Note` out of `NOW.md`, so `pm-checkpoint` `switch` (and `push`/`pop`) restore a roadmap item without the `Note` it had before `pm-next` claimed it. Carry `Note` through `NOW.md` or the stack entry. A skills change, so it bumps the rules major. Spec: `docs/superpowers/specs/2026-11-19-now-item-owner-size-links-design.md`. 2026-11-19 review, from the R-018 final re-review: `pop` no longer states that the five item fields (`Serves`, `Owner`, `Size`, `Depends on`, `Revisits`) land after `Milestone` and before `Spec`, as `pm-rejoin` and `pm-next` step 7 do; `push` cites `now/fields` as the reason to copy the five as a group into `STACK.md`, but `now/fields` checks `NOW.md` only and `checkStack` does not enforce it. Add the position sentence to `pop` and reword the `push` citation. 2026-11-19 review, from the R-018 final re-review: `pm-setup` Step 5 item 5 backfills the five item fields of an active `NOW.md` on the upgrade to rules 20, but not of entries already in `STACK.md`, so an item pushed before the upgrade pops back without them (its Now card exports `owner`/`size` null and the graph draws no edges for it). `pm-checkpoint switch` on an item never backfilled (the user chose `Continue on v19`) restores a roadmap block without `Serves` and `Size`, which `roadmap/item` requires. Either backfill stack entries in `pm-setup`, or have `pop` and `switch` ask for missing values the way the backfill does. Affects `skills/pm-setup/SKILL.md`.",
+        "revisits": null,
+        "claimable": true
+      }
+    ],
+    "later": [
       {
         "id": "R-013",
         "title": "Docs-site package: publish and migrate",
         "section": "later",
-        "position": 2,
+        "position": 1,
         "label": "waiting",
         "serves": [
           "V4"
@@ -272,6 +344,30 @@
         },
         "brief": "planning/briefs/2026-11-17-docs-site-package.md",
         "note": "Rewrites `pm-docs-site` and Non-interruption rule 9, so it bumps the rules major.",
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-025",
+        "title": "Docs-site package: feature pages list revisions",
+        "section": "later",
+        "position": 2,
+        "label": "later",
+        "serves": [
+          "V4"
+        ],
+        "milestone": "M1",
+        "owner": "agent",
+        "doneWhen": "a feature page for an item that another item's `Revisits` names lists that item under \"Revised by\", and a unit test in `packages/pm-docs-site` covers it.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "From R-012 design (2026-11-19): `dependents()` in `packages/pm-docs-site/src/lib/planning.ts` looks only at `dependsOn`, so a feature page lists its dependants but not the items whose `Revisits` names it; the R-012 graph already draws Revisits edges.",
         "revisits": null,
         "claimable": false
       },
@@ -347,6 +443,30 @@
         "note": null,
         "revisits": null,
         "claimable": false
+      },
+      {
+        "id": "R-024",
+        "title": "Self-contained aspire module test example",
+        "section": "later",
+        "position": 6,
+        "label": "later",
+        "serves": [
+          "V4"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "the TUnit example in `skills/pm-docs-site/templates/aspire/MODULE.md` defines `BuildAsync` and `Named`, includes `using Aspire.Hosting;`, and says when to use the literal `\"docs\"` instead of `Resources.DocsSite`.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "From R-004 execute (2026-11-17): verifying R-004 needed `using Aspire.Hosting;` for `DistributedApplicationExecutionContext` and the literal `\"docs\"`, because a test project reaches `Resources.DocsSite` only when the constant is visible to it. Spec: `docs/superpowers/specs/2026-11-17-aspire-module-verification.md`.",
+        "revisits": null,
+        "claimable": false
       }
     ]
   },
@@ -355,10 +475,38 @@
       "now": [],
       "next": [
         {
+          "id": "R-022",
+          "title": "Docs-site package: timeline hydrates in dev",
+          "owner": "agent",
+          "size": "S",
+          "detail": "ready"
+        },
+        {
+          "id": "R-023",
+          "title": "Docs-site package: stable browser tests",
+          "owner": "agent",
+          "size": "S",
+          "detail": "ready"
+        },
+        {
           "id": "R-020",
           "title": "Docs-site package: rich demo planning fixture",
           "owner": "agent",
           "size": "M",
+          "detail": "ready"
+        },
+        {
+          "id": "R-019",
+          "title": "Docs-site package: consumer-ready for 1.0.0",
+          "owner": "agent",
+          "size": "M",
+          "detail": "ready"
+        },
+        {
+          "id": "R-026",
+          "title": "pm-checkpoint keeps every item field through switch, push, and pop",
+          "owner": "agent",
+          "size": "S",
           "detail": "ready"
         }
       ],
@@ -484,6 +632,24 @@
         "milestone": "M1",
         "owner": "agent",
         "result": "branch feat/r-012-docs-site-package-dependency-graph"
+      },
+      {
+        "date": "2026-11-19",
+        "kind": "dropped",
+        "id": null,
+        "title": "Name 1.0.0 in the publish item and the M1 exit criterion",
+        "milestone": null,
+        "owner": null,
+        "result": "Reason: decided on 2026-11-18 (STRATEGY.md Decisions) to keep \"returns a version\" in both"
+      },
+      {
+        "date": "2026-11-19",
+        "kind": "review",
+        "id": null,
+        "title": null,
+        "milestone": null,
+        "owner": null,
+        "result": "Inbox 19 to 3. Added R-022, R-023, R-024, R-025, R-026; 9 files merged, 1 dropped, 2 to shape; R-019 promoted to Next for re-slicing; Next reordered."
       },
       {
         "date": "2026-11-18",
@@ -708,6 +874,12 @@
     ],
     "dropped": [
       {
+        "date": "2026-11-19",
+        "id": null,
+        "title": "Name 1.0.0 in the publish item and the M1 exit criterion",
+        "reason": "decided on 2026-11-18 (STRATEGY.md Decisions) to keep \"returns a version\" in both"
+      },
+      {
         "date": "2026-11-17",
         "id": "R-003",
         "title": "Fix pm-export's ajv validation command",
@@ -732,7 +904,12 @@
         "reason": "folded into R-009's Done when. Brief: planning/briefs/2026-11-17-docs-site-package.md"
       }
     ],
-    "reviews": []
+    "reviews": [
+      {
+        "date": "2026-11-19",
+        "summary": "Inbox 19 to 3. Added R-022, R-023, R-024, R-025, R-026; 9 files merged, 1 dropped, 2 to shape; R-019 promoted to Next for re-slicing; Next reordered."
+      }
+    ]
   },
   "inbox": [
     {
@@ -751,38 +928,6 @@
       "idea": "R-008 added `package-test` to `just lint-check`, which the lefthook pre-push hook runs. It adds two Astro builds, a pack, and a networked `bun install` to every push: about 40 to 60 seconds, and a push fails offline. Keep it, move it to CI only, or run only the fast unit tests on pre-push?"
     },
     {
-      "file": "planning/inbox/2026-11-17-1928-docs-site-popup-a11y.md",
-      "title": "Docs-site popup and board accessibility polish",
-      "captured": "2026-11-17 19:28",
-      "source": "agent (R-009 execute, final review)",
-      "kind": "improvement",
-      "severity": null,
-      "affects": "packages/pm-docs-site",
-      "context": "R-009 execute",
-      "discuss": "no",
-      "related": [
-        "R-010"
-      ],
-      "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-      "reviewed": "never",
-      "idea": "Deferred minors from the R-009 final review: card links do not say they open a popup (aria-haspopup=\"dialog\"); a backdrop click does not close the item dialog; popup section headings share the dialog title's h2 level; Board collapse toggles render without JavaScript and do nothing (render them hidden, let plan.ts reveal them); KanbanItemCard keeps tabindex=0 around a card that now holds links, so each card costs extra tab stops; no browser test for localStorage that throws."
-    },
-    {
-      "file": "planning/inbox/2026-11-17-2352-aspire-module-tunit-example-helpers.md",
-      "title": "Make the aspire MODULE.md test example self-contained",
-      "captured": "2026-11-17 23:52",
-      "source": "agent (R-004 execute)",
-      "kind": "improvement",
-      "severity": null,
-      "affects": "skills/pm-docs-site/templates/aspire/MODULE.md",
-      "context": "R-004 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "The TUnit example in the aspire MODULE.md calls `BuildAsync` and `Named` without defining them, and uses `Resources.DocsSite`, which a test project reaches only when the constant is visible to it. Verifying R-004 needed `using Aspire.Hosting;` for `DistributedApplicationExecutionContext` and the literal `\"docs\"`. Show the two helpers and say when to use the literal."
-    },
-    {
       "file": "planning/inbox/2026-11-18-0911-brief-static-first-superseded.md",
       "title": "Brief still says docs-site views are static first",
       "captured": "2026-11-18 09:11",
@@ -791,7 +936,7 @@
       "severity": null,
       "affects": "planning/briefs/2026-11-17-docs-site-package.md",
       "context": "R-010 design",
-      "discuss": "no",
+      "discuss": "yes",
       "related": [
         "R-010",
         "R-011",
@@ -800,23 +945,6 @@
       "brief": "planning/briefs/2026-11-17-docs-site-package.md",
       "reviewed": "never",
       "idea": "In R-010 design (2026-11-18) the user chose rich interactive components for every docs-site view, with React islands (React over Preact, so R-011 and R-012 can use React-first libraries such as React Flow). The brief's Performance ramification still says \"Render static HTML first and enhance with small islands\", and its Ramifications do not mention the React runtime dependency every consumer now gets. Update the brief (pm-shape) so R-011 and R-012 design from the new direction."
-    },
-    {
-      "file": "planning/inbox/2026-11-18-0912-r-013-and-m1-name-1-0-0.md",
-      "title": "R-013 and M1 exit criteria should name 1.0.0",
-      "captured": "2026-11-18 09:12",
-      "source": "agent (R-010 design)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "R-013",
-      "context": "R-010 design",
-      "discuss": "no",
-      "related": [
-        "R-013"
-      ],
-      "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-      "reviewed": "never",
-      "idea": "The brief (2026-11-18) decided R-013 releases stable `1.0.0`, but R-013's `Done when` says \"returns the released version\" and M1 Reproducible docs site's exit criterion says \"`npm view @purview-dev/pm-docs-site version` returns a version\", which `0.1.0-pre.1` already satisfies. Name `1.0.0` in both: `pm-item edit R-013` and `pm-strategy` for M1."
     },
     {
       "file": "planning/inbox/2026-11-18-1222-r-010-deferred-board-polish.md",
@@ -833,205 +961,8 @@
         "R-012"
       ],
       "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-      "reviewed": "never",
+      "reviewed": "2026-11-19",
       "idea": "Minor findings from R-010's task and final reviews, triaged \"can wait\":\n\n- The 3s reveal of a pending board also fires on a slow but successful hydration (brief unfiltered view, then the filtered one); say so in `components.css` and the `useBoardUrlState.ts` header, or tune it.\n- The pending mark is also set on `/plan/roadmap/?owner=...` (inert today); scope it to the Board page when R-011 adds Roadmap filters.\n- `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`.\n- The lane header is a plain `div`; an `h3` or `role=\"heading\"` would make lanes navigable.\n- Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed.\n- The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page; watch it for R-011 and R-012.\n- A collapsed column's vertical title stretches the shared header row.\n- `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab` (suggests drag and drop); its header comment lists only some changes.\n- `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array.\n- `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id` (key fallback, `href: null`, and the Done-tag rule untested); `tagHref` never asserted.\n- `integration.test.ts` asserts the integration names two ways.\n- `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`.\n- The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP."
-    },
-    {
-      "file": "planning/inbox/2026-11-18-1455-milestones-page-empty-no-milestone-card.md",
-      "title": "Milestones page shows empty No milestone card",
-      "captured": "2026-11-18 14:55",
-      "source": "agent (R-011 design)",
-      "kind": "bug",
-      "severity": "cosmetic",
-      "affects": "packages/pm-docs-site/src/routes/plan/milestones/index.astro",
-      "context": "R-011 design",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "`features()` gives dropped items `milestone: null`, so `milestoneSummaries` keeps the `No milestone` group whenever anything was dropped, and the Milestones page shows a `No milestone` card reading `0 of 0 done`. R-011 hides that card on the timeline and the Roadmap page only; the Milestones page keeps it."
-    },
-    {
-      "file": "planning/inbox/2026-11-18-1524-docs-site-demo-site.md",
-      "title": "Demo site showing every docs-site feature",
-      "captured": "2026-11-18 15:24",
-      "source": "user",
-      "kind": "feature",
-      "severity": null,
-      "affects": "packages/pm-docs-site",
-      "context": "R-011 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "This needs a demo site in repo, that shows all of the various features off"
-    },
-    {
-      "file": "planning/inbox/2026-11-18-1637-docs-site-dev-webserver-flaky-start.md",
-      "title": "Package dev web server start is intermittent",
-      "captured": "2026-11-18 16:37",
-      "source": "agent (R-011 execute, verification)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "packages/pm-docs-site/playwright.config.ts",
-      "context": "R-011 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "`just lint-check` failed twice on 2026-11-18 at `package-test`: the `dev` web server (`test/browser/dev-server.ts`) logged `Listen method has been called more than once without closing` and `transport invoke timed out after 60000ms`, then Playwright timed out after 300000ms. `bun run test:browser --project=dev` alone passed, and a third full run passed, so the start is intermittent when both web servers start together. Playwright starts both servers even with `--project=chromium`. Separately, `bun run test:browser -- --project chromium <file>` fails under Bun (Playwright reads the path as a project name), while `--project=chromium` works."
-    },
-    {
-      "file": "planning/inbox/2026-11-18-1638-timeline-polish-follow-ups.md",
-      "title": "Milestone timeline polish follow-ups",
-      "captured": "2026-11-18 16:38",
-      "source": "agent (R-011 execute, final review)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "packages/pm-docs-site/src/components/timeline/Timeline.tsx",
-      "context": "R-011 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-      "reviewed": "never",
-      "idea": "Minor findings from R-011's task and final reviews, triaged \"can wait\":\n\n- Keyboard focus drops to `<body>` when `Zoom in`, `Zoom out`, or `Reset zoom` becomes disabled at its limit; `aria-disabled` with a no-op guard would keep focus.\n- The plain-wheel path scrolls by `deltaY` without scaling line-mode (`deltaMode` 1) deltas.\n- The zoom-anchor browser test covers a single click, not two zoom changes before one render.\n- The `planned` and `other` card markers are never rendered in a browser test: the fixture has no planned milestone, because adding one adds a milestone page and the spec said no page is added.\n- Event de-duplication assumes the Now item is not also logged done or queued under another milestone; untested."
-    },
-    {
-      "file": "planning/inbox/2026-11-18-1830-r-021-deferred-build-polish.md",
-      "title": "R-021 deferred build and docs polish",
-      "captured": "2026-11-18 18:30",
-      "source": "agent (R-021 execute, final review)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "packages/pm-docs-site",
-      "context": "R-021 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": "planning/briefs/2026-11-18-pm-docs-site-typescript.md",
-      "reviewed": "never",
-      "idea": "Minor findings from R-021's final review, deferred:\n\n- `tsconfig.build.json` sets `types: [\"node\"]`, but `@types/node` arrives only through `@types/bun`; add it to `devDependencies` so a lockfile change cannot break `prepack`.\n- `scripts/build.ts` rewrites `.ts` specifiers only in the top level of `dist/`, and the install-test guard reads only the top level; a nested `lib/` folder would escape both (use `readdirSync(..., { recursive: true })`).\n- `scripts/check-exports.ts` rejects valid `.mjs`/`.cjs` entry points and accepts a `.d.ts` outside a `types` condition.\n- Shipped `src/` type-imports `../lib/types.ts`, which the tarball omits (runtime unaffected); ship it or note why not.\n- The `astro.config.ts` examples in `packages/pm-docs-site/README.md` and `docs/wiki/guide/Docs-Site-Package.md` are fenced as `js`.\n- `README.md:69` and `.config/purview-docs.yml:23` say `0.1.0-pre.1` is on npm; stale once `0.1.0-pre.2` publishes."
-    },
-    {
-      "file": "planning/inbox/2026-11-18-2248-r-017-fs-allow-review-follow-ups.md",
-      "title": "R-017 fs-allow review follow-ups",
-      "captured": "2026-11-18 22:48",
-      "source": "agent (R-017 execute, final review)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "packages/pm-docs-site/lib/index.ts, packages/pm-docs-site/test/integration.test.ts",
-      "context": "R-017 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "Deferred minors from the R-017 final review: (1) the `pm-docs-site:fs-allow` tests find the plugin by position (`.at(-1)`) instead of by name, so adding a later plugin breaks them; (2) the appended entry serves the whole package folder (test/, .astro/, scripts/, node_modules/) in in-repo and linked dev, which `fs.deny` still guards, and the comment could say so; (3) on case-insensitive macOS a case-only difference appends a harmless duplicate entry."
-    },
-    {
-      "file": "planning/inbox/2026-11-19-1006-feature-pages-miss-revisited-by.md",
-      "title": "Feature pages do not list revisions",
-      "captured": "2026-11-19 10:06",
-      "source": "agent (R-012 design)",
-      "kind": "improvement",
-      "severity": null,
-      "affects": "packages/pm-docs-site/src/lib/planning.ts",
-      "context": "R-012 design",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "The R-012 builder check found that `dependents()` in `packages/pm-docs-site/src/lib/planning.ts` looks only at `dependsOn`, so a feature page lists its dependants but not the items whose `Revisits` names it. The R-012 graph draws Revisits edges; the feature pages should list \"Revised by\" too. Out of R-012's scope (its spec, Non-goals)."
-    },
-    {
-      "file": "planning/inbox/2026-11-19-1213-timeline-no-hydrate-in-dev.md",
-      "title": "Roadmap timeline fails to hydrate in dev",
-      "captured": "2026-11-19 12:13",
-      "source": "agent (R-012 execute)",
-      "kind": "bug",
-      "severity": "minor",
-      "affects": "packages/pm-docs-site/src/components/timeline/Timeline.tsx",
-      "context": "R-012 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "Found while building R-012 (Task 5): under `pm-docs-site dev` in a packed-install consumer, the Roadmap Timeline island does not hydrate. It imports `src/lib/timeline.ts`, which imports `src/lib/planning.ts`, which imports `node:fs`, so the client bundle fails. `test/browser/dev.browser.ts` only checks the Board, so nothing caught it. R-012 fixed the same problem for the Graph island by moving its client functions into `src/lib/graph-state.ts`; the timeline needs the same split and a dev browser test."
-    },
-    {
-      "file": "planning/inbox/2026-11-19-1429-graph-no-flash-test-flake.md",
-      "title": "Graph no-flash test flakes on pending frame",
-      "captured": "2026-11-19 14:29",
-      "source": "agent (R-012 execute)",
-      "kind": "bug",
-      "severity": "minor",
-      "affects": "packages/pm-docs-site/test/browser/graph.browser.ts",
-      "context": "R-012 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "The both-switches-off no-flash browser test fails about 1 run in 10 on its \"at least one pending frame\" assertion. `sampleFrames` records its first frame on the first requestAnimationFrame after `addInitScript`, so a fast hydration can set and clear `data-graph-pending` before any frame is sampled. This is a test race; the no-wrong-layout assertions hold. Fix: push one frame synchronously when the init script runs, and record every `data-graph-pending` change with a MutationObserver on `document.documentElement`."
-    },
-    {
-      "file": "planning/inbox/2026-11-19-1510-checkpoint-switch-drops-item-note.md",
-      "title": "pm-checkpoint switch drops the item's Note",
-      "captured": "2026-11-19 15:10",
-      "source": "agent (R-018 design)",
-      "kind": "improvement",
-      "severity": null,
-      "affects": "skills/pm-checkpoint/SKILL.md",
-      "context": "R-018 design",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "R-018's design keeps `Note` out of `NOW.md`, so `pm-checkpoint` `switch` (and `push`/`pop`) still restore a roadmap item without the `Note` it had before `pm-next` claimed it. Carry `Note` through `NOW.md` or the stack entry so a switched item comes back unchanged."
-    },
-    {
-      "file": "planning/inbox/2026-11-19-2154-checkpoint-pop-field-position-wording.md",
-      "title": "pm-checkpoint pop and push field wording",
-      "captured": "2026-11-19 21:54",
-      "source": "agent (R-018 finish review)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "skills/pm-checkpoint/SKILL.md",
-      "context": "R-018 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "R-018's final re-review found two wording gaps in `pm-checkpoint`. `pop` no longer states that the five item fields (`Serves`, `Owner`, `Size`, `Depends on`, `Revisits`) land after `Milestone` and before `Spec`, as `pm-rejoin` and `pm-next` step 7 do. `push` cites `now/fields` as the reason to copy the five as a group into `STACK.md`, but `now/fields` checks `NOW.md` only; `checkStack` does not enforce it. Add the position sentence to `pop` and reword the `push` citation. Needs a rules bump once rules 20 is released."
-    },
-    {
-      "file": "planning/inbox/2026-11-19-2155-stack-entries-not-backfilled-on-upgrade.md",
-      "title": "Stack entries are not backfilled on upgrade",
-      "captured": "2026-11-19 21:55",
-      "source": "agent (R-018 finish review)",
-      "kind": "improvement",
-      "severity": null,
-      "affects": "skills/pm-setup/SKILL.md, skills/pm-checkpoint/SKILL.md",
-      "context": "R-018 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "`pm-setup` Step 5 item 5 backfills the five item fields of an active `NOW.md` on the upgrade to rules 20, but not of entries already in `STACK.md`. An item pushed before the upgrade pops back without them, so its Now card exports `owner`/`size` null and the graph draws no edges for it. Likewise `pm-checkpoint switch` on an item that was never backfilled (the user chose `Continue on v19`) restores a roadmap block without `Serves` and `Size`, which `roadmap/item` requires. Either backfill stack entries in `pm-setup`, or have `pop` and `switch` ask for missing values the way the backfill does."
-    },
-    {
-      "file": "planning/inbox/2026-11-19-2156-now-item-consumers-read-one-source.md",
-      "title": "Read the Now item's facts from one place",
-      "captured": "2026-11-19 21:56",
-      "source": "agent (R-018 finish review)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "packages/pm-docs-site, skills/pm-export, skills/pm-board/SKILL.md",
-      "context": "R-018 execute",
-      "discuss": "no",
-      "related": [
-        "R-020"
-      ],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "R-018 left small inconsistencies in how the active item's owner and size are read. `packages/pm-docs-site/src/routes/plan/now.astro` reads them from `board.columns.now[0]`, and `features()` from `now.item` (equal by construction, but two sources). `pm-board`'s Now card step does not say they come from `NOW.md`. The export schema's `$defs/itemRef` is now unreferenced. `graph.test.ts` builds a partial `Planning` with `as unknown as Planning` instead of spreading the fixture, and the shared package fixture draws no edge into the active node (R-020's rich fixture could). Tidy these in one pass."
     }
   ],
   "briefs": [
@@ -1066,14 +997,14 @@
     "removed": []
   },
   "counts": {
-    "next": 1,
-    "later": 5,
+    "next": 5,
+    "later": 6,
     "nextMax": 5,
-    "openInbox": 19,
-    "discuss": 1,
+    "openInbox": 2,
+    "discuss": 2,
     "shapingBriefs": 0,
     "done": 11,
-    "dropped": 4,
+    "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
     "redRisks": 0,
@@ -1081,11 +1012,15 @@
     "greenRisks": 0
   },
   "checks": {
-    "reviewDue": true,
-    "lastReview": "never",
+    "reviewDue": false,
+    "lastReview": "2026-11-19",
     "claimable": [
-      "R-020"
+      "R-022",
+      "R-023",
+      "R-020",
+      "R-019",
+      "R-026"
     ],
-    "drift": true
+    "drift": false
   }
 }
