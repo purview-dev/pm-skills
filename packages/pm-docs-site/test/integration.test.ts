@@ -165,6 +165,12 @@ describe('pmDocsSite', () => {
 		expect(updates[0]!.vite.optimizeDeps).toEqual({ include: [] });
 	});
 
+	it('adds only the missing entry when the consumer already pre-bundles react-dom/client', () => {
+		const { updates } = run({ title: 'T' }, { vite: { optimizeDeps: { include: ['react-dom/client'] } } });
+
+		expect(updates[0]!.vite.optimizeDeps).toEqual({ include: ['@xyflow/react'] });
+	});
+
 	it('throws on invalid options before Astro starts', () => {
 		// @ts-expect-error the title is missing on purpose
 		expect(() => setup({})).toThrow('pm-docs-site: title is required');

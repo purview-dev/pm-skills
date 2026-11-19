@@ -90,6 +90,47 @@ function assertNoFlash(frames: GraphFrame[], expectedLayout: string): void {
 	expect(frames.some((frame) => frame.visible && frame.layout !== null && frame.layout !== expectedLayout)).toBe(false);
 }
 
+/**
+ * The viewport's `style.transform` once it has stayed the same for `frames`
+ * consecutive animation frames, sampled inside the page after the pending
+ * mark has cleared. The mount-time fit can run once against the
+ * SSR-matching canvas size and again, moments later, against the real
+ * measured one (a ResizeObserver report); two macrotask-level poll reads
+ * that happen to match can still predate that second fit, so this samples
+ * inside the browser's own rAF loop instead, which a later fit cannot skip.
+ */
+async function settledTransform(page: Page, frames = 5): Promise<string> {
+	await page.waitForFunction(() => !document.documentElement.hasAttribute('data-graph-pending'));
+
+	return page.evaluate(
+		(need) =>
+			new Promise<string>((resolve) => {
+				const viewport = document.querySelector('.react-flow__viewport') as HTMLElement;
+				let last = viewport.style.transform;
+				let count = 0;
+
+				const tick = () => {
+					const current = viewport.style.transform;
+
+					if (current === last) {
+						count += 1;
+						if (count >= need) {
+							resolve(current);
+							return;
+						}
+					} else {
+						last = current;
+						count = 1;
+					}
+					requestAnimationFrame(tick);
+				};
+
+				requestAnimationFrame(tick);
+			}),
+		frames,
+	);
+}
+
 const graph = (page: Page) => page.locator('.plan-graph');
 const node = (page: Page, id: string) => page.locator(`[data-graph-node="${id}"]`);
 const lane = (page: Page, key: string) => page.locator(`.plan-graph__lane[data-lane="${key}"]`);
@@ -184,31 +225,20 @@ test('a focus naming a chip hidden by done=off opens unselected, with no focus k
 	await expect.poll(() => new URL(page.url()).search).toBe('?done=off');
 });
 
-test('Zoom in changes the viewport transform; Fit restores it', async ({ page }) => {
+test('Zoom in changes the viewport transform; Zoom out changes it again; Fit restores it', async ({ page }) => {
 	await openGraph(page);
 	const viewport = page.locator('.react-flow__viewport');
 
-	// The mount-time fit can run once against the SSR-matching canvas size and
-	// again, moments later, against the real measured one (a ResizeObserver
-	// report); wait for two consecutive reads to agree before treating the
-	// transform as settled, so this isn't a race with that second fit.
-	let before = await viewport.evaluate((element) => element.style.transform);
-
-	await expect
-		.poll(async () => {
-			const current = await viewport.evaluate((element) => element.style.transform);
-			const settled = current === before;
-
-			before = current;
-
-			return settled;
-		})
-		.toBe(true);
+	const before = await settledTransform(page);
 
 	expect(before).not.toBe('');
 
 	await toolbarButton(page, 'Zoom in').click();
 	await expect.poll(() => viewport.evaluate((element) => element.style.transform)).not.toBe(before);
+	const afterZoomIn = await viewport.evaluate((element) => element.style.transform);
+
+	await toolbarButton(page, 'Zoom out').click();
+	await expect.poll(() => viewport.evaluate((element) => element.style.transform)).not.toBe(afterZoomIn);
 
 	await toolbarButton(page, 'Fit').click();
 	await expect.poll(() => viewport.evaluate((element) => element.style.transform)).toBe(before);
@@ -305,6 +335,43 @@ test('every fixture edge carries data-graph-edge on its react-flow__edge element
 	await openGraph(page);
 
 	for (const id of EDGE_IDS) await expect(page.locator(`g.react-flow__edge[data-graph-edge="${id}"]`)).toHaveCount(1);
+});
+
+/**
+ * The computed `fill` of an edge's arrowhead polyline, inside the `<marker>`
+ * its `marker-end` references. `marker-end` is `url('#<id>')`, and `<id>`
+ * itself can embed a `color: var(--sl-color-gray-5)` and so its own closing
+ * parenthesis: strip the fixed `url(` prefix and the outer quotes and `)`
+ * instead of matching up to the first `)`, which would cut the id short.
+ */
+function arrowheadFill(page: Page, edgeId: string): Promise<string | null> {
+	return page.evaluate((id) => {
+		const path = document.querySelector(`g.react-flow__edge[data-graph-edge="${id}"] path.react-flow__edge-path`);
+		const markerEnd = path?.getAttribute('marker-end');
+
+		if (!markerEnd?.startsWith('url(') || !markerEnd.endsWith(')')) return null;
+
+		let inner = markerEnd.slice(4, -1);
+
+		if ((inner.startsWith('"') && inner.endsWith('"')) || (inner.startsWith("'") && inner.endsWith("'"))) inner = inner.slice(1, -1);
+
+		const markerId = inner.startsWith('#') ? inner.slice(1) : inner;
+		const polyline = document.getElementById(markerId)?.querySelector('polyline');
+
+		return polyline ? getComputedStyle(polyline).fill : null;
+	}, edgeId);
+}
+
+test("a muted edge's arrowhead takes the muted colour, not the full-contrast one", async ({ page }) => {
+	await openGraph(page);
+
+	// R-010>R-013 is fromChip (muted); R-013>R-014 runs between two open items (full-contrast).
+	const mutedFill = await arrowheadFill(page, 'R-010>R-013:depends:0');
+	const fullFill = await arrowheadFill(page, 'R-013>R-014:depends:0');
+
+	expect(mutedFill).not.toBeNull();
+	expect(fullFill).not.toBeNull();
+	expect(mutedFill).not.toBe(fullFill);
 });
 
 test('the graph hydrates with no page errors', async ({ page }) => {
