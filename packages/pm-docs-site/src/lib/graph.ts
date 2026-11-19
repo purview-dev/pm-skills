@@ -32,8 +32,6 @@ export interface GraphNode {
 	active: boolean;
 	/** Distinct Depends on + Revisits IDs that resolve to a done or dropped node; a repeated ID counts once. */
 	donePrerequisites: number;
-	/** `true` for the active item: its own `dependsOn`/`revisits` are not exported. */
-	linksNotExported: boolean;
 }
 
 export interface GraphEdge {
@@ -70,7 +68,6 @@ export interface DependencyRow {
 	revisits: Ref | null;
 	/** Open items whose `Revisits` names this row's item. */
 	revisedBy: Ref[];
-	linksNotExported: boolean;
 }
 
 const OPEN_STATES = new Set<Feature['state']>(['now', 'next', 'later']);
@@ -140,7 +137,6 @@ export function graphData(planning: Planning, known: Map<string, Pick<Target, 'h
 		blocked: feature.label === 'blocked' || feature.status?.value === 'blocked',
 		active: feature.state === 'now',
 		donePrerequisites: donePrerequisites(feature),
-		linksNotExported: feature.state === 'now',
 	}));
 
 	const chipNodes: GraphNode[] = [...chipIds]
@@ -160,7 +156,6 @@ export function graphData(planning: Planning, known: Map<string, Pick<Target, 'h
 				blocked: false,
 				active: false,
 				donePrerequisites: 0,
-				linksNotExported: false,
 			};
 		});
 
@@ -191,7 +186,6 @@ export function dependencyRows(data: GraphData): DependencyRow[] {
 				waitedOnBy: depends.filter((edge) => edge.source === node.id).map((edge) => ref(edge.target)),
 				revisits: ownRevisits ? ref(ownRevisits.source) : null,
 				revisedBy: revisits.filter((edge) => edge.source === node.id).map((edge) => ref(edge.target)),
-				linksNotExported: node.linksNotExported,
 			};
 		});
 }

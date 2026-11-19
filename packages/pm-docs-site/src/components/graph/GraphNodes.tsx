@@ -35,7 +35,7 @@ function Handles() {
 export function ItemNode({ data }: NodeProps<ItemFlowNode>) {
 	const { node, showDoneCount, milestoneHref } = data;
 	const rest = [node.size, node.section ? SECTIONS[node.section] : null, node.owner ?? 'agent'].filter(Boolean).join(' · ');
-	const notes = [node.linksNotExported ? 'Own links not exported yet' : null, showDoneCount && node.donePrerequisites > 0 ? `✓ ${node.donePrerequisites} done` : null].filter(Boolean);
+	const notes = [showDoneCount && node.donePrerequisites > 0 ? `✓ ${node.donePrerequisites} done` : null].filter(Boolean);
 
 	return (
 		<div className="plan-graph__item" data-active={node.active ? '' : undefined} data-blocked={node.blocked ? '' : undefined}>

@@ -36,12 +36,12 @@ function linked(layout: GraphLayout): string[] {
 
 /** A one-item node with the given ID and milestone, for synthetic graphs. */
 function item(id: string, milestone: string | null = null): GraphNode {
-	return { id, kind: 'item', title: id, href: null, milestone, size: 'S', section: 'next', owner: 'agent', blocked: false, active: false, donePrerequisites: 0, linksNotExported: false };
+	return { id, kind: 'item', title: id, href: null, milestone, size: 'S', section: 'next', owner: 'agent', blocked: false, active: false, donePrerequisites: 0 };
 }
 
 /** A done chip node with the given ID, for synthetic graphs. */
 function doneChip(id: string): GraphNode {
-	return { id, kind: 'done', title: id, href: null, milestone: null, size: null, section: null, owner: null, blocked: false, active: false, donePrerequisites: 0, linksNotExported: false };
+	return { id, kind: 'done', title: id, href: null, milestone: null, size: null, section: null, owner: null, blocked: false, active: false, donePrerequisites: 0 };
 }
 
 describe('graphLayouts', () => {

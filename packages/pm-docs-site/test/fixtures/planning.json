@@ -1,6 +1,6 @@
 {
   "$schema": "./planning.schema.json",
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "generatedAt": "2026-11-09T12:50:07+00:00",
   "generator": { "skill": "pm-export", "skillsVersion": 12, "rulesVersion": 12 },
   "project": { "pmRoot": "planning/", "defaultBranch": "main", "branchPattern": "feat/<id>-<slug>" },
@@ -25,7 +25,7 @@
   },
   "now": {
     "status": "active",
-    "item": { "id": "R-012", "title": "Invoice export" },
+    "item": { "id": "R-012", "title": "Invoice export", "serves": [], "owner": null, "size": null, "dependsOn": [], "revisits": null },
     "stage": "execute",
     "session": "feat/r-012-invoice-export",
     "brief": "planning/briefs/2026-11-09-invoice-export.md",

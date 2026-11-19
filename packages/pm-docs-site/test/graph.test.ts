@@ -61,8 +61,31 @@ describe('graphData', () => {
 		expect(fromChipOf('R-022')).toBe(false);
 	});
 
-	it('marks the active item and its links-not-exported flag', () => {
-		expect(nodeById.get('R-012')).toMatchObject({ active: true, linksNotExported: true, section: 'now' });
+	it('marks the active item', () => {
+		expect(nodeById.get('R-012')).toMatchObject({ active: true, section: 'now' });
+		expect(nodeById.get('R-012')).not.toHaveProperty('linksNotExported');
+	});
+
+	it("gives the active item's own done and missing dependencies the same chips as a roadmap item", () => {
+		const active = {
+			now: { status: 'active', item: { id: 'R-012', title: 'Invoice export', serves: [], owner: 'agent', size: 'M', dependsOn: ['R-010', 'R-098'], revisits: null }, milestone: null, stage: 'execute' },
+			strategy: { milestones: [] },
+			roadmap: { next: [], later: [] },
+			log: { done: [{ date: '2026-11-04', id: 'R-010', title: 'Choose the invoice format', milestone: null, owner: 'user', plan: null, result: 'CSV.' }], dropped: [] },
+			board: { columns: { now: [{ id: 'R-012', title: 'Invoice export', owner: 'agent', size: 'M', detail: 'execute' }] } },
+		} as unknown as Planning;
+		const activeData = graphData(active, new Map());
+		const activeNodeById = new Map(activeData.nodes.map((node) => [node.id, node]));
+
+		expect(activeNodeById.get('R-012')).toMatchObject({ active: true });
+		expect(activeNodeById.get('R-010')).toMatchObject({ kind: 'done' });
+		expect(activeNodeById.get('R-098')).toMatchObject({ kind: 'missing', title: null });
+		expect(activeData.edges).toContainEqual(expect.objectContaining({ source: 'R-010', target: 'R-012', kind: 'depends' }));
+		expect(activeData.edges).toContainEqual(expect.objectContaining({ source: 'R-098', target: 'R-012', kind: 'depends' }));
+
+		const activeRow = dependencyRows(activeData).find((row) => row.id === 'R-012')!;
+
+		expect(activeRow.waitsOn.map((ref) => ref.label)).toEqual(['R-010 Choose the invoice format', 'R-098 not found']);
 	});
 
 	it('marks a blocked item by label or status', () => {
@@ -164,8 +187,8 @@ describe('dependencyRows', () => {
 		expect(row.waitsOn.map((ref) => ref.label)).toEqual(['R-099 not found']);
 	});
 
-	it('marks R-012 as links-not-exported', () => {
-		expect(rowById.get('R-012')).toMatchObject({ linksNotExported: true });
+	it('gives R-012 no linksNotExported property', () => {
+		expect(rowById.get('R-012')).not.toHaveProperty('linksNotExported');
 	});
 });
 
