@@ -109,9 +109,13 @@ written to the branch the session is leaving.
    them` stop with nothing written. A failed pull stops the same way.
 7. Write `NOW.md` with the schema fields: `Status: active`, `Item`,
    `Session` (current branch), `Stage: design`, `Brief` (from the item, or
-   empty), `Milestone` (from the item, or empty), `Started` (today), empty
-   `Spec` and `Plan`, and the item's `Done when` under `## Done when`. Leave
-   `## Checkpoint` empty.
+   empty), `Milestone` (from the item, or empty), `Serves` (from the item),
+   `Owner` (from the item, or `agent`), `Size` (from the item),
+   `Depends on` (from the item, or `none`), `Revisits` (from the item, or
+   empty), `Started` (today), empty `Spec` and `Plan`, and the item's
+   `Done when` under `## Done when`. `## Done when` holds the item's checks
+   only; a held `Note:` goes on the item (step 8), never under
+   `## Done when`. Leave `## Checkpoint` empty.
 8. Remove the item from `## Next` in `ROADMAP.md`, and apply the writes
    held from steps 3 to 5. If it has a brief, set the brief's
    `Status: on roadmap (<ID>), active`.

@@ -237,6 +237,19 @@ Rules for this step:
 
    These questions do not count against the one question in Step 4. Do not
    edit anything else in the file.
+5. **Active item fields (version 20).** If `<PM state directory>/NOW.md`
+   is `Status: active` and lacks `Owner`, find the claim commit:
+   `git log --format=%H --grep="^docs(pm): claim <ID>" -1 <Session
+   branch>`. When found, read
+   `git show <commit>^:<PM state directory>/ROADMAP.md`, take that item's
+   `Serves`, `Owner`, `Size`, `Depends on`, and `Revisits` from its block,
+   and write them to `NOW.md` after `Milestone`. When the claim commit or
+   the item's block cannot be found, ask one choice question per missing
+   required value (`Owner`: `agent`, `user`, `both`; `Size`: `S`, `M`, `L`;
+   `Serves`: the `V` lines in `VISION.md`), and set `Depends on: none` and
+   `Revisits:` empty. Show the five values written. `pm-setup` does not
+   commit this: the next PM commit carries `NOW.md`, like the `Rules
+   version` line.
 
 ## Step 6: Verify
 
@@ -248,6 +261,8 @@ Rules for this step:
    across all agent files, and that the start marker carries no
    `version=`. Check that `config.md`, if changed, differs only in its
    `Rules version` line and the `Commits` settings added in Step 5, item 4.
+   Check that `NOW.md`, if changed, differs only in the five item fields
+   backfilled in Step 5, item 5.
 3. If the repository has a markdownlint config, run
    `npx markdownlint-cli2 <files>` (or `bunx markdownlint-cli2 <files>`) on
    the changed files and report the result.
@@ -261,7 +276,7 @@ Rules for this step:
 - Skills: <25 of 25 installed | missing: names>
 - Workflow skills: <n of n installed | missing: names>
 - Rules version: <v<n> recorded in <PM root>/config.md | legacy v<n> migrated | PM state not initialised>
-- Diff check: only the managed section changed, plus the Rules version line and any added Commits settings
+- Diff check: only the managed section changed, plus the Rules version line, any added Commits settings, and any backfilled NOW.md item fields
 - Commits: <PM state commit <value>, Export on commit <value> | PM state not initialised>
 - PM state: <not initialized | current | missing version 4 files: names>
 - Upgrade gate: <cleared, rules at v<n> | unchanged>

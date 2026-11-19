@@ -110,7 +110,8 @@ only in the conversation, and never resume the interrupted step silently.
    - Otherwise run `pm-checkpoint` (`pause`). It writes and commits the
      checkpoint.
    - `rewind`: set `Stage` to the chosen earlier stage. Keep `Brief`,
-     `Milestone`, `Spec`, `Plan`, and `Started`.
+     `Milestone`, `Serves`, `Owner`, `Size`, `Depends on`, `Revisits`,
+     `Spec`, `Plan`, and `Started`.
    - `fix-in-place`: keep `Stage`.
    - Replace `## Checkpoint` with a pause block whose `Stopped at`
      names the last step that still holds, whose `Next action` is the first

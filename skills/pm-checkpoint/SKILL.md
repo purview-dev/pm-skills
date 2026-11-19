@@ -118,6 +118,7 @@ and `Explain <ID>`.
    - Append to `## Done` in `LOG.md`:
      `- <date> <ID> <Title>. Milestone: <the Milestone in NOW.md, or none>.
      Owner: <owner>. Plan: <path | none>. Result: branch <branch>.`
+     `<owner>` is the `Owner` in `NOW.md`, or `agent` when it is missing.
      The branch is the durable locator: the finish step opens the pull
      request from it, so no PR number is written here.
    - If the item has a brief, set its `Status: done`.
@@ -149,10 +150,13 @@ and `Explain <ID>`.
 6. **switch:** write a checkpoint first, as in `pause`. When the user names
    the item to switch to, show `R-NNN <title>`. Copy the active
    item to the top of `## Next` in `ROADMAP.md` with `Status: paused` and
-   `Paused checkpoint:` set to that checkpoint, keeping its `Brief` and
-   `Milestone`. If Next is at its max from `config.md`, apply the **Full
-   Next** rule (Roadmap order and edits) and name the item moved to Later.
-   Then set `NOW.md` to idle as in `done`.
+   `Paused checkpoint:` set to that checkpoint, keeping its `Brief`,
+   `Milestone`, `Serves`, `Owner`, `Size`, `Depends on`, and `Revisits` from
+   `NOW.md` (omit a field `NOW.md` does not have), and `Done when` built by
+   joining the `## Done when` bullets with a semicolon and a space. If Next
+   is at its max from `config.md`, apply the **Full Next** rule (Roadmap
+   order and edits) and name the item moved to Later. Then set `NOW.md` to
+   idle as in `done`.
 7. **push:** create `<PM root>/STACK.md` when it is missing, then write one
    entry at its top, copying the values from `NOW.md`:
 
@@ -166,6 +170,11 @@ and `Explain <ID>`.
    - Spec: <path | none>
    - Plan: <path | none>
    - Milestone: <M | none>
+   - Serves: <Serves in NOW.md | none>
+   - Owner: <Owner in NOW.md, or agent>
+   - Size: <Size in NOW.md | none>
+   - Depends on: <Depends on in NOW.md, or none>
+   - Revisits: <Revisits in NOW.md | none>
    - Started: <Started in NOW.md>
    - Reason: <the user's reason, verbatim>
    - Done when:
@@ -187,7 +196,8 @@ and `Explain <ID>`.
 8. **pop:** read the top entry of `STACK.md` (Guard checks the stack,
    branch, and active item). Write its fields back into `NOW.md`:
    `Status: active`, `Item`, `Session` (the entry's `Branch`), `Stage`,
-   `Brief`, `Milestone`, `Spec`, `Plan`, `Started`, its `Done when` under
+   `Brief`, `Milestone`, `Serves`, `Owner`, `Size`, `Depends on`,
+   `Revisits`, `Spec`, `Plan`, `Started`, its `Done when` under
    `## Done when`, and its checkpoint under `## Checkpoint`. Remove the
    entry from `STACK.md`, leaving the next entry as the top. Step 9
    commits; show one line (`pop <ID> <title>: <stage> at its checkpoint`),
