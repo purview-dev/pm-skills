@@ -30,6 +30,7 @@ const VIEW_ROUTES: Record<ViewName, [pattern: string, file: string][]> = {
 		['/plan/milestones', 'plan/milestones/index.astro'],
 		['/plan/milestones/[milestone]', 'plan/milestones/[milestone].astro'],
 	],
+	graph: [['/plan/graph', 'plan/graph.astro']],
 	features: [
 		['/plan/features', 'plan/features/index.astro'],
 		['/plan/features/[id]', 'plan/features/[id].astro'],

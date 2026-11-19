@@ -13,6 +13,7 @@ export function buildSidebar(options: ResolvedOptions): SidebarItem[] {
 		views.now && { label: 'Now', link: '/plan/now/' },
 		{ label: 'Board', link: '/plan/board/' },
 		{ label: 'Roadmap', link: '/plan/roadmap/' },
+		views.graph && { label: 'Graph', link: '/plan/graph/' },
 		views.milestones && { label: 'Milestones', link: '/plan/milestones/' },
 		views.features && { label: 'Features', link: '/plan/features/' },
 		{ label: 'Log', link: '/plan/log/' },

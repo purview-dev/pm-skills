@@ -58,11 +58,13 @@ export default {
 | `description` | string | none |
 | `planning` | path from the site root | `../planning/planning.json` |
 | `docs` | `{ root, sources }`; `root` from the site root, each source a folder and globs | none: no repository pages |
-| `views` | any of `now`, `milestones`, `features`, `inbox`, `briefs`, `strategy` | all six |
+| `views` | any of `now`, `milestones`, `graph`, `features`, `inbox`, `briefs`, `strategy` | all seven |
 
 Home, Board, Roadmap, Log and Risks are always rendered. A docs source has
 `label`, `base`, `include`, and optionally `prefix`, `indexFile`, `order`,
 `collapsed`, and `hidden` (see `lib/types.ts`).
+
+- Graph: open items and their Depends on and Revisits links, by milestone.
 
 ## Board
 

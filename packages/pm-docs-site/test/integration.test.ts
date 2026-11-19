@@ -111,6 +111,7 @@ describe('pmDocsSite', () => {
 			'/plan/briefs',
 			'/plan/features',
 			'/plan/features/[id]',
+			'/plan/graph',
 			'/plan/inbox',
 			'/plan/milestones',
 			'/plan/milestones/[milestone]',

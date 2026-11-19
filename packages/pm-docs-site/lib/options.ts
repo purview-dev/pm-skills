@@ -6,7 +6,7 @@ import { resolve } from 'node:path';
 import type { PmDocsSiteOptions, ResolvedOptions, ViewName } from './types.ts';
 
 /** The optional plan views. Home, Board, Roadmap, Log and Risks are always on. */
-export const VIEW_NAMES: readonly ViewName[] = ['now', 'milestones', 'features', 'inbox', 'briefs', 'strategy'];
+export const VIEW_NAMES: readonly ViewName[] = ['now', 'milestones', 'graph', 'features', 'inbox', 'briefs', 'strategy'];
 
 /** Where the export lives by default, relative to the site root. */
 const DEFAULT_PLANNING = '../planning/planning.json';

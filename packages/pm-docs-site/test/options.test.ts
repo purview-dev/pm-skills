@@ -7,8 +7,8 @@ import { resolveOptions, VIEW_NAMES } from '../lib/options.ts';
 const root = resolve('/site');
 
 describe('resolveOptions', () => {
-	it('lists the six optional views', () => {
-		expect(VIEW_NAMES).toEqual(['now', 'milestones', 'features', 'inbox', 'briefs', 'strategy']);
+	it('lists the seven optional views', () => {
+		expect(VIEW_NAMES).toEqual(['now', 'milestones', 'graph', 'features', 'inbox', 'briefs', 'strategy']);
 	});
 
 	it('applies the defaults', () => {
@@ -18,13 +18,13 @@ describe('resolveOptions', () => {
 		expect(resolved.description).toBeNull();
 		expect(resolved.planning).toBe(resolve(root, '../planning/planning.json'));
 		expect(resolved.docs).toBeNull();
-		expect(Object.values(resolved.views)).toEqual([true, true, true, true, true, true]);
+		expect(Object.values(resolved.views)).toEqual([true, true, true, true, true, true, true]);
 	});
 
 	it('switches on only the listed views', () => {
 		const { views } = resolveOptions({ title: 'T', views: ['now'] }, root);
 
-		expect(views).toEqual({ now: true, milestones: false, features: false, inbox: false, briefs: false, strategy: false });
+		expect(views).toEqual({ now: true, milestones: false, graph: false, features: false, inbox: false, briefs: false, strategy: false });
 	});
 
 	it('resolves the planning path and the docs root from the site root', () => {
@@ -61,7 +61,7 @@ describe('resolveOptions', () => {
 	it('rejects an unknown view', () => {
 		// @ts-expect-error an unknown view on purpose
 		expect(() => resolveOptions({ title: 'T', views: ['board'] }, root)).toThrow(
-			'pm-docs-site: unknown view "board"; expected one of now, milestones, features, inbox, briefs, strategy',
+			'pm-docs-site: unknown view "board"; expected one of now, milestones, graph, features, inbox, briefs, strategy',
 		);
 	});
 });

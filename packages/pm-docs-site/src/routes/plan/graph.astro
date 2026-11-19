@@ -1,0 +1,11 @@
+---
+// The dependency graph: open items and their Depends on and Revisits links,
+// grouped by milestone. Stub page; a later task (R-012) renders the graph.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+import ExportStamp from '../../components/ExportStamp.astro';
+---
+
+<StarlightPage frontmatter={{ title: 'Graph', description: 'Open items and their Depends on and Revisits links, by milestone.', tableOfContents: false }}>
+	<ExportStamp />
+</StarlightPage>
