@@ -14,11 +14,11 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-018 Export the Now card's owner and size
 - Session: feat/r-018-export-the-now-cards-owner-and-size
-- Stage: plan
+- Stage: execute
 - Brief:
 - Milestone: M1
 - Spec: docs/superpowers/specs/2026-11-19-now-item-owner-size-links-design.md
-- Plan:
+- Plan: docs/superpowers/plans/2026-11-19-now-item-owner-size-links.md
 - Started: 2026-11-19
 
 ## Done when

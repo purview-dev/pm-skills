@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-19T15:10:14+00:00",
+  "generatedAt": "2026-11-19T18:24:11+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-018-export-the-now-cards-owner-and-size",
-    "head": "0f9551a3540d8159ae7a37d9486f680535da5532"
+    "head": "8a899e6f8d02d2ceb68204237ae2188834a93b1a"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -182,12 +182,12 @@
       "id": "R-018",
       "title": "Export the Now card's owner and size"
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-018-export-the-now-cards-owner-and-size",
     "brief": null,
     "milestone": "M1",
     "spec": "docs/superpowers/specs/2026-11-19-now-item-owner-size-links-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-19-now-item-owner-size-links.md",
     "started": "2026-11-19",
     "doneWhen": [
       "`bun skills/pm-export/scripts/export.ts write` gives the active item's Now card its roadmap `owner` and `size` instead of `null`.",
@@ -197,7 +197,205 @@
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-19-now-item-owner-size-links.md",
+    "checked": 0,
+    "total": 36,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "Export schemaVersion 4 with `nowItem`",
+        "checked": 0,
+        "total": 6,
+        "steps": [
+          {
+            "text": "**Step 1: Add the fields to the fixture `NOW.md`** after `- Milestone: M1`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Write the failing tests** in `export.test.ts`. Replace the `now.item` assertion in \"reads NOW.md, its checkpoint, ...\" and add one `it` under `describe(\"build\")`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Run to verify they fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Implement.** In the schema add `$defs/nowItem` (properties in the order `id, title, serves, owner, size, dependsOn, revisits`; reuse `#/$defs/idList`, `#/$defs/id`, and the `card` enums), point `now.item` at it, set the `schemaVersion` const to 4. In `planning.ts`, build `nowDoc.item` from `nowFields` using the existing helpers (`list` for `serves`, `ids` for `depends on`, `ids(...)[0] ?? null` for `revisits`, lowercase `owner`, uppercase `size`). A value outside `OWNERS`/`SIZES` exports `null` with an assumption in the roadmap's wording (`R-007 Owner \"someone\" is not agent, user, or both.`). A missing `Owner` or `Size` on an active item exports `null` with the assumption `NOW.md has no Owner; now.item.owner is null.` (same for Size). The Now card copies `owner` and `size` from `nowDoc.item`. Set `SCHEMA_VERSION = 4`. Update the example (`schemaVersion: 4`, a full `now.item`, matching Now card), the SKILL.md rows (`schemaVersion` `4`; `now` `item{id, title, serves, owner, size, dependsOn, revisits}`; replace line 165's \"`owner` and `size` are `null`: `NOW.md` holds neither.\" with \"`owner` and `size` come from `now.item`.\"), and `scripts/validate.ts:148`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Run to verify they pass**",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "Lint the new `NOW.md` and stack fields; template",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** in `lint.test.ts`, using the existing `repo({...})` helper and `rulesOf`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run to verify they fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement.** `KEYS.now` becomes the 14-field list; `checkNow` accepts the keys when they equal either the 9-field list (the rules 19 shape: the 14 minus the five) or the 14-field list, and the `now/fields` message names both. Add the `now/item` checks for an active `NOW.md` when the keys are present (reuse the roadmap's owner and size regexes and the `Serves`/`Depends on`/`Revisits` lookups `checkRoadmap` uses). Add the five keys to `KEYS.stack` after `Milestone`; `stack/entry`'s required keys are unchanged. Update `rules.ts`, `rules.md` (`now/fields` text names the optional five; new `now/item` row), and the `pm-init` NOW.md template (empty fields, and the five in the active example).",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run to verify they pass**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "Skills write and carry the fields",
+        "checked": 0,
+        "total": 7,
+        "steps": [
+          {
+            "text": "**Step 1: `pm-next` step 7.** After `Milestone (from the item, or empty)` add: `Serves`, `Owner` (from the item, or `agent`), `Size`, `Depends on` (from the item, or `none`), and `Revisits` (from the item, or empty). Add: `## Done when` holds the item's checks only; a held `Note:` goes on the item, never under `## Done when`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: `pm-checkpoint`.** `done`: the LOG line's `Owner` is `NOW.md`'s `Owner` (`agent` when missing). `switch`: the restored block gets `Serves`, `Owner`, `Size`, `Depends on`, `Revisits` from `NOW.md` and `Done when` from `## Done when`, its bullets joined with a semicolon and a space; omit a field `NOW.md` does not have. `push`: the stack entry template gains the five fields after `Milestone`. `pop`: writes them back to `NOW.md`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: `pm-revise:113`.** Add the five fields to its `NOW.md` field list in the same order.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: `pm-setup`.** Add Step 5 item 5 **Active item fields (version 20)**: when `<PM root>/NOW.md` is active and lacks `Owner`, find the claim commit with `git log --format=%H --grep=\"^docs(pm): claim <ID>\" -1 <Session branch>`, read `git show <commit>^:<PM root>/ROADMAP.md`, take that item's `Serves`, `Owner`, `Size`, `Depends on`, `Revisits`, and write them to `NOW.md` after `Milestone`. When the commit or block is missing, ask one choice question per missing `Owner`, `Size`, `Serves` (options drawn from the allowed values, the `V` lines in `VISION.md` for Serves), with `Depends on: none` and `Revisits:` empty. Show the five values. `pm-setup` does not commit; the next PM commit carries `NOW.md`, like the `Rules version` line. Step 6 item 2 and the Output diff-check line also allow those `NOW.md` lines.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Rules section.** Non-interruption rule 6: `pm-setup` may also write the item fields of an active `NOW.md` during an upgrade (pm-setup Step 5, item 5). Stack file definition: the entry also holds the item's `Serves`, `Owner`, `Size`, `Depends on`, and `Revisits`. Add the `Version 20` note with the spec's wording (section 5).",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Lint the Markdown**",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "Rules 20, installed here, R-018 backfilled",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Bump**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run `pm-setup`** (upgrade). Expected output: `upgraded to v20`, `Rules version: v20 recorded in planning/config.md`, and the backfill showing `Serves: V4`, `Owner: agent`, `Size: M`, `Depends on: none`, `Revisits:` (empty) for R-018, read from the parent of `ea9ea0d docs(pm): claim R-018 ...`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Verify the live export**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Verify**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit** the code files, then the PM files as a PM commit:",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 5,
+        "title": "Docs-site templates read schemaVersion 4",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing test** in the template's `planning.test.ts`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run to verify it fails**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement.** `SCHEMA_VERSION = 4`, the types and the `schemaVersion: 4;` literal, and in `features()` take `owner`, `size`, `serves`, `dependsOn`, `revisits` from `planning.now.item` instead of the board card. Update the `pm-docs-site` SKILL.md sentence to \"This skill reads schemaVersion 4.\" and its manifest example.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Re-render and verify**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 6,
+        "title": "Package and graph (after R-012 merges)",
+        "checked": 0,
+        "total": 8,
+        "steps": [
+          {
+            "text": "**Step 1: Gate on R-012.**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Bring `main` in.**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Write the failing tests.** In `test/graph.test.ts` replace the `linksNotExported` assertions:",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run to verify they fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Implement.** `SUPPORTED_SCHEMA_VERSIONS = [4]`, types and `SCHEMA_VERSION` as in Task 5, `features()` reads the five fields from `planning.now.item`, remove `linksNotExported` from `graph.ts` types and builders, the `GraphNodes.tsx` note, the `graph.astro` paragraph (and its `plan-deps__links` style if unused), the README paragraph at line 150, and update README line 130's version. Leave `package.json`'s version unchanged.",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Verify**",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Commit**",
+            "checked": false
+          },
+          {
+            "text": "**Step 8: Check every Done when line** in `planning/NOW.md` against this evidence: Task 4 Step 3 (owner and size live), Task 6 Step 6 (edges, notice removed, tests), Task 5 Step 4 (fixtures agree). Then `pm-checkpoint done`.",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -392,7 +590,7 @@
           "title": "Export the Now card's owner and size",
           "owner": null,
           "size": null,
-          "detail": "plan"
+          "detail": "execute, 0/36 plan steps"
         }
       ],
       "next": [
