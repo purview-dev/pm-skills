@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-19T10:09:48+00:00",
+  "generatedAt": "2026-11-19T10:15:33+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-012-docs-site-package-dependency-graph",
-    "head": "aee18c044e570d68ed1e897d9b14f177493c623a"
+    "head": "1293f3de95415e304f415e98625afb679e6e620e"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -182,19 +182,213 @@
       "id": "R-012",
       "title": "Docs-site package: dependency graph"
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-012-docs-site-package-dependency-graph",
     "brief": "planning/briefs/2026-11-17-docs-site-package.md",
     "milestone": "M1",
     "spec": "docs/superpowers/specs/2026-11-19-docs-site-package-dependency-graph-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-19-docs-site-package-dependency-graph.md",
     "started": "2026-11-18",
     "doneWhen": [
       "the graph page shows one node per open item and one edge per `Depends on` and `Revisits`, each node links to its feature page, and the layout is computed at build time."
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-19-docs-site-package-dependency-graph.md",
+    "checked": 0,
+    "total": 33,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "The `graph` view",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Update the failing tests**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run them and see them fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run the suite and the type check**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "Graph data",
+        "checked": 0,
+        "total": 6,
+        "steps": [
+          {
+            "text": "**Step 1: Extend the fixture**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Write the failing tests** (`test/graph.test.ts`, fixture loaded like `timeline.test.ts`, `known` from `targets(planning, ALL_VIEWS)`)",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Run and see them fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Implement `graphData` and `dependencyRows` in `src/lib/graph.ts`**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Run the tests**",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "Build-time layouts",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** (`test/graph-layout.test.ts`, on the Task 2 fixture data)",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run and see them fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement `graphLayouts`**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run the tests**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "URL state and chain tracing",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run and see them fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement** the five functions; `graphQuery` builds on `URLSearchParams`, deleting `lanes`, `done`, `focus` and re-adding only non-defaults in that order. `chainOf` walks upstream and downstream separately (a visited set each).",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run the tests**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 5,
+        "title": "The Graph island and page",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the page**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Write the island**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Write the styles**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Check the build and the bundle**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 6,
+        "title": "Browser tests",
+        "checked": 0,
+        "total": 3,
+        "steps": [
+          {
+            "text": "**Step 1: Write the tests** (helpers like `timeline.browser.ts`: `openGraph(page, query)` waits for `.plan-graph__toolbar`)",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run them**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 7,
+        "title": "Full verification",
+        "checked": 0,
+        "total": 4,
+        "steps": [
+          {
+            "text": "**Step 1: Package suite**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Repository checks**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Check the Done when on this repository's own plan**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Commit any fixes**",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -387,7 +581,7 @@
           "title": "Docs-site package: dependency graph",
           "owner": null,
           "size": null,
-          "detail": "plan"
+          "detail": "execute, 0/33 plan steps"
         }
       ],
       "next": [
