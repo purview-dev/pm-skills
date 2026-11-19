@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-19T23:53:55+00:00",
+  "generatedAt": "2026-11-19T23:55:34+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 20,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-022-docs-site-package-timeline-hydrates-in-dev",
-    "head": "ba5cd87bb003823411a7b12558102dd3346df271"
+    "head": "391e2440f4537a5ed6416b7e12db850c1ebb8fcc"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -189,19 +189,65 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-022-docs-site-package-timeline-hydrates-in-dev",
     "brief": null,
     "milestone": "M1",
     "spec": "docs/superpowers/specs/2026-11-19-docs-site-package-timeline-dev-hydration-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-19-docs-site-package-timeline-dev-hydration.md",
     "started": "2026-11-19",
     "doneWhen": [
       "Under `pm-docs-site dev` in a packed-install consumer, `/plan/roadmap/` shows the timeline toolbar with no `node:fs` error in the browser console, and `test/browser/dev.browser.ts` asserts it."
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-19-docs-site-package-timeline-dev-hydration.md",
+    "checked": 0,
+    "total": 8,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "Browser-safe timeline state, with dev tests for every island",
+        "checked": 0,
+        "total": 8,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing dev tests**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run them to see the timeline test fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Create `src/lib/timeline-state.ts` and move the browser-safe declarations into it**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Point the islands at `timeline-state.ts`**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Run the dev tests to see them pass**",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Run the unit tests, type check, and built-site browser tests**",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Run the repository checks**",
+            "checked": false
+          },
+          {
+            "text": "**Step 8: Commit**",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -518,7 +564,7 @@
           "title": "Docs-site package: timeline hydrates in dev",
           "owner": "agent",
           "size": "S",
-          "detail": "plan"
+          "detail": "execute, 0/8 plan steps"
         }
       ],
       "next": [

@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-022 Docs-site package: timeline hydrates in dev
 - Session: feat/r-022-docs-site-package-timeline-hydrates-in-dev
-- Stage: plan
+- Stage: execute
 - Brief:
 - Milestone: M1
 - Serves: V4
@@ -23,7 +23,7 @@ Milestone: optional; the item's milestone while it is active
 - Depends on: none
 - Revisits:
 - Spec: docs/superpowers/specs/2026-11-19-docs-site-package-timeline-dev-hydration-design.md
-- Plan:
+- Plan: docs/superpowers/plans/2026-11-19-docs-site-package-timeline-dev-hydration.md
 - Started: 2026-11-19
 
 ## Done when
