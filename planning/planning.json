@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 3,
-  "generatedAt": "2026-11-19T14:58:33+00:00",
+  "generatedAt": "2026-11-19T15:10:14+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 19,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-018-export-the-now-cards-owner-and-size",
-    "head": "18c93a9ab6edcaa24fa4776667df8666b6881d53"
+    "head": "0f9551a3540d8159ae7a37d9486f680535da5532"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -182,19 +182,18 @@
       "id": "R-018",
       "title": "Export the Now card's owner and size"
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-018-export-the-now-cards-owner-and-size",
     "brief": null,
     "milestone": "M1",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-19-now-item-owner-size-links-design.md",
     "plan": null,
     "started": "2026-11-19",
     "doneWhen": [
       "`bun skills/pm-export/scripts/export.ts write` gives the active item's Now card its roadmap `owner` and `size` instead of `null`.",
       "The export gives the active item its own `dependsOn` and `revisits`, and the R-012 dependency graph draws those edges (for example R-008 -> R-012).",
       "The graph's `Own links not exported yet` notice is removed.",
-      "The schema field docs, `planning.example.json`, and the docs-site fixture agree, and `just test` covers it.",
-      "Note: widened on 2026-11-19 at claim, from inbox `2026-11-19-1001-widen-r-018-now-item-links.md` (the user's choice in R-012 design). `skills/pm-export/scripts/planning.ts:489` writes `owner: null, size: null`, so every real board shows the active item as \"No owner\" and the R-010 owner and size filters hide it."
+      "The schema field docs, `planning.example.json`, and the docs-site fixture agree, and `just test` covers it."
     ],
     "checkpoint": null
   },
@@ -393,7 +392,7 @@
           "title": "Export the Now card's owner and size",
           "owner": null,
           "size": null,
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
@@ -914,6 +913,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Deferred minors from the R-017 final review: (1) the `pm-docs-site:fs-allow` tests find the plugin by position (`.at(-1)`) instead of by name, so adding a later plugin breaks them; (2) the appended entry serves the whole package folder (test/, .astro/, scripts/, node_modules/) in in-repo and linked dev, which `fs.deny` still guards, and the comment could say so; (3) on case-insensitive macOS a case-only difference appends a harmless duplicate entry."
+    },
+    {
+      "file": "planning/inbox/2026-11-19-1510-checkpoint-switch-drops-item-note.md",
+      "title": "pm-checkpoint switch drops the item's Note",
+      "captured": "2026-11-19 15:10",
+      "source": "agent (R-018 design)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "skills/pm-checkpoint/SKILL.md",
+      "context": "R-018 design",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "R-018's design keeps `Note` out of `NOW.md`, so `pm-checkpoint` `switch` (and `push`/`pop`) still restore a roadmap item without the `Note` it had before `pm-next` claimed it. Carry `Note` through `NOW.md` or the stack entry so a switched item comes back unchanged."
     }
   ],
   "briefs": [
@@ -951,7 +965,7 @@
     "next": 1,
     "later": 6,
     "nextMax": 5,
-    "openInbox": 12,
+    "openInbox": 13,
     "discuss": 1,
     "shapingBriefs": 0,
     "done": 9,
@@ -968,6 +982,6 @@
     "claimable": [
       "R-012"
     ],
-    "drift": true
+    "drift": false
   }
 }
