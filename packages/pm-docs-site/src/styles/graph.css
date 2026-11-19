@@ -109,7 +109,7 @@
 	cursor: pointer;
 }
 
-/* The active item: the accent ring the Board's Now card shows on hover. */
+/* The active item: an accent ring, like the timeline's active marker. */
 .plan-graph__item[data-active] {
 	border-color: var(--sl-color-accent);
 	box-shadow: 0 0 0 3px var(--sl-color-accent-low);
@@ -214,7 +214,9 @@ a.plan-graph__chip-text:hover {
 	stroke: var(--sl-color-gray-5);
 }
 
-/* defaultMarkerColor={null} leaves the arrowheads uncoloured inline. */
+/* A full-contrast edge's arrowhead: defaultMarkerColor={null} leaves it uncoloured
+   inline (Graph.tsx), so this rule applies. A muted (from-chip) edge sets its own
+   inline markerEnd.color instead, which wins over this rule for its arrowhead. */
 .plan-graph .react-flow__arrowhead polyline {
 	stroke: var(--sl-color-gray-3);
 	fill: var(--sl-color-gray-3);

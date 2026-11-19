@@ -131,7 +131,9 @@ function flowEdges(edges: GraphEdge[], layout: GraphLayout, chain: Set<string> |
 			type: 'default',
 			className: ['plan-graph__edge', `plan-graph__edge--${edge.kind}`, edge.fromChip ? 'plan-graph__edge--muted' : ''].filter(Boolean).join(' '),
 			...(edge.kind === 'revisits' ? { label: 'revisits' } : {}),
-			markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16 },
+			// A muted (from-chip) edge colours its own arrowhead; a full-contrast one is
+			// left uncoloured inline so the CSS rule on .react-flow__arrowhead polyline applies.
+			markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16, ...(edge.fromChip ? { color: 'var(--sl-color-gray-5)' } : {}) },
 			selectable: false,
 			focusable: false,
 			domAttributes: dataAttributes({
