@@ -115,7 +115,7 @@ New fields, in this order, after `Milestone` and before `Spec`:
 - `pm-checkpoint`:
   - `switch` writes them back on the restored roadmap block, with `Done
     when` from `## Done when`, so the block is complete. The `## Done
-    when` bullets are joined with `; ` into the one-line roadmap field
+    when` bullets are joined with a semicolon and a space into the one-line roadmap field
     (my call). `## Done when` holds checks only; `pm-next` never writes a
     `Note:` bullet there.
   - `push` copies them into the stack entry; `pop` restores them.
