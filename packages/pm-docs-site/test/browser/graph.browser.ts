@@ -23,6 +23,73 @@ async function openGraph(page: Page, query = ''): Promise<void> {
 	await hydrated(page);
 }
 
+interface GraphFrame {
+	/** Whether `<html>` still carries the pending mark. */
+	pending: boolean;
+	/** Whether `.plan-graph` is visible (gated by the pending mark's CSS rule). */
+	visible: boolean;
+	/** `.plan-graph`'s `data-layout`, or `null` before it exists. */
+	layout: string | null;
+}
+
+/**
+ * Samples every animation frame from document start until a few frames after
+ * hydration (`.plan-graph__toolbar` loses its `hidden` attribute): whether
+ * `<html>` still carries the pending mark, whether `.plan-graph` is visible,
+ * and its `data-layout`. A single snapshot (at `DOMContentLoaded`, say)
+ * almost always lands while the page is still pending, so it cannot catch a
+ * transient frame where the wrong layout is visible between the pending mark
+ * being removed and the right layout being applied; sampling every frame can.
+ */
+async function sampleFrames(page: Page, path: string): Promise<GraphFrame[]> {
+	await page.addInitScript(() => {
+		const frames: { pending: boolean; visible: boolean; layout: string | null }[] = [];
+		let stopAtFrame: number | null = null;
+
+		const sample = () => {
+			const graph = document.querySelector('.plan-graph');
+			const toolbar = document.querySelector('.plan-graph__toolbar');
+			const style = graph ? getComputedStyle(graph) : null;
+
+			frames.push({
+				pending: document.documentElement.hasAttribute('data-graph-pending'),
+				visible: style !== null && style.visibility !== 'hidden' && style.display !== 'none',
+				layout: graph?.getAttribute('data-layout') ?? null,
+			});
+
+			const toolbarShown = toolbar !== null && !toolbar.hasAttribute('hidden');
+
+			if (toolbarShown && stopAtFrame === null) stopAtFrame = frames.length + 5;
+
+			if (stopAtFrame !== null && frames.length >= stopAtFrame) {
+				(window as unknown as { graphFrames: typeof frames }).graphFrames = frames;
+				return;
+			}
+
+			requestAnimationFrame(sample);
+		};
+
+		requestAnimationFrame(sample);
+	});
+
+	await page.goto(path);
+	await page.waitForFunction(() => (window as unknown as { graphFrames?: unknown }).graphFrames !== undefined);
+
+	return page.evaluate(() => (window as unknown as { graphFrames: GraphFrame[] }).graphFrames);
+}
+
+/**
+ * Asserts the sampled frames never show the graph visible with a layout
+ * other than `expectedLayout`, show it visible with `expectedLayout` at least
+ * once, and that at least one frame was recorded while the pending mark was
+ * still set (proof the sampler ran early enough to see that phase).
+ */
+function assertNoFlash(frames: GraphFrame[], expectedLayout: string): void {
+	expect(frames.some((frame) => frame.pending)).toBe(true);
+	expect(frames.some((frame) => frame.visible && frame.layout === expectedLayout)).toBe(true);
+	expect(frames.some((frame) => frame.visible && frame.layout !== null && frame.layout !== expectedLayout)).toBe(false);
+}
+
 const graph = (page: Page) => page.locator('.plan-graph');
 const node = (page: Page, id: string) => page.locator(`[data-graph-node="${id}"]`);
 const lane = (page: Page, key: string) => page.locator(`.plan-graph__lane[data-lane="${key}"]`);
@@ -76,25 +143,10 @@ test('turning off Show done prerequisites writes done=off, hides the R-010 chip,
 });
 
 test('opening with both switches off shows flow-open, with no sampled frame of lanes-done', async ({ page }) => {
-	await page.addInitScript(() => {
-		document.addEventListener('DOMContentLoaded', () => {
-			const element = document.querySelector('.plan-graph');
+	const frames = await sampleFrames(page, '/plan/graph/?lanes=off&done=off');
 
-			(window as unknown as { atReady: unknown }).atReady = {
-				pending: document.documentElement.hasAttribute('data-graph-pending'),
-				visibility: element ? getComputedStyle(element).visibility : null,
-				layout: element?.getAttribute('data-layout') ?? null,
-			};
-		});
-	});
-	await page.goto('/plan/graph/?lanes=off&done=off');
+	assertNoFlash(frames, 'flow-open');
 	await hydrated(page);
-
-	const atReady = (await page.evaluate(() => (window as unknown as { atReady: unknown }).atReady)) as { pending: boolean; visibility: string | null; layout: string | null };
-
-	if (atReady.pending) expect(atReady.visibility).toBe('hidden');
-	else expect(atReady.layout).toBe('flow-open');
-
 	await expect(page.locator('html')).not.toHaveAttribute('data-graph-pending');
 	await expect(graph(page)).toHaveAttribute('data-layout', 'flow-open');
 });
@@ -135,7 +187,23 @@ test('a focus naming a chip hidden by done=off opens unselected, with no focus k
 test('Zoom in changes the viewport transform; Fit restores it', async ({ page }) => {
 	await openGraph(page);
 	const viewport = page.locator('.react-flow__viewport');
-	const before = await viewport.evaluate((element) => element.style.transform);
+
+	// The mount-time fit can run once against the SSR-matching canvas size and
+	// again, moments later, against the real measured one (a ResizeObserver
+	// report); wait for two consecutive reads to agree before treating the
+	// transform as settled, so this isn't a race with that second fit.
+	let before = await viewport.evaluate((element) => element.style.transform);
+
+	await expect
+		.poll(async () => {
+			const current = await viewport.evaluate((element) => element.style.transform);
+			const settled = current === before;
+
+			before = current;
+
+			return settled;
+		})
+		.toBe(true);
 
 	expect(before).not.toBe('');
 
@@ -194,6 +262,11 @@ test('Enter on a focused, unselected node selects it once; Escape clears it', as
 	await expect(target).toHaveAttribute('data-selected', '');
 	await expect.poll(() => new URL(page.url()).search).toBe('?focus=R-013');
 
+	// Stays selected: a second, unwanted write (or an immediate toggle back
+	// off) would already show up within a short wait.
+	await page.waitForTimeout(200);
+	expect(new URL(page.url()).search).toBe('?focus=R-013');
+
 	await page.keyboard.press('Escape');
 	await expect(target).not.toHaveAttribute('data-selected', '');
 	await expect.poll(() => new URL(page.url()).search).toBe('');
@@ -220,25 +293,10 @@ test('the lane layer paints below the edges layer', async ({ page }) => {
 });
 
 test('?lanes=off alone clears the pending mark once hydrated, with no sampled frame of lanes-done', async ({ page }) => {
-	await page.addInitScript(() => {
-		document.addEventListener('DOMContentLoaded', () => {
-			const element = document.querySelector('.plan-graph');
+	const frames = await sampleFrames(page, '/plan/graph/?lanes=off');
 
-			(window as unknown as { atReady: unknown }).atReady = {
-				pending: document.documentElement.hasAttribute('data-graph-pending'),
-				visibility: element ? getComputedStyle(element).visibility : null,
-				layout: element?.getAttribute('data-layout') ?? null,
-			};
-		});
-	});
-	await page.goto('/plan/graph/?lanes=off');
+	assertNoFlash(frames, 'flow-done');
 	await hydrated(page);
-
-	const atReady = (await page.evaluate(() => (window as unknown as { atReady: unknown }).atReady)) as { pending: boolean; visibility: string | null; layout: string | null };
-
-	if (atReady.pending) expect(atReady.visibility).toBe('hidden');
-	else expect(atReady.layout).toBe('flow-done');
-
 	await expect(page.locator('html')).not.toHaveAttribute('data-graph-pending');
 	await expect(graph(page)).toHaveAttribute('data-layout', 'flow-done');
 });
