@@ -46,31 +46,31 @@ In `dev.browser.ts`, extract the existing console and pageerror collection into 
 
 ```ts
 test('the roadmap timeline hydrates under pm-docs-site dev', async ({ page }) => {
-	test.setTimeout(120_000);
-	const errors = collectErrors(page);
+  test.setTimeout(120_000);
+  const errors = collectErrors(page);
 
-	await page.goto('/plan/roadmap/', { timeout: 90_000 });
-	const toolbar = page.locator('.plan-timeline__toolbar');
+  await page.goto('/plan/roadmap/', { timeout: 90_000 });
+  const toolbar = page.locator('.plan-timeline__toolbar');
 
-	await expect(toolbar).toBeVisible({ timeout: 30_000 }).catch(() => {});
-	expect(errors).toEqual([]);
-	await expect(toolbar).toBeVisible({ timeout: 1_000 });
-	await expect(page.getByRole('button', { name: 'Zoom in' })).toBeEnabled();
-	expect(errors).toEqual([]);
+  await expect(toolbar).toBeVisible({ timeout: 30_000 }).catch(() => {});
+  expect(errors).toEqual([]);
+  await expect(toolbar).toBeVisible({ timeout: 1_000 });
+  await expect(page.getByRole('button', { name: 'Zoom in' })).toBeEnabled();
+  expect(errors).toEqual([]);
 });
 
 test('the dependency graph hydrates under pm-docs-site dev', async ({ page }) => {
-	test.setTimeout(120_000);
-	const errors = collectErrors(page);
+  test.setTimeout(120_000);
+  const errors = collectErrors(page);
 
-	await page.goto('/plan/graph/', { timeout: 90_000 });
-	const html = page.locator('html');
+  await page.goto('/plan/graph/', { timeout: 90_000 });
+  const html = page.locator('html');
 
-	await expect(html).not.toHaveAttribute('data-graph-pending', { timeout: 30_000 }).catch(() => {});
-	expect(errors).toEqual([]);
-	await expect(html).not.toHaveAttribute('data-graph-pending', { timeout: 1_000 });
-	await expect(page.locator('.react-flow__node').first()).toBeVisible();
-	expect(errors).toEqual([]);
+  await expect(html).not.toHaveAttribute('data-graph-pending', { timeout: 30_000 }).catch(() => {});
+  expect(errors).toEqual([]);
+  await expect(html).not.toHaveAttribute('data-graph-pending', { timeout: 1_000 });
+  await expect(page.locator('.react-flow__node').first()).toBeVisible();
+  expect(errors).toEqual([]);
 });
 ```
 
