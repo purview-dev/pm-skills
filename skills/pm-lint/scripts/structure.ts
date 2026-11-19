@@ -54,7 +54,7 @@ export function kindOf(rel: string): Kind {
 
 // The field keys each block defines, as written in the templates.
 export const KEYS = {
-  now: ["Status", "Item", "Session", "Stage", "Brief", "Milestone", "Spec", "Plan", "Started"],
+  now: ["Status", "Item", "Session", "Stage", "Brief", "Milestone", "Serves", "Owner", "Size", "Depends on", "Revisits", "Spec", "Plan", "Started"],
   checkpoint: ["Stopped at", "Next action", "Start with", "Decisions", "Context", "Open question"],
   item: ["Serves", "Milestone", "Owner", "Done when", "Size", "Depends on", "Status", "Brief", "Paused checkpoint", "Note", "Revisits"],
   milestone: ["Serves", "Exit criteria", "Target", "Status"],
@@ -62,7 +62,7 @@ export const KEYS = {
   risk: ["Likelihood", "Impact", "RAG", "RAG override", "Status", "Owner", "Affects", "Trigger", "Mitigation", "Raised", "Reviewed", "Closed"],
   inbox: ["Captured", "Source", "Kind", "Severity", "Affects", "Context", "Discuss", "Related", "Brief", "Reviewed"],
   brief: ["Status", "Origin", "Updated"],
-  stack: ["Pushed", "Branch", "Stage", "Brief", "Spec", "Plan", "Milestone", "Started", "Reason", "Done when", "Checkpoint"],
+  stack: ["Pushed", "Branch", "Stage", "Brief", "Spec", "Plan", "Milestone", "Serves", "Owner", "Size", "Depends on", "Revisits", "Started", "Reason", "Done when", "Checkpoint"],
   pause: ["Paused", "Session", "Item", "Running", "Files", "Uncommitted outside PM root"],
   resume: ["Next action", "Start with", "Open question"],
   install: ["Rules version"],
@@ -107,6 +107,49 @@ const ITEM_ID = /\bR-\d{3,}\b/g;
 const idNumber = (id: string) => Number(/\d+/.exec(id)?.[0] ?? 0);
 const LEVELS = ["low", "medium", "high"];
 const RAG_RANK: Record<string, number> = { red: 0, amber: 1, green: 2 };
+
+// The item fields NOW.md and the stack carry alongside the roadmap: optional
+// everywhere, checked like a roadmap item's fields when present.
+const NOW_ITEM_FIELDS = ["Serves", "Owner", "Size", "Depends on", "Revisits"];
+const OWNER_VALUES = /^(agent|user|both)$/;
+const SIZE_VALUES = /^(S|M|L)$/;
+
+/** Every ID known anywhere in the PM state (ROADMAP.md, NOW.md, LOG.md), for `Depends on`. */
+const knownIds = (context: Context) => new Set([...context.items.map((i) => i.id), ...(context.now ? [context.now.id] : []), ...context.done.map((d) => d.id), ...context.dropped.map((d) => d.id)]);
+
+/** Every ID in the LOG.md `## Done` lines, for `Revisits`. */
+const doneIdSet = (context: Context) => new Set(context.done.map((d) => d.id));
+
+/** `Owner` is agent, user, or both, when present. */
+function checkOwnerField(field: Field | undefined, add: Add, rule: string) {
+  if (field && !isPlaceholder(field.value) && !OWNER_VALUES.test(field.value)) add(field.n, rule, `Owner "${field.value}" is not agent, user, or both.`);
+}
+
+/** `Size` is S, M, or L, when present. */
+function checkSizeField(field: Field | undefined, add: Add, rule: string) {
+  if (field && !isPlaceholder(field.value) && !SIZE_VALUES.test(field.value)) add(field.n, rule, `Size "${field.value}" is not S, M, or L.`);
+}
+
+/** `Depends on`: every ID named exists, is not `selfId`, and the field names at least one when it is not `none`. */
+function checkDependsOnField(field: Field | undefined, selfId: string | undefined, known: Set<string>, add: Add, rule: string) {
+  if (!field || isPlaceholder(field.value) || /^none$/i.test(field.value)) return;
+  const deps = field.value.match(ITEM_ID) ?? [];
+  if (!deps.length) {
+    add(field.n, rule, `Depends on "${field.value}" names no R-NNN ID.`);
+    return;
+  }
+  for (const dep of deps) {
+    if (selfId && dep === selfId) add(field.n, rule, `${selfId} depends on itself.`);
+    else if (!known.has(dep)) add(field.n, rule, `${dep} is not an item in ROADMAP.md, NOW.md, or LOG.md.`);
+  }
+}
+
+/** `Revisits`: one ID in the LOG.md Done lines, when it is not empty or none. */
+function checkRevisitsField(field: Field | undefined, doneIds: Set<string>, add: Add, rule: string) {
+  if (!field || isPlaceholder(field.value) || /^none$/i.test(field.value)) return;
+  const ids = field.value.match(ITEM_ID) ?? [];
+  if (!ids.length || ids.some((id) => !doneIds.has(id))) add(field.n, rule, `Revisits "${field.value}" is not an item in the LOG.md Done lines.`);
+}
 
 export function derivedRag(likelihood: string, impact: string): string | null {
   const l = LEVELS.indexOf(likelihood);
@@ -427,11 +470,18 @@ function outOfOrder(list: { n: number; text: string }[], add: Add, rule: string,
   if (bad) add(bad.n, rule, message);
 }
 
+const NOW_LEGACY_FIELDS = KEYS.now.filter((key) => !NOW_ITEM_FIELDS.includes(key));
+
 function checkNow(doc: Doc, add: Add, context: Context) {
   const top = fields(doc.lines, doc.h2[0]!);
   const keys = top.map((field) => field.key);
-  if (keys.join("|").toLowerCase() !== KEYS.now.join("|").toLowerCase()) {
-    add(top[0]?.n ?? 1, "now/fields", `The fields are ${keys.join(", ") || "missing"}; they must be ${KEYS.now.join(", ")}.`);
+  const keyLine = keys.join("|").toLowerCase();
+  if (keyLine !== KEYS.now.join("|").toLowerCase() && keyLine !== NOW_LEGACY_FIELDS.join("|").toLowerCase()) {
+    add(
+      top[0]?.n ?? 1,
+      "now/fields",
+      `The fields are ${keys.join(", ") || "missing"}; they must be ${NOW_LEGACY_FIELDS.join(", ")}, optionally with ${NOW_ITEM_FIELDS.join(", ")} after Milestone.`,
+    );
   }
   requireSections(doc, add, "now/sections", [["Done when", /^Done when/i], ["Checkpoint", /^Checkpoint\b/i]], true);
   const map = fieldMap(top);
@@ -464,6 +514,12 @@ function checkNow(doc: Doc, add: Add, context: Context) {
     for (const key of missing(cmap, KEYS.checkpoint.slice(0, 5))) add(h.n, "now/checkpoint", `The checkpoint has no \`${key}\`.`);
   }
   if (context.now && context.items.some((i) => i.id === context.now!.id)) add(context.now.n, "now/not-in-roadmap", `${context.now.id} is active and also in ROADMAP.md.`);
+  const selfId = /^(R-\d{3,})\b/.exec(item?.value ?? "")?.[1];
+  checkOwnerField(map.get("owner"), add, "now/item");
+  checkSizeField(map.get("size"), add, "now/item");
+  servesCheck(map.get("serves"), context, add, "now/item");
+  checkDependsOnField(map.get("depends on"), selfId, knownIds(context), add, "now/item");
+  checkRevisitsField(map.get("revisits"), doneIdSet(context), add, "now/item");
 }
 
 function checkRoadmap(doc: Doc, add: Add, context: Context) {
@@ -477,8 +533,8 @@ function checkRoadmap(doc: Doc, add: Add, context: Context) {
       if (!/^R-\d{3,}\s+\S/.test(block.heading!.text)) add(block.heading!.n, "roadmap/item", `"${block.heading!.text}" is not \`R-NNN <Title>\` (at least 3 digits).`);
     }
   }
-  const known = new Set([...context.items.map((i) => i.id), ...(context.now ? [context.now.id] : []), ...context.done.map((d) => d.id), ...context.dropped.map((d) => d.id)]);
-  const doneIds = new Set(context.done.map((d) => d.id));
+  const known = knownIds(context);
+  const doneIds = doneIdSet(context);
   const roadmapDoc = context.docs.get("ROADMAP.md")!;
   for (const item of context.items) {
     const block = sections(roadmapDoc.lines, 3).find((s) => s.heading?.n === item.n)!;
@@ -486,10 +542,8 @@ function checkRoadmap(doc: Doc, add: Add, context: Context) {
     checkBlockFields(list, KEYS.item, add, item.n);
     const map = item.fields;
     for (const key of missing(map, ["Serves", "Done when", "Size", "Status"])) add(item.n, "roadmap/item", `${item.id} has no \`${key}\`.`);
-    const owner = map.get("owner");
-    if (owner && !/^(agent|user|both)$/.test(owner.value)) add(owner.n, "roadmap/owner", `Owner "${owner.value}" is not agent, user, or both.`);
-    const size = map.get("size");
-    if (size && !/^(S|M|L)$/.test(size.value)) add(size.n, "roadmap/size", `Size "${size.value}" is not S, M, or L.`);
+    checkOwnerField(map.get("owner"), add, "roadmap/owner");
+    checkSizeField(map.get("size"), add, "roadmap/size");
     const status = map.get("status");
     if (status && !/^(ready|paused|blocked \(.+, since \d{4}-\d{2}-\d{2}\))$/.test(status.value)) {
       add(status.n, "roadmap/status", `Status "${status.value}" is not ready, paused, or blocked (<reason>, since YYYY-MM-DD).`);
@@ -499,20 +553,8 @@ function checkRoadmap(doc: Doc, add: Add, context: Context) {
     if (milestone && !isPlaceholder(milestone.value) && !/^(none|unassigned)$/i.test(milestone.value) && !namesMilestone(milestone.value, context.milestones)) {
       add(milestone.n, "roadmap/milestone", `Milestone "${milestone.value}" is not in STRATEGY.md${context.milestones.length ? ` (${context.milestones.join(", ")})` : ", which has no milestones"}.`);
     }
-    const depends = map.get("depends on");
-    if (depends && !/^none$/i.test(depends.value)) {
-      const deps = depends.value.match(ITEM_ID) ?? [];
-      if (!deps.length) add(depends.n, "roadmap/depends", `Depends on "${depends.value}" names no R-NNN ID.`);
-      for (const dep of deps) {
-        if (dep === item.id) add(depends.n, "roadmap/depends", `${item.id} depends on itself.`);
-        else if (!known.has(dep)) add(depends.n, "roadmap/depends", `${dep} is not an item in ROADMAP.md, NOW.md, or LOG.md.`);
-      }
-    }
-    const revisits = map.get("revisits");
-    if (revisits && !/^none$/i.test(revisits.value)) {
-      const ids = revisits.value.match(ITEM_ID) ?? [];
-      if (!ids.length || ids.some((id) => !doneIds.has(id))) add(revisits.n, "roadmap/revisits", `Revisits "${revisits.value}" is not an item in the LOG.md Done lines.`);
-    }
+    checkDependsOnField(map.get("depends on"), item.id, known, add, "roadmap/depends");
+    checkRevisitsField(map.get("revisits"), doneIds, add, "roadmap/revisits");
   }
   // Cycles in Depends on, among the open items.
   const graph = new Map(context.items.map((i) => [i.id, (i.fields.get("depends on")?.value.match(ITEM_ID) ?? []).filter((d) => d !== i.id)]));
