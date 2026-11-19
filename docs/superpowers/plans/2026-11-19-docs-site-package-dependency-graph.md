@@ -39,12 +39,14 @@ All paths below are relative to `packages/pm-docs-site/` unless they start with 
 ### Task 1: The `graph` view
 
 **Files:**
+
 - Modify: `lib/types.ts` (`ViewName`), `lib/options.ts` (`VIEW_NAMES`), `lib/sidebar.ts`, `lib/index.ts` (`VIEW_ROUTES`)
 - Create: `src/routes/plan/graph.astro` (a stub: `StarlightPage` titled `Graph` with `ExportStamp`; Task 5 fills it)
 - Modify: `test/fixtures/expected-pages.txt` (add `plan/graph/index.html`), `README.md` (the `views` row and the views list)
 - Modify tests: `test/options.test.ts`, `test/sidebar.test.ts`, and every `ALL_VIEWS` / views object in `test/board-data.test.ts`, `test/links.test.ts`, `test/references.test.ts`, `test/timeline.test.ts` (add `graph: true`)
 
 **Interfaces:**
+
 - Produces: `ViewName` includes `'graph'`; `VIEW_NAMES` is `['now', 'milestones', 'graph', 'features', 'inbox', 'briefs', 'strategy']`; route `/plan/graph` → `plan/graph.astro`.
 
 - [ ] **Step 1: Update the failing tests**
@@ -75,36 +77,38 @@ git commit -m "feat(pm-docs-site): add the graph view (R-012)"
 ### Task 2: Graph data
 
 **Files:**
+
 - Create: `src/lib/graph.ts`
 - Modify: `test/fixtures/planning.json`
 - Create: `test/graph.test.ts`
 
 **Interfaces:**
+
 - Consumes: `features(planning)`, `Feature` (`src/lib/planning.ts`); `Target` and `targets(planning, views)` (`src/lib/references.ts`) for hrefs in tests.
 - Produces (all exported from `src/lib/graph.ts`):
 
 ```ts
 export type GraphNodeKind = 'item' | 'done' | 'dropped' | 'missing';
 export interface GraphNode {
-	id: string;
-	kind: GraphNodeKind;
-	title: string | null;          // null for 'missing'
-	href: string | null;           // from known.get(id)?.href ?? null
-	milestone: string | null;      // items only; chips null
-	size: Size | null;
-	section: 'now' | 'next' | 'later' | null;
-	owner: string | null;
-	blocked: boolean;              // label === 'blocked' || status?.value === 'blocked'
-	active: boolean;               // section === 'now'
-	donePrerequisites: number;     // Depends on + Revisits IDs that are done or dropped
-	linksNotExported: boolean;     // true for the active item (spec: The active item's own links)
+ id: string;
+ kind: GraphNodeKind;
+ title: string | null;          // null for 'missing'
+ href: string | null;           // from known.get(id)?.href ?? null
+ milestone: string | null;      // items only; chips null
+ size: Size | null;
+ section: 'now' | 'next' | 'later' | null;
+ owner: string | null;
+ blocked: boolean;              // label === 'blocked' || status?.value === 'blocked'
+ active: boolean;               // section === 'now'
+ donePrerequisites: number;     // Depends on + Revisits IDs that are done or dropped
+ linksNotExported: boolean;     // true for the active item (spec: The active item's own links)
 }
 export interface GraphEdge {
-	id: string;                    // `${source}>${target}:${kind}:${n}`, n counts repeats from 0
-	source: string;                // the prerequisite or the original
-	target: string;                // the waiting item or the revision
-	kind: 'depends' | 'revisits';
-	fromChip: boolean;             // source is a done, dropped, or missing node
+ id: string;                    // `${source}>${target}:${kind}:${n}`, n counts repeats from 0
+ source: string;                // the prerequisite or the original
+ target: string;                // the waiting item or the revision
+ kind: 'depends' | 'revisits';
+ fromChip: boolean;             // source is a done, dropped, or missing node
 }
 export interface GraphData { nodes: GraphNode[]; edges: GraphEdge[] }
 export interface DependencyRow { id: string; title: string; href: string | null; waitsOn: Ref[]; waitedOnBy: Ref[]; revisits: Ref | null; revisedBy: Ref[]; linksNotExported: boolean }
@@ -153,11 +157,13 @@ git commit -m "feat(pm-docs-site): derive the dependency graph (R-012)"
 ### Task 3: Build-time layouts
 
 **Files:**
+
 - Modify: `package.json` (add `"@dagrejs/dagre": "3.1.3"` to `dependencies`; `bun install` from the repository root updates `bun.lock`)
 - Create: `src/lib/graph-layout.ts` (kept apart from `graph.ts` so the island never pulls dagre in)
 - Create: `test/graph-layout.test.ts`
 
 **Interfaces:**
+
 - Consumes: `GraphData`, `GraphNode` from Task 2; `milestoneSummaries(planning)` for lane order, `name`, and `isFocus`.
 - Produces:
 
@@ -206,10 +212,12 @@ git commit -m "feat(pm-docs-site): lay out the dependency graph at build time (R
 ### Task 4: URL state and chain tracing
 
 **Files:**
+
 - Modify: `src/lib/graph.ts`
 - Modify: `test/graph.test.ts`
 
 **Interfaces:**
+
 - Consumes: `GraphEdge` (Task 2), `LayoutKey`, `GraphLayout` (types only, `import type` from Task 3).
 - Produces:
 
@@ -253,12 +261,14 @@ git commit -m "feat(pm-docs-site): graph URL state and chain tracing (R-012)"
 ### Task 5: The Graph island and page
 
 **Files:**
+
 - Modify: `package.json` (add `"@xyflow/react": "13.0.2"`), `bun.lock`
 - Create: `src/components/graph/Graph.tsx` (island), `src/components/graph/GraphNodes.tsx` (item, chip, and lane node components), `src/components/graph/useGraphUrlState.ts`
 - Create: `src/styles/graph.css`
 - Modify: `src/routes/plan/graph.astro`
 
 **Interfaces:**
+
 - Consumes: `graphData`, `dependencyRows`, `parseGraphQuery`, `graphQuery`, `layoutKey`, `resolveFocus`, `chainOf` (`graph.ts`); `graphLayouts`, `GraphLayout`, `LayoutKey` (`graph-layout.ts`, frontmatter only; types elsewhere); `siteRefs().known`.
 - Produces: `<Graph client:load nodes={GraphNode[]} edges={GraphEdge[]} layouts={Record<LayoutKey, GraphLayout>} />`; DOM hooks for Task 6: `.plan-graph__toolbar`, `[data-graph-node="<ID>"]` with `data-kind`, `data-selected`, `data-dimmed`, `.plan-graph__lane[data-lane="<key>"]`, `[data-graph-edge="<edge id>"]`, `.plan-graph` with `data-layout="<LayoutKey>"`.
 
@@ -289,9 +299,11 @@ git commit -m "feat(pm-docs-site): the Graph page (R-012)"
 ### Task 6: Browser tests
 
 **Files:**
+
 - Create: `test/browser/graph.browser.ts`
 
 **Interfaces:**
+
 - Consumes: the DOM hooks in Task 5's Produces block; the Task 2 fixture.
 
 - [ ] **Step 1: Write the tests** (helpers like `timeline.browser.ts`: `openGraph(page, query)` waits for `.plan-graph__toolbar`)
