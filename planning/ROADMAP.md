@@ -14,16 +14,15 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-012 Docs-site package: dependency graph
+### R-020 Docs-site package: rich demo planning fixture
 
 - Serves: V4
 - Milestone: M1
 - Owner: agent
-- Done when: the graph page shows one node per open item and one edge per `Depends on` and `Revisits`, each node links to its feature page, and the layout is computed at build time.
+- Done when: a synthetic, schema-valid `planning.json` in the package's fixture site fills every view (at least 3 milestones with targets, `Depends on` and `Revisits` edges, risks in all three RAG states, inbox files, briefs, Done and Dropped log lines, an active Now item), `bun skills/pm-export/scripts/export.ts validate` passes on it, and the fixture site's build and browser tests render every page with content.
 - Size: M
-- Depends on: R-008
+- Depends on: none
 - Status: ready
-- Brief: planning/briefs/2026-11-17-docs-site-package.md
 
 ## Later
 
@@ -52,16 +51,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Status: ready
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 - Note: Rewrites `pm-docs-site` and Non-interruption rule 9, so it bumps the rules major.
-
-### R-020 Docs-site package: rich demo planning fixture
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: a synthetic, schema-valid `planning.json` in the package's fixture site fills every view (at least 3 milestones with targets, `Depends on` and `Revisits` edges, risks in all three RAG states, inbox files, briefs, Done and Dropped log lines, an active Now item), `bun skills/pm-export/scripts/export.ts validate` passes on it, and the fixture site's build and browser tests render every page with content.
-- Size: M
-- Depends on: none
-- Status: ready
 
 ### R-006 Check pm-setup's skill counts in validate
 

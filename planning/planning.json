@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-19T19:45:24+00:00",
+  "generatedAt": "2026-11-19T20:51:44+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 20,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-018-export-the-now-cards-owner-and-size",
-    "head": "00e1bac92ecfd823291ccc2200c29e54d6c7b927"
+    "head": "eb67e00635cdc931e290fd5bae3ac8358c1c3573"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -414,8 +414,8 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-012",
-        "title": "Docs-site package: dependency graph",
+        "id": "R-020",
+        "title": "Docs-site package: rich demo planning fixture",
         "section": "next",
         "position": 1,
         "label": "next",
@@ -424,17 +424,15 @@
         ],
         "milestone": "M1",
         "owner": "agent",
-        "doneWhen": "the graph page shows one node per open item and one edge per `Depends on` and `Revisits`, each node links to its feature page, and the layout is computed at build time.",
+        "doneWhen": "a synthetic, schema-valid `planning.json` in the package's fixture site fills every view (at least 3 milestones with targets, `Depends on` and `Revisits` edges, risks in all three RAG states, inbox files, briefs, Done and Dropped log lines, an active Now item), `bun skills/pm-export/scripts/export.ts validate` passes on it, and the fixture site's build and browser tests render every page with content.",
         "size": "M",
-        "dependsOn": [
-          "R-008"
-        ],
+        "dependsOn": [],
         "status": {
           "value": "ready",
           "reason": null,
           "since": null
         },
-        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+        "brief": null,
         "note": null,
         "revisits": null,
         "claimable": true
@@ -499,34 +497,10 @@
         "claimable": false
       },
       {
-        "id": "R-020",
-        "title": "Docs-site package: rich demo planning fixture",
-        "section": "later",
-        "position": 3,
-        "label": "later",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "a synthetic, schema-valid `planning.json` in the package's fixture site fills every view (at least 3 milestones with targets, `Depends on` and `Revisits` edges, risks in all three RAG states, inbox files, briefs, Done and Dropped log lines, an active Now item), `bun skills/pm-export/scripts/export.ts validate` passes on it, and the fixture site's build and browser tests render every page with content.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": null,
-        "revisits": null,
-        "claimable": false
-      },
-      {
         "id": "R-006",
         "title": "Check pm-setup's skill counts in validate",
         "section": "later",
-        "position": 4,
+        "position": 3,
         "label": "later",
         "serves": [
           "V1"
@@ -550,7 +524,7 @@
         "id": "R-015",
         "title": "Rehearse a fresh install in a scratch repository",
         "section": "later",
-        "position": 5,
+        "position": 4,
         "label": "later",
         "serves": [
           "V1"
@@ -574,7 +548,7 @@
         "id": "R-016",
         "title": "Rehearse the lifecycle guards",
         "section": "later",
-        "position": 6,
+        "position": 5,
         "label": "later",
         "serves": [
           "V2",
@@ -610,8 +584,8 @@
       ],
       "next": [
         {
-          "id": "R-012",
-          "title": "Docs-site package: dependency graph",
+          "id": "R-020",
+          "title": "Docs-site package: rich demo planning fixture",
           "owner": "agent",
           "size": "M",
           "detail": "ready"
@@ -620,6 +594,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-19",
+          "id": "R-012",
+          "title": "Docs-site package: dependency graph",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-19-docs-site-package-dependency-graph.md",
+          "result": "branch feat/r-012-docs-site-package-dependency-graph"
+        },
         {
           "date": "2026-11-18",
           "id": "R-017",
@@ -704,6 +687,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-19",
+        "kind": "done",
+        "id": "R-012",
+        "title": "Docs-site package: dependency graph",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-012-docs-site-package-dependency-graph"
+      },
       {
         "date": "2026-11-18",
         "kind": "done",
@@ -825,6 +817,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-19",
+        "id": "R-012",
+        "title": "Docs-site package: dependency graph",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-19-docs-site-package-dependency-graph.md",
+        "result": "branch feat/r-012-docs-site-package-dependency-graph"
+      },
       {
         "date": "2026-11-18",
         "id": "R-017",
@@ -1128,6 +1129,51 @@
       "idea": "Deferred minors from the R-017 final review: (1) the `pm-docs-site:fs-allow` tests find the plugin by position (`.at(-1)`) instead of by name, so adding a later plugin breaks them; (2) the appended entry serves the whole package folder (test/, .astro/, scripts/, node_modules/) in in-repo and linked dev, which `fs.deny` still guards, and the comment could say so; (3) on case-insensitive macOS a case-only difference appends a harmless duplicate entry."
     },
     {
+      "file": "planning/inbox/2026-11-19-1006-feature-pages-miss-revisited-by.md",
+      "title": "Feature pages do not list revisions",
+      "captured": "2026-11-19 10:06",
+      "source": "agent (R-012 design)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "packages/pm-docs-site/src/lib/planning.ts",
+      "context": "R-012 design",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "The R-012 builder check found that `dependents()` in `packages/pm-docs-site/src/lib/planning.ts` looks only at `dependsOn`, so a feature page lists its dependants but not the items whose `Revisits` names it. The R-012 graph draws Revisits edges; the feature pages should list \"Revised by\" too. Out of R-012's scope (its spec, Non-goals)."
+    },
+    {
+      "file": "planning/inbox/2026-11-19-1213-timeline-no-hydrate-in-dev.md",
+      "title": "Roadmap timeline fails to hydrate in dev",
+      "captured": "2026-11-19 12:13",
+      "source": "agent (R-012 execute)",
+      "kind": "bug",
+      "severity": "minor",
+      "affects": "packages/pm-docs-site/src/components/timeline/Timeline.tsx",
+      "context": "R-012 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Found while building R-012 (Task 5): under `pm-docs-site dev` in a packed-install consumer, the Roadmap Timeline island does not hydrate. It imports `src/lib/timeline.ts`, which imports `src/lib/planning.ts`, which imports `node:fs`, so the client bundle fails. `test/browser/dev.browser.ts` only checks the Board, so nothing caught it. R-012 fixed the same problem for the Graph island by moving its client functions into `src/lib/graph-state.ts`; the timeline needs the same split and a dev browser test."
+    },
+    {
+      "file": "planning/inbox/2026-11-19-1429-graph-no-flash-test-flake.md",
+      "title": "Graph no-flash test flakes on pending frame",
+      "captured": "2026-11-19 14:29",
+      "source": "agent (R-012 execute)",
+      "kind": "bug",
+      "severity": "minor",
+      "affects": "packages/pm-docs-site/test/browser/graph.browser.ts",
+      "context": "R-012 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "The both-switches-off no-flash browser test fails about 1 run in 10 on its \"at least one pending frame\" assertion. `sampleFrames` records its first frame on the first requestAnimationFrame after `addInitScript`, so a fast hydration can set and clear `data-graph-pending` before any frame is sampled. This is a test race; the no-wrong-layout assertions hold. Fix: push one frame synchronously when the init script runs, and record every `data-graph-pending` change with a MutationObserver on `document.documentElement`."
+    },
+    {
       "file": "planning/inbox/2026-11-19-1510-checkpoint-switch-drops-item-note.md",
       "title": "pm-checkpoint switch drops the item's Note",
       "captured": "2026-11-19 15:10",
@@ -1146,11 +1192,11 @@
   "briefs": [
     {
       "path": "planning/briefs/2026-11-17-docs-site-package.md",
-      "id": "R-012",
+      "id": "R-013",
       "title": "Docs site as a versioned package",
-      "status": "on roadmap (R-012, R-013)",
+      "status": "on roadmap (R-013)",
       "origin": "user request",
-      "updated": "2026-11-18",
+      "updated": "2026-11-19",
       "decision": "2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.",
       "problem": "The docs site is chaotic to maintain and builds non-deterministically: each consumer carries its own copy of the templates, resolves its own package versions, and any template change forces a rules-major bump on every consumer.",
       "doneWhen": "`docs-site/` contains only `package.json`, `astro.config.mjs`, and `bun.lock` (plus `.gitignore`), and `just docs-check` passes.",
@@ -1176,12 +1222,12 @@
   },
   "counts": {
     "next": 1,
-    "later": 6,
+    "later": 5,
     "nextMax": 5,
-    "openInbox": 13,
+    "openInbox": 16,
     "discuss": 1,
     "shapingBriefs": 0,
-    "done": 9,
+    "done": 10,
     "dropped": 4,
     "blockers": 0,
     "openRisks": 0,
@@ -1193,7 +1239,7 @@
     "reviewDue": true,
     "lastReview": "never",
     "claimable": [
-      "R-012"
+      "R-020"
     ],
     "drift": false
   }

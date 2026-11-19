@@ -20,6 +20,7 @@ describe('buildSidebar', () => {
 					link('Now', 'now'),
 					link('Board', 'board'),
 					link('Roadmap', 'roadmap'),
+					link('Graph', 'graph'),
 					link('Milestones', 'milestones'),
 					link('Features', 'features'),
 					link('Log', 'log'),

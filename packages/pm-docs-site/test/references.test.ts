@@ -7,7 +7,7 @@ import { linkify, references, RELATION_LABELS, targets } from '../src/lib/refere
 
 const FIXTURE = fileURLToPath(new URL('./fixtures/planning.json', import.meta.url));
 const planning = loadPlanning(FIXTURE);
-const all = { now: true, milestones: true, features: true, inbox: true, briefs: true, strategy: true };
+const all = { now: true, milestones: true, graph: true, features: true, inbox: true, briefs: true, strategy: true };
 const known = targets(planning, all);
 
 describe('targets', () => {

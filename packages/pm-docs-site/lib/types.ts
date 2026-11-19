@@ -3,7 +3,7 @@
 // integration itself.
 
 /** An optional plan view. Home, Board, Roadmap, Log and Risks are always on. */
-export type ViewName = 'now' | 'milestones' | 'features' | 'inbox' | 'briefs' | 'strategy';
+export type ViewName = 'now' | 'milestones' | 'graph' | 'features' | 'inbox' | 'briefs' | 'strategy';
 
 /** One folder of repository Markdown, shown as one sidebar group. */
 export interface DocsSource {
@@ -32,7 +32,7 @@ export interface PmDocsSiteOptions {
 	planning?: string;
 	/** Repository Markdown to render as pages; `root` is relative to the site root. Default: none. */
 	docs?: { root: string; sources: DocsSource[] };
-	/** The optional views to render. Default: all six. */
+	/** The optional views to render. Default: all seven. */
 	views?: ViewName[];
 }
 
