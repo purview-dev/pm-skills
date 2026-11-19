@@ -134,7 +134,7 @@ unnoticed: `site.ts check` lists any file that differs.
 a schema change ships with a template change and `pm-docs-site upgrade`
 carries it to an installed site.
 
-### 4.2 Fields the site reads (schemaVersion 3)
+### 4.2 Fields the site reads (schemaVersion 4)
 
 Type only what the pages use (`planning-types.ts`); the full shape is
 `<PM root>/planning.schema.json`.
@@ -144,7 +144,7 @@ Type only what the pages use (`planning-types.ts`); the full shape is
 | `generatedAt`, `source.branch`, `source.head` | Export stamp |
 | `strategy.focus.milestone`, `strategy.focus.whyNow` | Home, Roadmap (focus badge) |
 | `strategy.milestones[]` `{id, name, status, exitCriteria}` | Roadmap groups and their order |
-| `now` `{status, item{id,title}, stage, milestone, started}` | Home, Board (Now), Roadmap (active event) |
+| `now` `{status, item{id, title, serves, owner, size, dependsOn, revisits}, stage, milestone, started}` | Home, Board (Now), Roadmap (active event), Features (the Now feature's owner, size, serves, dependsOn, revisits) |
 | `plan` `{path, checked, total}` or `null` | Board (Now card progress) |
 | `roadmap.next[]`, `roadmap.later[]` (item objects) | Board (milestone tag), Roadmap (queued events), Home (claimable titles) |
 | `board.columns` `{now, next, foryou, waiting, done}` | Board |
@@ -214,7 +214,10 @@ These are the only values the site derives. Each is a pure function in
 ID are left out. Each `Feature` carries the fields its place holds (null
 elsewhere): `milestone` resolved with `milestoneId`, `doneWhen` as a list,
 `label`, `status`, `position`, `brief`, `note`, `revisits`, `stage`,
-`started`, `date`, `result`, `plan`, `reason`.
+`started`, `date`, `result`, `plan`, `reason`. The `now.item` entry also
+carries `owner`, `size`, `serves`, `dependsOn`, and `revisits` straight from
+`now.item`, the same fields a `roadmap.next[]` or `roadmap.later[]` entry
+carries from itself.
 
 `milestoneSummaries` returns one summary per `strategy.milestones[]` entry,
 in that order, then `No milestone` (slug `none`) only when a feature has no

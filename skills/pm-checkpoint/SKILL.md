@@ -170,11 +170,11 @@ and `Explain <ID>`.
    - Spec: <path | none>
    - Plan: <path | none>
    - Milestone: <M | none>
-   - Serves: <Serves in NOW.md | none>
-   - Owner: <Owner in NOW.md, or agent>
-   - Size: <Size in NOW.md | none>
-   - Depends on: <Depends on in NOW.md, or none>
-   - Revisits: <Revisits in NOW.md | none>
+   - Serves: <Serves in NOW.md>
+   - Owner: <Owner in NOW.md>
+   - Size: <Size in NOW.md>
+   - Depends on: <Depends on in NOW.md>
+   - Revisits: <Revisits in NOW.md>
    - Started: <Started in NOW.md>
    - Reason: <the user's reason, verbatim>
    - Done when:
@@ -187,6 +187,14 @@ and `Explain <ID>`.
      - Context: <...>
    ```
 
+   Copy Serves, Owner, Size, Depends on, and Revisits as a group: when
+   `NOW.md` carries them (every active item does, from `pm-next` step 7),
+   copy all five verbatim, `none` and blank included — `Depends on: none`
+   and a blank `Revisits` are valid values, not an absent field. When
+   `NOW.md` is in the rules-19 shape (none of the five present), omit all
+   five from the entry instead of writing fabricated values; `now/fields`
+   (`pm-lint`) rejects a partial set.
+
    Use the existing checkpoint, or write one as in `pause` when `NOW.md`
    has none. Then set `NOW.md` to idle as in `done`. The item, its stage,
    and its checkpoint are now on the stack and nowhere else. Step 9
@@ -196,9 +204,13 @@ and `Explain <ID>`.
 8. **pop:** read the top entry of `STACK.md` (Guard checks the stack,
    branch, and active item). Write its fields back into `NOW.md`:
    `Status: active`, `Item`, `Session` (the entry's `Branch`), `Stage`,
-   `Brief`, `Milestone`, `Serves`, `Owner`, `Size`, `Depends on`,
-   `Revisits`, `Spec`, `Plan`, `Started`, its `Done when` under
-   `## Done when`, and its checkpoint under `## Checkpoint`. Remove the
+   `Brief`, `Milestone`, `Spec`, `Plan`, `Started`, its `Done when` under
+   `## Done when`, and its checkpoint under `## Checkpoint`. Write
+   `Serves`, `Owner`, `Size`, `Depends on`, and `Revisits` as a group: when
+   the entry carries them, write all five verbatim, `none` and blank
+   included; when it carries none of them (a rules-19 entry), omit all
+   five instead of writing fabricated values — never a partial set, which
+   `now/fields` (`pm-lint`) rejects. Remove the
    entry from `STACK.md`, leaving the next entry as the top. Step 9
    commits; show one line (`pop <ID> <title>: <stage> at its checkpoint`),
    then invoke the skill for `Stage` from

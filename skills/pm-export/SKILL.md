@@ -158,6 +158,17 @@ An **item object** has these keys, in this order:
 context, openQuestion}` or `null`. `now.doneWhen` is the list under
 `## Done when`.
 
+`now.item` is `null` when `NOW.md` is idle. When active, read `serves` from
+the `Serves` field (same comma-separated parsing as an item object's
+`serves`), `dependsOn` from `Depends on` (`[]` for `none` or missing,
+same as an item object's `dependsOn`), and `revisits` from `Revisits`
+(`null` when empty or missing). `owner` and `size` are `null`, with an
+assumption, when `NOW.md` has no `Owner` or `Size` (or an invalid value);
+otherwise the field as written. This deliberately differs from an item
+object, whose `owner` defaults to `agent` when missing: `NOW.md`'s `Owner`
+and `Size` are either backfilled (`pm-setup` version 20) or already on the
+item, so a missing value is a gap to flag, not one to default past.
+
 The `board` mirrors `pm-board`:
 
 - `columns.now` holds the active item as `{id, title, owner, size, detail}`,

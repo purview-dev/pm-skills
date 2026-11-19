@@ -153,6 +153,47 @@ describe("build", () => {
     }
   });
 
+  it("exports an idle NOW.md with all 14 keys present but empty", () => {
+    const dir = mkdtempSync(join(tmpdir(), "pm-export-idle-"));
+    cpSync(FIXTURE, dir, { recursive: true });
+    const nowPath = join(dir, "planning", "NOW.md");
+    writeFileSync(
+      nowPath,
+      [
+        "# Now",
+        "",
+        "- Status: idle",
+        "- Item:",
+        "- Session:",
+        "- Stage:",
+        "- Brief:",
+        "- Milestone:",
+        "- Serves:",
+        "- Owner:",
+        "- Size:",
+        "- Depends on:",
+        "- Revisits:",
+        "- Spec:",
+        "- Plan:",
+        "- Started:",
+        "",
+        "## Done when",
+        "",
+        "## Checkpoint",
+        "",
+      ].join("\n"),
+    );
+    try {
+      const { document, assumptions: idleAssumptions } = build({ root: dir, ...fixed });
+      expect(document.now.item).toBeNull();
+      expect(document.board.columns.now).toEqual([]);
+      expect(idleAssumptions.some((a) => a.startsWith("NOW.md has no Owner") || a.startsWith("NOW.md has no Size"))).toBe(false);
+      expect(validate(document, schema)).toEqual([]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   it("flags an invalid Owner or Size in NOW.md", () => {
     const dir = mkdtempSync(join(tmpdir(), "pm-export-invalid-"));
     cpSync(FIXTURE, dir, { recursive: true });

@@ -116,7 +116,8 @@ ambiguous, ask which one is true.
 2. **`merged-unclosed`.** Write the Completion record, not a claim:
    - Append to `## Done` in `LOG.md`:
      `- <date> <ID> <Title>. Milestone: <M | none>. Owner: <owner>. Plan:
-     <path | none>. Result: branch <branch> (merged).`
+     <path | none>. Result: branch <branch> (merged).` Take `<owner>` from
+     `NOW.md`'s `Owner`, or `agent` when it is missing.
    - If the item has a brief, set its `Status: done`.
    - When this was the last open item of its milestone, apply the milestone
      prompt from `pm-checkpoint` (`done`) and record it in the same commit.
@@ -132,9 +133,13 @@ ambiguous, ask which one is true.
 3. **Write `NOW.md`.** Set `Status: active`, `Item` (`<ID Title>`),
    `Session` (the current branch; if HEAD is detached, say so and stop),
    `Stage` (from the evidence), `Brief`, `Milestone` (from the item, or
-   empty), `Spec`, and `Plan` (only paths that exist), `Started` (today, or
-   the value `NOW.md` already records for this item), and the item's `Done
-   when` under `## Done when`.
+   empty), `Serves` (from the item), `Owner` (from the item, or `agent`),
+   `Size` (from the item), `Depends on` (from the item, or `none`),
+   `Revisits` (from the item, or empty), `Spec`, and `Plan` (only paths
+   that exist), `Started` (today, or the value `NOW.md` already records for
+   this item), and the item's `Done when` under `## Done when`. These five
+   fields land after `Milestone` and before `Spec`, matching pm-next step
+   7.
 4. **Write `## Checkpoint`** in the `pause` format from `pm-checkpoint`:
    `Stopped at` (the last checked plan step, or `nothing built yet`),
    `Next action` (the first unchecked plan step, or the stage skill's first

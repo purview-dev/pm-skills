@@ -165,9 +165,9 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   operations written by `pm-checkpoint` (`push`, `pop`). Optional: a missing
   file is an empty stack. It is session memory, not a plan, so `pm-export`
   does not export it. A **stack entry** holds the item, its `Done when`, the
-  branch, the stage, the brief, spec, plan, milestone, serves, owner, size,
-  depends on, and revisits, started date, the reason it was suspended, and
-  its checkpoint block.
+  branch, the stage, the brief, spec, plan, milestone, the item's serves,
+  owner, size, depends on, and revisits, the started date, the reason it
+  was suspended, and its checkpoint block.
 - **Pause file:** `<PM root>/PAUSE.md`, the session's position written by
   `pm-pause`: `Paused`, `Session` (a branch, matched like `NOW.md`),
   `Item`, `Running` (the skill or workflow and its step), `Files`, the
@@ -933,7 +933,9 @@ Version 20 adds the claimed item's `Serves`, `Owner`, `Size`,
 `Depends on`, and `Revisits` to `NOW.md`, and `pm-setup` fills them in for
 an item that was active before the upgrade. The export moves to
 `schemaVersion` 4: run `pm-export`, and `pm-docs-site upgrade` for an
-installed site.
+installed site. `@purview-dev/pm-docs-site` reads `schemaVersion` 4 only
+from its next release; a site built on the published prerelease keeps
+reading a `schemaVersion` 3 export until it upgrades.
 
 ## Asking the user (mandatory)
 
