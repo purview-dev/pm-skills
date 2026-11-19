@@ -206,7 +206,7 @@ function lanesLayout(nodes: GraphNode[], edges: GraphEdge[], placed: Map<string,
 	return { boxes, lanes, tray: null, width: extent(boxes, 'x'), height: top };
 }
 
-/** Flow: dagre's positions for linked nodes, and isolated items in a tray below, wrapping at the linked width. */
+/** Flow: dagre's positions for linked nodes, and isolated items in a tray below, wrapping at the linked width or TRAY_COLUMNS, whichever is wider. */
 function flowLayout(nodes: GraphNode[], placed: Map<string, Box>): GraphLayout {
 	const boxes: Record<string, Box> = Object.fromEntries(nodes.filter((node) => placed.has(node.id)).map((node) => [node.id, placed.get(node.id)!]));
 	const isolated = nodes.filter((node) => !placed.has(node.id));
@@ -215,7 +215,7 @@ function flowLayout(nodes: GraphNode[], placed: Map<string, Box>): GraphLayout {
 
 	if (isolated.length > 0) {
 		const step = SIZES.item.width + NODE_SEP;
-		const perRow = placed.size > 0 ? Math.max(1, Math.floor((linkedWidth + NODE_SEP) / step)) : TRAY_COLUMNS;
+		const perRow = placed.size > 0 ? Math.max(TRAY_COLUMNS, Math.floor((linkedWidth + NODE_SEP) / step)) : TRAY_COLUMNS;
 		const trayY = placed.size > 0 ? extent(boxes, 'y') + TRAY_GAP : 0;
 
 		tray = { y: trayY };

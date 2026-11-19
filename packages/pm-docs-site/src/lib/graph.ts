@@ -30,7 +30,7 @@ export interface GraphNode {
 	blocked: boolean;
 	/** `section === 'now'`. */
 	active: boolean;
-	/** Depends on + Revisits IDs that resolve to a done or dropped node. */
+	/** Distinct Depends on + Revisits IDs that resolve to a done or dropped node; a repeated ID counts once. */
 	donePrerequisites: number;
 	/** `true` for the active item: its own `dependsOn`/`revisits` are not exported. */
 	linksNotExported: boolean;
@@ -120,11 +120,13 @@ export function graphData(planning: Planning, known: Map<string, Pick<Target, 'h
 	}
 
 	const donePrerequisites = (feature: Feature): number =>
-		[...feature.dependsOn, ...(feature.revisits ? [feature.revisits] : [])].filter((id) => {
-			const kind = classify(id, all);
+		new Set(
+			[...feature.dependsOn, ...(feature.revisits ? [feature.revisits] : [])].filter((id) => {
+				const kind = classify(id, all);
 
-			return kind === 'done' || kind === 'dropped';
-		}).length;
+				return kind === 'done' || kind === 'dropped';
+			}),
+		).size;
 
 	const itemNodes: GraphNode[] = open.map((feature) => ({
 		id: feature.id,

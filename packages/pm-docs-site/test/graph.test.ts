@@ -78,6 +78,24 @@ describe('graphData', () => {
 		expect(nodeById.get('R-020')).toMatchObject({ donePrerequisites: 1 });
 	});
 
+	it('counts a done ID named twice in dependsOn and again in revisits once, not three times', () => {
+		const repeated = {
+			now: { status: 'idle', item: null, milestone: null, stage: null },
+			strategy: { milestones: [] },
+			roadmap: {
+				next: [
+					{ id: 'R-102', title: 'Repeats a done prerequisite', section: 'next', position: 1, label: 'next', serves: [], milestone: null, owner: 'agent', doneWhen: 'none', size: 'S', dependsOn: ['R-010', 'R-010'], status: { value: 'ready', reason: null, since: null }, brief: null, note: null, revisits: 'R-010', claimable: true },
+				],
+				later: [],
+			},
+			log: { done: [{ date: '2026-11-04', id: 'R-010', title: 'Choose the invoice format', milestone: null, owner: 'user', plan: null, result: 'CSV.' }], dropped: [] },
+			board: { columns: { now: [] } },
+		} as unknown as Planning;
+		const repeatedData = graphData(repeated, new Map());
+
+		expect(repeatedData.nodes.find((node) => node.id === 'R-102')).toMatchObject({ donePrerequisites: 1 });
+	});
+
 	it('gives every href null when the features view is off', () => {
 		const off = graphData(planning, targets(planning, { ...ALL_VIEWS, features: false }));
 

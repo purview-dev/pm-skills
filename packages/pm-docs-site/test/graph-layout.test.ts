@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'bun:test';
 
 import { graphData } from '../src/lib/graph';
-import type { GraphData, GraphNode } from '../src/lib/graph';
+import type { GraphData, GraphEdge, GraphNode } from '../src/lib/graph';
 import { graphLayouts, SIZES } from '../src/lib/graph-layout';
 import type { Box, GraphLayout, LayoutKey } from '../src/lib/graph-layout';
 import { loadPlanning } from '../src/lib/planning';
@@ -37,6 +37,11 @@ function linked(layout: GraphLayout): string[] {
 /** A one-item node with the given ID and milestone, for synthetic graphs. */
 function item(id: string, milestone: string | null = null): GraphNode {
 	return { id, kind: 'item', title: id, href: null, milestone, size: 'S', section: 'next', owner: 'agent', blocked: false, active: false, donePrerequisites: 0, linksNotExported: false };
+}
+
+/** A done chip node with the given ID, for synthetic graphs. */
+function doneChip(id: string): GraphNode {
+	return { id, kind: 'done', title: id, href: null, milestone: null, size: null, section: null, owner: null, blocked: false, active: false, donePrerequisites: 0, linksNotExported: false };
 }
 
 describe('graphLayouts', () => {
@@ -99,6 +104,24 @@ describe('graphLayouts', () => {
 			expect(inLane('R-025', 'none')).toBe(true);
 		});
 
+		it('gives a chip two open items in different lanes both depend on exactly one box, in the first dependant lane in lane order', () => {
+			const chip = doneChip('R-300');
+			const nodes = [item('R-301', 'M2'), item('R-302', 'M1'), chip];
+			const edges: GraphEdge[] = [
+				{ id: 'R-300>R-301:depends:0', source: 'R-300', target: 'R-301', kind: 'depends', fromChip: true },
+				{ id: 'R-300>R-302:depends:0', source: 'R-300', target: 'R-302', kind: 'depends', fromChip: true },
+			];
+			const twoLane = graphLayouts({ nodes, edges }, planning)['lanes-done'];
+			const chipBoxes = Object.keys(twoLane.boxes).filter((id) => id === 'R-300');
+
+			expect(chipBoxes).toHaveLength(1);
+
+			const band = twoLane.lanes.find((candidate) => candidate.key === 'M1')!;
+			const box = twoLane.boxes['R-300']!;
+
+			expect(box.y >= band.y && box.y + box.height <= band.y + band.height).toBe(true);
+		});
+
 		it('puts an isolated item in the first column of its lane, inside the band', () => {
 			const firstX = Math.min(...linked(layout).map((id) => layout.boxes[id]!.x));
 
@@ -144,6 +167,18 @@ describe('graphLayouts', () => {
 
 			expect(box.y + box.height, id).toBeLessThanOrEqual(tray.y);
 		}
+	});
+
+	it('wraps the tray at TRAY_COLUMNS even when the linked graph is narrow', () => {
+		const linkedPair = [item('R-310', 'M1'), item('R-311', 'M1')];
+		const isolated = Array.from({ length: 12 }, (_, index) => item(`R-4${String(index).padStart(2, '0')}`));
+		const edges: GraphEdge[] = [{ id: 'R-310>R-311:depends:0', source: 'R-310', target: 'R-311', kind: 'depends', fromChip: false }];
+		const layout = graphLayouts({ nodes: [...linkedPair, ...isolated], edges }, planning)['flow-done'];
+		const isolatedIds = isolated.map((node) => node.id);
+		const firstRowY = Math.min(...isolatedIds.map((id) => layout.boxes[id]!.y));
+		const firstRow = isolatedIds.filter((id) => layout.boxes[id]!.y === firstRowY);
+
+		expect(firstRow.length).toBeGreaterThanOrEqual(4);
 	});
 
 	it('starts the flow linked graph and the tray at x 0', () => {
