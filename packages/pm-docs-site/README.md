@@ -152,6 +152,10 @@ an item with no prerequisites. Below the graph, a `Dependencies` list gives
 each open item's links as plain text, for search, screen readers, and
 browsers without JavaScript.
 
+The page adds `@xyflow/react` and `@dagrejs/dagre` as dependencies; dagre
+runs at build time only; it never reaches the browser. The island's
+JavaScript and `graph.css` load only on `/plan/graph/`, never on another page.
+
 ## CLI
 
 The CLI runs under Node 24 or later.
