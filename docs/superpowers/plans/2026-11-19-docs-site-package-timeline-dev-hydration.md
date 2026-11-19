@@ -30,6 +30,7 @@
 ### Task 1: Browser-safe timeline state, with dev tests for every island
 
 **Files:**
+
 - Create: `packages/pm-docs-site/src/lib/timeline-state.ts`
 - Modify: `packages/pm-docs-site/src/lib/timeline.ts` (remove the moved declarations, lines 10-29 and 73-156, the section comment at 73-77 moving with them; add a re-export)
 - Modify: `packages/pm-docs-site/src/components/timeline/Timeline.tsx:14-15`
@@ -37,6 +38,7 @@
 - Test: `packages/pm-docs-site/test/browser/dev.browser.ts`
 
 **Interfaces:**
+
 - Produces, from `src/lib/timeline-state.ts`, unchanged in name and signature: `MilestoneState`, `MilestoneStatus`, `TimelineMilestone`, `TimelineLayout`, `parseTimelineQuery(search: string): TimelineLayout`, `timelineQuery(layout: TimelineLayout, search: string): string`, `ZOOM`, `PINCH_STEP`, `zoomStep(zoom: number, direction: 1 | -1): number`, `zoomFromWheel(zoom: number, pending: number, deltaY: number, deltaMode: number): { zoom: number; pending: number }`, `wheelScrollsStrip(...)`, and the private constants `ZOOM_TICKS_PER_UNIT`, `ZOOM_MIN_TICKS`, `ZOOM_MAX_TICKS` (lines 104-106). `DONE` (line 31) stays in `timeline.ts`.
 - `src/lib/timeline.ts` keeps `parseMilestoneStatus`, `timelineMilestones`, the `normaliseTarget` re-export, and adds `export * from './timeline-state';`.
 
