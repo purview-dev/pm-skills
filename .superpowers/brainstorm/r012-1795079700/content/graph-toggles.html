@@ -1,0 +1,32 @@
+<h2>All three, as one graph with two switches</h2>
+<p class="subtitle">A, B and C differ in only two ways: whether milestones get lanes, and whether done prerequisites are drawn. So the page has one graph and two switches. Both are kept in the URL like the board's filters, so a shared link opens the same view.</p>
+
+<style>
+  .tb { display:flex; gap:1.5rem; align-items:center; padding:.5rem .75rem; border:1px solid rgba(255,255,255,.15); border-radius:6px; margin-bottom:.75rem; font: 13px system-ui, sans-serif; }
+  .sw { display:inline-flex; align-items:center; gap:.4rem; }
+  .sw i { width:28px; height:16px; border-radius:8px; background:#6c8cd5; position:relative; display:inline-block; }
+  .sw i::after { content:''; position:absolute; right:2px; top:2px; width:12px; height:12px; border-radius:50%; background:#fff; }
+  .sw.off i { background:#555; } .sw.off i::after { right:auto; left:2px; }
+  table.m { border-collapse: collapse; font: 13px system-ui, sans-serif; margin-top:1rem; }
+  table.m td, table.m th { border:1px solid rgba(255,255,255,.15); padding:.4rem .7rem; text-align:left; }
+</style>
+
+<div class="mockup">
+<div class="mockup-header">Preview: toolbar above the graph</div>
+<div class="mockup-body">
+<div class="tb">
+  <span class="sw"><i></i> Milestone lanes</span>
+  <span class="sw"><i></i> Show done prerequisites</span>
+  <span style="margin-left:auto">−&nbsp; 100% &nbsp;+ &nbsp;⟲ Fit</span>
+</div>
+<div class="placeholder">graph (pan by dragging, zoom with wheel or pinch, click a node to open its feature page)</div>
+</div>
+</div>
+
+<table class="m">
+<tr><th></th><th>Show done: on</th><th>Show done: off</th></tr>
+<tr><th>Lanes: on</th><td><strong>B</strong> (proposed default)</td><td>B without chips, "✓ n done" on nodes</td></tr>
+<tr><th>Lanes: off</th><td><strong>A</strong></td><td><strong>C</strong></td></tr>
+</table>
+
+<p class="subtitle">Each of the four combinations is laid out when the site is built. Flipping a switch swaps to a layout that's already prepared, with no layout work in the browser.</p>
