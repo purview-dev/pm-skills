@@ -134,10 +134,11 @@ describe('pmDocsSite', () => {
 		expect(updates[0]!.integrations.map((integration) => integration.name)).toEqual(['@astrojs/starlight']);
 	});
 
-	// The island's renderer imports react-dom/client from under node_modules,
-	// which Vite's dev optimizer skips: unbundled, React's CommonJS reaches the
-	// browser and the island never hydrates (test/browser/dev.browser.ts).
-	it('pre-bundles react-dom/client through the package when the site resolves it', () => {
+	// The island's renderer imports react-dom/client, and the Graph island
+	// @xyflow/react, from under node_modules, which Vite's dev optimizer skips:
+	// unbundled, their CommonJS dependencies reach the browser and the island
+	// never hydrates (test/browser/dev.browser.ts).
+	it('pre-bundles react-dom/client and @xyflow/react through the package when the site resolves it', () => {
 		const root = mkdtempSync(join(realpathSync.native(tmpdir()), 'pm-docs-site-optimize-'));
 
 		try {
@@ -148,18 +149,18 @@ describe('pmDocsSite', () => {
 
 			const { updates } = run({ title: 'T' }, { root: pathToFileURL(join(site, '/')) });
 
-			expect(updates[0]!.vite.optimizeDeps).toEqual({ include: ['@purview-dev/pm-docs-site > react-dom/client'] });
+			expect(updates[0]!.vite.optimizeDeps).toEqual({ include: ['@purview-dev/pm-docs-site > react-dom/client', '@purview-dev/pm-docs-site > @xyflow/react'] });
 		} finally {
 			rmSync(root, { recursive: true, force: true });
 		}
 	});
 
-	it('pre-bundles plain react-dom/client when the site does not resolve the package by name', () => {
-		expect(setup({ title: 'T' })[0]!.vite.optimizeDeps).toEqual({ include: ['react-dom/client'] });
+	it('pre-bundles plain react-dom/client and @xyflow/react when the site does not resolve the package by name', () => {
+		expect(setup({ title: 'T' })[0]!.vite.optimizeDeps).toEqual({ include: ['react-dom/client', '@xyflow/react'] });
 	});
 
 	it('adds nothing the consumer already pre-bundles', () => {
-		const { updates } = run({ title: 'T' }, { vite: { optimizeDeps: { include: ['react-dom/client'] } } });
+		const { updates } = run({ title: 'T' }, { vite: { optimizeDeps: { include: ['react-dom/client', '@xyflow/react'] } } });
 
 		expect(updates[0]!.vite.optimizeDeps).toEqual({ include: [] });
 	});

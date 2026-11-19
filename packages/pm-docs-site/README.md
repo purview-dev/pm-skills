@@ -64,8 +64,6 @@ Home, Board, Roadmap, Log and Risks are always rendered. A docs source has
 `label`, `base`, `include`, and optionally `prefix`, `indexFile`, `order`,
 `collapsed`, and `hidden` (see `lib/types.ts`).
 
-- Graph: open items and their Depends on and Revisits links, by milestone.
-
 ## Board
 
 The Board is a React island, hydrated on load: every roadmap item in five
@@ -115,6 +113,44 @@ Zoom runs from 50% to 200% in steps of 25%: the `Zoom out`, `Zoom in`, and
 `Reset zoom` buttons, Ctrl or Cmd + wheel over the strip, or a trackpad
 pinch. Zoom resizes the cards rather than scaling the page, and it is not
 kept in the URL: every visit starts at 100%.
+
+## Graph
+
+The Graph page (the `graph` view) is a React island that shows how open
+items depend on each other: one node per open item, with its ID (a link to
+its feature page), title, milestone, size, section, and owner, and one edge
+per `Depends on` and `Revisits` link, drawn from the prerequisite to the item
+that waits for it and left to right in the order the work has to happen.
+`Revisits` edges are dashed and labelled `revisits`. A done or dropped item
+an open item points at is a small chip (`✓ R-008`, or `✗ R-003` struck
+through), and an ID that matches no item is a warning chip
+(`? R-099 not found`). The active item is highlighted as on the Board; an
+explicitly blocked item has a dashed border. Every position is computed at
+build time, so no layout code reaches the browser.
+
+Two switches change the view, and each is kept in the URL alongside any
+other parameters:
+
+| Switch | Off | URL key |
+| --- | --- | --- |
+| `Milestone lanes` | one flow, with unlinked items in a `No links` tray below | `lanes=off` |
+| `Show done prerequisites` | no done or dropped chips; each node shows `✓ <n> done` instead | `done=off` |
+
+With lanes on, each milestone with open items is a band, in strategy order,
+labelled with its ID and name and `Focus` for the focus milestone, then
+`No milestone`. Click a node or chip, or press Enter on it, to trace its
+chain: everything it waits on and everything that waits on it, transitively,
+stays bright and the rest fades. The selection is kept as `focus=<ID>`, so
+a link opens with the same chain highlighted. Click the selected node again,
+or its ID link, to open its feature page; Escape or a click on the
+background clears the selection. Drag to pan, and zoom with the wheel or a
+pinch over the graph, or the `Zoom out`, `Zoom in`, and `Fit` buttons.
+
+The export does not carry the active item's own `Depends on` and `Revisits`
+yet, so its node says `Own links not exported yet` rather than looking like
+an item with no prerequisites. Below the graph, a `Dependencies` list gives
+each open item's links as plain text, for search, screen readers, and
+browsers without JavaScript.
 
 ## CLI
 
