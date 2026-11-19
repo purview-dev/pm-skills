@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-19T23:28:11+00:00",
+  "generatedAt": "2026-11-19T23:35:29+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 20,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "main",
-    "head": "d4b6637ddfd61b7ac9426ee51ca528af4c9ede42"
+    "head": "7b72fa31e4d27c773c0f7f3910feffbc8e7fdd20"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -275,7 +275,7 @@
         ],
         "milestone": "M1",
         "owner": "agent",
-        "doneWhen": "the package home page has no `just docs-preview`; a build without the `docs` option logs no Starlight missing-folder or empty-collection warning; `docsHref` returns no link for a spec or plan path no docs source maps (and honours a source `prefix`); RefLink prints fallback text (the entry title, \"No milestone\") for an unknown key; `linkify` uses the link scanner's boundaries, so an ID inside a path is not linked; the CLI warns when `--title` or `--planning` is ignored, a `planning.json` holding `null` prints the pm-export hint, `check` loads an `astro.config.ts` on the `engines` Node floor, `dev` has an automated test, and the README names the same-drive requirement on Windows.",
+        "doneWhen": "the package home page has no `just docs-preview`; a build without the `docs` option logs no Starlight missing-folder or empty-collection warning; `docsHref` returns no link for a spec or plan path no docs source maps (and honours a source `prefix`); RefLink prints fallback text (the entry title, \"No milestone\") for an unknown key; `linkify` uses the link scanner's boundaries, so an ID inside a path is not linked; the CLI warns when `--title` or `--planning` is ignored, a `planning.json` holding `null` prints the pm-export hint, `check` loads an `astro.config.ts` on the `engines` Node floor, and the README names the same-drive requirement on Windows.",
         "size": "M",
         "dependsOn": [
           "R-021"
@@ -286,7 +286,7 @@
           "since": null
         },
         "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-        "note": "Folds five inbox files from the R-008 and R-009 final reviews (CLI gaps, consumer text, dead doc links, RefLink fallbacks, IDs linked inside paths). Affects `packages/pm-docs-site/cli.mjs`, `lib/site-options.mjs`, `README.md`, `src/pages/index.astro`, `src/content.config.ts`, `src/lib/planning.ts`, `src/components/RefLink.astro`, `src/lib/references.ts` (the `.mjs` files become `.ts` source in R-021 Docs-site package: TypeScript source with a build step). Moved from Next 5 to the top of Later on 2026-11-18 when R-021 took the top of Next. 2026-11-19 review: the Milestones page (`src/routes/plan/milestones/index.astro`) shows a `No milestone` card reading `0 of 0 done` whenever anything was dropped, because `features()` gives dropped items `milestone: null`; R-011 hid it on the timeline and Roadmap page only (bug, cosmetic). 2026-11-19 review, accessibility from the R-009 final review: card links do not say they open a popup (`aria-haspopup=\"dialog\"`); a backdrop click does not close the item dialog; popup section headings share the dialog title's h2 level; Board collapse toggles render without JavaScript and do nothing (render them hidden, let `plan.ts` reveal them); `KanbanItemCard` keeps `tabindex=0` around a card that holds links, so each card costs extra tab stops; no browser test for a `localStorage` that throws. 2026-11-19 review, timeline follow-ups from the R-011 final review (`src/components/timeline/Timeline.tsx`): keyboard focus drops to `<body>` when `Zoom in`, `Zoom out`, or `Reset zoom` becomes disabled at its limit (`aria-disabled` with a no-op guard keeps focus); the plain-wheel path scrolls by `deltaY` without scaling line-mode (`deltaMode` 1) deltas; the zoom-anchor browser test covers a single click, not two zoom changes before one render; the `planned` and `other` card markers are never rendered in a browser test (the fixture has no planned milestone); event de-duplication assumes the Now item is not also logged done or queued under another milestone, untested. 2026-11-19 review, build and docs from the R-021 final review: `tsconfig.build.json` sets `types: [\"node\"]` but `@types/node` arrives only through `@types/bun` (add it to `devDependencies` so a lockfile change cannot break `prepack`); `scripts/build.ts` rewrites `.ts` specifiers only in the top level of `dist/`, and the install-test guard reads only the top level (use `readdirSync(..., { recursive: true })`); `scripts/check-exports.ts` rejects valid `.mjs`/`.cjs` entry points and accepts a `.d.ts` outside a `types` condition; shipped `src/` type-imports `../lib/types.ts`, which the tarball omits (ship it or note why not); the `astro.config.ts` examples in `packages/pm-docs-site/README.md` and `docs/wiki/guide/Docs-Site-Package.md` are fenced as `js`; `README.md:69` and `.config/purview-docs.yml:23` say `0.1.0-pre.1` is on npm. 2026-11-19 review: promoted from Later 1 to Next 4. Its `Done when` does not cover the four Notes merged today, and it has outgrown size M; re-slice it with `pm-shape` before it is claimed, and make R-013 depend on the slices.",
+        "note": "Folds five inbox files from the R-008 and R-009 final reviews (CLI gaps, consumer text, dead doc links, RefLink fallbacks, IDs linked inside paths). Affects `packages/pm-docs-site/lib/cli.ts`, `lib/site-options.ts`, `README.md`, `src/pages/index.astro`, `src/content.config.ts`, `src/lib/planning.ts`, `src/components/RefLink.astro`, `src/lib/references.ts`. 2026-11-19 re-sliced with pm-shape: the `dev` check left the `Done when` (`test/browser/dev.browser.ts` passes it since R-017); the build-hardening Note moved to R-027 Docs-site package: build hardening, and the accessibility, timeline, and empty-card Notes moved to R-028 Docs-site package: accessible board, popup, and timeline.",
         "revisits": null,
         "claimable": true
       },
@@ -317,10 +317,60 @@
     ],
     "later": [
       {
+        "id": "R-027",
+        "title": "Docs-site package: build hardening",
+        "section": "later",
+        "position": 1,
+        "label": "later",
+        "serves": [
+          "V4"
+        ],
+        "milestone": "M1",
+        "owner": "agent",
+        "doneWhen": "`@types/node` is in `packages/pm-docs-site` `devDependencies`; `scripts/build.ts` and the install-test guard walk `dist/` recursively; `scripts/check-exports.ts` accepts `.mjs` and `.cjs` entry points and rejects a `.d.ts` outside a `types` condition; every type import in the packed tarball resolves; the `astro.config.ts` examples in `packages/pm-docs-site/README.md` and `docs/wiki/guide/Docs-Site-Package.md` are fenced as `ts`; and no file names `0.1.0-pre.1` as the published version.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+        "note": "Sliced from R-019 Docs-site package: consumer-ready for 1.0.0 with pm-shape on 2026-11-19. Build and docs from the R-021 final review: `tsconfig.build.json` sets `types: [\"node\"]` but `@types/node` arrives only through `@types/bun` (add it to `devDependencies` so a lockfile change cannot break `prepack`); `scripts/build.ts` rewrites `.ts` specifiers only in the top level of `dist/`, and the install-test guard reads only the top level (use `readdirSync(..., { recursive: true })`); `scripts/check-exports.ts` rejects valid `.mjs`/`.cjs` entry points and accepts a `.d.ts` outside a `types` condition; shipped `src/` type-imports `../lib/types.ts`, which the tarball omits (ship it or note why not); the `astro.config.ts` examples in `packages/pm-docs-site/README.md` and `docs/wiki/guide/Docs-Site-Package.md` are fenced as `js`; `README.md:69` and `.config/purview-docs.yml:23` say `0.1.0-pre.1` is on npm.",
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-028",
+        "title": "Docs-site package: accessible board, popup, and timeline",
+        "section": "later",
+        "position": 2,
+        "label": "waiting",
+        "serves": [
+          "V4"
+        ],
+        "milestone": "M1",
+        "owner": "agent",
+        "doneWhen": "browser tests show the card's popup trigger with `aria-haspopup=\"dialog\"`, a backdrop click closing the item dialog, popup section headings below the dialog title's level, one tab stop per card, Board collapse toggles hidden without JavaScript, the timeline's zoom buttons keeping focus at their limits, line-mode wheel deltas scaled, the zoom anchor holding across two zoom changes before one render, the timeline's `planned` and `other` markers rendered, the Now item de-duplicated when it is also logged done or queued, a `localStorage` that throws leaving the Board usable, and no `No milestone` card on the Milestones page without an open unassigned item.",
+        "size": "M",
+        "dependsOn": [
+          "R-020"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+        "note": "Sliced from R-019 Docs-site package: consumer-ready for 1.0.0 with pm-shape on 2026-11-19; depends on R-020 Docs-site package: rich demo planning fixture for the planned milestone the timeline tests need. From the 2026-11-19 review. Empty card: the Milestones page (`src/routes/plan/milestones/index.astro`) shows a `No milestone` card reading `0 of 0 done` whenever anything was dropped, because `features()` gives dropped items `milestone: null`; R-011 hid it on the timeline and Roadmap page only (bug, cosmetic). Accessibility from the R-009 final review: card links do not say they open a popup (`aria-haspopup=\"dialog\"`); a backdrop click does not close the item dialog; popup section headings share the dialog title's h2 level; Board collapse toggles render without JavaScript and do nothing (render them hidden, let `plan.ts` reveal them); `KanbanItemCard` keeps `tabindex=0` around a card that holds links, so each card costs extra tab stops; no browser test for a `localStorage` that throws. Timeline follow-ups from the R-011 final review (`src/components/timeline/Timeline.tsx`): keyboard focus drops to `<body>` when `Zoom in`, `Zoom out`, or `Reset zoom` becomes disabled at its limit (`aria-disabled` with a no-op guard keeps focus); the plain-wheel path scrolls by `deltaY` without scaling line-mode (`deltaMode` 1) deltas; the zoom-anchor browser test covers a single click, not two zoom changes before one render; the `planned` and `other` card markers are never rendered in a browser test (the fixture has no planned milestone); event de-duplication assumes the Now item is not also logged done or queued under another milestone, untested.",
+        "revisits": null,
+        "claimable": false
+      },
+      {
         "id": "R-013",
         "title": "Docs-site package: publish and migrate",
         "section": "later",
-        "position": 1,
+        "position": 3,
         "label": "waiting",
         "serves": [
           "V4"
@@ -335,7 +385,9 @@
           "R-011",
           "R-012",
           "R-014",
-          "R-019"
+          "R-019",
+          "R-027",
+          "R-028"
         ],
         "status": {
           "value": "ready",
@@ -351,7 +403,7 @@
         "id": "R-025",
         "title": "Docs-site package: feature pages list revisions",
         "section": "later",
-        "position": 2,
+        "position": 4,
         "label": "later",
         "serves": [
           "V4"
@@ -375,7 +427,7 @@
         "id": "R-006",
         "title": "Check pm-setup's skill counts in validate",
         "section": "later",
-        "position": 3,
+        "position": 5,
         "label": "later",
         "serves": [
           "V1"
@@ -399,7 +451,7 @@
         "id": "R-015",
         "title": "Rehearse a fresh install in a scratch repository",
         "section": "later",
-        "position": 4,
+        "position": 6,
         "label": "later",
         "serves": [
           "V1"
@@ -423,7 +475,7 @@
         "id": "R-016",
         "title": "Rehearse the lifecycle guards",
         "section": "later",
-        "position": 5,
+        "position": 7,
         "label": "later",
         "serves": [
           "V2",
@@ -448,7 +500,7 @@
         "id": "R-024",
         "title": "Self-contained aspire module test example",
         "section": "later",
-        "position": 6,
+        "position": 8,
         "label": "later",
         "serves": [
           "V4"
@@ -970,7 +1022,7 @@
       "path": "planning/briefs/2026-11-17-docs-site-package.md",
       "id": "R-013",
       "title": "Docs site as a versioned package",
-      "status": "on roadmap (R-013)",
+      "status": "on roadmap (R-013, R-019, R-027, R-028)",
       "origin": "user request",
       "updated": "2026-11-19",
       "decision": "2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.",
@@ -998,7 +1050,7 @@
   },
   "counts": {
     "next": 5,
-    "later": 6,
+    "later": 8,
     "nextMax": 5,
     "openInbox": 2,
     "discuss": 2,
