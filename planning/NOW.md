@@ -17,6 +17,11 @@ Milestone: optional; the item's milestone while it is active
 - Stage: execute
 - Brief:
 - Milestone: M1
+- Serves: V4
+- Owner: agent
+- Size: M
+- Depends on: none
+- Revisits:
 - Spec: docs/superpowers/specs/2026-11-19-now-item-owner-size-links-design.md
 - Plan: docs/superpowers/plans/2026-11-19-now-item-owner-size-links.md
 - Started: 2026-11-19

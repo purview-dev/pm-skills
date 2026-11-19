@@ -1,11 +1,11 @@
 {
   "$schema": "./planning.schema.json",
-  "schemaVersion": 3,
-  "generatedAt": "2026-11-19T18:24:11+00:00",
+  "schemaVersion": 4,
+  "generatedAt": "2026-11-19T19:28:35+00:00",
   "generator": {
     "skill": "pm-export",
-    "skillsVersion": 19,
-    "rulesVersion": 19
+    "skillsVersion": 20,
+    "rulesVersion": 20
   },
   "project": {
     "pmRoot": "planning/",
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-018-export-the-now-cards-owner-and-size",
-    "head": "8a899e6f8d02d2ceb68204237ae2188834a93b1a"
+    "head": "9bc56055d34f50c06c3b96aed8942a21fbcdce66"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -180,7 +180,14 @@
     "status": "active",
     "item": {
       "id": "R-018",
-      "title": "Export the Now card's owner and size"
+      "title": "Export the Now card's owner and size",
+      "serves": [
+        "V4"
+      ],
+      "owner": "agent",
+      "size": "M",
+      "dependsOn": [],
+      "revisits": null
     },
     "stage": "execute",
     "session": "feat/r-018-export-the-now-cards-owner-and-size",
@@ -588,8 +595,8 @@
         {
           "id": "R-018",
           "title": "Export the Now card's owner and size",
-          "owner": null,
-          "size": null,
+          "owner": "agent",
+          "size": "M",
           "detail": "execute, 0/36 plan steps"
         }
       ],
