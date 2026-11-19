@@ -118,6 +118,7 @@ and `Explain <ID>`.
    - Append to `## Done` in `LOG.md`:
      `- <date> <ID> <Title>. Milestone: <the Milestone in NOW.md, or none>.
      Owner: <owner>. Plan: <path | none>. Result: branch <branch>.`
+     `<owner>` is the `Owner` in `NOW.md`, or `agent` when it is missing.
      The branch is the durable locator: the finish step opens the pull
      request from it, so no PR number is written here.
    - If the item has a brief, set its `Status: done`.
@@ -149,10 +150,13 @@ and `Explain <ID>`.
 6. **switch:** write a checkpoint first, as in `pause`. When the user names
    the item to switch to, show `R-NNN <title>`. Copy the active
    item to the top of `## Next` in `ROADMAP.md` with `Status: paused` and
-   `Paused checkpoint:` set to that checkpoint, keeping its `Brief` and
-   `Milestone`. If Next is at its max from `config.md`, apply the **Full
-   Next** rule (Roadmap order and edits) and name the item moved to Later.
-   Then set `NOW.md` to idle as in `done`.
+   `Paused checkpoint:` set to that checkpoint, keeping its `Brief`,
+   `Milestone`, `Serves`, `Owner`, `Size`, `Depends on`, and `Revisits` from
+   `NOW.md` (omit a field `NOW.md` does not have), and `Done when` built by
+   joining the `## Done when` bullets with a semicolon and a space. If Next
+   is at its max from `config.md`, apply the **Full Next** rule (Roadmap
+   order and edits) and name the item moved to Later. Then set `NOW.md` to
+   idle as in `done`.
 7. **push:** create `<PM root>/STACK.md` when it is missing, then write one
    entry at its top, copying the values from `NOW.md`:
 
@@ -166,6 +170,11 @@ and `Explain <ID>`.
    - Spec: <path | none>
    - Plan: <path | none>
    - Milestone: <M | none>
+   - Serves: <Serves in NOW.md>
+   - Owner: <Owner in NOW.md>
+   - Size: <Size in NOW.md>
+   - Depends on: <Depends on in NOW.md>
+   - Revisits: <Revisits in NOW.md>
    - Started: <Started in NOW.md>
    - Reason: <the user's reason, verbatim>
    - Done when:
@@ -178,6 +187,14 @@ and `Explain <ID>`.
      - Context: <...>
    ```
 
+   Copy Serves, Owner, Size, Depends on, and Revisits as a group: when
+   `NOW.md` carries them (every active item does, from `pm-next` step 7),
+   copy all five verbatim, `none` and blank included — `Depends on: none`
+   and a blank `Revisits` are valid values, not an absent field. When
+   `NOW.md` is in the rules-19 shape (none of the five present), omit all
+   five from the entry instead of writing fabricated values; `now/fields`
+   (`pm-lint`) rejects a partial set.
+
    Use the existing checkpoint, or write one as in `pause` when `NOW.md`
    has none. Then set `NOW.md` to idle as in `done`. The item, its stage,
    and its checkpoint are now on the stack and nowhere else. Step 9
@@ -188,7 +205,12 @@ and `Explain <ID>`.
    branch, and active item). Write its fields back into `NOW.md`:
    `Status: active`, `Item`, `Session` (the entry's `Branch`), `Stage`,
    `Brief`, `Milestone`, `Spec`, `Plan`, `Started`, its `Done when` under
-   `## Done when`, and its checkpoint under `## Checkpoint`. Remove the
+   `## Done when`, and its checkpoint under `## Checkpoint`. Write
+   `Serves`, `Owner`, `Size`, `Depends on`, and `Revisits` as a group: when
+   the entry carries them, write all five verbatim, `none` and blank
+   included; when it carries none of them (a rules-19 entry), omit all
+   five instead of writing fabricated values — never a partial set, which
+   `now/fields` (`pm-lint`) rejects. Remove the
    entry from `STACK.md`, leaving the next entry as the top. Step 9
    commits; show one line (`pop <ID> <title>: <stage> at its checkpoint`),
    then invoke the skill for `Stage` from

@@ -11,6 +11,11 @@
 - Stage: execute
 - Brief: planning/briefs/R-007-tenant-billing.md
 - Milestone: M1
+- Serves: V1
+- Owner: both
+- Size: M
+- Depends on: R-006
+- Revisits:
 - Spec: docs/superpowers/specs/2026-10-30-tenant-billing.md
 - Plan: docs/superpowers/plans/2026-10-31-tenant-billing.md
 - Started: 2026-11-02

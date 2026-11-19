@@ -121,14 +121,14 @@ Top-level keys, in order:
 | Key | Read from | Contents |
 | --- | --- | --- |
 | `$schema` | constant | `"./planning.schema.json"` |
-| `schemaVersion` | constant | `3`; bump it with the schema when the shape changes, together with `pm-docs-site`'s templates |
+| `schemaVersion` | constant | `4`; bump it with the schema when the shape changes, together with `pm-docs-site`'s templates |
 | `generatedAt` | clock | local ISO 8601 with offset: bash `date +%Y-%m-%dT%H:%M:%S%:z`, PowerShell `Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"` |
 | `generator` | this skill | `skill: "pm-export"`, `skillsVersion` from the marker in `pm-setup`'s reference, `rulesVersion` from `config.md` |
 | `project` | `config.md` | `pmRoot`, `defaultBranch`, `branchPattern` |
 | `source` | git | `branch` (`git branch --show-current`, `null` when detached), `head` (`git rev-parse HEAD`) |
 | `vision` | `VISION.md` | `problem`, `customer`, `outcomes[]` as `{id: "V1", text}`, `outOfScope[]`, `constraints{timeAvailable, budget, stack}` |
 | `strategy` | `STRATEGY.md` | `focus{milestone, whyNow}` and the five lists below |
-| `now` | `NOW.md` | `status`, `item{id, title}`, `stage`, `session`, `brief`, `milestone`, `spec`, `plan`, `started`, `doneWhen[]`, `checkpoint` |
+| `now` | `NOW.md` | `status`, `item{id, title, serves, owner, size, dependsOn, revisits}`, `stage`, `session`, `brief`, `milestone`, `spec`, `plan`, `started`, `doneWhen[]`, `checkpoint` |
 | `plan` | the plan at `now.plan` | `path`, `checked`, `total`, `tasks[]` as `{number, title, checked, total, steps[]}`, each step `{text, checked}`: one task per `### Task N` heading, one step per `- [ ]`/`- [x]` line with its text copied. `null` when `NOW.md` has no plan |
 | `roadmap` | `ROADMAP.md` | `next[]` and `later[]`, each an item object |
 | `board` | derived | `columns{now, next, foryou, waiting, done}` and `activity[]` |
@@ -158,11 +158,22 @@ An **item object** has these keys, in this order:
 context, openQuestion}` or `null`. `now.doneWhen` is the list under
 `## Done when`.
 
+`now.item` is `null` when `NOW.md` is idle. When active, read `serves` from
+the `Serves` field (same comma-separated parsing as an item object's
+`serves`), `dependsOn` from `Depends on` (`[]` for `none` or missing,
+same as an item object's `dependsOn`), and `revisits` from `Revisits`
+(`null` when empty or missing). `owner` and `size` are `null`, with an
+assumption, when `NOW.md` has no `Owner` or `Size` (or an invalid value);
+otherwise the field as written. This deliberately differs from an item
+object, whose `owner` defaults to `agent` when missing: `NOW.md`'s `Owner`
+and `Size` are either backfilled (`pm-setup` version 20) or already on the
+item, so a missing value is a gap to flag, not one to default past.
+
 The `board` mirrors `pm-board`:
 
 - `columns.now` holds the active item as `{id, title, owner, size, detail}`,
   with `detail` = `<stage>, <done>/<total> plan steps` (`<stage>` alone
-  without a plan). `owner` and `size` are `null`: `NOW.md` holds neither.
+  without a plan). `owner` and `size` come from `now.item`.
 - `columns.next` holds `Owner: agent` or `both` items in Next, including
   `paused`, with the `Status` value as `detail`; `columns.foryou` holds
   `Owner: user` items in Next, with `blocks <ID> <title>` as `detail` when

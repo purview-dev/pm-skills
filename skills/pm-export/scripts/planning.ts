@@ -1,4 +1,4 @@
-// Build the pm-export document (schemaVersion 3) from the Markdown PM state.
+// Build the pm-export document (schemaVersion 4) from the Markdown PM state.
 //
 // This file is the field map in pm-export's SKILL.md, as code: the same
 // input always gives the same output, so every project gets one export
@@ -8,7 +8,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 
 /** The schema this exporter writes, shipped beside it. */
 export const SCHEMA_PATH = join(import.meta.dir, "..", "references", "planning.schema.json");
@@ -364,9 +364,42 @@ export function build(options: BuildOptions): BuildResult {
           openQuestion: optional(checkpointFields.get("open question")),
         }
       : null;
+  const nowItem =
+    active && itemMatch
+      ? (() => {
+          const id = itemMatch[1]!;
+          const ownerValue = value(nowFields.get("owner"));
+          let owner: string | null = null;
+          if (ownerValue === null) {
+            assume("NOW.md has no Owner; now.item.owner is null.");
+          } else {
+            const lower = ownerValue.toLowerCase();
+            if (OWNERS.includes(lower)) owner = lower;
+            else assume(`${id} Owner "${lower}" is not agent, user, or both.`);
+          }
+          const sizeValue = value(nowFields.get("size"));
+          let size: string | null = null;
+          if (sizeValue === null) {
+            assume("NOW.md has no Size; now.item.size is null.");
+          } else {
+            const upper = sizeValue.toUpperCase();
+            if (SIZES.includes(upper)) size = upper;
+            else assume(`${id} Size "${upper}" is not S, M, or L.`);
+          }
+          return {
+            id,
+            title: itemMatch[2]!.trim(),
+            serves: list(nowFields.get("serves")),
+            owner,
+            size,
+            dependsOn: ids(nowFields.get("depends on")),
+            revisits: ids(nowFields.get("revisits"))[0] ?? null,
+          };
+        })()
+      : null;
   const nowDoc = {
     status: active ? "active" : "idle",
-    item: active && itemMatch ? { id: itemMatch[1]!, title: itemMatch[2]!.trim() } : null,
+    item: nowItem,
     stage: active && STAGES.includes(stage) ? stage : null,
     session: nowText("session"),
     brief: nowText("brief"),
@@ -486,7 +519,15 @@ export function build(options: BuildOptions): BuildResult {
   const board = {
     columns: {
       now: nowDoc.item
-        ? [{ id: nowDoc.item.id, title: nowDoc.item.title, owner: null, size: null, detail: [nowDoc.stage, plan ? `${plan.checked}/${plan.total} plan steps` : null].filter(Boolean).join(", ") || null }]
+        ? [
+            {
+              id: nowDoc.item.id,
+              title: nowDoc.item.title,
+              owner: nowDoc.item.owner,
+              size: nowDoc.item.size,
+              detail: [nowDoc.stage, plan ? `${plan.checked}/${plan.total} plan steps` : null].filter(Boolean).join(", ") || null,
+            },
+          ]
         : [],
       next: queued.filter((item) => item.owner !== "user").map((item) => card(item, item.status.value)),
       foryou: queued

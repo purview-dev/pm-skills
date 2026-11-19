@@ -146,11 +146,8 @@ or its ID link, to open its feature page; Escape or a click on the
 background clears the selection. Drag to pan, and zoom with the wheel or a
 pinch over the graph, or the `Zoom out`, `Zoom in`, and `Fit` buttons.
 
-The export does not carry the active item's own `Depends on` and `Revisits`
-yet, so its node says `Own links not exported yet` rather than looking like
-an item with no prerequisites. Below the graph, a `Dependencies` list gives
-each open item's links as plain text, for search, screen readers, and
-browsers without JavaScript.
+Below the graph, a `Dependencies` list gives each open item's links as plain
+text, for search, screen readers, and browsers without JavaScript.
 
 The page adds `@xyflow/react` and `@dagrejs/dagre` as dependencies; dagre
 runs at build time only; it never reaches the browser. The island's
@@ -170,7 +167,7 @@ The CLI runs under Node 24 or later.
 ## Supported exports
 
 `SUPPORTED_SCHEMA_VERSIONS` in `lib/schema-version.ts`: pm-export
-`schemaVersion` 3. Any other version fails the build and `check`, and the
+`schemaVersion` 4. Any other version fails the build and `check`, and the
 message says to run the `pm-export` skill.
 
 ## Development

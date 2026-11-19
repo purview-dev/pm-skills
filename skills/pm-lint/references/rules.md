@@ -129,13 +129,14 @@ header, a stack entry, the pause file, and the `config.md` sections.
 
 | Rule | Severity | Fix | Requirement |
 | --- | --- | --- | --- |
-| `now/fields` | error | no | `NOW.md` lists Status, Item, Session, Stage, Brief, Milestone, Spec, Plan, and Started, in that order. |
+| `now/fields` | error | no | `NOW.md` lists Status, Item, Session, Stage, Brief, Milestone, Spec, Plan, and Started, in that order, optionally with Serves, Owner, Size, Depends on, and Revisits after Milestone. |
 | `now/sections` | error | no | `NOW.md` has `## Done when` then `## Checkpoint`. |
 | `now/status` | error | no | Status is idle or active. |
 | `now/idle` | error | no | When idle, every field except Status is empty, and so are Done when and the checkpoint. |
 | `now/active` | error | no | When active: Item is `R-NNN <Title>`, Session is set, Stage is design, plan, execute, or finish, Started is YYYY-MM-DD, and Done when has a check. |
 | `now/checkpoint` | error | no | A filled checkpoint is `## Checkpoint YYYY-MM-DD HH:MM` with Stopped at, Next action, Start with, Decisions, and Context (Open question is optional). |
 | `now/not-in-roadmap` | error | no | The active item is not also in `ROADMAP.md`. |
+| `now/item` | error | no | When active, Serves lists V IDs from `VISION.md`, Owner is agent, user, or both, Size is S, M, or L, Depends on lists existing IDs or none, and Revisits is one existing ID or empty. |
 
 ### roadmap
 

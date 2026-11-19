@@ -60,13 +60,19 @@ export const RULES: Rule[] = [
   rule("strategy/decision-order", "error", true, "Decisions are newest first."),
 
   // NOW.md
-  rule("now/fields", "error", false, "NOW.md lists Status, Item, Session, Stage, Brief, Milestone, Spec, Plan, and Started, in that order."),
+  rule("now/fields", "error", false, "NOW.md lists Status, Item, Session, Stage, Brief, Milestone, Spec, Plan, and Started, in that order, optionally with Serves, Owner, Size, Depends on, and Revisits after Milestone."),
   rule("now/sections", "error", false, "NOW.md has `## Done when` and `## Checkpoint`."),
   rule("now/status", "error", false, "Status is idle or active."),
   rule("now/idle", "error", false, "When idle, every field except Status is empty."),
   rule("now/active", "error", false, "When active: Item is `R-NNN <Title>`, Session is set, Stage is design, plan, execute, or finish, Started is YYYY-MM-DD, and Done when has a check."),
   rule("now/checkpoint", "error", false, "A checkpoint is `## Checkpoint YYYY-MM-DD HH:MM` with Stopped at, Next action, Start with, Decisions, and Context."),
   rule("now/not-in-roadmap", "error", false, "The active item is not also in ROADMAP.md."),
+  rule(
+    "now/item",
+    "error",
+    false,
+    "When active, Serves lists V IDs from VISION.md, Owner is agent, user, or both, Size is S, M, or L, Depends on lists existing IDs or none, and Revisits is one existing ID or empty.",
+  ),
 
   // ROADMAP.md
   rule("roadmap/sections", "error", false, "ROADMAP.md has `## Next` then `## Later`, and no other level-2 section."),

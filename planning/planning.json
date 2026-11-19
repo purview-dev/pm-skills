@@ -1,11 +1,11 @@
 {
   "$schema": "./planning.schema.json",
-  "schemaVersion": 3,
-  "generatedAt": "2026-11-19T14:36:43+00:00",
+  "schemaVersion": 4,
+  "generatedAt": "2026-11-19T21:54:49+00:00",
   "generator": {
     "skill": "pm-export",
-    "skillsVersion": 19,
-    "rulesVersion": 19
+    "skillsVersion": 20,
+    "rulesVersion": 20
   },
   "project": {
     "pmRoot": "planning/",
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-012-docs-site-package-dependency-graph",
-    "head": "820a6cda3af04ec2259fa0c2a3a735b7e9b52e71"
+    "branch": "feat/r-018-export-the-now-cards-owner-and-size",
+    "head": "a31acbfd5d1237f790c644f364993ad43b08366d"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -215,30 +215,6 @@
         "note": null,
         "revisits": null,
         "claimable": true
-      },
-      {
-        "id": "R-018",
-        "title": "Export the Now card's owner and size",
-        "section": "next",
-        "position": 2,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "`bun skills/pm-export/scripts/export.ts write` gives the active item's Now card its roadmap `owner` and `size` instead of `null`, the schema field docs, `planning.example.json`, and the docs-site fixture agree, and `just test` covers it.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "`skills/pm-export/scripts/planning.ts:489` writes `owner: null, size: null`, so every real board shows the active item as \"No owner\" and the R-010 owner and size filters hide it.",
-        "revisits": null,
-        "claimable": true
       }
     ],
     "later": [
@@ -384,18 +360,20 @@
           "owner": "agent",
           "size": "M",
           "detail": "ready"
-        },
-        {
-          "id": "R-018",
-          "title": "Export the Now card's owner and size",
-          "owner": "agent",
-          "size": "S",
-          "detail": "ready"
         }
       ],
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-19",
+          "id": "R-018",
+          "title": "Export the Now card's owner and size",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-19-now-item-owner-size-links.md",
+          "result": "branch feat/r-018-export-the-now-cards-owner-and-size"
+        },
         {
           "date": "2026-11-19",
           "id": "R-012",
@@ -489,6 +467,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-19",
+        "kind": "done",
+        "id": "R-018",
+        "title": "Export the Now card's owner and size",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-018-export-the-now-cards-owner-and-size"
+      },
       {
         "date": "2026-11-19",
         "kind": "done",
@@ -619,6 +606,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-19",
+        "id": "R-018",
+        "title": "Export the Now card's owner and size",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-19-now-item-owner-size-links.md",
+        "result": "branch feat/r-018-export-the-now-cards-owner-and-size"
+      },
       {
         "date": "2026-11-19",
         "id": "R-012",
@@ -931,21 +927,6 @@
       "idea": "Deferred minors from the R-017 final review: (1) the `pm-docs-site:fs-allow` tests find the plugin by position (`.at(-1)`) instead of by name, so adding a later plugin breaks them; (2) the appended entry serves the whole package folder (test/, .astro/, scripts/, node_modules/) in in-repo and linked dev, which `fs.deny` still guards, and the comment could say so; (3) on case-insensitive macOS a case-only difference appends a harmless duplicate entry."
     },
     {
-      "file": "planning/inbox/2026-11-19-1001-widen-r-018-now-item-links.md",
-      "title": "Widen R-018 to export Now item's links",
-      "captured": "2026-11-19 10:01",
-      "source": "agent (R-012 design)",
-      "kind": "improvement",
-      "severity": null,
-      "affects": "R-018",
-      "context": "R-012 design",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "The user chose (R-012 design, 2026-11-19) to widen R-018 Export the Now card's owner and size so the export also carries the active item's own `Depends on` and `Revisits`. Today `now.item` is an `ItemRef` (ID and title) and `features()` in `packages/pm-docs-site/src/lib/planning.ts` gives the Now feature empty links, so the R-012 dependency graph cannot draw them (for example R-008 -> R-012). Add to R-018's Done when: the export gives the active item its `dependsOn` and `revisits`, the schema docs, example, and fixtures agree, the graph draws those edges, and the graph's `Own links not exported yet` notice is removed. Apply with `pm-item` after R-012's design."
-    },
-    {
       "file": "planning/inbox/2026-11-19-1006-feature-pages-miss-revisited-by.md",
       "title": "Feature pages do not list revisions",
       "captured": "2026-11-19 10:06",
@@ -989,6 +970,68 @@
       "brief": null,
       "reviewed": "never",
       "idea": "The both-switches-off no-flash browser test fails about 1 run in 10 on its \"at least one pending frame\" assertion. `sampleFrames` records its first frame on the first requestAnimationFrame after `addInitScript`, so a fast hydration can set and clear `data-graph-pending` before any frame is sampled. This is a test race; the no-wrong-layout assertions hold. Fix: push one frame synchronously when the init script runs, and record every `data-graph-pending` change with a MutationObserver on `document.documentElement`."
+    },
+    {
+      "file": "planning/inbox/2026-11-19-1510-checkpoint-switch-drops-item-note.md",
+      "title": "pm-checkpoint switch drops the item's Note",
+      "captured": "2026-11-19 15:10",
+      "source": "agent (R-018 design)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "skills/pm-checkpoint/SKILL.md",
+      "context": "R-018 design",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "R-018's design keeps `Note` out of `NOW.md`, so `pm-checkpoint` `switch` (and `push`/`pop`) still restore a roadmap item without the `Note` it had before `pm-next` claimed it. Carry `Note` through `NOW.md` or the stack entry so a switched item comes back unchanged."
+    },
+    {
+      "file": "planning/inbox/2026-11-19-2154-checkpoint-pop-field-position-wording.md",
+      "title": "pm-checkpoint pop and push field wording",
+      "captured": "2026-11-19 21:54",
+      "source": "agent (R-018 finish review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "skills/pm-checkpoint/SKILL.md",
+      "context": "R-018 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "R-018's final re-review found two wording gaps in `pm-checkpoint`. `pop` no longer states that the five item fields (`Serves`, `Owner`, `Size`, `Depends on`, `Revisits`) land after `Milestone` and before `Spec`, as `pm-rejoin` and `pm-next` step 7 do. `push` cites `now/fields` as the reason to copy the five as a group into `STACK.md`, but `now/fields` checks `NOW.md` only; `checkStack` does not enforce it. Add the position sentence to `pop` and reword the `push` citation. Needs a rules bump once rules 20 is released."
+    },
+    {
+      "file": "planning/inbox/2026-11-19-2155-stack-entries-not-backfilled-on-upgrade.md",
+      "title": "Stack entries are not backfilled on upgrade",
+      "captured": "2026-11-19 21:55",
+      "source": "agent (R-018 finish review)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "skills/pm-setup/SKILL.md, skills/pm-checkpoint/SKILL.md",
+      "context": "R-018 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "`pm-setup` Step 5 item 5 backfills the five item fields of an active `NOW.md` on the upgrade to rules 20, but not of entries already in `STACK.md`. An item pushed before the upgrade pops back without them, so its Now card exports `owner`/`size` null and the graph draws no edges for it. Likewise `pm-checkpoint switch` on an item that was never backfilled (the user chose `Continue on v19`) restores a roadmap block without `Serves` and `Size`, which `roadmap/item` requires. Either backfill stack entries in `pm-setup`, or have `pop` and `switch` ask for missing values the way the backfill does."
+    },
+    {
+      "file": "planning/inbox/2026-11-19-2156-now-item-consumers-read-one-source.md",
+      "title": "Read the Now item's facts from one place",
+      "captured": "2026-11-19 21:56",
+      "source": "agent (R-018 finish review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site, skills/pm-export, skills/pm-board/SKILL.md",
+      "context": "R-018 execute",
+      "discuss": "no",
+      "related": [
+        "R-020"
+      ],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "R-018 left small inconsistencies in how the active item's owner and size are read. `packages/pm-docs-site/src/routes/plan/now.astro` reads them from `board.columns.now[0]`, and `features()` from `now.item` (equal by construction, but two sources). `pm-board`'s Now card step does not say they come from `NOW.md`. The export schema's `$defs/itemRef` is now unreferenced. `graph.test.ts` builds a partial `Planning` with `as unknown as Planning` instead of spreading the fixture, and the shared package fixture draws no edge into the active node (R-020's rich fixture could). Tidy these in one pass."
     }
   ],
   "briefs": [
@@ -1023,13 +1066,13 @@
     "removed": []
   },
   "counts": {
-    "next": 2,
+    "next": 1,
     "later": 5,
     "nextMax": 5,
-    "openInbox": 16,
+    "openInbox": 19,
     "discuss": 1,
     "shapingBriefs": 0,
-    "done": 10,
+    "done": 11,
     "dropped": 4,
     "blockers": 0,
     "openRisks": 0,
@@ -1041,8 +1084,7 @@
     "reviewDue": true,
     "lastReview": "never",
     "claimable": [
-      "R-020",
-      "R-018"
+      "R-020"
     ],
     "drift": true
   }

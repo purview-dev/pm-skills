@@ -13,7 +13,7 @@ import type { Brief, InboxEntry, Level, Milestone, Owner, Planning, Rag, Risk, R
 const DEFAULT_PATH = '../planning/planning.json';
 
 /** The pm-export `schemaVersion` this site reads (pm-docs-site keeps it equal to pm-export's schema). */
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 
 export class PlanningExportError extends Error {
 	constructor(message: string) {
@@ -256,8 +256,11 @@ export function features(planning: Planning): Feature[] {
 					title: planning.now.item.title,
 					state: 'now' as const,
 					milestone: milestoneId(planning.now.milestone, known),
-					owner: planning.board.columns.now[0]?.owner ?? null,
-					size: planning.board.columns.now[0]?.size ?? null,
+					owner: planning.now.item.owner,
+					size: planning.now.item.size,
+					serves: planning.now.item.serves,
+					dependsOn: planning.now.item.dependsOn,
+					revisits: planning.now.item.revisits,
 					doneWhen: planning.now.doneWhen,
 					brief: planning.now.brief,
 					stage: planning.now.stage,

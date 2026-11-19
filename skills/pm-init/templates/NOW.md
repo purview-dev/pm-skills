@@ -9,6 +9,8 @@ Stage: design | plan | execute | finish
 Session: <branch> (worktree <path>, optional)
 Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
+Serves, Owner, Size, Depends on, Revisits: copied from the claimed item's
+roadmap block (pm-next); the roadmap item format (Shared definitions).
 -->
 
 - Status: idle
@@ -17,6 +19,11 @@ Milestone: optional; the item's milestone while it is active
 - Stage:
 - Brief:
 - Milestone:
+- Serves:
+- Owner:
+- Size:
+- Depends on:
+- Revisits:
 - Spec:
 - Plan:
 - Started:
@@ -34,6 +41,11 @@ Active example:
 - Stage: design
 - Brief: {{PM_ROOT}}briefs/R-007-tenant-billing.md
 - Milestone: M1
+- Serves: V1
+- Owner: both
+- Size: M
+- Depends on: R-006
+- Revisits:
 - Spec: docs/superpowers/specs/<file>.md
 - Plan: docs/superpowers/plans/<file>.md
 - Started: 2026-10-29

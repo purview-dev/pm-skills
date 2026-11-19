@@ -315,10 +315,29 @@ describe('features', () => {
 	it('keeps the fields each place holds, with a known milestone or none', () => {
 		const byId = new Map(all.map((feature) => [feature.id, feature]));
 
-		expect(byId.get('R-012')).toMatchObject({ stage: 'execute', doneWhen: ['An invoice downloads as CSV'], milestone: null });
+		expect(byId.get('R-012')).toMatchObject({
+			stage: 'execute',
+			doneWhen: ['An invoice downloads as CSV'],
+			milestone: null,
+			owner: null,
+			size: null,
+			serves: [],
+			dependsOn: [],
+			revisits: null,
+		});
 		expect(byId.get('R-014')).toMatchObject({ label: 'waiting', dependsOn: ['R-013'], position: 2, milestone: 'M2' });
 		expect(byId.get('R-011')).toMatchObject({ milestone: null, date: '2026-11-09', result: 'planning.json validates.' });
 		expect(byId.get('R-009')).toMatchObject({ reason: 'CSV covers it.' });
+	});
+
+	it("gives the Now feature its own owner, size, serves, and links from now.item, not the board card", () => {
+		const populated = {
+			...planning,
+			now: { ...planning.now, item: { id: 'R-012', title: 'Invoice export', serves: ['V2'], owner: 'agent', size: 'M', dependsOn: ['R-010', 'R-098'], revisits: 'R-003' } },
+		} as unknown as Planning;
+		const now = features(populated).find((feature) => feature.state === 'now')!;
+
+		expect(now).toMatchObject({ id: 'R-012', owner: 'agent', size: 'M', serves: ['V2'], dependsOn: ['R-010', 'R-098'], revisits: 'R-003' });
 	});
 
 	it('finds what depends on an item and the brief it links to', () => {

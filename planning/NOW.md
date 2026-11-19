@@ -17,6 +17,11 @@ Milestone: optional; the item's milestone while it is active
 - Stage:
 - Brief:
 - Milestone:
+- Serves:
+- Owner:
+- Size:
+- Depends on:
+- Revisits:
 - Spec:
 - Plan:
 - Started:

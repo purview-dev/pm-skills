@@ -76,7 +76,8 @@ describe("build", () => {
   });
 
   it("reads NOW.md, its checkpoint, and the plan's tasks, skipping fenced checkboxes", () => {
-    expect(doc.now.item).toEqual({ id: "R-007", title: "Tenant billing" });
+    expect(doc.now.item).toEqual({ id: "R-007", title: "Tenant billing", serves: ["V1"], owner: "both", size: "M", dependsOn: ["R-006"], revisits: null });
+    expect(doc.schemaVersion).toBe(4);
     expect(doc.now.doneWhen).toHaveLength(2);
     expect(doc.now.checkpoint.at).toBe("2026-11-08 14:10");
     expect(doc.now.checkpoint.openQuestion).toBeNull();
@@ -103,6 +104,7 @@ describe("build", () => {
 
   it("builds the board columns pm-board renders", () => {
     const columns = doc.board.columns;
+    expect(columns.now[0]).toMatchObject({ owner: "both", size: "M" });
     expect(columns.now[0].detail).toBe("execute, 3/5 plan steps");
     expect(columns.next.map((c: any) => c.id)).toEqual(["R-008"]);
     expect(columns.foryou[0].detail).toBe("blocks R-010 Charge the first invoice");
@@ -129,6 +131,83 @@ describe("build", () => {
     expect(build({ root: FIXTURE, ...fixed, today: "2026-11-20" }).document.checks.reviewDue).toBe(true);
     expect(build({ root: FIXTURE, ...fixed, branch: "feat/r-012-self-serve-signup" }).document.checks.drift).toBe(false);
     expect(build({ root: FIXTURE, ...fixed, branch: "feat/r-007-other-session" }).document.checks.drift).toBe(true);
+  });
+
+  it("exports a rules 19 NOW.md without the item fields as nulls, with assumptions", () => {
+    const dir = mkdtempSync(join(tmpdir(), "pm-export-strip-"));
+    cpSync(FIXTURE, dir, { recursive: true });
+    const nowPath = join(dir, "planning", "NOW.md");
+    const stripped = readFileSync(nowPath, "utf8")
+      .split("\n")
+      .filter((line) => !/^- (Serves|Owner|Size|Depends on|Revisits):/.test(line))
+      .join("\n");
+    writeFileSync(nowPath, stripped);
+    try {
+      const { document, assumptions: stripAssumptions } = build({ root: dir, ...fixed });
+      expect(document.now.item).toEqual({ id: "R-007", title: "Tenant billing", serves: [], owner: null, size: null, dependsOn: [], revisits: null });
+      expect(document.board.columns.now[0]).toMatchObject({ owner: null, size: null });
+      expect(stripAssumptions.filter((a) => a.startsWith("NOW.md has no Owner") || a.startsWith("NOW.md has no Size"))).toHaveLength(2);
+      expect(validate(document, schema)).toEqual([]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("exports an idle NOW.md with all 14 keys present but empty", () => {
+    const dir = mkdtempSync(join(tmpdir(), "pm-export-idle-"));
+    cpSync(FIXTURE, dir, { recursive: true });
+    const nowPath = join(dir, "planning", "NOW.md");
+    writeFileSync(
+      nowPath,
+      [
+        "# Now",
+        "",
+        "- Status: idle",
+        "- Item:",
+        "- Session:",
+        "- Stage:",
+        "- Brief:",
+        "- Milestone:",
+        "- Serves:",
+        "- Owner:",
+        "- Size:",
+        "- Depends on:",
+        "- Revisits:",
+        "- Spec:",
+        "- Plan:",
+        "- Started:",
+        "",
+        "## Done when",
+        "",
+        "## Checkpoint",
+        "",
+      ].join("\n"),
+    );
+    try {
+      const { document, assumptions: idleAssumptions } = build({ root: dir, ...fixed });
+      expect(document.now.item).toBeNull();
+      expect(document.board.columns.now).toEqual([]);
+      expect(idleAssumptions.some((a) => a.startsWith("NOW.md has no Owner") || a.startsWith("NOW.md has no Size"))).toBe(false);
+      expect(validate(document, schema)).toEqual([]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("flags an invalid Owner or Size in NOW.md", () => {
+    const dir = mkdtempSync(join(tmpdir(), "pm-export-invalid-"));
+    cpSync(FIXTURE, dir, { recursive: true });
+    const nowPath = join(dir, "planning", "NOW.md");
+    const invalid = readFileSync(nowPath, "utf8").replace("- Owner: both", "- Owner: someone").replace("- Size: M", "- Size: XL");
+    writeFileSync(nowPath, invalid);
+    try {
+      const { document, assumptions: invalidAssumptions } = build({ root: dir, ...fixed });
+      expect(document.now.item).toMatchObject({ owner: null, size: null });
+      expect(invalidAssumptions.some((a) => a.includes('Owner "someone"'))).toBe(true);
+      expect(invalidAssumptions.some((a) => a.includes('Size "XL"'))).toBe(true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });
 

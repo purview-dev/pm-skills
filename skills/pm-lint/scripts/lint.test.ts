@@ -109,6 +109,16 @@ describe("structure rules", () => {
     }
   });
 
+  it("reports a roadmap item's Depends on or Revisits when present but blank, not just when invalid", async () => {
+    const root = repo({
+      "ROADMAP.md": (text) =>
+        text.replace("- Depends on: none\n- Status: ready\n\n### R-009", "- Depends on:\n- Status: ready\n\n### R-009").replace("- Revisits: R-006 Tenant model", "- Revisits:"),
+    });
+    const rules = await rulesOf(root);
+    expect(rules).toContain("roadmap/depends");
+    expect(rules).toContain("roadmap/revisits");
+  });
+
   it("finds a reused ID, an active item still queued, and a full Next", async () => {
     const extra = (id: string) => `\n### ${id} Extra\n\n- Serves: V1\n- Done when: x\n- Size: S\n- Status: ready\n`;
     const root = repo({
@@ -130,6 +140,25 @@ describe("structure rules", () => {
     });
     const rules = await rulesOf(root);
     for (const rule of ["now/active", "now/checkpoint", "log/order", "log/line", "inbox/fields", "inbox/filename", "brief/sections", "brief/header"]) expect(rules).toContain(rule);
+  });
+
+  it("accepts NOW.md with or without the item fields", async () => {
+    // roadmap/later-order is a pre-existing, unrelated warning on this fixture (see "passes for the fixture project" above).
+    const withoutLaterOrder = (rules: string[]) => rules.filter((r) => r !== "roadmap/later-order");
+    expect(withoutLaterOrder(await rulesOf(repo({})))).toEqual([]); // the export fixture now has them (Task 1)
+    const without = repo({ "NOW.md": (t) => t.replace("- Serves: V1\n- Owner: both\n- Size: M\n- Depends on: R-006\n- Revisits:\n", "") });
+    expect(withoutLaterOrder(await rulesOf(without))).toEqual([]);
+  });
+
+  it("checks the item fields of an active NOW.md", async () => {
+    const root = repo({ "NOW.md": (t) => t.replace("- Owner: both", "- Owner: someone").replace("- Size: M", "- Size: XL").replace("- Depends on: R-006", "- Depends on: R-404") });
+    expect(await rulesOf(root)).toContain("now/item");
+  });
+
+  it("keeps the item fields empty when idle", async () => {
+    const idle = (owner: string) => `# Now\n\n- Status: idle\n- Item:\n- Session:\n- Stage:\n- Brief:\n- Milestone:\n- Serves:\n- Owner:${owner}\n- Size:\n- Depends on:\n- Revisits:\n- Spec:\n- Plan:\n- Started:\n\n## Done when\n\n## Checkpoint\n`;
+    expect((await rulesOf(repo({ "NOW.md": () => idle("") }))).filter((r) => r.startsWith("now/"))).toEqual([]);
+    expect(await rulesOf(repo({ "NOW.md": () => idle(" agent") }))).toContain("now/idle");
   });
 
   it("checks the risk register: values, RAG, section status, order, and removed lines", async () => {

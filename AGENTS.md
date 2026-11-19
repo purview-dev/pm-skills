@@ -424,8 +424,9 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   operations written by `pm-checkpoint` (`push`, `pop`). Optional: a missing
   file is an empty stack. It is session memory, not a plan, so `pm-export`
   does not export it. A **stack entry** holds the item, its `Done when`, the
-  branch, the stage, the brief, spec, plan, milestone, started date, the
-  reason it was suspended, and its checkpoint block.
+  branch, the stage, the brief, spec, plan, milestone, the item's serves,
+  owner, size, depends on, and revisits, the started date, the reason it
+  was suspended, and its checkpoint block.
 - **Pause file:** `<PM root>/PAUSE.md`, the session's position written by
   `pm-pause`: `Paused`, `Session` (a branch, matched like `NOW.md`),
   `Item`, `Running` (the skill or workflow and its step), `Files`, the
@@ -725,8 +726,9 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    main worktree, except a Completion record, which is written in the
    worktree that holds the item's branch (rules: **Completion rides the
    branch**). `pm-setup` may also edit only the managed section in the
-   selected agent instructions file, and the `Rules version` line in
-   `<PM root>/config.md`.
+   selected agent instructions file, the `Rules version` line in
+   `<PM root>/config.md`, and, during an upgrade, the item fields of an
+   active `NOW.md` (`pm-setup` Step 5, item 5).
    PM state skills never:
    - edit source code, spec, or plan files,
    - create or remove worktrees, or create branches other than the **Item
@@ -1185,6 +1187,14 @@ layout and checks their schema before it commits, and `pm-lint hook`
 prints a pre-commit hook (lefthook, husky, or git) that runs `pm-lint
 check --staged`. Run `pm-lint check` once after upgrading; older files may
 need `pm-lint fix` and the owning skill. No setting is added.
+
+Version 20 adds the claimed item's `Serves`, `Owner`, `Size`,
+`Depends on`, and `Revisits` to `NOW.md`, and `pm-setup` fills them in for
+an item that was active before the upgrade. The export moves to
+`schemaVersion` 4: run `pm-export`, and `pm-docs-site upgrade` for an
+installed site. `@purview-dev/pm-docs-site` reads `schemaVersion` 4 only
+from its next release; a site built on the published prerelease keeps
+reading a `schemaVersion` 3 export until it upgrades.
 
 ## Asking the user (mandatory)
 

@@ -22,9 +22,10 @@ installed. Existing content is never rewritten, reordered, or removed.
 - This skill is the fix for the upgrade check (rules: Upgrading before work
   resumes), so it never runs that check.
 - The only PM state this skill writes is the `Rules version` line and the
-  missing `Commits` settings in `<PM state directory>/config.md`. It never
-  creates or edits any other PM file, and never changes a setting that is
-  already written.
+  missing `Commits` settings in `<PM state directory>/config.md`, and,
+  during an upgrade, the item fields of an active `NOW.md` (Step 5, item
+  5). It never creates or edits any other PM file, and never changes a
+  setting that is already written.
 - The current folder must be inside a git repository. Work in the **main
   worktree**: the first path in `git worktree list`.
 - If `AGENTS.md` or `CLAUDE.md` has uncommitted changes, stop. Reply:
@@ -132,9 +133,9 @@ If only `.claude/CLAUDE.md` exists, treat it as `CLAUDE.md`.
 Show this, then ask exactly one question with the agent's question tool
 (never as typed options): `Apply this pm-setup plan to <target>?` with
 the options `Apply (recommended)` and `Do not apply`; the tool's free-text
-entry covers "change something". The folder question in Step 1 and the
-missing `Commits` settings in Step 5, item 4, are the only other
-questions.
+entry covers "change something". The folder question in Step 1, the
+missing `Commits` settings in Step 5, item 4, and the active item fields in
+Step 5, item 5, are the only other questions.
 
 ```markdown
 ## pm-setup plan
@@ -147,6 +148,7 @@ questions.
 - Workflow framework: <Superpowers | name | partial | none>
 - Workflow skills: <n> of <total> installed. Missing: <names | none>
 - PM state directory: <path>
+- Active item fields: <backfill R-NNN from <sha> | ask (claim commit not found) | none>
 
 ## Conflicts in your existing instructions
 
@@ -157,7 +159,8 @@ questions.
 ## Not changed
 
 - Everything outside the pm-skills markers.
-- <PM state directory> (run pm-init to create it).
+- <PM state directory> (run pm-init to create it), except NOW.md's active
+  item fields when Step 5, item 5 backfills them.
 ```
 
 Rules for this step:
@@ -237,6 +240,24 @@ Rules for this step:
 
    These questions do not count against the one question in Step 4. Do not
    edit anything else in the file.
+5. **Active item fields (version 20).** If `<PM state directory>/NOW.md`
+   is `Status: active` and lacks `Owner`, first check its `Session`
+   against the current session (`git branch --show-current`). When it
+   does not match, this is another session's claim (Non-interruption
+   rule 7): report `NOW.md's active item is on <Session>, not this
+   session; not backfilled.` and skip this item. Otherwise find the claim
+   commit: `git log --format=%H --grep="^docs(pm): claim <ID>" -1 <Session
+   branch>`. When found, read
+   `git show <commit>^:<PM state directory>/ROADMAP.md`, take that item's
+   `Serves`, `Owner`, `Size`, `Depends on`, and `Revisits` from its block,
+   and write them to `NOW.md` after `Milestone`, defaulting any field the
+   block itself lacks (`Owner` `agent`, `Depends on` `none`, `Revisits`
+   empty) rather than asking. When the claim commit or the item's block
+   cannot be found, ask one choice question per missing required value
+   (`Owner`: `agent`, `user`, `both`; `Size`: `S`, `M`, `L`; `Serves`: the
+   `V` lines in `VISION.md`), and set `Depends on: none` and `Revisits:`
+   empty. Show the five values written. `pm-setup` does not commit this:
+   the next PM commit carries `NOW.md`, like the `Rules version` line.
 
 ## Step 6: Verify
 
@@ -248,6 +269,8 @@ Rules for this step:
    across all agent files, and that the start marker carries no
    `version=`. Check that `config.md`, if changed, differs only in its
    `Rules version` line and the `Commits` settings added in Step 5, item 4.
+   Check that `NOW.md`, if changed, differs only in the five item fields
+   backfilled in Step 5, item 5.
 3. If the repository has a markdownlint config, run
    `npx markdownlint-cli2 <files>` (or `bunx markdownlint-cli2 <files>`) on
    the changed files and report the result.
@@ -261,7 +284,7 @@ Rules for this step:
 - Skills: <25 of 25 installed | missing: names>
 - Workflow skills: <n of n installed | missing: names>
 - Rules version: <v<n> recorded in <PM root>/config.md | legacy v<n> migrated | PM state not initialised>
-- Diff check: only the managed section changed, plus the Rules version line and any added Commits settings
+- Diff check: only the managed section changed, plus the Rules version line, any added Commits settings, and any backfilled NOW.md item fields
 - Commits: <PM state commit <value>, Export on commit <value> | PM state not initialised>
 - PM state: <not initialized | current | missing version 4 files: names>
 - Upgrade gate: <cleared, rules at v<n> | unchanged>

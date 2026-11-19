@@ -96,19 +96,19 @@ describe('pm-docs-site check', () => {
 		const result = runCli(['check', FIXTURE_SITE]);
 
 		expect(result.code, result.stderr).toBe(0);
-		expect(result.stdout).toContain('schemaVersion 3');
+		expect(result.stdout).toContain('schemaVersion 4');
 	}, CHECK);
 
 	it('fails on a schemaVersion it does not read', () => {
-		const dir = scratchFixture('v4-');
+		const dir = scratchFixture('v5-');
 		const planning = JSON.parse(readFileSync(join(dir, 'planning.json'), 'utf8'));
-		writeFileSync(join(dir, 'planning.json'), JSON.stringify({ ...planning, schemaVersion: 4 }));
-		writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'V4', planning: '../planning.json' }`));
+		writeFileSync(join(dir, 'planning.json'), JSON.stringify({ ...planning, schemaVersion: 5 }));
+		writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'V5', planning: '../planning.json' }`));
 
 		const result = runCli(['check', join(dir, 'site')]);
 
 		expect(result.code).toBe(1);
-		expect(result.stdout + result.stderr).toContain('has schemaVersion 4; this site reads schemaVersion 3');
+		expect(result.stdout + result.stderr).toContain('has schemaVersion 5; this site reads schemaVersion 4');
 		expect(existsSync(join(dir, 'site', 'dist'))).toBe(false);
 	}, CHECK);
 
