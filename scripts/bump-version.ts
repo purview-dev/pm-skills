@@ -92,10 +92,10 @@ if (next.major > current.major) {
     const demoConfig = readFileSync(demoConfigPath, "utf8");
     writeFileSync(demoConfigPath, demoConfig.replace(/^- Rules version: \d+$/m, `- Rules version: ${next.major}`));
     try {
-      execFileSync("bun", ["skills/pm-export/scripts/export.ts", "write", "--root", "examples/demo", "--pm-root", "planning/"], { cwd: root, encoding: "utf8" });
+      execFileSync("bun", ["skills/pm-export/scripts/export.ts", "write", "--frozen", "--root", "examples/demo", "--pm-root", "planning/"], { cwd: root, encoding: "utf8" });
     } catch (error) {
       const failure = error as { stdout?: string; stderr?: string };
-      fail(`demo: export.ts write failed\n${failure.stdout ?? ""}${failure.stderr ?? ""}`);
+      fail(`demo: export.ts write failed; the bump itself is written. Fix the demo, then run: bun skills/pm-export/scripts/export.ts write --frozen --root examples/demo --pm-root planning/\n${failure.stdout ?? ""}${failure.stderr ?? ""}`);
     }
     console.log("demo: refreshed examples/demo/planning/planning.json");
   }

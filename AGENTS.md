@@ -142,7 +142,7 @@ same `bun` commands as the `just` recipes). Markdown is linted with
   `just demo-check` (part of `just package-test`). Its
   `planning/planning.json` is derived: `just bump` refreshes it on a
   major, and
-  `bun skills/pm-export/scripts/export.ts write --root examples/demo --pm-root planning/`
+  `bun skills/pm-export/scripts/export.ts write --frozen --root examples/demo --pm-root planning/`
   after a demo PM edit.
 - Test the skills' scripts (`pm-export`'s exporter, `pm-lint`):
   `just test` (part of `just lint-check`).

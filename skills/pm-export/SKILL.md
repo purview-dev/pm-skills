@@ -41,6 +41,7 @@ when Bun is available. It needs Bun (`bun --version`).
 | --- | --- |
 | `bun <skill>/scripts/export.ts write [--root <worktree>]` | Build, validate, and write `planning.json`, and copy the schema when it differs. Prints `wrote:`, `schema:`, and one `assumption:` line per fact it could not read. Writes nothing and exits 1 with `invalid:` lines when the document would not match the schema |
 | `bun <skill>/scripts/export.ts write --dry-run` | Print the document instead of writing it |
+| `bun <skill>/scripts/export.ts write --frozen` | Rewrite the export as of its own `generatedAt` and `source`, for a synthetic plan whose dates must not move |
 | `bun <skill>/scripts/export.ts check [--root <worktree>]` | Read-only. Validate the export and its schema copy, rebuild from the Markdown as of the export's `generatedAt` and branch, and print `current` or the first difference; exit 1 on a difference |
 | `bun <skill>/scripts/export.ts validate [<file>] [--schema <file>]` | Read-only. Validate one file (default: the export) and print `valid:` or one `invalid: <path>: <reason>` line per error |
 | `bun <skill>/scripts/export.ts get [<path>] [--fresh]` | Read-only. Print the value at a path (`counts`, `roadmap.next[0].title`, `checks.claimable`) |

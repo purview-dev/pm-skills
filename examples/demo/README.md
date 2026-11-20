@@ -18,5 +18,5 @@ just demo-check   # check the export, lint the PM files, build, and fail on any 
 After editing `planning/`, regenerate the export:
 
 ```sh
-bun skills/pm-export/scripts/export.ts write --root examples/demo --pm-root planning/
+bun skills/pm-export/scripts/export.ts write --frozen --root examples/demo --pm-root planning/
 ```

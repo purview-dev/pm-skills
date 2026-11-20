@@ -279,6 +279,30 @@ describe("export.ts", () => {
     expect(printed()).toBe("roadmap.next[0].title is Invoice emails from the Markdown and Invoice email in planning/planning.json.");
   });
 
+  it("write --frozen keeps the export's time and source, and takes the new Markdown", () => {
+    expect(run("write")).toBe(0);
+    const exportPath = join(root, "planning", "planning.json");
+    const pinned = JSON.parse(readFileSync(exportPath, "utf8"));
+    pinned.generatedAt = "2026-01-05T09:00:00+00:00";
+    pinned.source = { ...pinned.source, branch: "demo", head: "0000000000000000000000000000000000000000" };
+    writeFileSync(exportPath, JSON.stringify(pinned, null, 2));
+    const roadmap = join(root, "planning", "ROADMAP.md");
+    writeFileSync(roadmap, readFileSync(roadmap, "utf8").replace("### R-008 Invoice email", "### R-008 Invoice emails"));
+
+    expect(run("write", "--frozen")).toBe(0);
+    const written = JSON.parse(readFileSync(exportPath, "utf8"));
+
+    expect(written.generatedAt).toBe("2026-01-05T09:00:00+00:00");
+    expect(written.source).toMatchObject({ branch: "demo", head: "0000000000000000000000000000000000000000" });
+    expect(written.roadmap.next[0].title).toBe("Invoice emails");
+    expect(run("check")).toBe(0);
+  });
+
+  it("write --frozen fails without an export to freeze", () => {
+    expect(run("write", "--frozen")).toBe(1);
+    expect(() => readFileSync(join(root, "planning", "planning.json"))).toThrow();
+  });
+
   it("refuses to write a document the schema rejects", () => {
     const roadmap = join(root, "planning", "ROADMAP.md");
     writeFileSync(roadmap, readFileSync(roadmap, "utf8").replace("- Size: S", "- Size: XL"));
