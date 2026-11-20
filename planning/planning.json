@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T15:48:11+00:00",
+  "generatedAt": "2026-11-20T15:55:42+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-028-docs-site-package-accessible-board-popup-and-timeline",
-    "head": "cf34641efaaad7c327e6321474f0588af8e7ecbb"
+    "head": "982f1d6a777acfe05f5fe7ceca2829637e07d42c"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -191,11 +191,11 @@
       ],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-028-docs-site-package-accessible-board-popup-and-timeline",
     "brief": "planning/briefs/2026-11-17-docs-site-package.md",
     "milestone": "M1",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-20-docs-site-accessible-board-popup-timeline-design.md",
     "plan": null,
     "started": "2026-11-20",
     "doneWhen": [
@@ -470,7 +470,7 @@
           "title": "Docs-site package: accessible board, popup, and timeline",
           "owner": "agent",
           "size": "M",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
@@ -1217,6 +1217,6 @@
       "R-029",
       "R-025"
     ],
-    "drift": true
+    "drift": false
   }
 }
