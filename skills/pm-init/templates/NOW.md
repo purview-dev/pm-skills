@@ -11,6 +11,8 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 Serves, Owner, Size, Depends on, Revisits: copied from the claimed item's
 roadmap block (pm-next); the roadmap item format (Shared definitions).
+Note: optional, after Revisits; the claimed item's Note, written only when
+it has one.
 -->
 
 - Status: idle

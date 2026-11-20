@@ -129,7 +129,7 @@ header, a stack entry, the pause file, and the `config.md` sections.
 
 | Rule | Severity | Fix | Requirement |
 | --- | --- | --- | --- |
-| `now/fields` | error | no | `NOW.md` lists Status, Item, Session, Stage, Brief, Milestone, Spec, Plan, and Started, in that order, optionally with Serves, Owner, Size, Depends on, and Revisits after Milestone. |
+| `now/fields` | error | no | `NOW.md` lists Status, Item, Session, Stage, Brief, Milestone, Spec, Plan, and Started, in that order, optionally with Serves, Owner, Size, Depends on, and Revisits after Milestone, and then an optional Note. |
 | `now/sections` | error | no | `NOW.md` has `## Done when` then `## Checkpoint`. |
 | `now/status` | error | no | Status is idle or active. |
 | `now/idle` | error | no | When idle, every field except Status is empty, and so are Done when and the checkpoint. |

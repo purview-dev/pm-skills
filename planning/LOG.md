@@ -4,6 +4,7 @@
 
 ## Done
 
+- 2026-11-20 R-026 pm-checkpoint keeps every item field through switch, push, and pop. Milestone: none. Owner: agent. Plan: docs/superpowers/plans/2026-11-20-checkpoint-keeps-item-fields.md. Result: branch feat/r-026-checkpoint-keeps-item-fields.
 - 2026-11-20 R-027 Docs-site package: build hardening. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-20-docs-site-package-build-hardening.md. Result: branch feat/r-027-docs-site-package-build-hardening.
 - 2026-11-20 R-019 Docs-site package: consumer-ready for 1.0.0. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-20-docs-site-consumer-ready.md. Result: branch feat/r-019-docs-site-package-consumer-ready-for-1-0-0.
 - 2026-11-20 R-020 Docs-site package: rich demo planning fixture. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-20-docs-site-demo.md. Result: branch feat/r-020-docs-site-demo-fixture.

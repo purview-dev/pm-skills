@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T14:34:48+00:00",
+  "generatedAt": "2026-11-20T15:19:44+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-027-docs-site-package-build-hardening",
-    "head": "463f5eb03f0ddb35edf76bb0f5bf440c13b25079"
+    "branch": "feat/r-026-checkpoint-keeps-item-fields",
+    "head": "fed56d31b412945b63f364dd99e9e8eca370e6e1"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -191,32 +191,7 @@
   },
   "plan": null,
   "roadmap": {
-    "next": [
-      {
-        "id": "R-026",
-        "title": "pm-checkpoint keeps every item field through switch, push, and pop",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V2"
-        ],
-        "milestone": null,
-        "owner": "agent",
-        "doneWhen": "an item claimed with a `Note` and then moved with `pm-checkpoint` `switch`, or `push` then `pop`, returns to `ROADMAP.md` with every field it had before the claim, including `Note`, and `just test` covers the field list.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "From R-018 design (2026-11-19): R-018's design keeps `Note` out of `NOW.md`, so `pm-checkpoint` `switch` (and `push`/`pop`) restore a roadmap item without the `Note` it had before `pm-next` claimed it. Carry `Note` through `NOW.md` or the stack entry. A skills change, so it bumps the rules major. Spec: `docs/superpowers/specs/2026-11-19-now-item-owner-size-links-design.md`. 2026-11-19 review, from the R-018 final re-review: `pop` no longer states that the five item fields (`Serves`, `Owner`, `Size`, `Depends on`, `Revisits`) land after `Milestone` and before `Spec`, as `pm-rejoin` and `pm-next` step 7 do; `push` cites `now/fields` as the reason to copy the five as a group into `STACK.md`, but `now/fields` checks `NOW.md` only and `checkStack` does not enforce it. Add the position sentence to `pop` and reword the `push` citation. 2026-11-19 review, from the R-018 final re-review: `pm-setup` Step 5 item 5 backfills the five item fields of an active `NOW.md` on the upgrade to rules 20, but not of entries already in `STACK.md`, so an item pushed before the upgrade pops back without them (its Now card exports `owner`/`size` null and the graph draws no edges for it). `pm-checkpoint switch` on an item never backfilled (the user chose `Continue on v19`) restores a roadmap block without `Serves` and `Size`, which `roadmap/item` requires. Either backfill stack entries in `pm-setup`, or have `pop` and `switch` ask for missing values the way the backfill does. Affects `skills/pm-setup/SKILL.md`.",
-        "revisits": null,
-        "claimable": true
-      }
-    ],
+    "next": [],
     "later": [
       {
         "id": "R-028",
@@ -403,18 +378,19 @@
   "board": {
     "columns": {
       "now": [],
-      "next": [
-        {
-          "id": "R-026",
-          "title": "pm-checkpoint keeps every item field through switch, push, and pop",
-          "owner": "agent",
-          "size": "S",
-          "detail": "ready"
-        }
-      ],
+      "next": [],
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-20",
+          "id": "R-026",
+          "title": "pm-checkpoint keeps every item field through switch, push, and pop",
+          "milestone": null,
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-20-checkpoint-keeps-item-fields.md",
+          "result": "branch feat/r-026-checkpoint-keeps-item-fields"
+        },
         {
           "date": "2026-11-20",
           "id": "R-027",
@@ -562,6 +538,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-20",
+        "kind": "done",
+        "id": "R-026",
+        "title": "pm-checkpoint keeps every item field through switch, push, and pop",
+        "milestone": null,
+        "owner": "agent",
+        "result": "branch feat/r-026-checkpoint-keeps-item-fields"
+      },
       {
         "date": "2026-11-20",
         "kind": "done",
@@ -764,6 +749,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-20",
+        "id": "R-026",
+        "title": "pm-checkpoint keeps every item field through switch, push, and pop",
+        "milestone": null,
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-20-checkpoint-keeps-item-fields.md",
+        "result": "branch feat/r-026-checkpoint-keeps-item-fields"
+      },
       {
         "date": "2026-11-20",
         "id": "R-027",
@@ -1107,6 +1101,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Minors from the R-027 Docs-site package: build hardening final review, deferred: (1) `test/build.test.ts` probe test can leave `lib/__probe__` behind if the run is killed, and `prepack` would then ship `dist/__probe__/`; the restoring rebuild in `finally` ignores its exit code (gitignore `lib/__probe__/` or assert the exit code). (2) `test/install.test.ts` `relativeImports` skips side-effect imports (`import '../styles/x.css'`, `import '../scripts/plan.ts'`). (3) The install test counts a bare directory as a resolved import (the `''` suffix); use `statSync(...).isFile()`. (4) \"non-JavaScript\" wording remains in `.github/workflows/publish-pm-docs-site.yml:151`, `docs/wiki/contributing/Repository-Layout.md:57`, and `packages/pm-docs-site/README.md:219`; `check-exports` now reports \"the wrong kind of file\". (5) `docs/wiki/contributing/Development.md:71` uses `0.1.0-pre.1` as a format example; mark it \"for example\" so it is not read as the current release."
+    },
+    {
+      "file": "planning/inbox/2026-11-20-1518-r-026-deferred-review-minors.md",
+      "title": "R-026 deferred review minors",
+      "captured": "2026-11-20 15:18",
+      "source": "agent (R-026 execute)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "skills/pm-lint, skills/pm-checkpoint, skills/pm-next",
+      "context": "R-026 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Minors from the R-026 pm-checkpoint keeps every item field final review, deferred: (1) `skills/pm-lint/scripts/structure.ts` comment on `NOW_NOTE` says \"rules 22\"; the change shipped on rules 21 (21.0.0-pre.2). (2) The R-026 spec (design item 6) and plan (Task 3) still describe `just bump major` to rules 22; add a superseded line. (3) The `now/fields` rule text in `rules.md`, `rules.ts`, and the `checkNow` message says \"and then an optional Note\", readable as after `Started`; say \"an optional Note after Revisits\". (4) `pm-checkpoint` `switch` recovery runs only when `Serves`/`Size` are missing and never restores `Note`, so an item claimed under 21.0.0-pre.1 (whose `pm-next` dropped the Note) switches back without it; also restore `Note` from the claim-commit block when `NOW.md` lacks one. (5) `pm-next` steps 3 and 5 can each hold a `Note:`, but step 7 joins \"a held note\" in the singular; state the order for two. (6) A blank `- Note:` on an item: say \"a non-empty Note\" in `pm-next` step 7 and `pm-rejoin` step 3. (7) No test pins that a `Note` without the five item fields fails `now/fields`."
     }
   ],
   "briefs": [
@@ -1158,13 +1167,13 @@
     "removed": []
   },
   "counts": {
-    "next": 1,
+    "next": 0,
     "later": 7,
     "nextMax": 5,
-    "openInbox": 9,
+    "openInbox": 10,
     "discuss": 2,
     "shapingBriefs": 0,
-    "done": 16,
+    "done": 17,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1173,11 +1182,9 @@
     "greenRisks": 0
   },
   "checks": {
-    "reviewDue": false,
+    "reviewDue": true,
     "lastReview": "2026-11-19",
-    "claimable": [
-      "R-026"
-    ],
+    "claimable": [],
     "drift": true
   }
 }

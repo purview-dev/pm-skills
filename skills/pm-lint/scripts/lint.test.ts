@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { checkFormat, fixFormat } from "./format.ts";
 import { fix, hookSnippet, lint, main } from "./lint.ts";
 import { RULES } from "./rules.ts";
-import { buildContext, checkStructure, fixStructure } from "./structure.ts";
+import { buildContext, checkStructure, fixStructure, KEYS } from "./structure.ts";
 
 const SKILLS = join(import.meta.dir, "..", "..");
 // The synthetic repository pm-export's tests use: every PM file, written as the skills write them.
@@ -161,6 +161,35 @@ describe("structure rules", () => {
     expect(await rulesOf(repo({ "NOW.md": () => idle(" agent") }))).toContain("now/idle");
   });
 
+  it("accepts a Note after Revisits in NOW.md", async () => {
+    const root = repo({ "NOW.md": (t) => t.replace("- Revisits:\n", "- Revisits:\n- Note: Started as is: only item in Next.\n") });
+    expect((await rulesOf(root)).filter((r) => r !== "roadmap/later-order")).toEqual([]);
+  });
+
+  it("rejects a Note out of place in NOW.md", async () => {
+    const root = repo({ "NOW.md": (t) => t.replace("- Serves: V1\n", "- Note: x\n- Serves: V1\n") });
+    expect(await rulesOf(root)).toContain("now/fields");
+  });
+
+  it("reports a Note on an idle NOW.md", async () => {
+    const idle = `# Now\n\n- Status: idle\n- Item:\n- Session:\n- Stage:\n- Brief:\n- Milestone:\n- Serves:\n- Owner:\n- Size:\n- Depends on:\n- Revisits:\n- Note: x\n- Spec:\n- Plan:\n- Started:\n\n## Done when\n\n## Checkpoint\n`;
+    const rules = await rulesOf(repo({ "NOW.md": () => idle }));
+    expect(rules).toContain("now/idle");
+    expect(rules).not.toContain("now/fields");
+  });
+
+  it("accepts stack entries with and without Note", async () => {
+    const checkpoint = "- Checkpoint:\n  - Stopped at: step 2\n  - Next action: step 3\n  - Start with: plan\n  - Decisions: none\n  - Context: none\n";
+    const stack =
+      "# Stack\n\n" +
+      "### R-012 With a note\n\n- Pushed: 2026-11-20 10:00\n- Branch: feat/r-012-with-a-note\n- Stage: execute\n- Brief: none\n- Spec: none\n- Plan: none\n- Milestone: none\n- Serves: V1\n- Owner: agent\n- Size: S\n- Depends on: none\n- Revisits:\n- Note: kept\n- Started: 2026-11-19\n- Reason: emergency\n- Done when:\n  - a check\n" +
+      checkpoint +
+      "\n### R-011 Rules 19 entry\n\n- Pushed: 2026-11-18 10:00\n- Branch: feat/r-011-rules-19-entry\n- Stage: plan\n- Brief: none\n- Spec: none\n- Plan: none\n- Milestone: none\n- Started: 2026-11-17\n- Reason: emergency\n- Done when:\n  - a check\n" +
+      checkpoint;
+    const rules = await rulesOf(repo({ "STACK.md": () => stack }));
+    expect(rules.filter((r) => r.startsWith("stack/") || r === "fields/unknown")).toEqual([]);
+  });
+
   it("checks the risk register: values, RAG, section status, order, and removed lines", async () => {
     const root = repo({
       "RISKS.md": (text) =>
@@ -183,6 +212,19 @@ describe("structure rules", () => {
     });
     const rules = await rulesOf(root);
     for (const rule of ["config/commits", "config/limits", "vision/outcome", "strategy/milestone-status", "strategy/focus", "strategy/decision"]) expect(rules).toContain(rule);
+  });
+});
+
+describe("item fields ride NOW.md and the stack", () => {
+  it("carries every roadmap item field through NOW.md and the push template", () => {
+    const carried = KEYS.item.filter((k) => !["Status", "Paused checkpoint"].includes(k));
+    for (const key of carried.filter((k) => k !== "Done when")) expect(KEYS.now as readonly string[]).toContain(key);
+    for (const key of carried) expect(KEYS.stack as readonly string[]).toContain(key);
+    const skill = readFileSync(join(SKILLS, "pm-checkpoint", "SKILL.md"), "utf8");
+    const template = /```markdown\n\s*### <ID> <Title>\n([\s\S]*?)```/.exec(skill)?.[1] ?? "";
+    const keys = [...template.matchAll(/^\s*- ([A-Z][A-Za-z ]*):/gm)].map((m) => m[1]!);
+    for (const key of carried) expect(keys).toContain(key);
+    expect(keys.indexOf("Note")).toBe(keys.indexOf("Revisits") + 1);
   });
 });
 

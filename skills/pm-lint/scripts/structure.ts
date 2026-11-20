@@ -54,7 +54,7 @@ export function kindOf(rel: string): Kind {
 
 // The field keys each block defines, as written in the templates.
 export const KEYS = {
-  now: ["Status", "Item", "Session", "Stage", "Brief", "Milestone", "Serves", "Owner", "Size", "Depends on", "Revisits", "Spec", "Plan", "Started"],
+  now: ["Status", "Item", "Session", "Stage", "Brief", "Milestone", "Serves", "Owner", "Size", "Depends on", "Revisits", "Note", "Spec", "Plan", "Started"],
   checkpoint: ["Stopped at", "Next action", "Start with", "Decisions", "Context", "Open question"],
   item: ["Serves", "Milestone", "Owner", "Done when", "Size", "Depends on", "Status", "Brief", "Paused checkpoint", "Note", "Revisits"],
   milestone: ["Serves", "Exit criteria", "Target", "Status"],
@@ -62,7 +62,7 @@ export const KEYS = {
   risk: ["Likelihood", "Impact", "RAG", "RAG override", "Status", "Owner", "Affects", "Trigger", "Mitigation", "Raised", "Reviewed", "Closed"],
   inbox: ["Captured", "Source", "Kind", "Severity", "Affects", "Context", "Discuss", "Related", "Brief", "Reviewed"],
   brief: ["Status", "Origin", "Updated"],
-  stack: ["Pushed", "Branch", "Stage", "Brief", "Spec", "Plan", "Milestone", "Serves", "Owner", "Size", "Depends on", "Revisits", "Started", "Reason", "Done when", "Checkpoint"],
+  stack: ["Pushed", "Branch", "Stage", "Brief", "Spec", "Plan", "Milestone", "Serves", "Owner", "Size", "Depends on", "Revisits", "Note", "Started", "Reason", "Done when", "Checkpoint"],
   pause: ["Paused", "Session", "Item", "Running", "Files", "Uncommitted outside PM root"],
   resume: ["Next action", "Start with", "Open question"],
   install: ["Rules version"],
@@ -111,8 +111,14 @@ const RAG_RANK: Record<string, number> = { red: 0, amber: 1, green: 2 };
 // The item fields NOW.md and the stack carry alongside the roadmap: optional
 // everywhere, checked like a roadmap item's fields when present.
 const NOW_ITEM_FIELDS = ["Serves", "Owner", "Size", "Depends on", "Revisits"];
-/** The rules 19 shape: `KEYS.now` without the item fields. */
-const NOW_LEGACY_FIELDS = KEYS.now.filter((key) => !NOW_ITEM_FIELDS.includes(key));
+/** The item's `Note`, optional after `Revisits` (rules 22). */
+const NOW_NOTE = "Note";
+/** The rules 20 shape: `KEYS.now` without `Note`. */
+const NOW_ITEM_SHAPE = KEYS.now.filter((key) => key !== NOW_NOTE);
+/** The rules 19 shape: `KEYS.now` without the item fields or `Note`. */
+const NOW_LEGACY_FIELDS = NOW_ITEM_SHAPE.filter((key) => !NOW_ITEM_FIELDS.includes(key));
+/** The key sequences `now/fields` accepts. */
+const NOW_SHAPES = [KEYS.now, NOW_ITEM_SHAPE, NOW_LEGACY_FIELDS].map((shape) => shape.join("|").toLowerCase());
 const OWNER_VALUES = /^(agent|user|both)$/;
 const SIZE_VALUES = /^(S|M|L)$/;
 
@@ -483,11 +489,11 @@ function checkNow(doc: Doc, add: Add, context: Context) {
   const top = fields(doc.lines, doc.h2[0]!);
   const keys = top.map((field) => field.key);
   const keyLine = keys.join("|").toLowerCase();
-  if (keyLine !== KEYS.now.join("|").toLowerCase() && keyLine !== NOW_LEGACY_FIELDS.join("|").toLowerCase()) {
+  if (!NOW_SHAPES.includes(keyLine)) {
     add(
       top[0]?.n ?? 1,
       "now/fields",
-      `The fields are ${keys.join(", ") || "missing"}; they must be ${NOW_LEGACY_FIELDS.join(", ")}, optionally with ${NOW_ITEM_FIELDS.join(", ")} after Milestone.`,
+      `The fields are ${keys.join(", ") || "missing"}; they must be ${NOW_LEGACY_FIELDS.join(", ")}, optionally with ${NOW_ITEM_FIELDS.join(", ")} after Milestone, and then an optional ${NOW_NOTE}.`,
     );
   }
   requireSections(doc, add, "now/sections", [["Done when", /^Done when/i], ["Checkpoint", /^Checkpoint\b/i]], true);
