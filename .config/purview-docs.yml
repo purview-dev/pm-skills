@@ -133,7 +133,7 @@ useCases:
       The site is package.json, a lockfile, and astro.config.ts; pm-docs-site build renders every
       plan page and its search index from planning.json, and pm-docs-site check reports an export
       in a format the package does not read before anything is built. The package is in
-      prerelease on npm (0.1.0-pre.1, under the prerelease dist-tag).
+      prerelease on npm, under the prerelease dist-tag.
     evidence: >-
       The package's tests install it from its packed tarball into a folder outside the repository
       and build the fixture site there, and the built page list must equal the recorded

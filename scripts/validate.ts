@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { differences, readManifest } from "../skills/pm-docs-site/scripts/site.ts";
 import { SCHEMA_VERSION as EXPORTER_SCHEMA_VERSION } from "../skills/pm-export/scripts/planning.ts";
 import { formatErrors, validate as validateSchema } from "../skills/pm-export/scripts/schema.ts";
+import { versionDrift } from "./package-docs.ts";
 import { parse as parseVersion } from "./semver.ts";
 
 const root = join(import.meta.dir, "..");
@@ -274,6 +275,12 @@ const packageLicence = join("packages", "pm-docs-site", "LICENSE.md");
 if (existsSync(join(root, "packages", "pm-docs-site", "package.json"))) {
   if (!existsSync(join(root, packageLicence))) fail(`${packageLicence}: missing (copy LICENSE.md)`);
   else if (read(packageLicence) !== read("LICENSE.md")) fail(`${packageLicence}: differs from LICENSE.md (copy it again)`);
+
+  // The consumer docs pin the package's own version, so they never name a stale release.
+  const packageVersion = JSON.parse(read("packages", "pm-docs-site", "package.json")).version as string;
+  for (const doc of ["packages/pm-docs-site/README.md", "docs/wiki/guide/Docs-Site-Package.md"]) {
+    for (const message of versionDrift(doc, read(doc), packageVersion)) fail(message);
+  }
 }
 
 if (errors.length) {
