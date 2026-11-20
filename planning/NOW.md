@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-027 Docs-site package: build hardening
 - Session: feat/r-027-docs-site-package-build-hardening
-- Stage: design
+- Stage: plan
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 - Milestone: M1
 - Serves: V4
@@ -22,7 +22,7 @@ Milestone: optional; the item's milestone while it is active
 - Size: S
 - Depends on: none
 - Revisits:
-- Spec:
+- Spec: docs/superpowers/specs/2026-11-20-docs-site-package-build-hardening-design.md
 - Plan:
 - Started: 2026-11-20
 

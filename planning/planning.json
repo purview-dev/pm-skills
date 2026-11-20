@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T13:31:14+00:00",
+  "generatedAt": "2026-11-20T13:56:57+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-027-docs-site-package-build-hardening",
-    "head": "6abccc3da14f6effbe4210100163df5d01237d21"
+    "head": "e73467a8d64e26feca01e8e4d7f1497ec1e6d0e5"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -189,11 +189,11 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-027-docs-site-package-build-hardening",
     "brief": "planning/briefs/2026-11-17-docs-site-package.md",
     "milestone": "M1",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-20-docs-site-package-build-hardening-design.md",
     "plan": null,
     "started": "2026-11-20",
     "doneWhen": [
@@ -446,7 +446,7 @@
           "title": "Docs-site package: build hardening",
           "owner": "agent",
           "size": "S",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
@@ -1118,6 +1118,6 @@
       "R-019",
       "R-026"
     ],
-    "drift": true
+    "drift": false
   }
 }
