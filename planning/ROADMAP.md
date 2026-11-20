@@ -14,17 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-023 Docs-site package: stable browser tests
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: `npx playwright test test/browser/graph.browser.ts --project chromium --repeat-each=10` in `packages/pm-docs-site` passes 10 of 10 runs.
-- Size: S
-- Depends on: none
-- Status: ready
-- Note: Bug (minor) from R-012 execute (2026-11-19): the both-switches-off no-flash test fails about 1 run in 10 on "at least one pending frame", because `sampleFrames` records its first frame after a fast hydration can set and clear `data-graph-pending`. Fix: push one frame synchronously when the init script runs, and record every `data-graph-pending` change with a MutationObserver on `document.documentElement`. Same re-review: the chip dedup assertion at `test/graph-layout.test.ts:498-500` cannot fail; `arrowheadFill` in `graph.browser.ts:392-407` depends on React Flow's `url('#<id>')` marker format. 2026-11-19 review, from R-011 verification (2026-11-18): `just lint-check` failed twice at `package-test` when both Playwright web servers started together; the `dev` server (`test/browser/dev-server.ts`) logged `Listen method has been called more than once without closing` and `transport invoke timed out after 60000ms`, then Playwright timed out after 300000ms. Playwright starts both servers even with `--project=chromium`. Separately, `bun run test:browser -- --project chromium <file>` fails under Bun (the path is read as a project name), while `--project=chromium` works. Affects `packages/pm-docs-site/playwright.config.ts`. 2026-11-19 review, from the R-017 final review: the `pm-docs-site:fs-allow` tests in `test/integration.test.ts` find the plugin by position (`.at(-1)`) instead of by name, so a later plugin breaks them; the appended entry in `lib/index.ts` serves the whole package folder in in-repo and linked dev, which `fs.deny` still guards, and the comment could say so; on case-insensitive macOS a case-only difference appends a harmless duplicate entry.
-
 ### R-020 Docs-site package: rich demo planning fixture
 
 - Serves: V4
