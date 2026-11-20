@@ -159,7 +159,7 @@ describe('graphLayouts', () => {
 
 		expect(layout.lanes).toEqual([]);
 		expect(tray).not.toBeNull();
-		expect(isolated.sort()).toEqual(['R-012', 'R-023']);
+		expect(isolated.sort()).toEqual(['R-023']);
 		for (const id of isolated) expect(layout.boxes[id]!.y, id).toBeGreaterThanOrEqual(tray.y);
 		for (const id of linkedIds) {
 			const box = layout.boxes[id]!;

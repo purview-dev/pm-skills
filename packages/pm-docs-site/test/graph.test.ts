@@ -17,6 +17,11 @@ const ALL_VIEWS = { now: true, milestones: true, graph: true, features: true, in
 const planning = loadPlanning(FIXTURE);
 const known = targets(planning, ALL_VIEWS);
 
+/** The fixture with some sections replaced, typed as a whole export. */
+function withPlan(overrides: Partial<Planning>): Planning {
+	return { ...planning, ...overrides };
+}
+
 describe('graphData', () => {
 	const data = graphData(planning, known);
 	const nodeById = new Map(data.nodes.map((node) => [node.id, node]));
@@ -37,7 +42,7 @@ describe('graphData', () => {
 		expect(nodeById.has('R-011')).toBe(false);
 	});
 
-	it('builds exactly these seven edges, fromChip for the done, dropped, and missing sources', () => {
+	it('builds exactly these eight edges, fromChip for the done, dropped, and missing sources', () => {
 		const ids = data.edges.map((edge) => `${edge.source}>${edge.target}:${edge.kind}`);
 
 		expect(ids).toEqual([
@@ -46,6 +51,7 @@ describe('graphData', () => {
 			'R-013>R-014:depends',
 			'R-009>R-021:depends',
 			'R-022>R-024:depends',
+			'R-012>R-024:depends',
 			'R-099>R-020:depends',
 			'R-025>R-020:revisits',
 		]);
@@ -59,6 +65,12 @@ describe('graphData', () => {
 		expect(fromChipOf('R-021')).toBe(false);
 		expect(fromChipOf('R-013')).toBe(false);
 		expect(fromChipOf('R-022')).toBe(false);
+		expect(fromChipOf('R-012')).toBe(false);
+	});
+
+	it('draws an edge into the active node', () => {
+		expect(data.edges).toContainEqual(expect.objectContaining({ source: 'R-012', target: 'R-024', kind: 'depends' }));
+		expect(nodeById.get('R-012')).toMatchObject({ active: true });
 	});
 
 	it('marks the active item', () => {
@@ -67,13 +79,12 @@ describe('graphData', () => {
 	});
 
 	it("gives the active item's own done and missing dependencies the same chips as a roadmap item", () => {
-		const active = {
-			now: { status: 'active', item: { id: 'R-012', title: 'Invoice export', serves: [], owner: 'agent', size: 'M', dependsOn: ['R-010', 'R-098'], revisits: null }, milestone: null, stage: 'execute' },
-			strategy: { milestones: [] },
+		const active = withPlan({
+			now: { ...planning.now, status: 'active', item: { id: 'R-012', title: 'Invoice export', serves: [], owner: 'agent', size: 'M', dependsOn: ['R-010', 'R-098'], revisits: null }, milestone: null, stage: 'execute' },
 			roadmap: { next: [], later: [] },
-			log: { done: [{ date: '2026-11-04', id: 'R-010', title: 'Choose the invoice format', milestone: null, owner: 'user', plan: null, result: 'CSV.' }], dropped: [] },
-			board: { columns: { now: [{ id: 'R-012', title: 'Invoice export', owner: 'agent', size: 'M', detail: 'execute' }] } },
-		} as unknown as Planning;
+			log: { ...planning.log, done: [{ date: '2026-11-04', id: 'R-010', title: 'Choose the invoice format', milestone: null, owner: 'user', plan: null, result: 'CSV.' }], dropped: [] },
+			board: { ...planning.board, columns: { ...planning.board.columns, now: [{ id: 'R-012', title: 'Invoice export', owner: 'agent', size: 'M', detail: 'execute' }] } },
+		});
 		const activeData = graphData(active, new Map());
 		const activeNodeById = new Map(activeData.nodes.map((node) => [node.id, node]));
 
@@ -102,18 +113,17 @@ describe('graphData', () => {
 	});
 
 	it('counts a done ID named twice in dependsOn and again in revisits once, not three times', () => {
-		const repeated = {
-			now: { status: 'idle', item: null, milestone: null, stage: null },
-			strategy: { milestones: [] },
+		const repeated = withPlan({
+			now: { ...planning.now, status: 'idle', item: null, milestone: null, stage: null },
 			roadmap: {
 				next: [
 					{ id: 'R-102', title: 'Repeats a done prerequisite', section: 'next', position: 1, label: 'next', serves: [], milestone: null, owner: 'agent', doneWhen: 'none', size: 'S', dependsOn: ['R-010', 'R-010'], status: { value: 'ready', reason: null, since: null }, brief: null, note: null, revisits: 'R-010', claimable: true },
 				],
 				later: [],
 			},
-			log: { done: [{ date: '2026-11-04', id: 'R-010', title: 'Choose the invoice format', milestone: null, owner: 'user', plan: null, result: 'CSV.' }], dropped: [] },
-			board: { columns: { now: [] } },
-		} as unknown as Planning;
+			log: { ...planning.log, done: [{ date: '2026-11-04', id: 'R-010', title: 'Choose the invoice format', milestone: null, owner: 'user', plan: null, result: 'CSV.' }], dropped: [] },
+			board: { ...planning.board, columns: { ...planning.board.columns, now: [] } },
+		});
 		const repeatedData = graphData(repeated, new Map());
 
 		expect(repeatedData.nodes.find((node) => node.id === 'R-102')).toMatchObject({ donePrerequisites: 1 });
@@ -126,36 +136,34 @@ describe('graphData', () => {
 	});
 
 	it('gives distinct edge IDs ending :0 and :1 for a repeated dependency', () => {
-		const repeated = {
-			now: { status: 'idle', item: null, milestone: null, stage: null },
-			strategy: { milestones: [] },
+		const repeated = withPlan({
+			now: { ...planning.now, status: 'idle', item: null, milestone: null, stage: null },
 			roadmap: {
 				next: [
 					{ id: 'R-100', title: 'Repeats a dependency', section: 'next', position: 1, label: 'next', serves: [], milestone: null, owner: 'agent', doneWhen: 'none', size: 'S', dependsOn: ['R-010', 'R-010'], status: { value: 'ready', reason: null, since: null }, brief: null, note: null, revisits: null, claimable: true },
 				],
 				later: [],
 			},
-			log: { done: [], dropped: [] },
-			board: { columns: { now: [] } },
-		} as unknown as Planning;
+			log: { ...planning.log, done: [], dropped: [] },
+			board: { ...planning.board, columns: { ...planning.board.columns, now: [] } },
+		});
 		const data2 = graphData(repeated, new Map());
 
 		expect(data2.edges.map((edge) => edge.id)).toEqual(['R-010>R-100:depends:0', 'R-010>R-100:depends:1']);
 	});
 
 	it('gives one edge with source === target and no chip for a self-dependency', () => {
-		const selfDep = {
-			now: { status: 'idle', item: null, milestone: null, stage: null },
-			strategy: { milestones: [] },
+		const selfDep = withPlan({
+			now: { ...planning.now, status: 'idle', item: null, milestone: null, stage: null },
 			roadmap: {
 				next: [
 					{ id: 'R-101', title: 'Depends on itself', section: 'next', position: 1, label: 'next', serves: [], milestone: null, owner: 'agent', doneWhen: 'none', size: 'S', dependsOn: ['R-101'], status: { value: 'ready', reason: null, since: null }, brief: null, note: null, revisits: null, claimable: true },
 				],
 				later: [],
 			},
-			log: { done: [], dropped: [] },
-			board: { columns: { now: [] } },
-		} as unknown as Planning;
+			log: { ...planning.log, done: [], dropped: [] },
+			board: { ...planning.board, columns: { ...planning.board.columns, now: [] } },
+		});
 		const data3 = graphData(selfDep, new Map());
 
 		expect(data3.nodes.map((node) => node.id)).toEqual(['R-101']);
