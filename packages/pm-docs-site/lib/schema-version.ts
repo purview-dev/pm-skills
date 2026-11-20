@@ -22,3 +22,18 @@ export function checkSchemaVersion(version: unknown, path: string): void {
 		`${path} has schemaVersion ${String(version)}; this site reads schemaVersion ${SUPPORTED_SCHEMA_VERSIONS.join(', ')}.`,
 	);
 }
+
+/**
+ * Throw unless the parsed export is an object with a schemaVersion this package
+ * reads, so `null`, an array, or a scalar fails with the pm-export hint.
+ * @param path the export's path, for the message
+ */
+export function checkExport(value: unknown, path: string): asserts value is { schemaVersion: number } {
+	if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+		const kind = value === null ? 'null' : Array.isArray(value) ? 'an array' : typeof value;
+
+		throw new PlanningExportError(`${path} does not hold a plan export (found ${kind}).`);
+	}
+
+	checkSchemaVersion((value as { schemaVersion?: unknown }).schemaVersion, path);
+}

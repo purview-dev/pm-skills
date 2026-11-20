@@ -134,6 +134,20 @@ describe('pm-docs-site check', () => {
 		expect(existsSync(join(dir, 'site', 'dist'))).toBe(false);
 	}, CHECK);
 
+	it('fails with the pm-export hint when planning.json holds null', () => {
+		const dir = scratchFixture('null-');
+		writeFileSync(join(dir, 'planning.json'), 'null');
+		writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'Null', planning: '../planning.json' }`));
+
+		const result = runCli(['check', join(dir, 'site')]);
+		const output = result.stdout + result.stderr;
+
+		expect(result.code).toBe(1);
+		expect(output).toContain('does not hold a plan export (found null)');
+		expect(output).toContain('pm-export');
+		expect(output).not.toContain('TypeError');
+	}, CHECK);
+
 	it('fails when the config has no pm-docs-site integration', () => {
 		const dir = scratchFixture('none-');
 		writeFileSync(join(dir, 'site', 'astro.config.ts'), 'export default {};\n');
