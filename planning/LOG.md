@@ -1,6 +1,6 @@
 # Log
 
-<!-- Newest first in each section. Nothing is deleted without a line here. -->
+<!-- Newest first in each section. Nothing is deleted without a line here. -->
 
 ## Done
 
