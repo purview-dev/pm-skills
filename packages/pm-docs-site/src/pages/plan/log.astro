@@ -38,7 +38,7 @@ const plans = new Map(planning.log.done.filter((entry) => entry.id).map((entry) 
 								<span class={`log-kind log-kind--${entry.kind}`}>{entry.kind}</span>
 							</td>
 							<td>
-								{entry.id ? <RefLink ref={entry.id} /> : <LinkedText text={entry.title} />}
+								{entry.id ? <RefLink ref={entry.id} fallback={`${entry.id} ${entry.title}`} /> : <LinkedText text={entry.title} />}
 								{plan && (
 									<>
 										{' '}

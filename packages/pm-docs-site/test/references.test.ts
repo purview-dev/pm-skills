@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'bun:test';
 
 import { loadPlanning } from '../src/lib/planning';
-import { linkify, references, RELATION_LABELS, targets } from '../src/lib/references';
+import { linkify, references, refText, RELATION_LABELS, targets } from '../src/lib/references';
 
 const FIXTURE = fileURLToPath(new URL('./fixtures/planning.json', import.meta.url));
 const planning = loadPlanning(FIXTURE);
@@ -81,6 +81,22 @@ describe('references', () => {
 		expect(RELATION_LABELS.listed).toBe('Listed on');
 		expect(RELATION_LABELS.mentions).toBe('Mentioned on');
 		expect(RELATION_LABELS['depends on']).toBe('Depends on');
+	});
+});
+
+describe('refText', () => {
+	const target = known.get('R-012');
+
+	it('names a known target, or its key for label id', () => {
+		expect(refText(target, 'R-012', 'full')).toBe(target!.label);
+		expect(refText(target, 'R-012', 'id', 'unused')).toBe('R-012');
+	});
+
+	it('prints the fallback for an unknown key, else the key', () => {
+		expect(refText(undefined, 'R-404', 'full', 'R-404 Lost item')).toBe('R-404 Lost item');
+		expect(refText(undefined, 'none', 'full', 'No milestone')).toBe('No milestone');
+		expect(refText(undefined, 'R-404', 'full')).toBe('R-404');
+		expect(refText(undefined, null, 'full')).toBe('');
 	});
 });
 

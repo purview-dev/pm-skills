@@ -63,6 +63,17 @@ export function targets(planning: Planning, views: Views): Map<string, Target> {
 	return known;
 }
 
+/**
+ * The text RefLink prints: a known target's label (`full`) or its key (`id`);
+ * for an unknown key, the caller's fallback (an entry title, `No milestone`),
+ * else the key itself.
+ */
+export function refText(target: Target | undefined, ref: string | null | undefined, label: 'full' | 'id', fallback?: string): string {
+	if (target) return label === 'full' ? target.label : (ref ?? '');
+
+	return fallback ?? ref ?? '';
+}
+
 /** A run of prose: plain text, or the text of one known reference and its target. */
 export interface Run {
 	text: string;
