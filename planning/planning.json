@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T15:19:17+00:00",
+  "generatedAt": "2026-11-20T15:19:29+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-026-checkpoint-keeps-item-fields",
-    "head": "659da4a96c0fe98a0bcaa1272c6c3b5fcb714dba"
+    "head": "be9bec8685cc0bdb23d903279d9cadc2b886150d"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
