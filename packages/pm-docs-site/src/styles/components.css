@@ -283,10 +283,14 @@ button.plan-column__toggle:focus-visible {
 /* Fills the dialog's box, so only a click on the dialog element itself (the
    backdrop, never this frame) closes the popup (src/scripts/plan.ts). Not
    rounded, so it scrolls long content itself without the parent's corner
-   clipping taking its hit box away (see .plan-dialog's overflow above). */
+   clipping taking its hit box away (see .plan-dialog's overflow above).
+   max-height is not `inherit`: that copies .plan-dialog's own max-height
+   value, which bounds its border box, not its content box; with the 1px
+   border on each side, inheriting it would let the frame (and its
+   scrollbar) run 2px past the dialog's border. */
 .plan-dialog__frame {
 	padding: 1.25rem 1.5rem;
-	max-height: inherit;
+	max-height: calc(100vh - 4rem - 2px);
 	overflow: auto;
 }
 
