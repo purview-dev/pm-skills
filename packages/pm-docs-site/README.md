@@ -93,7 +93,8 @@ board can be linked and survives a reload:
 `/plan/board/?owner=user&milestone=M2&group=milestone`. Unknown or junk
 values fall back to All / None. Column collapse still works per column,
 across every lane, and without JavaScript the full, ungrouped board renders
-with the filter bar hidden.
+with the filter bar hidden; the column collapse toggles appear only once
+the island loads.
 
 The integration adds `@astrojs/react` itself, so a consumer site stays the
 three files above.
