@@ -18,6 +18,10 @@ migrates the `pm-docs-site` skill to it, the skill and this repository's
 Three files: `package.json`, a lockfile, and `astro.config.ts`. No `src/`
 folder: the integration points Astro's `srcDir` at the package.
 
+On Windows, keep the site and the installed package on the same drive: Astro
+cannot build a site whose root is on another drive than the package's `src/`,
+so a package linked from another drive fails the build.
+
 ```json
 {
   "name": "my-project-site",

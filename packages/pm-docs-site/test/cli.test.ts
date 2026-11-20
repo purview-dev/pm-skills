@@ -3,7 +3,7 @@ import { join } from 'node:path';
 
 import { afterAll, describe, expect, it } from 'bun:test';
 
-import { expectedPages, FIXTURES, htmlPages, runCli, SCRATCH, scratchFixture, siteConfig } from './helpers';
+import { expectedPages, FIXTURES, htmlPages, PACKAGE, runCli, SCRATCH, scratchFixture, siteConfig } from './helpers';
 
 const BUILD = 180_000;
 // A check runs the CLI in a Node subprocess and builds nothing, but the start-up
@@ -189,6 +189,13 @@ describe('pm-docs-site check', () => {
 		expect(output).toContain('astro.config.ts');
 		expect(output).toContain('explicit .ts extensions');
 	}, CHECK);
+
+	it('declares a Node floor that strips the TypeScript of astro.config.ts', () => {
+		const { engines } = JSON.parse(readFileSync(join(PACKAGE, 'package.json'), 'utf8'));
+
+		// Node 24 loads erasable TypeScript without a flag; the fixture check above loads its astro.config.ts under node.
+		expect(engines.node).toBe('>=24');
+	});
 
 	it('fails when a docs source folder is missing', () => {
 		const dir = scratchFixture('docs-');
