@@ -61,7 +61,7 @@
 
 **Interfaces:**
 
-- Produces: `node scripts/check-exports.ts [package-root]`. The root defaults to the package folder; exit 0 prints the existing success line, exit 1 prints `refusing to publish ...` with one `  - <target>` line per problem.
+- Produces: `node scripts/check-exports.ts [package-root]`. The root defaults to the package folder; exit 0 prints the existing success line, exit 1 prints `refusing to publish ...` with one indented `- <target>` line per problem.
 
 - [ ] **Step 1: Write the failing tests** in `test/check-exports.test.ts`. A helper `check(pkg: object, files: string[]): { code: number; output: string }` writes `package.json` and empty `files` into a `mkdtempSync` folder and spawns `node scripts/check-exports.ts <dir>` from `PACKAGE`. Cases:
   - `exports: { '.': { types: './dist/index.d.ts', import: './dist/index.mjs', require: './dist/index.cjs' } }` with those files: code 0.
