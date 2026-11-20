@@ -47,15 +47,15 @@ In `test/schema-version.test.ts`:
 
 ```ts
 describe('checkExport', () => {
-	it('rejects null and arrays with the pm-export hint', () => {
-		expect(() => checkExport(null, 'p.json')).toThrow('p.json does not hold a plan export (found null). Run the pm-export skill');
-		expect(() => checkExport([], 'p.json')).toThrow('(found an array)');
-	});
+  it('rejects null and arrays with the pm-export hint', () => {
+    expect(() => checkExport(null, 'p.json')).toThrow('p.json does not hold a plan export (found null). Run the pm-export skill');
+    expect(() => checkExport([], 'p.json')).toThrow('(found an array)');
+  });
 
-	it('checks the schemaVersion of an object', () => {
-		expect(() => checkExport({ schemaVersion: 4 }, 'p.json')).not.toThrow();
-		expect(() => checkExport({ schemaVersion: 5 }, 'p.json')).toThrow('has schemaVersion 5');
-	});
+  it('checks the schemaVersion of an object', () => {
+    expect(() => checkExport({ schemaVersion: 4 }, 'p.json')).not.toThrow();
+    expect(() => checkExport({ schemaVersion: 5 }, 'p.json')).toThrow('has schemaVersion 5');
+  });
 });
 ```
 
@@ -63,17 +63,17 @@ In `test/cli.test.ts`, `describe('pm-docs-site check')`:
 
 ```ts
 it('fails with the pm-export hint when planning.json holds null', () => {
-	const dir = scratchFixture('null-');
-	writeFileSync(join(dir, 'planning.json'), 'null');
-	writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'Null', planning: '../planning.json' }`));
+  const dir = scratchFixture('null-');
+  writeFileSync(join(dir, 'planning.json'), 'null');
+  writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'Null', planning: '../planning.json' }`));
 
-	const result = runCli(['check', join(dir, 'site')]);
-	const output = result.stdout + result.stderr;
+  const result = runCli(['check', join(dir, 'site')]);
+  const output = result.stdout + result.stderr;
 
-	expect(result.code).toBe(1);
-	expect(output).toContain('does not hold a plan export (found null)');
-	expect(output).toContain('pm-export');
-	expect(output).not.toContain('TypeError');
+  expect(result.code).toBe(1);
+  expect(output).toContain('does not hold a plan export (found null)');
+  expect(output).toContain('pm-export');
+  expect(output).not.toContain('TypeError');
 }, CHECK);
 ```
 
@@ -113,12 +113,12 @@ git commit -m "fix(pm-docs-site): a non-object export fails with the pm-export h
 
 ```ts
 it('warns that --title and --planning are ignored when the site has a config file', () => {
-	const result = runCli(['check', FIXTURE_SITE, '--title', 'X', '--planning', 'nope.json']);
+  const result = runCli(['check', FIXTURE_SITE, '--title', 'X', '--planning', 'nope.json']);
 
-	expect(result.code, result.stderr).toBe(0);
-	expect(result.stderr).toContain('pm-docs-site: --title is ignored:');
-	expect(result.stderr).toContain('pm-docs-site: --planning is ignored:');
-	expect(result.stderr).toContain('astro.config.ts sets the options.');
+  expect(result.code, result.stderr).toBe(0);
+  expect(result.stderr).toContain('pm-docs-site: --title is ignored:');
+  expect(result.stderr).toContain('pm-docs-site: --planning is ignored:');
+  expect(result.stderr).toContain('astro.config.ts sets the options.');
 }, CHECK);
 ```
 
@@ -204,10 +204,10 @@ git commit -m "fix(pm-docs-site): no repository text or docs warnings in a consu
 
 ```ts
 it('never links an ID inside a path or a longer token', () => {
-	const text = 'R-012 starts; see docs/plans/R-012-x.md and R-012-draft.';
-	const linked = linkify(text, known).filter((run) => run.target).map((run) => run.text);
+  const text = 'R-012 starts; see docs/plans/R-012-x.md and R-012-draft.';
+  const linked = linkify(text, known).filter((run) => run.target).map((run) => run.text);
 
-	expect(linked).toEqual(['R-012']);
+  expect(linked).toEqual(['R-012']);
 });
 ```
 
@@ -248,19 +248,19 @@ git commit -m "fix(pm-docs-site): linkify uses the link scanner's boundaries (R-
 
 ```ts
 describe('refText', () => {
-	const target = known.get('R-012');
+  const target = known.get('R-012');
 
-	it('names a known target, or its key for label id', () => {
-		expect(refText(target, 'R-012', 'full')).toBe(target!.label);
-		expect(refText(target, 'R-012', 'id', 'unused')).toBe('R-012');
-	});
+  it('names a known target, or its key for label id', () => {
+    expect(refText(target, 'R-012', 'full')).toBe(target!.label);
+    expect(refText(target, 'R-012', 'id', 'unused')).toBe('R-012');
+  });
 
-	it('prints the fallback for an unknown key, else the key', () => {
-		expect(refText(undefined, 'R-404', 'full', 'R-404 Lost item')).toBe('R-404 Lost item');
-		expect(refText(undefined, 'none', 'full', 'No milestone')).toBe('No milestone');
-		expect(refText(undefined, 'R-404', 'full')).toBe('R-404');
-		expect(refText(undefined, null, 'full')).toBe('');
-	});
+  it('prints the fallback for an unknown key, else the key', () => {
+    expect(refText(undefined, 'R-404', 'full', 'R-404 Lost item')).toBe('R-404 Lost item');
+    expect(refText(undefined, 'none', 'full', 'No milestone')).toBe('No milestone');
+    expect(refText(undefined, 'R-404', 'full')).toBe('R-404');
+    expect(refText(undefined, null, 'full')).toBe('');
+  });
 });
 ```
 
@@ -300,11 +300,11 @@ git commit -m "fix(pm-docs-site): RefLink prints fallback text for an unknown ke
 
 ```ts
 it('links through a source prefix and not a path no source maps', () => {
-	const root = fileURLToPath(new URL('./fixtures/docs/', import.meta.url));
-	const pages = docsPages({ root, sources: [{ label: 'Guide', base: '.', include: ['README.md', 'guide/*.md'], prefix: 'docs/' }] });
+  const root = fileURLToPath(new URL('./fixtures/docs/', import.meta.url));
+  const pages = docsPages({ root, sources: [{ label: 'Guide', base: '.', include: ['README.md', 'guide/*.md'], prefix: 'docs/' }] });
 
-	expect(docsHref('guide/intro.md', pages)).toBe('/docs/guide/intro/');
-	expect(docsHref('docs/superpowers/plans/2026-10-27-tenant-model.md', pages)).toBeNull();
+  expect(docsHref('guide/intro.md', pages)).toBe('/docs/guide/intro/');
+  expect(docsHref('docs/superpowers/plans/2026-10-27-tenant-model.md', pages)).toBeNull();
 });
 ```
 
@@ -312,10 +312,10 @@ it('links through a source prefix and not a path no source maps', () => {
 
 ```ts
 it('declares a Node floor that strips the TypeScript of astro.config.ts', () => {
-	const { engines } = JSON.parse(readFileSync(join(PACKAGE, 'package.json'), 'utf8'));
+  const { engines } = JSON.parse(readFileSync(join(PACKAGE, 'package.json'), 'utf8'));
 
-	// Node 24 loads erasable TypeScript without a flag; the check test above loads astro.config.ts under node.
-	expect(engines.node).toBe('>=24');
+  // Node 24 loads erasable TypeScript without a flag; the check test above loads astro.config.ts under node.
+  expect(engines.node).toBe('>=24');
 });
 ```
 
