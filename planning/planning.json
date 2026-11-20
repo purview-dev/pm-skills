@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T08:04:01+00:00",
+  "generatedAt": "2026-11-20T08:12:53+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 20,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-023-docs-site-package-stable-browser-tests",
-    "head": "529d0b30c886e9d1dd31e98b299dbc43d1499e75"
+    "head": "1bb3deab57057ddb7e44f790f0de5152ecba1492"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -189,15 +189,16 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-023-docs-site-package-stable-browser-tests",
     "brief": null,
     "milestone": "M1",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-20-docs-site-package-stable-browser-tests-design.md",
     "plan": null,
     "started": "2026-11-20",
     "doneWhen": [
-      "`npx playwright test test/browser/graph.browser.ts --project chromium --repeat-each=10` in `packages/pm-docs-site` passes 10 of 10 runs."
+      "`npx playwright test test/browser/graph.browser.ts --project chromium --repeat-each=10` in `packages/pm-docs-site` passes 10 of 10 runs.",
+      "`just package-test` passes twice in a row."
     ],
     "checkpoint": null
   },
@@ -494,7 +495,7 @@
           "title": "Docs-site package: stable browser tests",
           "owner": "agent",
           "size": "S",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
@@ -1071,6 +1072,6 @@
       "R-019",
       "R-026"
     ],
-    "drift": true
+    "drift": false
   }
 }

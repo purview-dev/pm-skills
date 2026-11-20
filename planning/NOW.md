@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-023 Docs-site package: stable browser tests
 - Session: feat/r-023-docs-site-package-stable-browser-tests
-- Stage: design
+- Stage: plan
 - Brief:
 - Milestone: M1
 - Serves: V4
@@ -22,13 +22,14 @@ Milestone: optional; the item's milestone while it is active
 - Size: S
 - Depends on: none
 - Revisits:
-- Spec:
+- Spec: docs/superpowers/specs/2026-11-20-docs-site-package-stable-browser-tests-design.md
 - Plan:
 - Started: 2026-11-20
 
 ## Done when
 
 - `npx playwright test test/browser/graph.browser.ts --project chromium --repeat-each=10` in `packages/pm-docs-site` passes 10 of 10 runs.
+- `just package-test` passes twice in a row.
 
 ## Checkpoint
 
