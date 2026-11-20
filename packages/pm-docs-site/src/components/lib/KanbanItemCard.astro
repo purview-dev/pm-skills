@@ -7,7 +7,9 @@
  * source; the only changes are that hard-coded dark-theme colours use Starlight theme variables,
  * so the card reads in light and dark themes, and that the title (and tag) can be a link, for the
  * site's item popup and backlinks (href, itemId, tagHref), and the due-date line (and a title that is not a link) links known IDs.
- * The title link carries `aria-haspopup="dialog"` when it is the popup trigger.
+ * The title link carries `aria-haspopup="dialog"` when it is the popup trigger. The card is not
+ * focusable and has no role (one tab stop per link), and the drag cursor is gone, matching the
+ * React port.
  *
  * @param {string} title - The description or summary of the task ticket.
  * @param {'low'|'medium'|'high'|'urgent'} priority - Priority level flag. Default is 'high'.
@@ -58,7 +60,7 @@ const priorityMap = {
 const currentPriority = priorityMap[priority] || priorityMap.high;
 ---
 
-<div class="k-item" tabindex="0" role="article" aria-label={`Task: ${title}`}>
+<div class="k-item">
 	<div class="k-item__head">
 		{tagHref ? <a class="k-item__tag" href={tagHref}>{tag}</a> : <span class="k-item__tag">{tag}</span>}
 		<span
@@ -154,25 +156,18 @@ const currentPriority = priorityMap[priority] || priorityMap.high;
 		display: flex;
 		flex-direction: column;
 		gap: 0.65rem;
-		cursor: grab;
 		transition:
 			transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
 			border-color 0.2s ease,
 			box-shadow 0.2s ease;
 		max-width: 300px;
 		box-sizing: border-box;
-		outline: none;
 	}
 
-	.k-item:hover,
-	.k-item:focus-visible {
+	.k-item:hover {
 		transform: translateY(-2px);
 		border-color: var(--sl-color-accent, rgba(99, 102, 241, 0.4));
 		box-shadow: 0 10px 24px -6px rgba(0, 0, 0, 0.25);
-	}
-
-	.k-item:focus-visible {
-		box-shadow: 0 0 0 2px var(--c-primary, #6366f1);
 	}
 
 	.k-item__head {
