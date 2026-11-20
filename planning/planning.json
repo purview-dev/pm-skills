@@ -1,11 +1,11 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T08:38:57+00:00",
+  "generatedAt": "2026-11-20T10:16:45+00:00",
   "generator": {
     "skill": "pm-export",
-    "skillsVersion": 20,
-    "rulesVersion": 20
+    "skillsVersion": 21,
+    "rulesVersion": 21
   },
   "project": {
     "pmRoot": "planning/",
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-023-docs-site-package-stable-browser-tests",
-    "head": "8135629f5b74d7860a85e7ad1be44d7baa8a3729"
+    "branch": "feat/r-020-docs-site-demo-fixture",
+    "head": "c8d4a4df74dae5d5c6b84876aef1da187fb80b29"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -193,34 +193,10 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-020",
-        "title": "Docs-site package: rich demo planning fixture",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "a synthetic, schema-valid `planning.json` in the package's fixture site fills every view (at least 3 milestones with targets, `Depends on` and `Revisits` edges, risks in all three RAG states, inbox files, briefs, Done and Dropped log lines, an active Now item), `bun skills/pm-export/scripts/export.ts validate` passes on it, and the fixture site's build and browser tests render every page with content.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "2026-11-19 review, from the user (2026-11-18): \"This needs a demo site in repo, that shows all of the various features off\". 2026-11-19 review, from the R-018 final re-review: `packages/pm-docs-site/src/routes/plan/now.astro` reads the active item's owner and size from `board.columns.now[0]` while `features()` reads `now.item` (equal by construction, two sources); `pm-board`'s Now card step does not say they come from `NOW.md`; the export schema's `$defs/itemRef` is unreferenced; `graph.test.ts` builds a partial `Planning` with `as unknown as Planning` instead of spreading the fixture; the shared package fixture draws no edge into the active node. Tidy these in one pass.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-019",
         "title": "Docs-site package: consumer-ready for 1.0.0",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4"
@@ -246,7 +222,7 @@
         "id": "R-026",
         "title": "pm-checkpoint keeps every item field through switch, push, and pop",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V2"
@@ -297,7 +273,7 @@
         "title": "Docs-site package: accessible board, popup, and timeline",
         "section": "later",
         "position": 2,
-        "label": "waiting",
+        "label": "later",
         "serves": [
           "V4"
         ],
@@ -479,13 +455,6 @@
       "now": [],
       "next": [
         {
-          "id": "R-020",
-          "title": "Docs-site package: rich demo planning fixture",
-          "owner": "agent",
-          "size": "M",
-          "detail": "ready"
-        },
-        {
           "id": "R-019",
           "title": "Docs-site package: consumer-ready for 1.0.0",
           "owner": "agent",
@@ -503,6 +472,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-20",
+          "id": "R-020",
+          "title": "Docs-site package: rich demo planning fixture",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-20-docs-site-demo.md",
+          "result": "branch feat/r-020-docs-site-demo-fixture"
+        },
         {
           "date": "2026-11-20",
           "id": "R-023",
@@ -623,6 +601,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-20",
+        "kind": "done",
+        "id": "R-020",
+        "title": "Docs-site package: rich demo planning fixture",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-020-docs-site-demo-fixture"
+      },
       {
         "date": "2026-11-20",
         "kind": "done",
@@ -798,6 +785,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-20",
+        "id": "R-020",
+        "title": "Docs-site package: rich demo planning fixture",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-20-docs-site-demo.md",
+        "result": "branch feat/r-020-docs-site-demo-fixture"
+      },
       {
         "date": "2026-11-20",
         "id": "R-023",
@@ -1039,6 +1035,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Four minor findings from the R-023 final review, deferred: (1) `sampleFrames` counts observer records toward the 5-frame post-hydration tail (`stopAtFrame = frames.length + 5`), so as few as 3 real animation frames are sampled after hydration; count rAF samples separately. (2) `record(true)` on a pending-mark removal reads `visible` and `layout` after the removal, recording an impossible `pending: true, visible: true` frame; push `visible: false` or comment it as a marker. (3) `arrowheadFill` reports `marker-end is not url(#id) (marker-end: null)` when the edge path itself is missing; add a `no edge path` reason. (4) `playwright.config.ts` could say `--project=dev` now runs only through `bun run test:browser:dev`."
+    },
+    {
+      "file": "planning/inbox/2026-11-20-1015-r-020-deferred-review-minors.md",
+      "title": "R-020 deferred demo check review minors",
+      "captured": "2026-11-20 10:15",
+      "source": "agent (R-020 execute)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "scripts/check-demo.ts, examples/demo/planning/planning.json",
+      "context": "R-020 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Four minor findings from the R-020 final review, deferred: (1) `scripts/check-demo.ts` scans only `plan/` pages, so the home page's empty states (\"Nothing in Next can be started.\", \"No open risk is red.\") are not checked; include `index.html`. (2) The `Nothing links here yet.` allowlist entry is unused in today's demo build; drop it until a feature page needs it. (3) The demo export records this repository's branch and head (`feat/r-020-docs-site-demo-fixture`, `c2220cd`) as its source, now frozen by `export.ts write --frozen`; pin a neutral source. (4) The opening-tag regex in `emptyStates` also matches `data-class=`, and an unclosed `plan-empty` element swallows the rest of the page (loud false positives only)."
     }
   ],
   "briefs": [
@@ -1065,6 +1076,23 @@
       "problem": "The user's rule (2026-11-18): TypeScript only (`.mts`/`.ts`/`.tsx`, run with Bun), never `.js` or `.mjs`. The `@purview-dev/pm-docs-site` package still has ten JavaScript files, and R-017 Docs-site package: in-repo dev hydrates cannot add its helper until the package can load TypeScript.",
       "doneWhen": "`git ls-files packages/pm-docs-site` lists no `.js`, `.mjs`, or `.cjs` file.",
       "revisions": []
+    },
+    {
+      "path": "planning/briefs/R-020-docs-site-demo-fixture.md",
+      "id": "R-020",
+      "title": "Docs-site package: rich demo planning fixture",
+      "status": "done",
+      "origin": "R-020",
+      "updated": "2026-11-20",
+      "decision": "2026-11-20 Build it now. R-020 keeps its ID and place at Next 1, with this brief and the Done when above. Why: it serves the M1 focus, and the user chose to build it now over adding it to Next or Later.",
+      "problem": "Nobody can see every docs-site feature in one place. The repository's own site shows only the states its plan is in, and the test fixture is reached only through the tests.",
+      "doneWhen": "`examples/demo/planning/planning.json` passes `bun skills/pm-export/scripts/export.ts validate examples/demo/planning/planning.json` and holds at least 3 milestones with targets, `Depends on` and `Revisits` edges including one into the active node, risks in red, amber, and green, inbox files, briefs, Done and Dropped log lines, and an active Now item.",
+      "revisions": [
+        {
+          "date": "2026-11-20",
+          "text": "The `Done when` named `examples/demo/planning.json`, but pm-export writes the export inside the demo's PM root. Must now: name `examples/demo/planning/planning.json`. Mode: fix-in-place. Supersedes: none."
+        }
+      ]
     }
   ],
   "risks": {
@@ -1073,13 +1101,13 @@
     "removed": []
   },
   "counts": {
-    "next": 3,
+    "next": 2,
     "later": 8,
     "nextMax": 5,
-    "openInbox": 4,
+    "openInbox": 5,
     "discuss": 2,
     "shapingBriefs": 0,
-    "done": 13,
+    "done": 14,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1091,7 +1119,6 @@
     "reviewDue": false,
     "lastReview": "2026-11-19",
     "claimable": [
-      "R-020",
       "R-019",
       "R-026"
     ],

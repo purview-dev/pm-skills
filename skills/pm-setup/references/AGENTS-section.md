@@ -1,4 +1,4 @@
-<!-- pm-skills:start version=20 -->
+<!-- pm-skills:start version=21 -->
 <!-- Managed by pm-setup. Edit outside these markers; content inside is replaced on upgrade.
      Installed copies keep this marker without a version. The version of record is
      `Rules version` in the PM root config.md, so editing or merging this file cannot lose it. -->
@@ -936,6 +936,12 @@ an item that was active before the upgrade. The export moves to
 installed site. `@purview-dev/pm-docs-site` reads `schemaVersion` 4 only
 from its next release; a site built on the published prerelease keeps
 reading a `schemaVersion` 3 export until it upgrades.
+
+Version 21 removes the unused `itemRef` definition from the export schema,
+so a consumer's `<PM root>/planning.schema.json` differs from `pm-export`'s
+until it re-exports: run `pm-export` once. The export stays at
+`schemaVersion` 4. `pm-board`'s Now card names `NOW.md`'s `Owner` and
+`Size` as the source of its owner and size. No setting is added.
 
 ## Asking the user (mandatory)
 

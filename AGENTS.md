@@ -137,6 +137,13 @@ same `bun` commands as the `just` recipes). Markdown is linted with
 - Serve the project site: `just docs` (<http://localhost:4321>). Search
   works only on a build: `just docs-preview`. Check it matches the
   templates, then test, type-check, and build it: `just docs-check`.
+- Open the demo site (`examples/demo/`, an invented plan that fills every
+  view, built on the local `packages/pm-docs-site`): `just demo`. Check it:
+  `just demo-check` (part of `just package-test`). Its
+  `planning/planning.json` is derived: `just bump` refreshes it on a
+  major, and
+  `bun skills/pm-export/scripts/export.ts write --frozen --root examples/demo --pm-root planning/`
+  after a demo PM edit.
 - Test the skills' scripts (`pm-export`'s exporter, `pm-lint`):
   `just test` (part of `just lint-check`).
 - Lint `planning/` against the PM file format: `just pm-lint` (fix the
@@ -1195,6 +1202,12 @@ an item that was active before the upgrade. The export moves to
 installed site. `@purview-dev/pm-docs-site` reads `schemaVersion` 4 only
 from its next release; a site built on the published prerelease keeps
 reading a `schemaVersion` 3 export until it upgrades.
+
+Version 21 removes the unused `itemRef` definition from the export schema,
+so a consumer's `<PM root>/planning.schema.json` differs from `pm-export`'s
+until it re-exports: run `pm-export` once. The export stays at
+`schemaVersion` 4. `pm-board`'s Now card names `NOW.md`'s `Owner` and
+`Size` as the source of its owner and size. No setting is added.
 
 ## Asking the user (mandatory)
 

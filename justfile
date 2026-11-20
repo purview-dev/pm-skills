@@ -70,10 +70,29 @@ docs-check:
 # Test and type-check the pm-docs-site package (published from publish-pm-docs-site.yml), then run its browser tests in Chromium. Its builds need Node 24 or later.
 [group('Docs')]
 [working-directory('packages/pm-docs-site')]
-package-test:
+package-test: && demo-check
     bun install --frozen-lockfile
     bun test
     bun run check
     bunx playwright install chromium
     bun run test:browser
     bun run test:browser:dev
+
+# Build the package and the demo site (examples/demo, an invented plan that fills every view), then serve the build at http://localhost:4321. Needs Node 24 or later.
+[group('Docs')]
+demo:
+    cd packages/pm-docs-site && node scripts/build.ts
+    cd examples/demo && bun install --frozen-lockfile
+    cd examples/demo && bun run build
+    cd examples/demo && bun run preview
+
+# Check the demo site: its export is current and valid, its PM files lint clean, and every page builds with content (part of package-test).
+[group('Docs')]
+demo-check:
+    bun skills/pm-export/scripts/export.ts check --root examples/demo --pm-root planning/
+    bun skills/pm-export/scripts/export.ts validate examples/demo/planning/planning.json
+    bun skills/pm-lint/scripts/lint.ts check --root examples/demo --pm-root planning/
+    cd packages/pm-docs-site && node scripts/build.ts
+    cd examples/demo && bun install --frozen-lockfile
+    cd examples/demo && bun run build
+    bun scripts/check-demo.ts

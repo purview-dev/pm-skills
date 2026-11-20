@@ -14,17 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-020 Docs-site package: rich demo planning fixture
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: a synthetic, schema-valid `planning.json` in the package's fixture site fills every view (at least 3 milestones with targets, `Depends on` and `Revisits` edges, risks in all three RAG states, inbox files, briefs, Done and Dropped log lines, an active Now item), `bun skills/pm-export/scripts/export.ts validate` passes on it, and the fixture site's build and browser tests render every page with content.
-- Size: M
-- Depends on: none
-- Status: ready
-- Note: 2026-11-19 review, from the user (2026-11-18): "This needs a demo site in repo, that shows all of the various features off". 2026-11-19 review, from the R-018 final re-review: `packages/pm-docs-site/src/routes/plan/now.astro` reads the active item's owner and size from `board.columns.now[0]` while `features()` reads `now.item` (equal by construction, two sources); `pm-board`'s Now card step does not say they come from `NOW.md`; the export schema's `$defs/itemRef` is unreferenced; `graph.test.ts` builds a partial `Planning` with `as unknown as Planning` instead of spreading the fixture; the shared package fixture draws no edge into the active node. Tidy these in one pass.
-
 ### R-019 Docs-site package: consumer-ready for 1.0.0
 
 - Serves: V4

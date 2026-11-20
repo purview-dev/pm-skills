@@ -1,6 +1,6 @@
 // pm-export's script: write, check, validate, and query <PM root>/planning.json.
 //
-//   bun <skill>/scripts/export.ts write    [--root <dir>] [--pm-root <dir>] [--dry-run]
+//   bun <skill>/scripts/export.ts write    [--root <dir>] [--pm-root <dir>] [--dry-run] [--frozen]
 //   bun <skill>/scripts/export.ts check    [--root <dir>] [--pm-root <dir>]
 //   bun <skill>/scripts/export.ts validate [<file>] [--schema <file>]
 //   bun <skill>/scripts/export.ts get      [<path>] [--fresh] [--root <dir>] [--pm-root <dir>]
@@ -20,7 +20,8 @@ import { formatErrors, validate } from "./schema.ts";
 const USAGE = `usage: bun export.ts <write | check | validate | get | find | summary> [options]
 
   write     Build planning.json from the Markdown PM state, validate it, and write it with its schema.
-            --dry-run prints the document instead of writing it.
+            --dry-run prints the document instead of writing it. --frozen keeps the existing
+            export's generatedAt and source (for a synthetic plan such as the demo).
   check     Read-only. Validate the export against the schema, then compare it with the Markdown.
   validate  Read-only. Validate one file (default: the export) against the schema.
   get       Print the value at a path (\`counts\`, \`roadmap.next[0].title\`); no path prints the document.
@@ -133,7 +134,29 @@ const print = (value: unknown) => console.log(typeof value === "string" ? value 
 
 function write(args: Args): number {
   const { root, pmRoot, exportPath, schemaPath } = options(args);
-  const { document, assumptions } = build({ root, pmRoot });
+  // --frozen rebuilds as of the existing export's own time and source, as check
+  // does, so a synthetic plan (the demo) keeps its board window and Review due.
+  let frozen: { generatedAt?: string; branch: string | null; head: string | null } | null = null;
+  if (args.flags.has("--frozen")) {
+    if (!existsSync(exportPath)) throw new Failure(`No export at ${pmRoot}planning.json to freeze. Run write without --frozen first.`);
+    const existing = readJson(exportPath, `${pmRoot}planning.json`);
+    frozen = {
+      generatedAt: typeof existing.generatedAt === "string" ? existing.generatedAt : undefined,
+      branch: existing.source?.branch ?? null,
+      head: existing.source?.head ?? null,
+    };
+  }
+  const { document, assumptions } = frozen
+    ? build({
+        root,
+        pmRoot,
+        now: frozen.generatedAt ? new Date(frozen.generatedAt) : undefined,
+        today: frozen.generatedAt?.slice(0, 10),
+        branch: frozen.branch,
+        head: frozen.head,
+      })
+    : build({ root, pmRoot });
+  if (frozen?.generatedAt) document.generatedAt = frozen.generatedAt;
   const errors = formatErrors(validate(document, schema()));
   if (errors.length) {
     console.error(`Not written: the export would not match the schema.\n${errors.map((line) => `invalid: ${line}`).join("\n")}`);

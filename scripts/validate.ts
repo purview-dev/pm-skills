@@ -146,6 +146,26 @@ else {
     }
     const schemaVersion = schema.properties?.schemaVersion?.const;
     if (schemaVersion !== 4) fail(`planning.schema.json: schemaVersion const must be 4 (got ${schemaVersion})`);
+    // Every definition is used, and every reference resolves.
+    const refs = new Set<string>();
+    const collectRefs = (node: unknown): void => {
+      if (Array.isArray(node)) node.forEach(collectRefs);
+      else if (node && typeof node === "object") {
+        for (const [key, value] of Object.entries(node)) {
+          if (key === "$ref" && typeof value === "string") refs.add(value);
+          else collectRefs(value);
+        }
+      }
+    };
+    collectRefs(schema);
+    const defs = Object.keys(schema.$defs ?? {});
+    for (const name of defs) {
+      if (!refs.has(`#/$defs/${name}`)) fail(`planning.schema.json: $defs/${name} is never referenced`);
+    }
+    for (const ref of refs) {
+      const name = ref.startsWith("#/$defs/") ? ref.slice("#/$defs/".length) : null;
+      if (name !== null && !defs.includes(name)) fail(`planning.schema.json: $ref ${ref} has no definition`);
+    }
     if (example.schemaVersion !== schemaVersion) {
       fail("planning.example.json: schemaVersion differs from the schema");
     }
