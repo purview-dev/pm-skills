@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T10:54:57+00:00",
+  "generatedAt": "2026-11-20T11:41:18+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-019-docs-site-package-consumer-ready-for-1-0-0",
-    "head": "aa8155f67d15e36979990664e4baa6295fcd368e"
+    "head": "04b7592a9042cd7a9af4e4299ba1c373f743eb4f"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -221,194 +221,194 @@
   },
   "plan": {
     "path": "docs/superpowers/plans/2026-11-20-docs-site-consumer-ready.md",
-    "checked": 0,
+    "checked": 33,
     "total": 33,
     "tasks": [
       {
         "number": 1,
         "title": "A non-object export fails with the pm-export hint",
-        "checked": 0,
+        "checked": 5,
         "total": 5,
         "steps": [
           {
             "text": "**Step 1: Write the failing tests**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Run to verify they fail**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Implement `checkExport` and use it**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Run to verify they pass**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Commit**",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 2,
         "title": "The CLI warns when a flag is ignored",
-        "checked": 0,
+        "checked": 5,
         "total": 5,
         "steps": [
           {
             "text": "**Step 1: Write the failing test**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Run to verify it fails**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Implement the warning in `loadSiteOptions`; add one README line under `## CLI` saying the flags apply only to a site without an `astro.config.*` and are otherwise ignored with a warning.**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Run to verify it passes**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Commit**",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 3,
         "title": "A consumer build shows no repository text and no docs warnings",
-        "checked": 0,
+        "checked": 5,
         "total": 5,
         "steps": [
           {
             "text": "**Step 1: Extend the failing test**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Run to verify it fails**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Implement**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Run to verify it passes**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Commit**",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 4,
         "title": "linkify uses the link scanner's boundaries",
-        "checked": 0,
+        "checked": 5,
         "total": 5,
         "steps": [
           {
             "text": "**Step 1: Write the failing test**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Run to verify it fails**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Implement**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Run to verify it passes**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Commit**",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 5,
         "title": "RefLink prints fallback text for an unknown key",
-        "checked": 0,
+        "checked": 5,
         "total": 5,
         "steps": [
           {
             "text": "**Step 1: Write the failing test**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Run to verify it fails**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Implement `refText`, use it in RefLink, and pass fallbacks**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Run to verify it passes**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Commit**",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 6,
         "title": "Pin docsHref prefixes and the Node floor; Windows drive note",
-        "checked": 0,
+        "checked": 5,
         "total": 5,
         "steps": [
           {
             "text": "**Step 1: Write the tests**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Run them**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Add the README line**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Lint**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Commit**",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 7,
         "title": "Verify the branch",
-        "checked": 0,
+        "checked": 3,
         "total": 3,
         "steps": [
           {
             "text": "**Step 1:** Run `bun test` and `bun run check` in `packages/pm-docs-site/`. Expected: all pass, 0 errors.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2:** Run `just package-test` and `just lint-check` from the repo root. Expected: both exit 0.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3:** Walk R-019's nine `Done when` checks in `planning/NOW.md` and name the test that proves each.",
-            "checked": false
+            "checked": true
           }
         ]
       }
@@ -656,7 +656,7 @@
           "title": "Docs-site package: consumer-ready for 1.0.0",
           "owner": "agent",
           "size": "M",
-          "detail": "execute, 0/33 plan steps"
+          "detail": "execute, 33/33 plan steps"
         }
       ],
       "next": [
@@ -1249,6 +1249,36 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Four minor findings from the R-020 final review, deferred: (1) `scripts/check-demo.ts` scans only `plan/` pages, so the home page's empty states (\"Nothing in Next can be started.\", \"No open risk is red.\") are not checked; include `index.html`. (2) The `Nothing links here yet.` allowlist entry is unused in today's demo build; drop it until a feature page needs it. (3) The demo export records this repository's branch and head (`feat/r-020-docs-site-demo-fixture`, `c2220cd`) as its source, now frozen by `export.ts write --frozen`; pin a neutral source. (4) The opening-tag regex in `emptyStates` also matches `data-class=`, and an unclosed `plan-empty` element swallows the rest of the page (loud false positives only)."
+    },
+    {
+      "file": "planning/inbox/2026-11-20-1116-docs-site-404-entry-warning.md",
+      "title": "Docs-site build warns docs 404 entry missing",
+      "captured": "2026-11-20 11:16",
+      "source": "agent (R-019 execute)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "packages/pm-docs-site/src/content.config.ts",
+      "context": "R-019 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Every pm-docs-site build, with or without the `docs` option, logs `[WARN] [content] Entry docs → 404 was not found.` while rendering /404.html: Starlight's 404 route calls `getEntry('docs', '404')` and falls back to its built-in page when the entry is missing. R-019 removed the missing-folder and empty-collection warnings but not this one. A `404` entry in the docs collection, or Starlight's `disable404Route` with the package's own 404 page, would remove it; check that a `404` entry is not also routed as /404/."
+    },
+    {
+      "file": "planning/inbox/2026-11-20-1140-r-019-deferred-review-minors.md",
+      "title": "R-019 deferred reference review minors",
+      "captured": "2026-11-20 11:40",
+      "source": "agent (R-019 execute, final review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site/src/lib/ref-boundary.ts, packages/pm-docs-site/src/pages/plan/log.astro",
+      "context": "R-019 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Two minor findings from the R-019 final review, deferred: (1) the shared reference boundary `(?<![\\w/-])` in `src/lib/ref-boundary.ts` means an ID after `/` is never linked, so the second ID in `M1/M2` or `R-011/R-012`, and a brief path written `./planning/briefs/x.md`, stay plain text; the link test shares the boundary, so it cannot flag it. Either give IDs a boundary that allows a leading `/` outside a path, or pin `M1/M2` as intended in `test/references.test.ts`. (2) `src/pages/plan/log.astro:41` prints `<id> <title>` as plain text when the entry's ID has no target, so known IDs inside that title are not linked; render `{entry.id} <LinkedText text={entry.title} />` in that case."
     }
   ],
   "briefs": [
@@ -1303,7 +1333,7 @@
     "next": 1,
     "later": 8,
     "nextMax": 5,
-    "openInbox": 5,
+    "openInbox": 7,
     "discuss": 2,
     "shapingBriefs": 0,
     "done": 14,
