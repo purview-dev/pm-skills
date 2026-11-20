@@ -144,7 +144,10 @@ export default function pmDocsSite(options: PmDocsSiteOptions): AstroIntegration
 								// Serve the package's own files in dev. The in-repo fixture and a linked
 								// consumer resolve the package outside the site's workspace root, so Vite
 								// refuses its node_modules (the React island client) and nothing hydrates.
-								// Append only: Vite's defaults and the consumer's entries stay.
+								// Append only: Vite's defaults and the consumer's entries stay. The entry
+								// serves the whole package folder in in-repo and linked dev; Vite's
+								// `server.fs.deny` still guards it. On a case-insensitive file system a
+								// path that differs only in case appends a second, harmless entry.
 								name: 'pm-docs-site:fs-allow',
 								configResolved: (resolvedConfig: { server: { fs: { allow: string[] } } }) => {
 									const { allow } = resolvedConfig.server.fs;

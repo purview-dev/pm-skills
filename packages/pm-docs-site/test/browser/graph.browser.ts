@@ -40,28 +40,56 @@ interface GraphFrame {
  * almost always lands while the page is still pending, so it cannot catch a
  * transient frame where the wrong layout is visible between the pending mark
  * being removed and the right layout being applied; sampling every frame can.
+ * It also samples once at document start and on every change of the pending
+ * mark, so a mark set and cleared between two frames is still seen.
  */
 async function sampleFrames(page: Page, path: string): Promise<GraphFrame[]> {
 	await page.addInitScript(() => {
 		const frames: { pending: boolean; visible: boolean; layout: string | null }[] = [];
 		let stopAtFrame: number | null = null;
 
-		const sample = () => {
+		const record = (pending = document.documentElement?.hasAttribute('data-graph-pending') ?? false) => {
 			const graph = document.querySelector('.plan-graph');
-			const toolbar = document.querySelector('.plan-graph__toolbar');
 			const style = graph ? getComputedStyle(graph) : null;
 
 			frames.push({
-				pending: document.documentElement.hasAttribute('data-graph-pending'),
+				pending,
 				visible: style !== null && style.visibility !== 'hidden' && style.display !== 'none',
 				layout: graph?.getAttribute('data-layout') ?? null,
 			});
+		};
 
+		// The inline script in graph.astro sets the pending mark while the page
+		// parses, and hydration can clear it before the first animation frame,
+		// so every change of the mark is recorded as it happens: a removal first
+		// records the state it ends (still pending), then the state after it.
+		// The observer watches `document`, not `<html>`: an init script can run
+		// before `<html>` exists.
+		const observer = new MutationObserver((mutations) => {
+			for (const mutation of mutations) {
+				if (mutation.target !== document.documentElement) continue;
+				if (mutation.oldValue !== null) record(true);
+				record();
+			}
+		});
+
+		observer.observe(document, {
+			subtree: true,
+			attributes: true,
+			attributeFilter: ['data-graph-pending'],
+			attributeOldValue: true,
+		});
+
+		const sample = () => {
+			record();
+
+			const toolbar = document.querySelector('.plan-graph__toolbar');
 			const toolbarShown = toolbar !== null && !toolbar.hasAttribute('hidden');
 
 			if (toolbarShown && stopAtFrame === null) stopAtFrame = frames.length + 5;
 
 			if (stopAtFrame !== null && frames.length >= stopAtFrame) {
+				observer.disconnect();
 				(window as unknown as { graphFrames: typeof frames }).graphFrames = frames;
 				return;
 			}
@@ -69,6 +97,7 @@ async function sampleFrames(page: Page, path: string): Promise<GraphFrame[]> {
 			requestAnimationFrame(sample);
 		};
 
+		record();
 		requestAnimationFrame(sample);
 	});
 
@@ -343,23 +372,35 @@ test('every fixture edge carries data-graph-edge on its react-flow__edge element
  * itself can embed a `color: var(--sl-color-gray-5)` and so its own closing
  * parenthesis: strip the fixed `url(` prefix and the outer quotes and `)`
  * instead of matching up to the first `)`, which would cut the id short.
+ * This reads React Flow's marker format, so it fails loudly, naming the
+ * `marker-end` value, when that format changes.
  */
-function arrowheadFill(page: Page, edgeId: string): Promise<string | null> {
-	return page.evaluate((id) => {
+async function arrowheadFill(page: Page, edgeId: string): Promise<string> {
+	const { fill, markerEnd, reason } = await page.evaluate((id) => {
 		const path = document.querySelector(`g.react-flow__edge[data-graph-edge="${id}"] path.react-flow__edge-path`);
-		const markerEnd = path?.getAttribute('marker-end');
+		const markerEnd = path?.getAttribute('marker-end') ?? null;
 
-		if (!markerEnd?.startsWith('url(') || !markerEnd.endsWith(')')) return null;
+		if (!markerEnd?.startsWith('url(') || !markerEnd.endsWith(')')) return { fill: null, markerEnd, reason: 'marker-end is not url(#id)' };
 
 		let inner = markerEnd.slice(4, -1);
 
 		if ((inner.startsWith('"') && inner.endsWith('"')) || (inner.startsWith("'") && inner.endsWith("'"))) inner = inner.slice(1, -1);
 
 		const markerId = inner.startsWith('#') ? inner.slice(1) : inner;
-		const polyline = document.getElementById(markerId)?.querySelector('polyline');
+		const marker = document.getElementById(markerId);
 
-		return polyline ? getComputedStyle(polyline).fill : null;
+		if (!marker) return { fill: null, markerEnd, reason: 'no marker element' };
+
+		const polyline = marker.querySelector('polyline');
+
+		if (!polyline) return { fill: null, markerEnd, reason: 'no polyline' };
+
+		return { fill: getComputedStyle(polyline).fill, markerEnd, reason: null };
 	}, edgeId);
+
+	if (reason !== null || fill === null) throw new Error(`arrowheadFill(${edgeId}): ${reason} (marker-end: ${markerEnd})`);
+
+	return fill;
 }
 
 test("a muted edge's arrowhead takes the muted colour, not the full-contrast one", async ({ page }) => {
@@ -369,8 +410,6 @@ test("a muted edge's arrowhead takes the muted colour, not the full-contrast one
 	const mutedFill = await arrowheadFill(page, 'R-010>R-013:depends:0');
 	const fullFill = await arrowheadFill(page, 'R-013>R-014:depends:0');
 
-	expect(mutedFill).not.toBeNull();
-	expect(fullFill).not.toBeNull();
 	expect(mutedFill).not.toBe(fullFill);
 });
 

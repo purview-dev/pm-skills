@@ -1,36 +1,25 @@
-// Browser tests: the built fixture site in Chromium (project `chromium`), and
-// the fixture under `pm-docs-site dev` in a packed-install consumer (project
-// `dev`, test/browser/dev.browser.ts). Specs are *.browser.ts so `bun test`
-// (which runs *.test.* and *.spec.*) never picks them up.
+// Browser tests: the built fixture site in Chromium (project `chromium`). The
+// fixture under `pm-docs-site dev` in a packed-install consumer is a separate
+// run (playwright.dev.config.ts, `bun run test:browser:dev`), so each run
+// starts only its own web server. Specs are *.browser.ts so `bun test` (which
+// runs *.test.* and *.spec.*) never picks them up. Pass `--project=chromium`
+// with `=`: `--project` takes several names, so `--project chromium <file>`
+// reads the file as a second project.
 import { defineConfig, devices } from '@playwright/test';
 
 const PORT = 4399;
-const DEV_PORT = 4398;
 
 export default defineConfig({
 	testDir: './test/browser',
 	testMatch: '**/*.browser.ts',
 	fullyParallel: true,
 	reporter: 'list',
-	projects: [
-		{ name: 'chromium', testIgnore: '**/dev.browser.ts', use: { ...devices['Desktop Chrome'], baseURL: `http://localhost:${PORT}` } },
-		{ name: 'dev', testMatch: '**/dev.browser.ts', use: { ...devices['Desktop Chrome'], baseURL: `http://localhost:${DEV_PORT}` } },
-	],
-	webServer: [
-		{
-			command: 'node test/browser/serve.ts',
-			url: `http://localhost:${PORT}/`,
-			timeout: 180_000,
-			reuseExistingServer: false,
-			env: { PORT: String(PORT) },
-		},
-		{
-			// Packs, installs into a consumer outside the repository, and runs the dev server.
-			command: 'bun test/browser/dev-server.ts',
-			url: `http://localhost:${DEV_PORT}/`,
-			timeout: 300_000,
-			reuseExistingServer: false,
-			env: { PORT: String(DEV_PORT) },
-		},
-	],
+	projects: [{ name: 'chromium', testIgnore: '**/dev.browser.ts', use: { ...devices['Desktop Chrome'], baseURL: `http://localhost:${PORT}` } }],
+	webServer: {
+		command: 'node test/browser/serve.ts',
+		url: `http://localhost:${PORT}/`,
+		timeout: 180_000,
+		reuseExistingServer: false,
+		env: { PORT: String(PORT) },
+	},
 });

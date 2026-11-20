@@ -114,6 +114,9 @@ jobs:
       - name: Browser tests
         run: bun run test:browser
 
+      - name: Dev browser tests
+        run: bun run test:browser:dev
+
   # Mirrors `just version-check` (the lefthook pre-push hook): a skills change
   # ships in a release, so it must raise the rules version and package.json
   # past the version on main; anything else (docs, CI, scripts, package

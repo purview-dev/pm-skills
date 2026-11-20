@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T07:25:55+00:00",
+  "generatedAt": "2026-11-20T08:38:57+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 20,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "main",
-    "head": "5c2e0d1aad0de2eb6933e1fa56648154f0123ba1"
+    "branch": "feat/r-023-docs-site-package-stable-browser-tests",
+    "head": "8135629f5b74d7860a85e7ad1be44d7baa8a3729"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -193,34 +193,10 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-023",
-        "title": "Docs-site package: stable browser tests",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "`npx playwright test test/browser/graph.browser.ts --project chromium --repeat-each=10` in `packages/pm-docs-site` passes 10 of 10 runs.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "Bug (minor) from R-012 execute (2026-11-19): the both-switches-off no-flash test fails about 1 run in 10 on \"at least one pending frame\", because `sampleFrames` records its first frame after a fast hydration can set and clear `data-graph-pending`. Fix: push one frame synchronously when the init script runs, and record every `data-graph-pending` change with a MutationObserver on `document.documentElement`. Same re-review: the chip dedup assertion at `test/graph-layout.test.ts:498-500` cannot fail; `arrowheadFill` in `graph.browser.ts:392-407` depends on React Flow's `url('#<id>')` marker format. 2026-11-19 review, from R-011 verification (2026-11-18): `just lint-check` failed twice at `package-test` when both Playwright web servers started together; the `dev` server (`test/browser/dev-server.ts`) logged `Listen method has been called more than once without closing` and `transport invoke timed out after 60000ms`, then Playwright timed out after 300000ms. Playwright starts both servers even with `--project=chromium`. Separately, `bun run test:browser -- --project chromium <file>` fails under Bun (the path is read as a project name), while `--project=chromium` works. Affects `packages/pm-docs-site/playwright.config.ts`. 2026-11-19 review, from the R-017 final review: the `pm-docs-site:fs-allow` tests in `test/integration.test.ts` find the plugin by position (`.at(-1)`) instead of by name, so a later plugin breaks them; the appended entry in `lib/index.ts` serves the whole package folder in in-repo and linked dev, which `fs.deny` still guards, and the comment could say so; on case-insensitive macOS a case-only difference appends a harmless duplicate entry.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-020",
         "title": "Docs-site package: rich demo planning fixture",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4"
@@ -244,7 +220,7 @@
         "id": "R-019",
         "title": "Docs-site package: consumer-ready for 1.0.0",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -270,7 +246,7 @@
         "id": "R-026",
         "title": "pm-checkpoint keeps every item field through switch, push, and pop",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V2"
@@ -503,13 +479,6 @@
       "now": [],
       "next": [
         {
-          "id": "R-023",
-          "title": "Docs-site package: stable browser tests",
-          "owner": "agent",
-          "size": "S",
-          "detail": "ready"
-        },
-        {
           "id": "R-020",
           "title": "Docs-site package: rich demo planning fixture",
           "owner": "agent",
@@ -534,6 +503,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-20",
+          "id": "R-023",
+          "title": "Docs-site package: stable browser tests",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-20-docs-site-package-stable-browser-tests.md",
+          "result": "branch feat/r-023-docs-site-package-stable-browser-tests"
+        },
         {
           "date": "2026-11-20",
           "id": "R-022",
@@ -645,6 +623,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-20",
+        "kind": "done",
+        "id": "R-023",
+        "title": "Docs-site package: stable browser tests",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-023-docs-site-package-stable-browser-tests"
+      },
       {
         "date": "2026-11-20",
         "kind": "done",
@@ -811,6 +798,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-20",
+        "id": "R-023",
+        "title": "Docs-site package: stable browser tests",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-20-docs-site-package-stable-browser-tests.md",
+        "result": "branch feat/r-023-docs-site-package-stable-browser-tests"
+      },
       {
         "date": "2026-11-20",
         "id": "R-022",
@@ -1026,6 +1022,23 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Deferred minor from the R-022 final review: `Graph.tsx:5-7` states in the island itself that it may import only types from `lib/graph`, but `Timeline.tsx` has no matching note that it may import only types from `lib/timeline` (values come from `lib/timeline-state.ts`). Add a one-line header note so the next edit keeps the rule. The reviewer also suggested a `bun test` guard that walks `src/components/**` and fails on a value import of `lib/planning`, `lib/timeline`, `lib/graph`, or `lib/graph-layout` (option 2 in the R-022 design, not chosen then)."
+    },
+    {
+      "file": "planning/inbox/2026-11-20-0838-r-023-deferred-review-minors.md",
+      "title": "R-023 deferred browser test review minors",
+      "captured": "2026-11-20 08:38",
+      "source": "agent (R-023 execute)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site/test/browser/graph.browser.ts, packages/pm-docs-site/playwright.config.ts",
+      "context": "R-023 execute",
+      "discuss": "no",
+      "related": [
+        "R-023"
+      ],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Four minor findings from the R-023 final review, deferred: (1) `sampleFrames` counts observer records toward the 5-frame post-hydration tail (`stopAtFrame = frames.length + 5`), so as few as 3 real animation frames are sampled after hydration; count rAF samples separately. (2) `record(true)` on a pending-mark removal reads `visible` and `layout` after the removal, recording an impossible `pending: true, visible: true` frame; push `visible: false` or comment it as a marker. (3) `arrowheadFill` reports `marker-end is not url(#id) (marker-end: null)` when the edge path itself is missing; add a `no edge path` reason. (4) `playwright.config.ts` could say `--project=dev` now runs only through `bun run test:browser:dev`."
     }
   ],
   "briefs": [
@@ -1060,13 +1073,13 @@
     "removed": []
   },
   "counts": {
-    "next": 4,
+    "next": 3,
     "later": 8,
     "nextMax": 5,
-    "openInbox": 3,
+    "openInbox": 4,
     "discuss": 2,
     "shapingBriefs": 0,
-    "done": 12,
+    "done": 13,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1078,11 +1091,10 @@
     "reviewDue": false,
     "lastReview": "2026-11-19",
     "claimable": [
-      "R-023",
       "R-020",
       "R-019",
       "R-026"
     ],
-    "drift": false
+    "drift": true
   }
 }

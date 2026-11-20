@@ -180,11 +180,12 @@ describe('pmDocsSite', () => {
 describe('pm-docs-site:fs-allow', () => {
 	// The package folder, as the integration computes it from lib/ (one level below it).
 	const packageDir = realpathSync(fileURLToPath(new URL('../', import.meta.url))).replaceAll('\\', '/');
-	const plugin = () => setup({ title: 'T' })[0]!.vite.plugins.at(-1)!;
+	const plugins = () => setup({ title: 'T' })[0]!.vite.plugins;
+	const plugin = () => plugins().find((candidate) => candidate.name === 'pm-docs-site:fs-allow')!;
 	const resolvedWith = (allow: string[]) => ({ server: { fs: { allow: [...allow] } } });
 
 	it('is the last plugin', () => {
-		expect(plugin().name).toBe('pm-docs-site:fs-allow');
+		expect(plugins().at(-1)!.name).toBe('pm-docs-site:fs-allow');
 	});
 
 	it('appends the package folder after the existing entries', () => {

@@ -1,4 +1,4 @@
-// The dev browser tests' web server (playwright.config.ts, project `dev`): the
+// The dev browser tests' web server (playwright.dev.config.ts, project `dev`): the
 // packed package installed from its tarball into a consumer outside the
 // repository, as install.test.ts does, then `pm-docs-site dev` on PORT. In the
 // repository the package's dependencies resolve from its own node_modules, so
