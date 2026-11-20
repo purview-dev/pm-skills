@@ -7,6 +7,7 @@
  * source; the only changes are that hard-coded dark-theme colours use Starlight theme variables,
  * so the card reads in light and dark themes, and that the title (and tag) can be a link, for the
  * site's item popup and backlinks (href, itemId, tagHref), and the due-date line (and a title that is not a link) links known IDs.
+ * The title link carries `aria-haspopup="dialog"` when it is the popup trigger.
  *
  * @param {string} title - The description or summary of the task ticket.
  * @param {'low'|'medium'|'high'|'urgent'} priority - Priority level flag. Default is 'high'.
@@ -69,7 +70,7 @@ const currentPriority = priorityMap[priority] || priorityMap.high;
 		</span>
 	</div>
 
-	<h4 class="k-item__title">{href ? <a class="plan-item-link" href={href} data-item={itemId}>{title}</a> : <LinkedText text={title} />}</h4>
+	<h4 class="k-item__title">{href ? <a class="plan-item-link" href={href} data-item={itemId} aria-haspopup={itemId ? 'dialog' : undefined}>{title}</a> : <LinkedText text={title} />}</h4>
 
 	<div class="k-item__footer">
 		<div class="k-item__meta">

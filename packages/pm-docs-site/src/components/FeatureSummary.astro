@@ -9,11 +9,16 @@ import StateBadge from './StateBadge.astro';
 
 interface Props {
 	id: string;
+	/** h2 on the feature page (default); h3 in the item popup, below its h2 title. */
+	headingLevel?: 2 | 3;
 }
+
+const { id, headingLevel } = Astro.props;
+const Heading = headingLevel === 3 ? 'h3' : 'h2';
 
 const planning = loadPlanning();
 const all = features(planning);
-const feature = all.find((candidate) => candidate.id === Astro.props.id)!;
+const feature = all.find((candidate) => candidate.id === id)!;
 const byId = new Map(all.map((candidate) => [candidate.id, candidate]));
 const brief = briefOf(planning, feature);
 const blocks = dependents(all, feature.id);
@@ -65,7 +70,7 @@ const facts: { label: string; value: string }[] = [
 {
 	feature.doneWhen.length > 0 && (
 		<section>
-			<h2>Done when</h2>
+			<Heading>Done when</Heading>
 			<ul>
 				{feature.doneWhen.map((check) => (
 					<li>
@@ -80,7 +85,7 @@ const facts: { label: string; value: string }[] = [
 {
 	(feature.dependsOn.length > 0 || blocks.length > 0 || feature.revisits || revisedBy.length > 0) && (
 		<section>
-			<h2>Related items</h2>
+			<Heading>Related items</Heading>
 			<ul>
 				{feature.dependsOn.map((dep) => (
 					<li>
@@ -110,7 +115,7 @@ const facts: { label: string; value: string }[] = [
 {
 	(brief || feature.brief) && (
 		<section>
-			<h2>Brief</h2>
+			<Heading>Brief</Heading>
 			{brief ? (
 				<>
 					<p>
@@ -143,7 +148,7 @@ const facts: { label: string; value: string }[] = [
 {
 	risks.length > 0 && (
 		<section>
-			<h2>Risks</h2>
+			<Heading>Risks</Heading>
 			<ul>
 				{risks.map((risk) => (
 					<li>

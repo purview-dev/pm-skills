@@ -1,6 +1,8 @@
 // The Board and Roadmap in the browser: a plain click on a card opens its item
 // popup (any other click is the browser's). Without this script every card is
-// a link. The Board's column collapse lives in its island
+// a link. A click on the dialog element itself (the backdrop; its content
+// sits in `.plan-dialog__frame`, never directly in the dialog) closes the
+// popup. The Board's column collapse lives in its island
 // (src/components/board/Board.tsx).
 
 function openItem(link: HTMLAnchorElement): void {
@@ -28,6 +30,11 @@ function start(): void {
 			if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
 			event.preventDefault();
 			openItem(link);
+			return;
+		}
+
+		if (target instanceof HTMLDialogElement && target.matches('dialog[data-item-dialog]')) {
+			target.close();
 			return;
 		}
 

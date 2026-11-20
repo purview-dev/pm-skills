@@ -260,15 +260,30 @@
 .plan-dialog {
 	width: min(42rem, calc(100vw - 2rem));
 	max-height: calc(100vh - 4rem);
-	padding: 1.25rem 1.5rem;
+	padding: 0;
 	border: 1px solid var(--sl-color-hairline);
 	border-radius: 12px;
 	background: var(--sl-color-bg);
 	color: var(--sl-color-text);
+	/* Not the default `auto`: with the rounded corners above, a browser clips
+	   a child's hit box out of the corners, so a click just inside an edge
+	   would miss .plan-dialog__frame and land on this element (the backdrop
+	   click target in src/scripts/plan.ts) instead. The frame scrolls itself. */
+	overflow: visible;
 }
 
 .plan-dialog::backdrop {
 	background: rgb(0 0 0 / 0.45);
+}
+
+/* Fills the dialog's box, so only a click on the dialog element itself (the
+   backdrop, never this frame) closes the popup (src/scripts/plan.ts). Not
+   rounded, so it scrolls long content itself without the parent's corner
+   clipping taking its hit box away (see .plan-dialog's overflow above). */
+.plan-dialog__frame {
+	padding: 1.25rem 1.5rem;
+	max-height: inherit;
+	overflow: auto;
 }
 
 .plan-dialog__head {

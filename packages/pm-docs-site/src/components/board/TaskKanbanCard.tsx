@@ -8,7 +8,9 @@
  * the task can be a link, for the site's item popup and backlinks (href, itemId), and a task that
  * is not a link links known IDs; the tag shows the item's size (S, M, L as the kit's low, med,
  * high) and is omitted without one; a RAG dot sits beside it; the assignee chip is omitted for a card with no
- * owner; and the card has no role. Its styles are in src/styles/kanban.css.
+ * owner; and the card has no role. The task link carries
+ * `aria-haspopup="dialog"` when it is the popup trigger. Its styles are in
+ * src/styles/kanban.css.
  */
 import type { CardRag, LinkRun } from '../../lib/board';
 import type { Size } from '../../lib/planning-types';
@@ -47,7 +49,7 @@ export default function TaskKanbanCard({ task, taskRuns, date, assigneeInitials,
 
 			<p className="task-card__desc">
 				{href ? (
-					<a className="plan-item-link" href={href} data-item={itemId ?? undefined}>
+					<a className="plan-item-link" href={href} data-item={itemId ?? undefined} aria-haspopup={itemId ? 'dialog' : undefined}>
 						{task}
 					</a>
 				) : (
