@@ -8,9 +8,9 @@
 // the browser's own scrolling; the wheel listener below only adds Ctrl/Cmd +
 // wheel zoom and a plain vertical wheel that scrolls a horizontal strip
 // sideways while it can. It never calls scrollIntoView, which would move the page.
-// This island imports only types from `lib/timeline`; its values come from
-// `lib/timeline-state.ts`, so the island never pulls `lib/planning` into the
-// browser (as Graph.tsx:5-7).
+// This island imports nothing from `lib/timeline` (which re-exports from and
+// pulls in server-only `lib/planning`); its types and values both come from
+// `lib/timeline-state.ts`, so the browser bundle never includes `lib/planning`.
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 
