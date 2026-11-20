@@ -2,6 +2,8 @@
 // main content that are not inside a link, its internal links, its element ids,
 // and its `Linked from` section. Uses Bun's built-in HTMLRewriter.
 
+import { refPattern } from '../src/lib/ref-boundary.ts';
+
 export interface PageScan {
 	/** Known keys found in text with no `<a>` ancestor (the page's own `<h1>`, scripts, styles, and `<option>`s are exempt). */
 	unlinked: string[];
@@ -22,7 +24,7 @@ const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 export async function scanPage(html: string, known: Set<string>): Promise<PageScan> {
 	const keys = [...known].sort((a, b) => b.length - a.length).map(escape);
-	const pattern = keys.length > 0 ? new RegExp(`(?<![\\w/-])(?:${keys.join('|')})(?![\\w-])`, 'g') : null;
+	const pattern = keys.length > 0 ? refPattern(keys) : null;
 	const scan: PageScan = { unlinked: [], links: [], ids: new Set(), title: '', linkedFrom: new Set(), hasLinkedFrom: false };
 	const root: Frame = { main: false, link: false, h1: false, derived: false, linkedFrom: false, code: false };
 	const stack: Frame[] = [root];

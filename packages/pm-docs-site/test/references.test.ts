@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'bun:test';
 
 import { loadPlanning } from '../src/lib/planning';
-import { linkify, references, RELATION_LABELS, targets } from '../src/lib/references';
+import { linkify, references, refText, RELATION_LABELS, targets } from '../src/lib/references';
 
 const FIXTURE = fileURLToPath(new URL('./fixtures/planning.json', import.meta.url));
 const planning = loadPlanning(FIXTURE);
@@ -84,6 +84,22 @@ describe('references', () => {
 	});
 });
 
+describe('refText', () => {
+	const target = known.get('R-012');
+
+	it('names a known target, or its key for label id', () => {
+		expect(refText(target, 'R-012', 'full')).toBe(target!.label);
+		expect(refText(target, 'R-012', 'id', 'unused')).toBe('R-012');
+	});
+
+	it('prints the fallback for an unknown key, else the key', () => {
+		expect(refText(undefined, 'R-404', 'full', 'R-404 Lost item')).toBe('R-404 Lost item');
+		expect(refText(undefined, 'none', 'full', 'No milestone')).toBe('No milestone');
+		expect(refText(undefined, 'R-404', 'full')).toBe('R-404');
+		expect(refText(undefined, null, 'full')).toBe('');
+	});
+});
+
 describe('linkify', () => {
 	it('links only exact known IDs and brief paths', () => {
 		const text = 'See R-012, (RK-002). Not M10, R-0120 or R-999; brief planning/briefs/2026-11-07-referrals.md.';
@@ -91,6 +107,13 @@ describe('linkify', () => {
 
 		expect(runs.filter((run) => run.target).map((run) => run.text)).toEqual(['R-012', 'RK-002', 'planning/briefs/2026-11-07-referrals.md']);
 		expect(runs.map((run) => run.text).join('')).toBe(text);
+	});
+
+	it('never links an ID inside a path or a longer token', () => {
+		const text = 'R-012 starts; see docs/plans/R-012-x.md and R-012-draft.';
+		const linked = linkify(text, known).filter((run) => run.target).map((run) => run.text);
+
+		expect(linked).toEqual(['R-012']);
 	});
 
 	it('returns one plain run for text with no known ID', () => {

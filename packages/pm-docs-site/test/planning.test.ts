@@ -423,4 +423,12 @@ describe('docsHref', () => {
 		expect(docsHref('none (formatting commit)', pages)).toBeNull();
 		expect(docsHref(null, pages)).toBeNull();
 	});
+
+	it('links through a source prefix and not a path no source maps', () => {
+		const root = fileURLToPath(new URL('./fixtures/docs/', import.meta.url));
+		const prefixed = docsPages({ root, sources: [{ label: 'Guide', base: '.', include: ['README.md', 'guide/*.md'], prefix: 'docs/' }] });
+
+		expect(docsHref('guide/intro.md', prefixed)).toBe('/docs/guide/intro/');
+		expect(docsHref('docs/superpowers/plans/2026-10-27-tenant-model.md', prefixed)).toBeNull();
+	});
 });

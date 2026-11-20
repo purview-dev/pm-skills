@@ -3,7 +3,7 @@ import { join } from 'node:path';
 
 import { afterAll, describe, expect, it } from 'bun:test';
 
-import { expectedPages, FIXTURES, htmlPages, runCli, SCRATCH, scratchFixture, siteConfig } from './helpers';
+import { expectedPages, FIXTURES, htmlPages, PACKAGE, runCli, SCRATCH, scratchFixture, siteConfig } from './helpers';
 
 const BUILD = 180_000;
 // A check runs the CLI in a Node subprocess and builds nothing, but the start-up
@@ -44,6 +44,15 @@ describe('pm-docs-site build', () => {
 				expect(pages.filter((page) => page.startsWith(`plan/${view}/`))).toEqual([]);
 			}
 			expect(pages.filter((page) => page.startsWith('docs/'))).toEqual([]);
+
+			// A consumer build: no repository-only text, and no Starlight docs warnings without the docs option.
+			const output = result.stdout + result.stderr;
+			const home = readFileSync(join(dir, 'site', 'dist', 'index.html'), 'utf8');
+
+			expect(home).not.toContain('just docs-preview');
+			expect(home).toContain('pm-docs-site build');
+			expect(output).not.toMatch(/src[\\/]content[\\/]docs/);
+			expect(output).not.toMatch(/collection "(docs|i18n)" does not exist or is empty/);
 		},
 		BUILD,
 	);
@@ -134,6 +143,42 @@ describe('pm-docs-site check', () => {
 		expect(existsSync(join(dir, 'site', 'dist'))).toBe(false);
 	}, CHECK);
 
+	it('warns that --title and --planning are ignored when the site has a config file', () => {
+		const result = runCli(['check', FIXTURE_SITE, '--title', 'X', '--planning', 'nope.json']);
+
+		expect(result.code, result.stderr).toBe(0);
+		expect(result.stderr).toContain('pm-docs-site: --title is ignored:');
+		expect(result.stderr).toContain('pm-docs-site: --planning is ignored:');
+		expect(result.stderr).toContain('astro.config.ts sets the options.');
+	}, CHECK);
+
+	it('fails with the pm-export hint when planning.json holds null', () => {
+		const dir = scratchFixture('null-');
+		writeFileSync(join(dir, 'planning.json'), 'null');
+		writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'Null', planning: '../planning.json' }`));
+
+		const result = runCli(['check', join(dir, 'site')]);
+		const output = result.stdout + result.stderr;
+
+		expect(result.code).toBe(1);
+		expect(output).toContain('does not hold a plan export (found null)');
+		expect(output).toContain('pm-export');
+		expect(output).not.toContain('TypeError');
+	}, CHECK);
+
+	it('names the file and the pm-export hint when planning.json is not valid JSON', () => {
+		const dir = scratchFixture('badjson-');
+		writeFileSync(join(dir, 'planning.json'), '{ "schemaVersion": 4,');
+		writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'Bad', planning: '../planning.json' }`));
+
+		const result = runCli(['check', join(dir, 'site')]);
+		const output = result.stdout + result.stderr;
+
+		expect(result.code).toBe(1);
+		expect(output).toContain('planning.json is not valid JSON (');
+		expect(output).toContain('pm-export');
+	}, CHECK);
+
 	it('fails when the config has no pm-docs-site integration', () => {
 		const dir = scratchFixture('none-');
 		writeFileSync(join(dir, 'site', 'astro.config.ts'), 'export default {};\n');
@@ -157,6 +202,13 @@ describe('pm-docs-site check', () => {
 		expect(output).toContain('astro.config.ts');
 		expect(output).toContain('explicit .ts extensions');
 	}, CHECK);
+
+	it('declares a Node floor that strips the TypeScript of astro.config.ts', () => {
+		const { engines } = JSON.parse(readFileSync(join(PACKAGE, 'package.json'), 'utf8'));
+
+		// Node 24 loads erasable TypeScript without a flag; the fixture check above loads its astro.config.ts under node.
+		expect(engines.node).toBe('>=24');
+	});
 
 	it('fails when a docs source folder is missing', () => {
 		const dir = scratchFixture('docs-');

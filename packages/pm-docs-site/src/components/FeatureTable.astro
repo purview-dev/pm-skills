@@ -50,7 +50,7 @@ const when = (feature: Feature) => (state === 'done' || state === 'dropped' ? fe
 						<td class="plan-nowrap">{when(feature) ?? '–'}</td>
 						{!hideMilestone && (
 							<td>
-								<RefLink ref={feature.milestone ?? 'none'} />
+								<RefLink ref={feature.milestone ?? 'none'} fallback={feature.milestone ?? 'No milestone'} />
 							</td>
 						)}
 						<td>{feature.owner ?? '–'}</td>
