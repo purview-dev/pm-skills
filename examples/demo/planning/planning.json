@@ -1,11 +1,11 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T09:53:31+00:00",
+  "generatedAt": "2026-11-20T09:59:10+00:00",
   "generator": {
     "skill": "pm-export",
-    "skillsVersion": 20,
-    "rulesVersion": 20
+    "skillsVersion": 21,
+    "rulesVersion": 21
   },
   "project": {
     "pmRoot": "planning/",
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-020-docs-site-demo-fixture",
-    "head": "7d701c35297abc6ce8e5d26fb9bf16d666401e01"
+    "head": "c2220cd4270ba61a5554bd8c6aeb95972c353a6f"
   },
   "vision": {
     "problem": "Small fitness and craft studios take bookings by message and spreadsheet, so classes double-book and no-shows go unpaid.",

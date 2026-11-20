@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { bump, compare, DEFAULT_PREID, format, isPrerelease, parse, PARTS, type Part, type Version } from "./semver.ts";
@@ -20,6 +20,7 @@ const root = join(import.meta.dir, "..");
 const pkgPath = join(root, "package.json");
 const sectionPath = join(root, "skills", "pm-setup", "references", "AGENTS-section.md");
 const configPath = join(root, "skills", "pm-init", "templates", "config.md");
+const demoConfigPath = join(root, "examples", "demo", "planning", "config.md");
 
 const usage = `usage: bun scripts/bump-version.ts <${PARTS.join(" | ")}> [--preid <id>]
        bun scripts/bump-version.ts set <version>`;
@@ -84,4 +85,18 @@ if (next.major > current.major) {
   const config = readFileSync(configPath, "utf8");
   writeFileSync(configPath, config.replace(/^- Rules version: \d+$/m, `- Rules version: ${next.major}`));
   console.log(`rules v${rules} -> v${next.major}. Run pm-setup to install them here (AGENTS.md and planning/config.md).`);
+
+  // The demo's plan runs the rules the repository ships, and its export records
+  // the skills version, so a major leaves it stale until it is rewritten.
+  if (existsSync(demoConfigPath)) {
+    const demoConfig = readFileSync(demoConfigPath, "utf8");
+    writeFileSync(demoConfigPath, demoConfig.replace(/^- Rules version: \d+$/m, `- Rules version: ${next.major}`));
+    try {
+      execFileSync("bun", ["skills/pm-export/scripts/export.ts", "write", "--root", "examples/demo", "--pm-root", "planning/"], { cwd: root, encoding: "utf8" });
+    } catch (error) {
+      const failure = error as { stdout?: string; stderr?: string };
+      fail(`demo: export.ts write failed\n${failure.stdout ?? ""}${failure.stderr ?? ""}`);
+    }
+    console.log("demo: refreshed examples/demo/planning/planning.json");
+  }
 }
