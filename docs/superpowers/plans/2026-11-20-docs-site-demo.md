@@ -44,11 +44,11 @@
 
 - Produces: `scripts/validate.ts` fails with `planning.schema.json: $defs/<name> is never referenced` for any `$defs` key with no `"$ref": "#/$defs/<name>"`, and `planning.schema.json: $ref #/$defs/<name> has no definition` for a dangling ref.
 
-- [ ] **Step 1: Add the check to `scripts/validate.ts`.** Collect every `$ref` string in the parsed schema (walk the object), compare with `Object.keys(schema.$defs)`, and call `fail(...)` with the two messages above.
-- [ ] **Step 2: Run `bun scripts/validate.ts`.** Expected: FAIL with `planning.schema.json: $defs/itemRef is never referenced`.
-- [ ] **Step 3: Delete the `itemRef` entry** from `skills/pm-export/references/planning.schema.json`.
-- [ ] **Step 4: Run `bun scripts/validate.ts` and `just test`.** Expected: both pass (`validate.ts` also validates the example and the docs-site fixtures against the schema).
-- [ ] **Step 5: Commit** `skills/pm-export/references/planning.schema.json` and `scripts/validate.ts` with `fix(pm-export): drop the unreferenced itemRef definition`. Do not write or commit `planning/planning.schema.json`: the next PM commit's export refresh copies the schema there.
+- [x] **Step 1: Add the check to `scripts/validate.ts`.** Collect every `$ref` string in the parsed schema (walk the object), compare with `Object.keys(schema.$defs)`, and call `fail(...)` with the two messages above.
+- [x] **Step 2: Run `bun scripts/validate.ts`.** Expected: FAIL with `planning.schema.json: $defs/itemRef is never referenced`.
+- [x] **Step 3: Delete the `itemRef` entry** from `skills/pm-export/references/planning.schema.json`.
+- [x] **Step 4: Run `bun scripts/validate.ts` and `just test`.** Expected: both pass (`validate.ts` also validates the example and the docs-site fixtures against the schema).
+- [x] **Step 5: Commit** `skills/pm-export/references/planning.schema.json` and `scripts/validate.ts` with `fix(pm-export): drop the unreferenced itemRef definition`. Do not write or commit `planning/planning.schema.json`: the next PM commit's export refresh copies the schema there.
 
 ### Task 2: One source for the Now page's owner and size
 
@@ -61,10 +61,10 @@
 
 - Consumes: `now.item` (`{ id, title, serves, owner, size, dependsOn, revisits } | null`, `packages/pm-docs-site/src/lib/planning-types.ts`).
 
-- [ ] **Step 1: In `now.astro`,** remove `const card = planning.board.columns.now[0];` and read `now.item?.size ?? null` for the priority and `now.item?.owner ?? null` for `initials(...)`.
-- [ ] **Step 2: Verify** `Select-String -Path packages/pm-docs-site/src/routes/plan/now.astro -Pattern 'board\.columns'` prints nothing, then in `packages/pm-docs-site` run `bun test`, `bun run check`, and `bun run test:browser`. Expected: all pass.
-- [ ] **Step 3: In `skills/pm-board/SKILL.md` line 52,** change the Now line to: `` - `Now`: the active item in `NOW.md`, with its stage and step count; its owner and size are `NOW.md`'s `Owner` and `Size` fields. `` Run `bunx markdownlint-cli2 skills/pm-board/SKILL.md`. Expected: 0 issues.
-- [ ] **Step 4: Commit** with `fix(pm-docs-site): read the Now card from now.item (R-020)`.
+- [x] **Step 1: In `now.astro`,** remove `const card = planning.board.columns.now[0];` and read `now.item?.size ?? null` for the priority and `now.item?.owner ?? null` for `initials(...)`.
+- [x] **Step 2: Verify** `Select-String -Path packages/pm-docs-site/src/routes/plan/now.astro -Pattern 'board\.columns'` prints nothing, then in `packages/pm-docs-site` run `bun test`, `bun run check`, and `bun run test:browser`. Expected: all pass.
+- [x] **Step 3: In `skills/pm-board/SKILL.md` line 52,** change the Now line to: `` - `Now`: the active item in `NOW.md`, with its stage and step count; its owner and size are `NOW.md`'s `Owner` and `Size` fields. `` Run `bunx markdownlint-cli2 skills/pm-board/SKILL.md`. Expected: 0 issues.
+- [x] **Step 4: Commit** with `fix(pm-docs-site): read the Now card from now.item (R-020)`.
 
 ### Task 3: The package fixture draws an edge into the active node; `graph.test.ts` spreads the fixture
 
@@ -78,12 +78,12 @@
 
 - Produces: `function withPlan(overrides: Partial<Planning>): Planning` in `graph.test.ts`, returning `{ ...planning, ...overrides }`.
 
-- [ ] **Step 1: Update the edge test first.** In `builds exactly these seven edges`, rename to `builds exactly these eight edges`, and expect `'R-022>R-024:depends'` followed by `'R-012>R-024:depends'`; add `expect(fromChipOf('R-012')).toBe(false);`. Add a test `draws an edge into the active node` that asserts `data.edges` contains `{ source: 'R-012', target: 'R-024', kind: 'depends' }` and `nodeById.get('R-012')` has `active: true`.
-- [ ] **Step 2: Run** `bun test test/graph.test.ts` in `packages/pm-docs-site`. Expected: FAIL on the edge list.
-- [ ] **Step 3: In the fixture,** set R-024's `dependsOn` to `["R-022", "R-012"]`, and make its `claimable`, `board.columns` placement (`waiting` when a dependency is open), and `counts` agree with what `pm-export` would derive. Check with `bun skills/pm-export/scripts/export.ts validate packages/pm-docs-site/test/fixtures/planning.json` (expected: `valid`).
-- [ ] **Step 4: Replace the four `as unknown as Planning` casts** with `withPlan({ now, roadmap, log, board: { ...planning.board, columns: { ...planning.board.columns, now: [...] } } })`, giving each partial item every field `Planning` types require. `strategy` comes from the spread.
-- [ ] **Step 5: Run** `bun test`, `bun run check`, and `bun run test:browser` in `packages/pm-docs-site`, and `bun scripts/validate.ts` at the root. Update any assertion that moved with R-024 (board column, claimable count). Expected: all pass, and `Select-String -Path packages/pm-docs-site/test/graph.test.ts -Pattern 'as unknown as'` prints nothing.
-- [ ] **Step 6: Commit** with `test(pm-docs-site): fixture edge into the active node (R-020)`.
+- [x] **Step 1: Update the edge test first.** In `builds exactly these seven edges`, rename to `builds exactly these eight edges`, and expect `'R-022>R-024:depends'` followed by `'R-012>R-024:depends'`; add `expect(fromChipOf('R-012')).toBe(false);`. Add a test `draws an edge into the active node` that asserts `data.edges` contains `{ source: 'R-012', target: 'R-024', kind: 'depends' }` and `nodeById.get('R-012')` has `active: true`.
+- [x] **Step 2: Run** `bun test test/graph.test.ts` in `packages/pm-docs-site`. Expected: FAIL on the edge list.
+- [x] **Step 3: In the fixture,** set R-024's `dependsOn` to `["R-022", "R-012"]`, and make its `claimable`, `board.columns` placement (`waiting` when a dependency is open), and `counts` agree with what `pm-export` would derive. Check with `bun skills/pm-export/scripts/export.ts validate packages/pm-docs-site/test/fixtures/planning.json` (expected: `valid`).
+- [x] **Step 4: Replace the four `as unknown as Planning` casts** with `withPlan({ now, roadmap, log, board: { ...planning.board, columns: { ...planning.board.columns, now: [...] } } })`, giving each partial item every field `Planning` types require. `strategy` comes from the spread.
+- [x] **Step 5: Run** `bun test`, `bun run check`, and `bun run test:browser` in `packages/pm-docs-site`, and `bun scripts/validate.ts` at the root. Update any assertion that moved with R-024 (board column, claimable count). Expected: all pass, and `Select-String -Path packages/pm-docs-site/test/graph.test.ts -Pattern 'as unknown as'` prints nothing.
+- [x] **Step 6: Commit** with `test(pm-docs-site): fixture edge into the active node (R-020)`.
 
 ### Task 4: `scripts/check-demo.ts`
 
@@ -98,7 +98,7 @@
 - Failure lines: `missing page: <path>`, `unexpected page: <path>`, `<path>: empty state "<text>"`.
 - `ALLOWED` entries, each with its reason: `/^plan\/risks\//` with `–` (an empty risk-matrix cell) and with the risk legend text that starts `A cell's colour is the RAG` (risks.astro:67, a legend, not an empty state); `/^plan\/features\/r-\d+\//` with `Nothing links here yet.` (LinkedFrom.astro, true for a feature no item links to).
 
-- [ ] **Step 1: Write the failing tests** in `scripts/check-demo.test.ts`, building a temporary `dist/` with `mkdtempSync`:
+- [x] **Step 1: Write the failing tests** in `scripts/check-demo.test.ts`, building a temporary `dist/` with `mkdtempSync`:
   - `passes a dist whose pages match and have no empty state`: `checkDemo(dir, ['index.html', 'plan/board/index.html'])` is `[]`.
   - `reports a missing and an unexpected page`: expect `['missing page: plan/log/index.html', 'unexpected page: plan/extra/index.html']`.
   - `reports an empty state under plan/`: a page `plan/inbox/index.html` with `<p class="plan-empty">Nothing here</p>` returns `['plan/inbox/index.html: empty state "Nothing here"']`.
@@ -106,10 +106,10 @@
   - `ignores an allowed use`: `plan/features/r-001/index.html` holding `<p class="plan-empty">Nothing links here yet.</p>` returns `[]`.
   - `ignores empty states outside plan/`: `index.html` holding `<p class="plan-empty">Nothing is in progress.</p>` returns `[]`.
   - `gives every allowlist entry a reason`: every `ALLOWED` entry has a non-empty `reason`.
-- [ ] **Step 2: Run** `bun test scripts/check-demo.test.ts`. Expected: FAIL (module not found).
-- [ ] **Step 3: Implement** with `node:fs` only: walk `distDir` for `.html` (as `htmlPages` in `packages/pm-docs-site/test/helpers.ts`), compare with `expectedPages`, and for pages under `plan/` find each element whose `class` attribute contains the word `plan-empty`, taking its inner text up to the matching closing tag of the same name, with tags stripped and whitespace collapsed.
-- [ ] **Step 4: Run** `bun test scripts/check-demo.test.ts`, then `just test`. Expected: PASS.
-- [ ] **Step 5: Commit** with `test(scripts): check-demo finds empty and missing demo pages (R-020)`.
+- [x] **Step 2: Run** `bun test scripts/check-demo.test.ts`. Expected: FAIL (module not found).
+- [x] **Step 3: Implement** with `node:fs` only: walk `distDir` for `.html` (as `htmlPages` in `packages/pm-docs-site/test/helpers.ts`), compare with `expectedPages`, and for pages under `plan/` find each element whose `class` attribute contains the word `plan-empty`, taking its inner text up to the matching closing tag of the same name, with tags stripped and whitespace collapsed.
+- [x] **Step 4: Run** `bun test scripts/check-demo.test.ts`, then `just test`. Expected: PASS.
+- [x] **Step 5: Commit** with `test(scripts): check-demo finds empty and missing demo pages (R-020)`.
 
 ### Task 5: The demo site and its PM root
 
@@ -125,15 +125,15 @@
 - Consumes: `checkDemo` CLI (Task 4).
 - Produces: the `examples/demo/` folder that Task 6's recipes build.
 
-- [ ] **Step 1: Write the PM root.** One invented product (your call: neutral, for example a small booking app), dated around one fixed "today" of your choice. `config.md` has `Rules version: 20` (Task 7 moves it), `Max items in Next: 5`, and the template's Commits and Handoffs. It must hold everything the spec's "The demo's plan" section lists: 4 `V` lines; bets, assumptions, `Not doing`, and decisions; 3 or more milestones with dated `Target:` (one `done (<date>)`, one the `Current focus`, one later) plus unassigned items; a full Next and a milestone-grouped Later with every owner, size, and status (`ready`, `paused`, `blocked`); a `Depends on` naming the active item; an open item whose `Revisits` names a Done item; an active `NOW.md` with `Done when`, spec and plan paths, and a checkpoint; `LOG.md` with Done lines in 3 milestones, 2 Dropped lines, and review lines; `RISKS.md` with red, amber, and green open risks, one `RAG override`, one `mitigating` with an `R-NNN` mitigation, one `accepted`, one closed, and one removed; 3 or more inbox files (one `Kind: bug` with `## Reproduction`, one `Discuss: yes`); and 2 briefs (one `on roadmap (<ID>)`, one `parked`).
-- [ ] **Step 2: Lint** with `bun skills/pm-lint/scripts/lint.ts fix --root examples/demo --pm-root planning/`, then `check` with the same flags. Expected: `pm-lint: clean`.
-- [ ] **Step 3: Generate** with `bun skills/pm-export/scripts/export.ts write --root examples/demo --pm-root planning/`, then confirm the content with `bun skills/pm-export/scripts/export.ts summary --root examples/demo --pm-root planning/` and `validate examples/demo/planning/planning.json`. Expected: `valid`, an active Now item, and the counts from Step 1.
-- [ ] **Step 4: Write the site files.** `package.json` (private, `"type": "module"`, the scripts and dependency from Global Constraints; add `astro` or `@astrojs/starlight` at `7.4.8` and `0.42.10` only if the config or `astro preview` cannot resolve them through the package). `astro.config.ts` calls `pmDocsSite({ title: 'Demo plan', planning: 'planning/planning.json', docs: { root: 'docs', sources: [{ label: 'Guide', base: '.', include: ['README.md', 'guide/*.md'], prefix: 'docs/' }] } })`, following `packages/pm-docs-site/test/fixtures/site/astro.config.ts`. `README.md` says what the demo is, that its plan is invented, and `just demo`.
-- [ ] **Step 5: Build** with `node scripts/build.ts` in `packages/pm-docs-site`, then `bun install` and `bun run build` in `examples/demo`. Expected: the build succeeds with no Starlight warning. Commit the resulting `bun.lock`.
-- [ ] **Step 6: Write `expected-pages.txt`** from the built page list (`index.html`, `404.html`, the `docs/` pages, and every `plan/` page, including `plan/milestones/<id>/` for every milestone, `plan/milestones/none/`, one `plan/features/<id>/` per open item, and one `plan/risks/<id>/` per risk). Check it against the views in `VIEWS` (`skills/pm-docs-site/scripts/site.ts`) and the package's injected routes, so no view is missing.
-- [ ] **Step 7: Run** `bun scripts/check-demo.ts`. Expected: `demo: <n> pages, none empty`. When a page shows an empty state, add the content to the Markdown and re-run Steps 2, 3, 5, and 7. Never widen `ALLOWED` to pass.
-- [ ] **Step 8: Run** `bunx markdownlint-cli2 "examples/**/*.md"`. Expected: 0 issues.
-- [ ] **Step 9: Commit** `examples/demo/` with `feat(examples): pm-docs-site demo with every view filled (R-020)`.
+- [x] **Step 1: Write the PM root.** One invented product (your call: neutral, for example a small booking app), dated around one fixed "today" of your choice. `config.md` has `Rules version: 20` (Task 7 moves it), `Max items in Next: 5`, and the template's Commits and Handoffs. It must hold everything the spec's "The demo's plan" section lists: 4 `V` lines; bets, assumptions, `Not doing`, and decisions; 3 or more milestones with dated `Target:` (one `done (<date>)`, one the `Current focus`, one later) plus unassigned items; a full Next and a milestone-grouped Later with every owner, size, and status (`ready`, `paused`, `blocked`); a `Depends on` naming the active item; an open item whose `Revisits` names a Done item; an active `NOW.md` with `Done when`, spec and plan paths, and a checkpoint; `LOG.md` with Done lines in 3 milestones, 2 Dropped lines, and review lines; `RISKS.md` with red, amber, and green open risks, one `RAG override`, one `mitigating` with an `R-NNN` mitigation, one `accepted`, one closed, and one removed; 3 or more inbox files (one `Kind: bug` with `## Reproduction`, one `Discuss: yes`); and 2 briefs (one `on roadmap (<ID>)`, one `parked`).
+- [x] **Step 2: Lint** with `bun skills/pm-lint/scripts/lint.ts fix --root examples/demo --pm-root planning/`, then `check` with the same flags. Expected: `pm-lint: clean`.
+- [x] **Step 3: Generate** with `bun skills/pm-export/scripts/export.ts write --root examples/demo --pm-root planning/`, then confirm the content with `bun skills/pm-export/scripts/export.ts summary --root examples/demo --pm-root planning/` and `validate examples/demo/planning/planning.json`. Expected: `valid`, an active Now item, and the counts from Step 1.
+- [x] **Step 4: Write the site files.** `package.json` (private, `"type": "module"`, the scripts and dependency from Global Constraints; add `astro` or `@astrojs/starlight` at `7.4.8` and `0.42.10` only if the config or `astro preview` cannot resolve them through the package). `astro.config.ts` calls `pmDocsSite({ title: 'Demo plan', planning: 'planning/planning.json', docs: { root: 'docs', sources: [{ label: 'Guide', base: '.', include: ['README.md', 'guide/*.md'], prefix: 'docs/' }] } })`, following `packages/pm-docs-site/test/fixtures/site/astro.config.ts`. `README.md` says what the demo is, that its plan is invented, and `just demo`.
+- [x] **Step 5: Build** with `node scripts/build.ts` in `packages/pm-docs-site`, then `bun install` and `bun run build` in `examples/demo`. Expected: the build succeeds with no Starlight warning. Commit the resulting `bun.lock`.
+- [x] **Step 6: Write `expected-pages.txt`** from the built page list (`index.html`, `404.html`, the `docs/` pages, and every `plan/` page, including `plan/milestones/<id>/` for every milestone, `plan/milestones/none/`, one `plan/features/<id>/` per open item, and one `plan/risks/<id>/` per risk). Check it against the views in `VIEWS` (`skills/pm-docs-site/scripts/site.ts`) and the package's injected routes, so no view is missing.
+- [x] **Step 7: Run** `bun scripts/check-demo.ts`. Expected: `demo: <n> pages, none empty`. When a page shows an empty state, add the content to the Markdown and re-run Steps 2, 3, 5, and 7. Never widen `ALLOWED` to pass.
+- [x] **Step 8: Run** `bunx markdownlint-cli2 "examples/**/*.md"`. Expected: 0 issues.
+- [x] **Step 9: Commit** `examples/demo/` with `feat(examples): pm-docs-site demo with every view filled (R-020)`.
 
 ### Task 6: `just demo`, `just demo-check`, `package-test`, and CI
 
@@ -147,15 +147,15 @@
 
 - Consumes: `scripts/check-demo.ts` (Task 4), `examples/demo/` (Task 5).
 
-- [ ] **Step 1: Add the recipes,** each with a one-line comment like its neighbours. Neither sets a shell.
+- [x] **Step 1: Add the recipes,** each with a one-line comment like its neighbours. Neither sets a shell.
   - `demo`: run `node scripts/build.ts` in `packages/pm-docs-site`, then `bun install --frozen-lockfile`, `bun run build`, and `bun run preview` in `examples/demo`.
   - `demo-check`, in the spec's order: `export.ts check --root examples/demo --pm-root planning/`; `export.ts validate examples/demo/planning/planning.json`; `lint.ts check --root examples/demo --pm-root planning/`; `node scripts/build.ts` in the package; `bun install --frozen-lockfile` and `bun run build` in `examples/demo`; `bun scripts/check-demo.ts`. Use `cd <dir> && ...` lines or per-line paths, because a recipe has one `working-directory`.
   - `package-test` runs `just demo-check` as its last line.
-- [ ] **Step 2: Verify** `just demo-check`. Expected: it ends with `demo: <n> pages, none empty`. Then delete `packages/pm-docs-site/dist/` and run it again. Expected: it passes, because the recipe rebuilds `dist/`.
-- [ ] **Step 3: Verify** `just demo` serves at <http://localhost:4321>: open `/plan/board/`, `/plan/roadmap/`, and `/plan/graph/` and see content, then stop it.
-- [ ] **Step 4: Add CI steps** after `Dev browser tests` in `pm-docs-site-package`, with `working-directory: ${{ github.workspace }}` and the same commands as `demo-check`, as separate named steps (`Demo export is current`, `Demo export is valid`, `Demo PM files lint`, `Build the package`, `Install the demo`, `Build the demo`, `Demo pages have content`). Run `bun test scripts/workflows.test.ts`. Expected: PASS.
-- [ ] **Step 5: Add one line to `AGENTS.md`**'s build list: `` - Open the demo site (`examples/demo/`, an invented plan that fills every view): `just demo`. Check it: `just demo-check` (part of `just package-test`). Its `planning/planning.json` is derived: `just bump` refreshes it on a major, and `bun skills/pm-export/scripts/export.ts write --root examples/demo --pm-root planning/` after a demo PM edit. `` Run `just validate`. Expected: pass.
-- [ ] **Step 6: Commit** with `build(examples): just demo and demo-check in package-test and CI (R-020)`.
+- [x] **Step 2: Verify** `just demo-check`. Expected: it ends with `demo: <n> pages, none empty`. Then delete `packages/pm-docs-site/dist/` and run it again. Expected: it passes, because the recipe rebuilds `dist/`.
+- [x] **Step 3: Verify** `just demo` serves at <http://localhost:4321>: open `/plan/board/`, `/plan/roadmap/`, and `/plan/graph/` and see content, then stop it.
+- [x] **Step 4: Add CI steps** after `Dev browser tests` in `pm-docs-site-package`, with `working-directory: ${{ github.workspace }}` and the same commands as `demo-check`, as separate named steps (`Demo export is current`, `Demo export is valid`, `Demo PM files lint`, `Build the package`, `Install the demo`, `Build the demo`, `Demo pages have content`). Run `bun test scripts/workflows.test.ts`. Expected: PASS.
+- [x] **Step 5: Add one line to `AGENTS.md`**'s build list: `` - Open the demo site (`examples/demo/`, an invented plan that fills every view): `just demo`. Check it: `just demo-check` (part of `just package-test`). Its `planning/planning.json` is derived: `just bump` refreshes it on a major, and `bun skills/pm-export/scripts/export.ts write --root examples/demo --pm-root planning/` after a demo PM edit. `` Run `just validate`. Expected: pass.
+- [x] **Step 6: Commit** with `build(examples): just demo and demo-check in package-test and CI (R-020)`.
 
 ### Task 7: Rules 21: the bump refreshes the demo, and the upgrade note
 
@@ -169,9 +169,9 @@
 
 - Produces: after a major bump, `examples/demo/planning/config.md` has `- Rules version: <new major>`, and the demo export is rewritten. `bump-version.ts` prints `demo: refreshed examples/demo/planning/planning.json`, or fails with the export's output when the write fails.
 
-- [ ] **Step 1: In `bump-version.ts`'s major block,** after the config template, replace `- Rules version: \d+` in `examples/demo/planning/config.md` (skip when the file is missing), then run `bun skills/pm-export/scripts/export.ts write --root examples/demo --pm-root planning/` with `execFileSync` (`cwd: root`), and print the line above.
-- [ ] **Step 2: Add the upgrade note** to the managed section reference: `Version 21 removes the unused itemRef definition from the export schema, so a consumer's planning.schema.json differs from pm-export's until it re-exports: run pm-export once. pm-board's Now card names NOW.md as the source of its owner and size. The export stays at schemaVersion 4. No setting is added.`
-- [ ] **Step 3: Bump** with `just bump premajor`. Expected: `v20.0.0 -> v21.0.0-pre.1 (prerelease)`, `rules v20 -> v21`, and `demo: refreshed ...`.
-- [ ] **Step 4: Commit** `scripts/bump-version.ts`, `skills/pm-setup/references/AGENTS-section.md`, `package.json`, `skills/pm-init/templates/config.md`, and `examples/demo/planning/` with `feat(pm-setup): rules 21; bump refreshes the demo export (R-020)`. Leave `planning/` and `AGENTS.md` for Step 5.
-- [ ] **Step 5: Install the rules here** by running the `pm-setup` skill. It writes the `AGENTS.md` managed section and `planning/config.md` `Rules version: 21`, and makes its own PM commit (with the export refresh) for `planning/`. Commit the `AGENTS.md` section with `docs(agents): install rules 21`.
-- [ ] **Step 6: Verify** `just lint-check` and `just version-check`. Expected: both pass, and `just demo-check` inside `package-test` reports `current` for the demo export with no manual re-run.
+- [x] **Step 1: In `bump-version.ts`'s major block,** after the config template, replace `- Rules version: \d+` in `examples/demo/planning/config.md` (skip when the file is missing), then run `bun skills/pm-export/scripts/export.ts write --root examples/demo --pm-root planning/` with `execFileSync` (`cwd: root`), and print the line above.
+- [x] **Step 2: Add the upgrade note** to the managed section reference: `Version 21 removes the unused itemRef definition from the export schema, so a consumer's planning.schema.json differs from pm-export's until it re-exports: run pm-export once. pm-board's Now card names NOW.md as the source of its owner and size. The export stays at schemaVersion 4. No setting is added.`
+- [x] **Step 3: Bump** with `just bump premajor`. Expected: `v20.0.0 -> v21.0.0-pre.1 (prerelease)`, `rules v20 -> v21`, and `demo: refreshed ...`.
+- [x] **Step 4: Commit** `scripts/bump-version.ts`, `skills/pm-setup/references/AGENTS-section.md`, `package.json`, `skills/pm-init/templates/config.md`, and `examples/demo/planning/` with `feat(pm-setup): rules 21; bump refreshes the demo export (R-020)`. Leave `planning/` and `AGENTS.md` for Step 5.
+- [x] **Step 5: Install the rules here** by running the `pm-setup` skill. It writes the `AGENTS.md` managed section and `planning/config.md` `Rules version: 21`, and makes its own PM commit (with the export refresh) for `planning/`. Commit the `AGENTS.md` section with `docs(agents): install rules 21`.
+- [x] **Step 6: Verify** `just lint-check` and `just version-check`. Expected: both pass, and `just demo-check` inside `package-test` reports `current` for the demo export with no manual re-run.
