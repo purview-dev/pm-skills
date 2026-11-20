@@ -66,7 +66,7 @@ Strongest argument against the chosen option: two synthetic files must both move
 
 ## Done when
 
-- `examples/demo/planning.json` passes `bun skills/pm-export/scripts/export.ts validate examples/demo/planning.json` and holds at least 3 milestones with targets, `Depends on` and `Revisits` edges including one into the active node, risks in red, amber, and green, inbox files, briefs, Done and Dropped log lines, and an active Now item.
+- `examples/demo/planning/planning.json` passes `bun skills/pm-export/scripts/export.ts validate examples/demo/planning/planning.json` and holds at least 3 milestones with targets, `Depends on` and `Revisits` edges including one into the active node, risks in red, amber, and green, inbox files, briefs, Done and Dropped log lines, and an active Now item.
 - `just demo` builds `examples/demo/` against the local `packages/pm-docs-site` and serves it at <http://localhost:4321>.
 - `just package-test` validates and builds `examples/demo/` and fails when any built page under `plan/` has no item, milestone, risk, or log content.
 - `packages/pm-docs-site/src/routes/plan/now.astro` reads the active item's owner and size from `now.item` only; `skills/pm-board/SKILL.md`'s Now card step says they come from `NOW.md`; `$defs/itemRef` is gone from the export schema; `graph.test.ts` has no `as unknown as Planning`; the package fixture has an edge into the active node.
@@ -83,3 +83,7 @@ Strongest argument against the chosen option: two synthetic files must both move
 ## Decision
 
 - 2026-11-20 Build it now. R-020 keeps its ID and place at Next 1, with this brief and the Done when above. Why: it serves the M1 focus, and the user chose to build it now over adding it to Next or Later.
+
+## Revisions
+
+- 2026-11-20 The `Done when` named `examples/demo/planning.json`, but pm-export writes the export inside the demo's PM root. Must now: name `examples/demo/planning/planning.json`. Mode: fix-in-place. Supersedes: none.
