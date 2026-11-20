@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T14:53:51+00:00",
+  "generatedAt": "2026-11-20T15:00:49+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-026-checkpoint-keeps-item-fields",
-    "head": "ac4d1dee5532a21908295c672e02f6a831ab1696"
+    "head": "3aaecc4760c176d9c6243833bca97eed3003fc0d"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -189,11 +189,11 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-026-checkpoint-keeps-item-fields",
     "brief": null,
     "milestone": null,
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-20-checkpoint-keeps-item-fields-design.md",
     "plan": null,
     "started": "2026-11-20",
     "doneWhen": [
@@ -395,7 +395,7 @@
           "title": "pm-checkpoint keeps every item field through switch, push, and pop",
           "owner": "agent",
           "size": "S",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [],
@@ -1163,6 +1163,6 @@
     "reviewDue": false,
     "lastReview": "2026-11-19",
     "claimable": [],
-    "drift": true
+    "drift": false
   }
 }

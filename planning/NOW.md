@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-026 pm-checkpoint keeps every item field through switch, push, and pop
 - Session: feat/r-026-checkpoint-keeps-item-fields
-- Stage: design
+- Stage: plan
 - Brief:
 - Milestone:
 - Serves: V2
@@ -22,7 +22,7 @@ Milestone: optional; the item's milestone while it is active
 - Size: S
 - Depends on: none
 - Revisits:
-- Spec:
+- Spec: docs/superpowers/specs/2026-11-20-checkpoint-keeps-item-fields-design.md
 - Plan:
 - Started: 2026-11-20
 
