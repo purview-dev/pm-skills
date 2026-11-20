@@ -79,14 +79,17 @@ describe('an installed package', () => {
 				}
 			}
 
-			// Every relative import in the shipped src/ resolves inside the tarball,
-			// including the type-only imports of lib/ that Vite and astro check read.
-			const shippedSrc = join(pkgDir, 'src');
-			for (const file of filesUnder(shippedSrc, /\.(ts|tsx|astro)$/)) {
-				for (const specifier of relativeImports(join(shippedSrc, file))) {
-					const base = join(shippedSrc, dirname(file), specifier);
-					const found = ['', '.ts', '.tsx', '/index.ts'].some((suffix) => existsSync(base + suffix));
-					expect(found, `src/${file} imports ${specifier}`).toBe(true);
+			// Every relative import in the shipped src/ and lib/ sources resolves
+			// inside the tarball, including the type-only imports that Vite erases
+			// and only astro check and editors read.
+			for (const folder of ['src', 'lib']) {
+				const shipped = join(pkgDir, folder);
+				for (const file of filesUnder(shipped, /\.(ts|tsx|astro)$/)) {
+					for (const specifier of relativeImports(join(shipped, file))) {
+						const base = join(shipped, dirname(file), specifier);
+						const found = ['', '.ts', '.tsx', '/index.ts'].some((suffix) => existsSync(base + suffix));
+						expect(found, `${folder}/${file} imports ${specifier}`).toBe(true);
+					}
 				}
 			}
 

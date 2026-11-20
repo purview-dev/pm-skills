@@ -27,7 +27,8 @@ const entry = (target: string, isTypes: boolean): void => {
 };
 const walk = (value: unknown, isTypes: boolean): void => {
 	if (typeof value === 'string') entry(value, isTypes);
-	else if (value && typeof value === 'object') for (const [key, child] of Object.entries(value)) walk(child, key === 'types');
+	// Once under a `types` condition, every nested condition names a declaration.
+	else if (value && typeof value === 'object') for (const [key, child] of Object.entries(value)) walk(child, isTypes || key === 'types');
 };
 walk(pkg.exports ?? {}, false);
 // Node refuses to strip types under node_modules, so every bin is built JavaScript.

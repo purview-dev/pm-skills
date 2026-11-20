@@ -35,6 +35,13 @@ describe('check-exports', () => {
 		expect(result.code, result.output).toBe(0);
 	});
 
+	it('accepts conditions nested under a types condition', () => {
+		const files = ['dist/index.d.mts', 'dist/index.mjs'];
+		const result = check({ exports: { '.': { types: { import: './dist/index.d.mts' }, default: './dist/index.mjs' } } }, files);
+
+		expect(result.code, result.output).toBe(0);
+	});
+
 	it('rejects a declaration outside a types condition', () => {
 		const result = check({ exports: { '.': { default: './dist/index.d.ts' } } }, ['dist/index.d.ts']);
 
