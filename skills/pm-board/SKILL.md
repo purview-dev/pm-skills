@@ -49,7 +49,8 @@ likely modes as options.
    inbox and the `Discuss: yes` files (Shared definitions). If `NOW.md` has
    a plan, count its checkboxes.
 2. Build the columns:
-   - `Now`: the active item in `NOW.md`, with its stage and step count.
+   - `Now`: the active item in `NOW.md`, with its stage and step count;
+     its owner and size are `NOW.md`'s `Owner` and `Size` fields.
    - `Next (agent)`: `## Next` items with `Owner: agent` or `both`, in
      roadmap order. Include `Status: paused`.
    - `For you`: `Owner: user` items in `## Next`, in roadmap order, plus

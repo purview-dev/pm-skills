@@ -13,8 +13,7 @@ import '../../styles/components.css';
 
 const planning = loadPlanning();
 const { now, plan } = planning;
-const card = planning.board.columns.now[0];
-const priority = ({ low: 'low', medium: 'med', high: 'high' } as const)[sizeToPriority(card?.size ?? null)];
+const priority = ({ low: 'low', medium: 'med', high: 'high' } as const)[sizeToPriority(now.item?.size ?? null)];
 
 const paths = [
 	{ label: 'Brief', path: now.brief },
@@ -121,7 +120,7 @@ const checkpoint = now.checkpoint
 								<TaskKanbanCard
 									task={`Task ${task.number}: ${task.title}`}
 									date={`${task.checked}/${task.total} steps`}
-									assigneeInitials={initials(card?.owner ?? null)}
+									assigneeInitials={initials(now.item?.owner ?? null)}
 									priority={priority}
 									progress={planProgress(task)}
 								/>

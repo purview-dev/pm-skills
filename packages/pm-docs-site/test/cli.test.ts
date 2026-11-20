@@ -49,6 +49,28 @@ describe('pm-docs-site build', () => {
 	);
 
 	it(
+		"takes the Now page's owner and size from now.item, not the board card",
+		() => {
+			const dir = scratchFixture('now-item-');
+			const planningPath = join(dir, 'planning.json');
+			const planning = JSON.parse(readFileSync(planningPath, 'utf8'));
+			planning.now.item = { ...planning.now.item, owner: 'user', size: 'L' };
+			planning.board.columns.now = planning.board.columns.now.map((card: object) => ({ ...card, owner: null, size: null }));
+			writeFileSync(planningPath, JSON.stringify(planning));
+			writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'Now', planning: '../planning.json', views: ['now'] }`));
+
+			const result = runCli(['build', join(dir, 'site')]);
+			const html = readFileSync(join(dir, 'site', 'dist', 'plan', 'now', 'index.html'), 'utf8');
+
+			expect(result.code, result.stderr).toBe(0);
+			expect(html).toContain('title="Assigned to YOU"');
+			expect(html).toContain('class="task-card__tag task-card__tag--high');
+			expect(html).not.toContain('class="task-card__tag task-card__tag--low');
+		},
+		BUILD,
+	);
+
+	it(
 		'still reads a site whose config is astro.config.mjs',
 		() => {
 			const dir = scratchFixture('cli-mjs-');
