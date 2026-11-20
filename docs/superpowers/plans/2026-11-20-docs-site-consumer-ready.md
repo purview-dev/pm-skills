@@ -33,12 +33,14 @@
 ### Task 1: A non-object export fails with the pm-export hint
 
 **Files:**
+
 - Modify: `lib/schema-version.ts`
 - Modify: `lib/cli.ts:51-56` (the `problems` export check)
 - Modify: `src/lib/planning.ts:29-39` (`loadPlanning`)
 - Test: `test/schema-version.test.ts`, `test/cli.test.ts`
 
 **Interfaces:**
+
 - Produces: `export function checkExport(value: unknown, path: string): asserts value is { schemaVersion: number }` in `lib/schema-version.ts`. Throws `PlanningExportError(`${path} does not hold a plan export (found ${kind}).`)` where `kind` is `null`, `an array`, or `typeof value`, when `value` is not a non-array object; otherwise calls `checkSchemaVersion(value.schemaVersion, path)`.
 
 - [ ] **Step 1: Write the failing tests**
@@ -101,11 +103,13 @@ git commit -m "fix(pm-docs-site): a non-object export fails with the pm-export h
 ### Task 2: The CLI warns when a flag is ignored
 
 **Files:**
+
 - Modify: `lib/site-options.ts:26` (after a config file is found)
 - Modify: `packages/pm-docs-site/README.md` `## CLI` section
 - Test: `test/cli.test.ts`
 
 **Interfaces:**
+
 - Consumes: `loadSiteOptions(siteDir, flags)` (unchanged signature).
 - Produces: one `console.warn` line per flag given while a config file exists, exactly `pm-docs-site: --<flag> is ignored: <configFile> sets the options.` (`<flag>` is `title` or `planning`), before the config is loaded.
 
@@ -144,11 +148,13 @@ git commit -m "feat(pm-docs-site): warn when a CLI flag is ignored (R-019)"
 ### Task 3: A consumer build shows no repository text and no docs warnings
 
 **Files:**
+
 - Modify: `src/pages/index.astro:129`
 - Modify: `src/content.config.ts`
 - Test: `test/cli.test.ts` (`'leaves out the pages of views that are off'`, a build without the `docs` option)
 
 **Interfaces:**
+
 - Produces: nothing other tasks use.
 
 - [ ] **Step 1: Extend the failing test**
@@ -189,12 +195,14 @@ git commit -m "fix(pm-docs-site): no repository text or docs warnings in a consu
 ### Task 4: linkify uses the link scanner's boundaries
 
 **Files:**
+
 - Create: `src/lib/ref-boundary.ts`
 - Modify: `src/lib/references.ts:71-77` (`ID`, `linkify`)
 - Modify: `test/scan.ts:25`
 - Test: `test/references.test.ts`
 
 **Interfaces:**
+
 - Produces, in `src/lib/ref-boundary.ts` (no imports, so the test helper can load it):
   - `export const REF_BEFORE = String.raw`(?<![\w/-])``
   - `export const REF_AFTER = String.raw`(?![\w-])``
@@ -235,12 +243,14 @@ git commit -m "fix(pm-docs-site): linkify uses the link scanner's boundaries (R-
 ### Task 5: RefLink prints fallback text for an unknown key
 
 **Files:**
+
 - Modify: `src/lib/references.ts` (add `refText`)
 - Modify: `src/components/RefLink.astro`
 - Modify: `src/pages/plan/log.astro:41`, `src/pages/plan/roadmap.astro:52`, `src/components/FeatureSummary.astro:49`, `src/components/FeatureTable.astro:53`
 - Test: `test/references.test.ts`
 
 **Interfaces:**
+
 - Produces: `export function refText(target: Target | undefined, ref: string | null | undefined, label: 'full' | 'id', fallback?: string): string` — with a target: `target.label` for `full`, `ref` for `id`; without one: `fallback ?? ref ?? ''`.
 - RefLink gains `fallback?: string` and renders `refText(...)`.
 
@@ -288,10 +298,12 @@ git commit -m "fix(pm-docs-site): RefLink prints fallback text for an unknown ke
 ### Task 6: Pin docsHref prefixes and the Node floor; Windows drive note
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/README.md` (`## A consumer site`)
 - Test: `test/planning.test.ts` (`describe('docsHref')`), `test/cli.test.ts`
 
 **Interfaces:**
+
 - Consumes: `docsPages(docs)`, `docsHref(path, pages)` (unchanged).
 
 - [ ] **Step 1: Write the tests**
