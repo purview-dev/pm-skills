@@ -4,6 +4,7 @@
 
 ## Done
 
+- 2026-11-20 R-022 Docs-site package: timeline hydrates in dev. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-19-docs-site-package-timeline-dev-hydration.md. Result: branch feat/r-022-docs-site-package-timeline-hydrates-in-dev.
 - 2026-11-19 R-018 Export the Now card's owner and size. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-19-now-item-owner-size-links.md. Result: branch feat/r-018-export-the-now-cards-owner-and-size.
 - 2026-11-19 R-012 Docs-site package: dependency graph. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-19-docs-site-package-dependency-graph.md. Result: branch feat/r-012-docs-site-package-dependency-graph.
 - 2026-11-18 R-017 Docs-site package: in-repo dev hydrates. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-18-docs-site-package-in-repo-dev.md. Result: branch feat/r-017-docs-site-package-in-repo-dev-hydrates.

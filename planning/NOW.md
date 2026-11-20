@@ -11,24 +11,22 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: active
-- Item: R-022 Docs-site package: timeline hydrates in dev
-- Session: feat/r-022-docs-site-package-timeline-hydrates-in-dev
-- Stage: execute
+- Status: idle
+- Item:
+- Session:
+- Stage:
 - Brief:
-- Milestone: M1
-- Serves: V4
-- Owner: agent
-- Size: S
-- Depends on: none
+- Milestone:
+- Serves:
+- Owner:
+- Size:
+- Depends on:
 - Revisits:
-- Spec: docs/superpowers/specs/2026-11-19-docs-site-package-timeline-dev-hydration-design.md
-- Plan: docs/superpowers/plans/2026-11-19-docs-site-package-timeline-dev-hydration.md
-- Started: 2026-11-19
+- Spec:
+- Plan:
+- Started:
 
 ## Done when
-
-- Under `pm-docs-site dev` in a packed-install consumer, `/plan/roadmap/` shows the timeline toolbar with no `node:fs` error in the browser console, and `test/browser/dev.browser.ts` asserts it.
 
 ## Checkpoint
 

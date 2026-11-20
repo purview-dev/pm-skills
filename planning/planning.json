@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-19T23:55:34+00:00",
+  "generatedAt": "2026-11-20T00:11:22+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 20,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-022-docs-site-package-timeline-hydrates-in-dev",
-    "head": "391e2440f4537a5ed6416b7e12db850c1ebb8fcc"
+    "head": "0e3c4d005ba784d0c1b4701512f175ee2d84fbe8"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -177,77 +177,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-022",
-      "title": "Docs-site package: timeline hydrates in dev",
-      "serves": [
-        "V4"
-      ],
-      "owner": "agent",
-      "size": "S",
-      "dependsOn": [],
-      "revisits": null
-    },
-    "stage": "execute",
-    "session": "feat/r-022-docs-site-package-timeline-hydrates-in-dev",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
     "brief": null,
-    "milestone": "M1",
-    "spec": "docs/superpowers/specs/2026-11-19-docs-site-package-timeline-dev-hydration-design.md",
-    "plan": "docs/superpowers/plans/2026-11-19-docs-site-package-timeline-dev-hydration.md",
-    "started": "2026-11-19",
-    "doneWhen": [
-      "Under `pm-docs-site dev` in a packed-install consumer, `/plan/roadmap/` shows the timeline toolbar with no `node:fs` error in the browser console, and `test/browser/dev.browser.ts` asserts it."
-    ],
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-19-docs-site-package-timeline-dev-hydration.md",
-    "checked": 0,
-    "total": 8,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "Browser-safe timeline state, with dev tests for every island",
-        "checked": 0,
-        "total": 8,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing dev tests**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run them to see the timeline test fail**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Create `src/lib/timeline-state.ts` and move the browser-safe declarations into it**",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Point the islands at `timeline-state.ts`**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Run the dev tests to see them pass**",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Run the unit tests, type check, and built-site browser tests**",
-            "checked": false
-          },
-          {
-            "text": "**Step 7: Run the repository checks**",
-            "checked": false
-          },
-          {
-            "text": "**Step 8: Commit**",
-            "checked": false
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [
       {
@@ -558,15 +500,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-022",
-          "title": "Docs-site package: timeline hydrates in dev",
-          "owner": "agent",
-          "size": "S",
-          "detail": "execute, 0/8 plan steps"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-023",
@@ -600,6 +534,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-20",
+          "id": "R-022",
+          "title": "Docs-site package: timeline hydrates in dev",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-19-docs-site-package-timeline-dev-hydration.md",
+          "result": "branch feat/r-022-docs-site-package-timeline-hydrates-in-dev"
+        },
         {
           "date": "2026-11-19",
           "id": "R-018",
@@ -702,6 +645,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-20",
+        "kind": "done",
+        "id": "R-022",
+        "title": "Docs-site package: timeline hydrates in dev",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-022-docs-site-package-timeline-hydrates-in-dev"
+      },
       {
         "date": "2026-11-19",
         "kind": "done",
@@ -859,6 +811,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-20",
+        "id": "R-022",
+        "title": "Docs-site package: timeline hydrates in dev",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-19-docs-site-package-timeline-dev-hydration.md",
+        "result": "branch feat/r-022-docs-site-package-timeline-hydrates-in-dev"
+      },
       {
         "date": "2026-11-19",
         "id": "R-018",
@@ -1050,6 +1011,21 @@
       "brief": "planning/briefs/2026-11-17-docs-site-package.md",
       "reviewed": "2026-11-19",
       "idea": "Minor findings from R-010's task and final reviews, triaged \"can wait\":\n\n- The 3s reveal of a pending board also fires on a slow but successful hydration (brief unfiltered view, then the filtered one); say so in `components.css` and the `useBoardUrlState.ts` header, or tune it.\n- The pending mark is also set on `/plan/roadmap/?owner=...` (inert today); scope it to the Board page when R-011 adds Roadmap filters.\n- `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`.\n- The lane header is a plain `div`; an `h3` or `role=\"heading\"` would make lanes navigable.\n- Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed.\n- The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page; watch it for R-011 and R-012.\n- A collapsed column's vertical title stretches the shared header row.\n- `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab` (suggests drag and drop); its header comment lists only some changes.\n- `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array.\n- `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id` (key fallback, `href: null`, and the Done-tag rule untested); `tagHref` never asserted.\n- `integration.test.ts` asserts the integration names two ways.\n- `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`.\n- The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP."
+    },
+    {
+      "file": "planning/inbox/2026-11-20-0010-timeline-island-import-rule-note.md",
+      "title": "Timeline island lacks its import-rule note",
+      "captured": "2026-11-20 00:10",
+      "source": "agent (R-022 execute, final review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site/src/components/timeline/Timeline.tsx",
+      "context": "R-022 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Deferred minor from the R-022 final review: `Graph.tsx:5-7` states in the island itself that it may import only types from `lib/graph`, but `Timeline.tsx` has no matching note that it may import only types from `lib/timeline` (values come from `lib/timeline-state.ts`). Add a one-line header note so the next edit keeps the rule. The reviewer also suggested a `bun test` guard that walks `src/components/**` and fails on a value import of `lib/planning`, `lib/timeline`, `lib/graph`, or `lib/graph-layout` (option 2 in the R-022 design, not chosen then)."
     }
   ],
   "briefs": [
@@ -1087,10 +1063,10 @@
     "next": 4,
     "later": 8,
     "nextMax": 5,
-    "openInbox": 2,
+    "openInbox": 3,
     "discuss": 2,
     "shapingBriefs": 0,
-    "done": 11,
+    "done": 12,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1107,6 +1083,6 @@
       "R-019",
       "R-026"
     ],
-    "drift": false
+    "drift": true
   }
 }
