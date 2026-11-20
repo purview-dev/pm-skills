@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T10:41:36+00:00",
+  "generatedAt": "2026-11-20T10:51:30+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-019-docs-site-package-consumer-ready-for-1-0-0",
-    "head": "6abccc3da14f6effbe4210100163df5d01237d21"
+    "head": "930e0954ccc20092951b03d814feeb4ef533d9be"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -191,11 +191,11 @@
       ],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-019-docs-site-package-consumer-ready-for-1-0-0",
     "brief": "planning/briefs/2026-11-17-docs-site-package.md",
     "milestone": "M1",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-20-docs-site-consumer-ready-design.md",
     "plan": null,
     "started": "2026-11-20",
     "doneWhen": [
@@ -209,7 +209,15 @@
       "`check` loads an `astro.config.ts` on the `engines` Node floor.",
       "The README names the same-drive requirement on Windows."
     ],
-    "checkpoint": null
+    "checkpoint": {
+      "at": "2026-11-20 10:51",
+      "stoppedAt": "design approved; spec committed (930e095).",
+      "nextAction": "write the implementation plan from the spec.",
+      "startWith": "docs/superpowers/specs/2026-11-20-docs-site-consumer-ready-design.md",
+      "decisions": "targeted fixes in place, one test per Done when check; `linkify` and the test scanner share one exported boundary pattern; ignored CLI flags warn, not fail. `docsHref` and the Node floor are already met and need tests only.",
+      "context": "none",
+      "openQuestion": null
+    }
   },
   "plan": null,
   "roadmap": {
@@ -454,7 +462,7 @@
           "title": "Docs-site package: consumer-ready for 1.0.0",
           "owner": "agent",
           "size": "M",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
@@ -1118,6 +1126,6 @@
     "claimable": [
       "R-026"
     ],
-    "drift": true
+    "drift": false
   }
 }

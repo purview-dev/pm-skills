@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-019 Docs-site package: consumer-ready for 1.0.0
 - Session: feat/r-019-docs-site-package-consumer-ready-for-1-0-0
-- Stage: design
+- Stage: plan
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 - Milestone: M1
 - Serves: V4
@@ -22,7 +22,7 @@ Milestone: optional; the item's milestone while it is active
 - Size: M
 - Depends on: R-021
 - Revisits:
-- Spec:
+- Spec: docs/superpowers/specs/2026-11-20-docs-site-consumer-ready-design.md
 - Plan:
 - Started: 2026-11-20
 
@@ -38,7 +38,13 @@ Milestone: optional; the item's milestone while it is active
 - `check` loads an `astro.config.ts` on the `engines` Node floor.
 - The README names the same-drive requirement on Windows.
 
-## Checkpoint
+## Checkpoint 2026-11-20 10:51
+
+- Stopped at: design approved; spec committed (930e095).
+- Next action: write the implementation plan from the spec.
+- Start with: docs/superpowers/specs/2026-11-20-docs-site-consumer-ready-design.md
+- Decisions: targeted fixes in place, one test per Done when check; `linkify` and the test scanner share one exported boundary pattern; ignored CLI flags warn, not fail. `docsHref` and the Node floor are already met and need tests only.
+- Context: none
 
 <!--
 Active example:
