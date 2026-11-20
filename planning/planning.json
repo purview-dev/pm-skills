@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T09:28:45+00:00",
+  "generatedAt": "2026-11-20T09:28:59+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 20,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-020-docs-site-demo-fixture",
-    "head": "066a6d45f3c804b7f134a01bf620820859e3c8d9"
+    "head": "f0efe1e0e86f9b95d6c7566bd2c94b466d2913d0"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -204,9 +204,9 @@
       "`just lint-check` passes."
     ],
     "checkpoint": {
-      "at": "2026-11-20 09:13",
-      "stoppedAt": "design spec approved (`docs/superpowers/specs/2026-11-20-docs-site-demo-design.md`).",
-      "nextAction": "write the implementation plan from the spec.",
+      "at": "2026-11-20 09:40",
+      "stoppedAt": "plan written (`docs/superpowers/plans/2026-11-20-docs-site-demo.md`, 7 tasks); execution approach: native.",
+      "nextAction": "Task 1 of the plan (drop the unreferenced itemRef).",
       "startWith": "superpowers:executing-plans",
       "decisions": "demo PM files in `examples/demo/planning/` generate `planning.json`; linked `file:` package with a `demo-check` recipe; `just bump` refreshes the demo export.",
       "context": "Revision 2026-11-20: the `Done when` path is `examples/demo/planning/planning.json`, not `examples/demo/planning.json`.",

@@ -34,10 +34,10 @@ Milestone: optional; the item's milestone while it is active
 - `now.astro` reads owner and size from `now.item` only, `skills/pm-board/SKILL.md`'s Now card step says they come from `NOW.md`, `$defs/itemRef` is gone from the export schema, `graph.test.ts` has no `as unknown as Planning`, and the package fixture has an edge into the active node.
 - `just lint-check` passes.
 
-## Checkpoint 2026-11-20 09:13
+## Checkpoint 2026-11-20 09:40
 
-- Stopped at: design spec approved (`docs/superpowers/specs/2026-11-20-docs-site-demo-design.md`).
-- Next action: write the implementation plan from the spec.
+- Stopped at: plan written (`docs/superpowers/plans/2026-11-20-docs-site-demo.md`, 7 tasks); execution approach: native.
+- Next action: Task 1 of the plan (drop the unreferenced itemRef).
 - Start with: superpowers:executing-plans
 - Decisions: demo PM files in `examples/demo/planning/` generate `planning.json`; linked `file:` package with a `demo-check` recipe; `just bump` refreshes the demo export.
 - Context: Revision 2026-11-20: the `Done when` path is `examples/demo/planning/planning.json`, not `examples/demo/planning.json`.
