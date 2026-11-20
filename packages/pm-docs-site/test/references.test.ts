@@ -93,6 +93,13 @@ describe('linkify', () => {
 		expect(runs.map((run) => run.text).join('')).toBe(text);
 	});
 
+	it('never links an ID inside a path or a longer token', () => {
+		const text = 'R-012 starts; see docs/plans/R-012-x.md and R-012-draft.';
+		const linked = linkify(text, known).filter((run) => run.target).map((run) => run.text);
+
+		expect(linked).toEqual(['R-012']);
+	});
+
 	it('returns one plain run for text with no known ID', () => {
 		expect(linkify('nothing here', known)).toEqual([{ text: 'nothing here' }]);
 	});

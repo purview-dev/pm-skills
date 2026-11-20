@@ -9,6 +9,7 @@ import type { ViewName } from '../../lib/types.ts';
 import { graphData } from './graph';
 import { briefAnchor, briefOf, featureHref, features, loadPlanning, milestoneHref, milestoneSummaries, roadmapGroups, type Feature } from './planning';
 import type { Planning } from './planning-types';
+import { refPattern } from './ref-boundary';
 
 export type Views = Record<ViewName, boolean>;
 
@@ -68,13 +69,21 @@ export interface Run {
 	target?: Target;
 }
 
-const ID = String.raw`\b(?:RK-\d{3,}|R-\d{3,}|M\d+)\b`;
+const IDS = [String.raw`RK-\d{3,}`, String.raw`R-\d{3,}`, String.raw`M\d+`];
 const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-/** Split text into plain runs and runs that are a known ID or brief path with a page. */
+/**
+ * Split text into plain runs and runs that are a known ID or brief path with a
+ * page, at the link scanner's boundaries (ref-boundary.ts): an ID inside a path
+ * or a hyphenated token is never a reference.
+ */
 export function linkify(text: string, known: Map<string, Target>): Run[] {
-	const paths = [...known.values()].filter((target) => target.kind === 'brief').map((target) => escape(target.key));
-	const pattern = new RegExp([...paths, ID].join('|'), 'g');
+	const paths = [...known.values()]
+		.filter((target) => target.kind === 'brief')
+		.map((target) => target.key)
+		.sort((a, b) => b.length - a.length)
+		.map(escape);
+	const pattern = refPattern([...paths, ...IDS]);
 	const runs: Run[] = [];
 	const plain = (value: string) => {
 		if (!value) return;
