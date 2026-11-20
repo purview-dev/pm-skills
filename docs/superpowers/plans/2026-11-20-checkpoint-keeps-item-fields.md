@@ -1,6 +1,6 @@
 # R-026 pm-checkpoint keeps every item field Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** an item's `Note` (and every other roadmap field) survives `pm-next` claim, `pm-checkpoint` `switch`, and `push` then `pop`.
 
@@ -43,19 +43,19 @@
 
 - Produces: `KEYS.now` includes `"Note"` after `"Revisits"`; `KEYS.stack` includes `"Note"` after `"Revisits"`. `now/fields` accepts exactly three key sequences: `KEYS.now`, `KEYS.now` without `Note`, and `NOW_LEGACY_FIELDS` (no item fields, no `Note`).
 
-- [ ] **Step 1: Write the failing tests** in `lint.test.ts`:
+- [x] **Step 1: Write the failing tests** in `lint.test.ts`:
   - `it("accepts a Note after Revisits in NOW.md")`: `repo({ "NOW.md": t => t.replace("- Revisits:\n", "- Revisits:\n- Note: Started as is: only item in Next.\n") })` → rules (minus `roadmap/later-order`) equal `[]`.
   - `it("rejects a Note out of place in NOW.md")`: insert `- Note: x\n` before `- Serves: V1` → rules contain `now/fields`.
   - `it("reports a Note on an idle NOW.md")`: use the existing `idle` helper's output plus `- Note: x` in the field list → rules contain `now/idle`.
   - `it("accepts stack entries with and without Note")`: add `STACK.md` with two entries in the `pm-checkpoint` push format, one with `- Note: kept` after `- Revisits:`, one with none of the six item fields → no `stack/*` or `fields/unknown` findings.
 
-- [ ] **Step 2: Run** `bun test skills/pm-lint/scripts/lint.test.ts` — expected: the Note-accepting tests FAIL (`now/fields`, `fields/unknown`).
+- [x] **Step 2: Run** `bun test skills/pm-lint/scripts/lint.test.ts` — expected: the Note-accepting tests FAIL (`now/fields`, `fields/unknown`).
 
-- [ ] **Step 3: Implement.** Add `"Note"` to `KEYS.now` and `KEYS.stack` after `"Revisits"`. Define `NOW_NOTE = "Note"`, keep `NOW_ITEM_FIELDS` as the five, `NOW_LEGACY_FIELDS = KEYS.now` minus the five and `Note`, and accept the three sequences in `checkNow`. Update the `now/fields` message and the rule text in `rules.ts` and `rules.md` identically: `NOW.md lists Status, Item, Session, Stage, Brief, Milestone, Spec, Plan, and Started, in that order, optionally with Serves, Owner, Size, Depends on, and Revisits after Milestone, and then an optional Note.` In the `pm-init` `NOW.md` comment add: `Note: optional; the claimed item's Note, written only when it has one.`
+- [x] **Step 3: Implement.** Add `"Note"` to `KEYS.now` and `KEYS.stack` after `"Revisits"`. Define `NOW_NOTE = "Note"`, keep `NOW_ITEM_FIELDS` as the five, `NOW_LEGACY_FIELDS = KEYS.now` minus the five and `Note`, and accept the three sequences in `checkNow`. Update the `now/fields` message and the rule text in `rules.ts` and `rules.md` identically: `NOW.md lists Status, Item, Session, Stage, Brief, Milestone, Spec, Plan, and Started, in that order, optionally with Serves, Owner, Size, Depends on, and Revisits after Milestone, and then an optional Note.` In the `pm-init` `NOW.md` comment add: `Note: optional; the claimed item's Note, written only when it has one.`
 
-- [ ] **Step 4: Run** `bun test skills/pm-lint/scripts/lint.test.ts` — expected: PASS (including the catalogue/`rules.md` and fresh-`pm-init` tests).
+- [x] **Step 4: Run** `bun test skills/pm-lint/scripts/lint.test.ts` — expected: PASS (including the catalogue/`rules.md` and fresh-`pm-init` tests).
 
-- [ ] **Step 5: Commit** `fix(pm-lint): accept the item Note in NOW.md and stack entries (R-026)`.
+- [x] **Step 5: Commit** `fix(pm-lint): accept the item Note in NOW.md and stack entries (R-026)`.
 
 ### Task 2: the skills carry `Note`, and the field list is tested
 
@@ -70,25 +70,25 @@
 
 - Consumes: `KEYS` from `./structure.ts` (Task 1).
 
-- [ ] **Step 1: Write the failing test** `it("carries every roadmap item field through NOW.md and the push template")`:
+- [x] **Step 1: Write the failing test** `it("carries every roadmap item field through NOW.md and the push template")`:
   - `carried = KEYS.item.filter(k => !["Status", "Paused checkpoint"].includes(k))`.
   - Every `carried` key except `"Done when"` is in `KEYS.now`; every `carried` key is in `KEYS.stack`.
   - Read `skills/pm-checkpoint/SKILL.md`; take the fenced block that starts with `### <ID> <Title>` in step 7; its `- <Key>:` keys contain every `carried` key, and `Note` follows `Revisits`.
 
-- [ ] **Step 2: Run** `bun test skills/pm-lint/scripts/lint.test.ts` — expected: FAIL, `Note` missing from the push template.
+- [x] **Step 2: Run** `bun test skills/pm-lint/scripts/lint.test.ts` — expected: FAIL, `Note` missing from the push template.
 
-- [ ] **Step 3: Edit `pm-checkpoint`.**
+- [x] **Step 3: Edit `pm-checkpoint`.**
   - Step 7 template: add `- Note: <Note in NOW.md>` after `Revisits`. Replace the group paragraph's `now/fields` citation: copy the five as a group so `pop` restores a `NOW.md` that `now/fields` accepts. Copy `Note` when `NOW.md` has it; omit it otherwise.
   - Step 8 (pop): restore `Note` when the entry has it; add the sentence `These fields land after Milestone and before Spec, with Note after Revisits, matching pm-next step 7.`
   - Step 6 (switch): add `Note` to the kept list. Add: when `NOW.md` lacks `Serves`, `Owner`, or `Size`, recover them as `pm-setup` Step 5 item 5 does (the item block from `git show <claim commit>^:<PM root>/ROADMAP.md`, `Owner` `agent` and `Depends on` `none` by default), and ask one choice question per still-missing required value (`Serves`, `Size`) before writing the roadmap block, so `roadmap/item` passes.
 
-- [ ] **Step 4: Edit `pm-next`.** Step 7 writes `Note` (from the item) after `Revisits`, only when the item has one. Steps 3 and 5 hold their `Note:`, and step 7 writes it as the `Note`. When the item already has one, the held note is appended as `<existing> <YYYY-MM-DD>: <held note>`. Step 8 drops "apply the writes held from steps 3 to 5" for the `Note:` (split items still apply).
+- [x] **Step 4: Edit `pm-next`.** Step 7 writes `Note` (from the item) after `Revisits`, only when the item has one. Steps 3 and 5 hold their `Note:`, and step 7 writes it as the `Note`. When the item already has one, the held note is appended as `<existing> <YYYY-MM-DD>: <held note>`. Step 8 drops "apply the writes held from steps 3 to 5" for the `Note:` (split items still apply).
 
-- [ ] **Step 5: Edit `pm-rejoin` step 3** (write `Note` from the item, when it has one, after `Revisits`) and the **`pm-revise` rewind keep-list** (add `Note`).
+- [x] **Step 5: Edit `pm-rejoin` step 3** (write `Note` from the item, when it has one, after `Revisits`) and the **`pm-revise` rewind keep-list** (add `Note`).
 
-- [ ] **Step 6: Run** `bun test skills/pm-lint/scripts/lint.test.ts` and `bunx markdownlint-cli2 skills/pm-next/SKILL.md skills/pm-checkpoint/SKILL.md skills/pm-rejoin/SKILL.md skills/pm-revise/SKILL.md` — expected: PASS, 0 errors.
+- [x] **Step 6: Run** `bun test skills/pm-lint/scripts/lint.test.ts` and `bunx markdownlint-cli2 skills/pm-next/SKILL.md skills/pm-checkpoint/SKILL.md skills/pm-rejoin/SKILL.md skills/pm-revise/SKILL.md` — expected: PASS, 0 errors.
 
-- [ ] **Step 7: Commit** `fix(pm-checkpoint): keep the item Note through claim, switch, and pop (R-026)`.
+- [x] **Step 7: Commit** `fix(pm-checkpoint): keep the item Note through claim, switch, and pop (R-026)`.
 
 ### Task 3: rules 22
 
@@ -97,8 +97,8 @@
 - Modify (by script): `package.json`, `skills/pm-setup/references/AGENTS-section.md` marker, `skills/pm-init/templates/config.md`
 - Modify: `skills/pm-setup/references/AGENTS-section.md` upgrade notes; `AGENTS.md` managed section; `planning/config.md` `Rules version`
 
-- [ ] **Step 1: Run** `just bump major` — expected: `package.json` `22.0.0`, marker `version=22`.
-- [ ] **Step 2:** In `AGENTS-section.md`, after the `Version 21` note, add: `Version 22 carries the claimed item's Note: pm-next writes it to NOW.md after Revisits, pm-checkpoint push and pop carry it through STACK.md, and switch writes it back to ROADMAP.md. switch recovers missing item fields from the claim commit before it writes the roadmap block. The export stays at schemaVersion 4. No setting is added.` In the `Shared definitions` stack-entry definition, add `note` to the held fields list (`... depends on, revisits, and note ...`).
-- [ ] **Step 3:** Install the section as `pm-setup` would: replace the text between the markers in `AGENTS.md` with the reference minus `version=22`, and set `- Rules version: 22` in `planning/config.md`.
-- [ ] **Step 4: Run** `just lint-check` and `just version-check` — expected: both pass.
-- [ ] **Step 5: Commit** `chore(release): rules 22 for the item Note (R-026)`, without `planning/`: the `Rules version` line is PM state, and the next PM commit (`pm-checkpoint` `done`) carries it, as after `pm-setup`.
+- [x] **Step 1: Run** `just bump major` — expected: `package.json` `22.0.0`, marker `version=22`.
+- [x] **Step 2:** In `AGENTS-section.md`, after the `Version 21` note, add: `Version 22 carries the claimed item's Note: pm-next writes it to NOW.md after Revisits, pm-checkpoint push and pop carry it through STACK.md, and switch writes it back to ROADMAP.md. switch recovers missing item fields from the claim commit before it writes the roadmap block. The export stays at schemaVersion 4. No setting is added.` In the `Shared definitions` stack-entry definition, add `note` to the held fields list (`... depends on, revisits, and note ...`).
+- [x] **Step 3:** Install the section as `pm-setup` would: replace the text between the markers in `AGENTS.md` with the reference minus `version=22`, and set `- Rules version: 22` in `planning/config.md`.
+- [x] **Step 4: Run** `just lint-check` and `just version-check` — expected: both pass.
+- [x] **Step 5: Commit** `chore(release): rules 22 for the item Note (R-026)`, without `planning/`: the `Rules version` line is PM state, and the next PM commit (`pm-checkpoint` `done`) carries it, as after `pm-setup`.
