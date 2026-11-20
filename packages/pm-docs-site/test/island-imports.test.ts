@@ -13,6 +13,11 @@
 // brace import whose every specifier is `type` has nothing left to emit), so
 // the checker below treats both as type-only. A mix (`import { type X, Y }
 // from`) keeps `Y` as a real binding and still counts as a value import.
+//
+// The same rule applies to a re-export (`export { X } from`, `export * from`,
+// or `export type { X } from`); a side-effect import (`import '<specifier>';`)
+// and a dynamic import (`import('<specifier>')`) carry no type-only form at
+// all, so either one of a guarded lib is always a value import.
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -50,13 +55,20 @@ function everySpecifierIsType(braces: string): boolean {
 	return names.length > 0 && names.every((name) => /^type\s+/.test(name));
 }
 
+// `import ... from` and `export ... from` share the same shape: an optional whole-clause
+// `type`, the clause between the keyword and `from`, and the quoted specifier.
 const IMPORT_RE = /import\s+(type\s+)?([\s\S]*?)\s*from\s*['"]([^'"]+)['"]/g;
+const EXPORT_RE = /export\s+(type\s+)?([\s\S]*?)\s*from\s*['"]([^'"]+)['"]/g;
+// A side-effect import has no clause at all: `import '<specifier>';`.
+const SIDE_EFFECT_IMPORT_RE = /import\s*['"]([^'"]+)['"]/g;
+// A dynamic import: `import('<specifier>')`, with or without `await`.
+const DYNAMIC_IMPORT_RE = /import\s*\(\s*['"]([^'"]+)['"]\s*\)/g;
 
-/** Every value-importing specifier of a guarded module found in `source`. */
-function valueImportsOfGuardedLibs(source: string): string[] {
+/** Findings from a static `import`/`export ... from` clause, where a `type` keyword can make it erasable. */
+function fromClauseFindings(source: string, pattern: RegExp): string[] {
 	const findings: string[] = [];
 
-	for (const match of stripComments(source).matchAll(IMPORT_RE)) {
+	for (const match of source.matchAll(pattern)) {
 		const [, wholeType, clause, specifier] = match;
 		if (!guardedLib(specifier)) continue;
 
@@ -65,6 +77,27 @@ function valueImportsOfGuardedLibs(source: string): string[] {
 	}
 
 	return findings;
+}
+
+/** Findings from a form that has no type-only shape at all: a side-effect or dynamic import. */
+function alwaysValueFindings(source: string, pattern: RegExp): string[] {
+	const findings: string[] = [];
+
+	for (const [, specifier] of source.matchAll(pattern)) if (guardedLib(specifier)) findings.push(specifier);
+
+	return findings;
+}
+
+/** Every value-importing specifier of a guarded module found in `source`, across every import and export form. */
+function valueImportsOfGuardedLibs(source: string): string[] {
+	const stripped = stripComments(source);
+
+	return [
+		...fromClauseFindings(stripped, IMPORT_RE),
+		...fromClauseFindings(stripped, EXPORT_RE),
+		...alwaysValueFindings(stripped, SIDE_EFFECT_IMPORT_RE),
+		...alwaysValueFindings(stripped, DYNAMIC_IMPORT_RE),
+	];
 }
 
 describe('islands import only types from server-only libs', () => {
@@ -84,5 +117,11 @@ describe('islands import only types from server-only libs', () => {
 	it('the guard catches a value import', () => {
 		expect(valueImportsOfGuardedLibs(`import { features } from '../../lib/planning';`)).toEqual(['../../lib/planning']);
 		expect(valueImportsOfGuardedLibs(`import type { Feature } from '../../lib/planning';`)).toEqual([]);
+		expect(valueImportsOfGuardedLibs(`export { loadPlanning } from '../../lib/planning';`)).toEqual(['../../lib/planning']);
+		expect(valueImportsOfGuardedLibs(`export * from '../../lib/planning';`)).toEqual(['../../lib/planning']);
+		expect(valueImportsOfGuardedLibs(`import '../../lib/planning';`)).toEqual(['../../lib/planning']);
+		expect(valueImportsOfGuardedLibs(`const m = await import('../../lib/planning');`)).toEqual(['../../lib/planning']);
+		expect(valueImportsOfGuardedLibs(`export type { Feature } from '../../lib/planning';`)).toEqual([]);
+		expect(valueImportsOfGuardedLibs(`import('../../lib/timeline-state');`)).toEqual([]);
 	});
 });
