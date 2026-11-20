@@ -40,14 +40,14 @@
 - Consumes: none.
 - Produces: `sampleFrames(page: Page, path: string): Promise<GraphFrame[]>`, signature unchanged; callers at lines 187 and 326 unchanged.
 
-- [ ] **Step 1: Reproduce the flake.** Run (in `packages/pm-docs-site`): `npx playwright test test/browser/graph.browser.ts --project=chromium --repeat-each=10 -g "both switches off"`. Expected: at least one failure on `expect(frames.some((frame) => frame.pending)).toBe(true)` is likely but not guaranteed; record the result either way.
-- [ ] **Step 2: Change `sampleFrames`'s init script.**
+- [x] **Step 1: Reproduce the flake.** Run (in `packages/pm-docs-site`): `npx playwright test test/browser/graph.browser.ts --project=chromium --repeat-each=10 -g "both switches off"`. Expected: at least one failure on `expect(frames.some((frame) => frame.pending)).toBe(true)` is likely but not guaranteed; record the result either way.
+- [x] **Step 2: Change `sampleFrames`'s init script.**
   - Call `sample()` once synchronously at the end of the init script, before the first `requestAnimationFrame(sample)`; the synchronous call must not schedule a frame itself (split the push into a `record()` helper that `sample` and the observer both call, and keep the rAF scheduling and stop logic in `sample`).
   - Create a `MutationObserver` on `document.documentElement` with `{ attributes: true, attributeFilter: ['data-graph-pending'] }` whose callback calls `record()` once per mutation record. For a removal record, push a frame with `pending: true` (the attribute was set until this mutation: `mutation.oldValue !== null`, observed with `attributeOldValue: true`) and then the current state.
   - Disconnect the observer when `graphFrames` is published.
   - Update the doc comment above `sampleFrames` to say it also samples at document start and on every pending-mark change.
-- [ ] **Step 3: Run** `npx playwright test test/browser/graph.browser.ts --project=chromium --repeat-each=10`. Expected: every test passes, 10 of 10 runs each.
-- [ ] **Step 4: Commit**
+- [x] **Step 3: Run** `npx playwright test test/browser/graph.browser.ts --project=chromium --repeat-each=10`. Expected: every test passes, 10 of 10 runs each.
+- [x] **Step 4: Commit**
 
 ```bash
 git add packages/pm-docs-site/test/browser/graph.browser.ts
@@ -70,13 +70,13 @@ git commit -m "test(pm-docs-site): graph sampler sees every pending change (R-02
 - Consumes: none.
 - Produces: scripts `test:browser` (`playwright test`) and `test:browser:dev` (`playwright test -c playwright.dev.config.ts`).
 
-- [ ] **Step 1: `playwright.config.ts`.** Keep `testDir`, `testMatch`, `fullyParallel`, `reporter`. Projects: only `chromium` (keep `testIgnore: '**/dev.browser.ts'`). `webServer`: only the `node test/browser/serve.ts` entry, as an object. Rewrite the header comment: this config is the built fixture site; the dev-server tests live in `playwright.dev.config.ts`, so each run starts one server; pass `--project=chromium` with `=` because `--project` is variadic.
-- [ ] **Step 2: `playwright.dev.config.ts`.** Same `testDir`, `fullyParallel`, `reporter`; `testMatch: '**/dev.browser.ts'`; one project `dev` with `devices['Desktop Chrome']` and `baseURL` `http://localhost:4398`; `webServer` the `bun test/browser/dev-server.ts` entry exactly as it is today (timeout 300_000, `reuseExistingServer: false`, `env.PORT`). Header comment: the packed-install consumer under `pm-docs-site dev`, run by `bun run test:browser:dev`.
-- [ ] **Step 3: Scripts and wiring.** `package.json`: add `"test:browser:dev": "playwright test -c playwright.dev.config.ts"`. `justfile` `package-test`: add `bun run test:browser:dev` after `bun run test:browser`. `ci.yml`: add a step `- name: Dev browser tests` / `run: bun run test:browser:dev` after `Browser tests`. Update the two comments in `dev-server.ts` and `dev.browser.ts` to name `playwright.dev.config.ts`.
-- [ ] **Step 4: Run** `bun run test:browser`. Expected: PASS, output lists only `[chromium]` tests, and no `dev-server.ts` output (no `bun pm pack` line) appears.
-- [ ] **Step 5: Run** `bun run test:browser:dev`. Expected: PASS, output lists only `[dev]` tests from `dev.browser.ts`.
-- [ ] **Step 6: Run** `bun run check`. Expected: 0 errors (the new config is type-checked by `include: ["**/*"]`).
-- [ ] **Step 7: Commit**
+- [x] **Step 1: `playwright.config.ts`.** Keep `testDir`, `testMatch`, `fullyParallel`, `reporter`. Projects: only `chromium` (keep `testIgnore: '**/dev.browser.ts'`). `webServer`: only the `node test/browser/serve.ts` entry, as an object. Rewrite the header comment: this config is the built fixture site; the dev-server tests live in `playwright.dev.config.ts`, so each run starts one server; pass `--project=chromium` with `=` because `--project` is variadic.
+- [x] **Step 2: `playwright.dev.config.ts`.** Same `testDir`, `fullyParallel`, `reporter`; `testMatch: '**/dev.browser.ts'`; one project `dev` with `devices['Desktop Chrome']` and `baseURL` `http://localhost:4398`; `webServer` the `bun test/browser/dev-server.ts` entry exactly as it is today (timeout 300_000, `reuseExistingServer: false`, `env.PORT`). Header comment: the packed-install consumer under `pm-docs-site dev`, run by `bun run test:browser:dev`.
+- [x] **Step 3: Scripts and wiring.** `package.json`: add `"test:browser:dev": "playwright test -c playwright.dev.config.ts"`. `justfile` `package-test`: add `bun run test:browser:dev` after `bun run test:browser`. `ci.yml`: add a step `- name: Dev browser tests` / `run: bun run test:browser:dev` after `Browser tests`. Update the two comments in `dev-server.ts` and `dev.browser.ts` to name `playwright.dev.config.ts`.
+- [x] **Step 4: Run** `bun run test:browser`. Expected: PASS, output lists only `[chromium]` tests, and no `dev-server.ts` output (no `bun pm pack` line) appears.
+- [x] **Step 5: Run** `bun run test:browser:dev`. Expected: PASS, output lists only `[dev]` tests from `dev.browser.ts`.
+- [x] **Step 6: Run** `bun run check`. Expected: 0 errors (the new config is type-checked by `include: ["**/*"]`).
+- [x] **Step 7: Commit**
 
 ```bash
 git add packages/pm-docs-site/playwright.config.ts packages/pm-docs-site/playwright.dev.config.ts packages/pm-docs-site/package.json packages/pm-docs-site/test/browser/dev-server.ts packages/pm-docs-site/test/browser/dev.browser.ts justfile .github/workflows/ci.yml
@@ -95,11 +95,11 @@ git commit -m "test(pm-docs-site): one web server per browser test run (R-023)"
 - Consumes: `graphLayouts(...)['lanes-done'].boxes: Record<string, Box>` (existing).
 - Produces: `arrowheadFill(page: Page, edgeId: string): Promise<string>`, which throws instead of returning `null`.
 
-- [ ] **Step 1: Chip test.** Replace the `chipBoxes` filter and `toHaveLength(1)` with `expect(Object.keys(twoLane.boxes).sort()).toEqual(['R-300', 'R-301', 'R-302'])`, so an extra box for the chip under any key fails. Keep the lane assertions that follow.
-- [ ] **Step 2: Run** `bun test test/graph-layout.test.ts`. Expected: PASS.
-- [ ] **Step 3: `arrowheadFill`.** Return a `{ fill: string | null; markerEnd: string | null; reason: string | null }` from `page.evaluate`, with `reason` set to `'marker-end is not url(#id)'`, `'no marker element'`, or `'no polyline'`. Outside the evaluate, throw an `Error` whose message is `arrowheadFill(<edgeId>): <reason> (marker-end: <markerEnd>)` when `reason` is set; otherwise return `fill`. Update the doc comment to say it fails loudly when React Flow's marker format changes. Remove the two `expect(...).not.toBeNull()` lines at the callers, which the throw replaces.
-- [ ] **Step 4: Run** `npx playwright test test/browser/graph.browser.ts --project=chromium -g "arrowhead"`. Expected: PASS.
-- [ ] **Step 5: Commit**
+- [x] **Step 1: Chip test.** Replace the `chipBoxes` filter and `toHaveLength(1)` with `expect(Object.keys(twoLane.boxes).sort()).toEqual(['R-300', 'R-301', 'R-302'])`, so an extra box for the chip under any key fails. Keep the lane assertions that follow.
+- [x] **Step 2: Run** `bun test test/graph-layout.test.ts`. Expected: PASS.
+- [x] **Step 3: `arrowheadFill`.** Return a `{ fill: string | null; markerEnd: string | null; reason: string | null }` from `page.evaluate`, with `reason` set to `'marker-end is not url(#id)'`, `'no marker element'`, or `'no polyline'`. Outside the evaluate, throw an `Error` whose message is `arrowheadFill(<edgeId>): <reason> (marker-end: <markerEnd>)` when `reason` is set; otherwise return `fill`. Update the doc comment to say it fails loudly when React Flow's marker format changes. Remove the two `expect(...).not.toBeNull()` lines at the callers, which the throw replaces.
+- [x] **Step 4: Run** `npx playwright test test/browser/graph.browser.ts --project=chromium -g "arrowhead"`. Expected: PASS.
+- [x] **Step 5: Commit**
 
 ```bash
 git add packages/pm-docs-site/test/graph-layout.test.ts packages/pm-docs-site/test/browser/graph.browser.ts
@@ -118,10 +118,10 @@ git commit -m "test(pm-docs-site): chip and arrowhead checks can fail (R-023)"
 - Consumes: `setup({ title })[0]!.vite.plugins` (existing test helper).
 - Produces: none.
 
-- [ ] **Step 1: Tests.** Change `plugin()` to `plugins().find((p) => p.name === 'pm-docs-site:fs-allow')!`, where `plugins()` returns `setup({ title: 'T' })[0]!.vite.plugins`. Change the `'is the last plugin'` test to `expect(plugins().at(-1)!.name).toBe('pm-docs-site:fs-allow')`.
-- [ ] **Step 2: Comment.** Add to the comment above `name: 'pm-docs-site:fs-allow'`: the entry serves the whole package folder in in-repo and linked dev, `server.fs.deny` still guards it, and on a case-insensitive file system a case-only path difference appends a harmless duplicate entry.
-- [ ] **Step 3: Run** `bun test test/integration.test.ts` and `bun run check`. Expected: PASS, 0 errors.
-- [ ] **Step 4: Commit**
+- [x] **Step 1: Tests.** Change `plugin()` to `plugins().find((p) => p.name === 'pm-docs-site:fs-allow')!`, where `plugins()` returns `setup({ title: 'T' })[0]!.vite.plugins`. Change the `'is the last plugin'` test to `expect(plugins().at(-1)!.name).toBe('pm-docs-site:fs-allow')`.
+- [x] **Step 2: Comment.** Add to the comment above `name: 'pm-docs-site:fs-allow'`: the entry serves the whole package folder in in-repo and linked dev, `server.fs.deny` still guards it, and on a case-insensitive file system a case-only path difference appends a harmless duplicate entry.
+- [x] **Step 3: Run** `bun test test/integration.test.ts` and `bun run check`. Expected: PASS, 0 errors.
+- [x] **Step 4: Commit**
 
 ```bash
 git add packages/pm-docs-site/test/integration.test.ts packages/pm-docs-site/lib/index.ts
@@ -132,7 +132,7 @@ git commit -m "test(pm-docs-site): fs-allow tests find the plugin by name (R-023
 
 **Files:** none.
 
-- [ ] **Step 1: Run** (in `packages/pm-docs-site`) `npx playwright test test/browser/graph.browser.ts --project chromium --repeat-each=10`. Expected: all passed, 0 failed.
-- [ ] **Step 2: Run** (repository root) `just package-test`. Expected: exit 0.
-- [ ] **Step 3: Run** `just package-test` again. Expected: exit 0.
-- [ ] **Step 4: Run** `just lint-check`. Expected: exit 0.
+- [x] **Step 1: Run** (in `packages/pm-docs-site`) `npx playwright test test/browser/graph.browser.ts --project chromium --repeat-each=10`. Expected: all passed, 0 failed.
+- [x] **Step 2: Run** (repository root) `just package-test`. Expected: exit 0.
+- [x] **Step 3: Run** `just package-test` again. Expected: exit 0.
+- [x] **Step 4: Run** `just lint-check`. Expected: exit 0.
