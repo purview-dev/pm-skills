@@ -111,7 +111,7 @@ only in the conversation, and never resume the interrupted step silently.
      checkpoint.
    - `rewind`: set `Stage` to the chosen earlier stage. Keep `Brief`,
      `Milestone`, `Serves`, `Owner`, `Size`, `Depends on`, `Revisits`,
-     `Spec`, `Plan`, and `Started`.
+     `Note`, `Spec`, `Plan`, and `Started`.
    - `fix-in-place`: keep `Stage`.
    - Replace `## Checkpoint` with a pause block whose `Stopped at`
      names the last step that still holds, whose `Next action` is the first

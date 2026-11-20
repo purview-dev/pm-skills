@@ -112,12 +112,17 @@ written to the branch the session is leaving.
    empty), `Milestone` (from the item, or empty), `Serves` (from the item),
    `Owner` (from the item, or `agent`), `Size` (from the item),
    `Depends on` (from the item, or `none`), `Revisits` (from the item, or
-   empty), `Started` (today), empty `Spec` and `Plan`, and the item's
-   `Done when` under `## Done when`. `## Done when` holds the item's checks
-   only; a held `Note:` goes on the item (step 8), never under
-   `## Done when`. Leave `## Checkpoint` empty.
-8. Remove the item from `## Next` in `ROADMAP.md`, and apply the writes
-   held from steps 3 to 5. If it has a brief, set the brief's
+   empty), `Note` (only when the item has one, or a `Note:` is held from
+   steps 3 to 5), `Started` (today), empty `Spec` and `Plan`, and the
+   item's `Done when` under `## Done when`. `Note` is the item's `Note`
+   verbatim; a held note is appended to it as `<existing> <YYYY-MM-DD>:
+   <held note>`, or is the whole `Note` when the item has none. Omit the
+   `Note` line when there is neither. `## Done when` holds the item's
+   checks only; a held `Note:` never goes under it. Leave `## Checkpoint`
+   empty.
+8. Remove the item from `## Next` in `ROADMAP.md`, and apply the other
+   writes held from steps 3 to 5 (split items, brief answers); a held
+   `Note:` is already in `NOW.md` (step 7). If it has a brief, set the brief's
    `Status: on roadmap (<ID>), active`.
 9. **Commit** the PM state (rules: Committing PM state), with the message
    `docs(pm): claim <ID> <slug>`, on the **Item branch**. The claim must

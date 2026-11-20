@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { checkFormat, fixFormat } from "./format.ts";
 import { fix, hookSnippet, lint, main } from "./lint.ts";
 import { RULES } from "./rules.ts";
-import { buildContext, checkStructure, fixStructure } from "./structure.ts";
+import { buildContext, checkStructure, fixStructure, KEYS } from "./structure.ts";
 
 const SKILLS = join(import.meta.dir, "..", "..");
 // The synthetic repository pm-export's tests use: every PM file, written as the skills write them.
@@ -212,6 +212,19 @@ describe("structure rules", () => {
     });
     const rules = await rulesOf(root);
     for (const rule of ["config/commits", "config/limits", "vision/outcome", "strategy/milestone-status", "strategy/focus", "strategy/decision"]) expect(rules).toContain(rule);
+  });
+});
+
+describe("item fields ride NOW.md and the stack", () => {
+  it("carries every roadmap item field through NOW.md and the push template", () => {
+    const carried = KEYS.item.filter((k) => !["Status", "Paused checkpoint"].includes(k));
+    for (const key of carried.filter((k) => k !== "Done when")) expect(KEYS.now as readonly string[]).toContain(key);
+    for (const key of carried) expect(KEYS.stack as readonly string[]).toContain(key);
+    const skill = readFileSync(join(SKILLS, "pm-checkpoint", "SKILL.md"), "utf8");
+    const template = /```markdown\n\s*### <ID> <Title>\n([\s\S]*?)```/.exec(skill)?.[1] ?? "";
+    const keys = [...template.matchAll(/^\s*- ([A-Z][A-Za-z ]*):/gm)].map((m) => m[1]!);
+    for (const key of carried) expect(keys).toContain(key);
+    expect(keys.indexOf("Note")).toBe(keys.indexOf("Revisits") + 1);
   });
 });
 

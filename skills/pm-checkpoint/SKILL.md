@@ -151,9 +151,16 @@ and `Explain <ID>`.
    the item to switch to, show `R-NNN <title>`. Copy the active
    item to the top of `## Next` in `ROADMAP.md` with `Status: paused` and
    `Paused checkpoint:` set to that checkpoint, keeping its `Brief`,
-   `Milestone`, `Serves`, `Owner`, `Size`, `Depends on`, and `Revisits` from
-   `NOW.md` (omit a field `NOW.md` does not have), and `Done when` built by
-   joining the `## Done when` bullets with a semicolon and a space. If Next
+   `Milestone`, `Serves`, `Owner`, `Size`, `Depends on`, `Revisits`, and
+   `Note` from `NOW.md` (omit an optional field `NOW.md` does not have), and
+   `Done when` built by joining the `## Done when` bullets with a semicolon
+   and a space. A roadmap item requires `Serves` and `Size`
+   (`roadmap/item`): when `NOW.md` lacks them (an item claimed before rules
+   20), recover the item fields as `pm-setup` Step 5, item 5 does — the
+   item's block in `git show <claim commit>^:<PM root>/ROADMAP.md`, with
+   `Owner` `agent` and `Depends on` `none` when the block lacks them — and
+   ask one choice question per required value still missing (`Serves`: the
+   `V` lines in `VISION.md`; `Size`: `S`, `M`, `L`). If Next
    is at its max from `config.md`, apply the **Full Next** rule (Roadmap
    order and edits) and name the item moved to Later. Then set `NOW.md` to
    idle as in `done`.
@@ -175,6 +182,7 @@ and `Explain <ID>`.
    - Size: <Size in NOW.md>
    - Depends on: <Depends on in NOW.md>
    - Revisits: <Revisits in NOW.md>
+   - Note: <Note in NOW.md; omit the line when NOW.md has none>
    - Started: <Started in NOW.md>
    - Reason: <the user's reason, verbatim>
    - Done when:
@@ -192,8 +200,10 @@ and `Explain <ID>`.
    copy all five verbatim, `none` and blank included — `Depends on: none`
    and a blank `Revisits` are valid values, not an absent field. When
    `NOW.md` is in the rules-19 shape (none of the five present), omit all
-   five from the entry instead of writing fabricated values; `now/fields`
-   (`pm-lint`) rejects a partial set.
+   five from the entry instead of writing fabricated values. They travel as
+   a group so `pop` writes back a `NOW.md` that `now/fields` (`pm-lint`)
+   accepts, which a partial set is not. Copy `Note` verbatim after
+   `Revisits` when `NOW.md` has it, and omit it otherwise.
 
    Use the existing checkpoint, or write one as in `pause` when `NOW.md`
    has none. Then set `NOW.md` to idle as in `done`. The item, its stage,
@@ -210,7 +220,9 @@ and `Explain <ID>`.
    the entry carries them, write all five verbatim, `none` and blank
    included; when it carries none of them (a rules-19 entry), omit all
    five instead of writing fabricated values — never a partial set, which
-   `now/fields` (`pm-lint`) rejects. Remove the
+   `now/fields` (`pm-lint`) rejects. Write `Note` after `Revisits` when the
+   entry has it. These fields land after `Milestone` and before `Spec`,
+   matching `pm-next` step 7. Remove the
    entry from `STACK.md`, leaving the next entry as the top. Step 9
    commits; show one line (`pop <ID> <title>: <stage> at its checkpoint`),
    then invoke the skill for `Stage` from

@@ -135,11 +135,12 @@ ambiguous, ask which one is true.
    `Stage` (from the evidence), `Brief`, `Milestone` (from the item, or
    empty), `Serves` (from the item), `Owner` (from the item, or `agent`),
    `Size` (from the item), `Depends on` (from the item, or `none`),
-   `Revisits` (from the item, or empty), `Spec`, and `Plan` (only paths
+   `Revisits` (from the item, or empty), `Note` (from the item, only when
+   it has one), `Spec`, and `Plan` (only paths
    that exist), `Started` (today, or the value `NOW.md` already records for
    this item), and the item's `Done when` under `## Done when`. These five
-   fields land after `Milestone` and before `Spec`, matching pm-next step
-   7.
+   fields land after `Milestone` and before `Spec`, with `Note` after
+   `Revisits`, matching pm-next step 7.
 4. **Write `## Checkpoint`** in the `pause` format from `pm-checkpoint`:
    `Stopped at` (the last checked plan step, or `nothing built yet`),
    `Next action` (the first unchecked plan step, or the stage skill's first
