@@ -11,7 +11,7 @@ import config from 'virtual:pm-docs-site/config';
 
 import type { DocsSource } from '../../lib/types.ts';
 import { pagesOf } from '../../lib/repo-docs.ts';
-import { checkExport, PlanningExportError, SUPPORTED_SCHEMA_VERSIONS } from '../../lib/schema-version.ts';
+import { parseExport, PlanningExportError, SUPPORTED_SCHEMA_VERSIONS } from '../../lib/schema-version.ts';
 import type { Brief, InboxEntry, Level, Milestone, Owner, Planning, Rag, Risk, RoadmapItem, Size, Stage } from './planning-types';
 
 export { PlanningExportError, SUPPORTED_SCHEMA_VERSIONS };
@@ -26,17 +26,7 @@ export function loadPlanning(path: string = config.planning): Planning {
 		throw new PlanningExportError(`No plan export at ${path}.`);
 	}
 
-	let planning: unknown;
-
-	try {
-		planning = JSON.parse(text);
-	} catch (error) {
-		throw new PlanningExportError(`${path} is not valid JSON (${(error as Error).message}).`);
-	}
-
-	checkExport(planning, path);
-
-	return planning as Planning;
+	return parseExport(text, path) as unknown as Planning;
 }
 
 /** Board-card priority from item size — the PM state has no priority of its own. */

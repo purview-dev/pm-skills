@@ -166,6 +166,19 @@ describe('pm-docs-site check', () => {
 		expect(output).not.toContain('TypeError');
 	}, CHECK);
 
+	it('names the file and the pm-export hint when planning.json is not valid JSON', () => {
+		const dir = scratchFixture('badjson-');
+		writeFileSync(join(dir, 'planning.json'), '{ "schemaVersion": 4,');
+		writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'Bad', planning: '../planning.json' }`));
+
+		const result = runCli(['check', join(dir, 'site')]);
+		const output = result.stdout + result.stderr;
+
+		expect(result.code).toBe(1);
+		expect(output).toContain('planning.json is not valid JSON (');
+		expect(output).toContain('pm-export');
+	}, CHECK);
+
 	it('fails when the config has no pm-docs-site integration', () => {
 		const dir = scratchFixture('none-');
 		writeFileSync(join(dir, 'site', 'astro.config.ts'), 'export default {};\n');

@@ -37,3 +37,23 @@ export function checkExport(value: unknown, path: string): asserts value is { sc
 
 	checkSchemaVersion((value as { schemaVersion?: unknown }).schemaVersion, path);
 }
+
+/**
+ * Parse and check the export's text: invalid JSON, a non-object, or an
+ * unsupported schemaVersion throws PlanningExportError, which names the path
+ * and the pm-export hint.
+ * @param path the export's path, for the message
+ */
+export function parseExport(text: string, path: string): { schemaVersion: number } {
+	let value: unknown;
+
+	try {
+		value = JSON.parse(text);
+	} catch (error) {
+		throw new PlanningExportError(`${path} is not valid JSON (${(error as Error).message}).`);
+	}
+
+	checkExport(value, path);
+
+	return value;
+}
