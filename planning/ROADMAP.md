@@ -14,16 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-026 pm-checkpoint keeps every item field through switch, push, and pop
-
-- Serves: V2
-- Owner: agent
-- Done when: an item claimed with a `Note` and then moved with `pm-checkpoint` `switch`, or `push` then `pop`, returns to `ROADMAP.md` with every field it had before the claim, including `Note`, and `just test` covers the field list.
-- Size: S
-- Depends on: none
-- Status: ready
-- Note: From R-018 design (2026-11-19): R-018's design keeps `Note` out of `NOW.md`, so `pm-checkpoint` `switch` (and `push`/`pop`) restore a roadmap item without the `Note` it had before `pm-next` claimed it. Carry `Note` through `NOW.md` or the stack entry. A skills change, so it bumps the rules major. Spec: `docs/superpowers/specs/2026-11-19-now-item-owner-size-links-design.md`. 2026-11-19 review, from the R-018 final re-review: `pop` no longer states that the five item fields (`Serves`, `Owner`, `Size`, `Depends on`, `Revisits`) land after `Milestone` and before `Spec`, as `pm-rejoin` and `pm-next` step 7 do; `push` cites `now/fields` as the reason to copy the five as a group into `STACK.md`, but `now/fields` checks `NOW.md` only and `checkStack` does not enforce it. Add the position sentence to `pop` and reword the `push` citation. 2026-11-19 review, from the R-018 final re-review: `pm-setup` Step 5 item 5 backfills the five item fields of an active `NOW.md` on the upgrade to rules 20, but not of entries already in `STACK.md`, so an item pushed before the upgrade pops back without them (its Now card exports `owner`/`size` null and the graph draws no edges for it). `pm-checkpoint switch` on an item never backfilled (the user chose `Continue on v19`) restores a roadmap block without `Serves` and `Size`, which `roadmap/item` requires. Either backfill stack entries in `pm-setup`, or have `pop` and `switch` ask for missing values the way the backfill does. Affects `skills/pm-setup/SKILL.md`.
-
 ## Later
 
 <!-- Grouped by milestone where one is set. Same item format. -->
