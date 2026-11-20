@@ -119,4 +119,17 @@ describe("the CI workflow", () => {
   it("checks the version on every pull request", () => {
     expect(ci).toMatch(/bun scripts\/check-version\.ts/);
   });
+
+  it("runs every just demo-check step, as the justfile does", () => {
+    const justfile = readFileSync(join(root, "justfile"), "utf8");
+    const recipe = /^demo-check:\r?\n((?:[ \t]+\S.*\r?\n?)+)/m.exec(justfile);
+    expect(recipe).not.toBeNull();
+    const steps = recipe![1]!
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => line.replace(/^cd \S+ && /, ""));
+    expect(steps.length).toBeGreaterThan(0);
+    for (const step of steps) expect(ci).toContain(step);
+  });
 });

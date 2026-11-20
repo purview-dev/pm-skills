@@ -137,6 +137,13 @@ same `bun` commands as the `just` recipes). Markdown is linted with
 - Serve the project site: `just docs` (<http://localhost:4321>). Search
   works only on a build: `just docs-preview`. Check it matches the
   templates, then test, type-check, and build it: `just docs-check`.
+- Open the demo site (`examples/demo/`, an invented plan that fills every
+  view, built on the local `packages/pm-docs-site`): `just demo`. Check it:
+  `just demo-check` (part of `just package-test`). Its
+  `planning/planning.json` is derived: `just bump` refreshes it on a
+  major, and
+  `bun skills/pm-export/scripts/export.ts write --root examples/demo --pm-root planning/`
+  after a demo PM edit.
 - Test the skills' scripts (`pm-export`'s exporter, `pm-lint`):
   `just test` (part of `just lint-check`).
 - Lint `planning/` against the PM file format: `just pm-lint` (fix the

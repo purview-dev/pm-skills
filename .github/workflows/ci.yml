@@ -117,6 +117,35 @@ jobs:
       - name: Dev browser tests
         run: bun run test:browser:dev
 
+      # Mirrors `just demo-check`: the demo site (examples/demo) builds with
+      # every view filled. Run from the repository root.
+      - name: Demo export is current
+        working-directory: ${{ github.workspace }}
+        run: bun skills/pm-export/scripts/export.ts check --root examples/demo --pm-root planning/
+
+      - name: Demo export is valid
+        working-directory: ${{ github.workspace }}
+        run: bun skills/pm-export/scripts/export.ts validate examples/demo/planning/planning.json
+
+      - name: Demo PM files lint
+        working-directory: ${{ github.workspace }}
+        run: bun skills/pm-lint/scripts/lint.ts check --root examples/demo --pm-root planning/
+
+      - name: Build the package
+        run: node scripts/build.ts
+
+      - name: Install the demo
+        working-directory: ${{ github.workspace }}/examples/demo
+        run: bun install --frozen-lockfile
+
+      - name: Build the demo
+        working-directory: ${{ github.workspace }}/examples/demo
+        run: bun run build
+
+      - name: Demo pages have content
+        working-directory: ${{ github.workspace }}
+        run: bun scripts/check-demo.ts
+
   # Mirrors `just version-check` (the lefthook pre-push hook): a skills change
   # ships in a release, so it must raise the rules version and package.json
   # past the version on main; anything else (docs, CI, scripts, package
