@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-020 Docs-site package: rich demo planning fixture
 - Session: feat/r-020-docs-site-demo-fixture
-- Stage: plan
+- Stage: execute
 - Brief: planning/briefs/R-020-docs-site-demo-fixture.md
 - Milestone: M1
 - Serves: V4
@@ -23,7 +23,7 @@ Milestone: optional; the item's milestone while it is active
 - Depends on: none
 - Revisits:
 - Spec: docs/superpowers/specs/2026-11-20-docs-site-demo-design.md
-- Plan:
+- Plan: docs/superpowers/plans/2026-11-20-docs-site-demo.md
 - Started: 2026-11-20
 
 ## Done when
@@ -38,7 +38,7 @@ Milestone: optional; the item's milestone while it is active
 
 - Stopped at: design spec approved (`docs/superpowers/specs/2026-11-20-docs-site-demo-design.md`).
 - Next action: write the implementation plan from the spec.
-- Start with: superpowers:writing-plans
+- Start with: superpowers:executing-plans
 - Decisions: demo PM files in `examples/demo/planning/` generate `planning.json`; linked `file:` package with a `demo-check` recipe; `just bump` refreshes the demo export.
 - Context: Revision 2026-11-20: the `Done when` path is `examples/demo/planning/planning.json`, not `examples/demo/planning.json`.
 
