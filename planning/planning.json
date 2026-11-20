@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T11:41:18+00:00",
+  "generatedAt": "2026-11-20T11:41:56+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-019-docs-site-package-consumer-ready-for-1-0-0",
-    "head": "04b7592a9042cd7a9af4e4299ba1c373f743eb4f"
+    "head": "39cce817fa8b1e15d4b0e06099a23e6921ff6a58"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -177,243 +177,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-019",
-      "title": "Docs-site package: consumer-ready for 1.0.0",
-      "serves": [
-        "V4"
-      ],
-      "owner": "agent",
-      "size": "M",
-      "dependsOn": [
-        "R-021"
-      ],
-      "revisits": null
-    },
-    "stage": "execute",
-    "session": "feat/r-019-docs-site-package-consumer-ready-for-1-0-0",
-    "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-    "milestone": "M1",
-    "spec": "docs/superpowers/specs/2026-11-20-docs-site-consumer-ready-design.md",
-    "plan": "docs/superpowers/plans/2026-11-20-docs-site-consumer-ready.md",
-    "started": "2026-11-20",
-    "doneWhen": [
-      "The package home page has no `just docs-preview`.",
-      "A build without the `docs` option logs no Starlight missing-folder or empty-collection warning.",
-      "`docsHref` returns no link for a spec or plan path no docs source maps, and honours a source `prefix`.",
-      "RefLink prints fallback text (the entry title, \"No milestone\") for an unknown key.",
-      "`linkify` uses the link scanner's boundaries, so an ID inside a path is not linked.",
-      "The CLI warns when `--title` or `--planning` is ignored.",
-      "A `planning.json` holding `null` prints the pm-export hint.",
-      "`check` loads an `astro.config.ts` on the `engines` Node floor.",
-      "The README names the same-drive requirement on Windows."
-    ],
-    "checkpoint": {
-      "at": "2026-11-20 11:05",
-      "stoppedAt": "plan committed (a386b42); no task started.",
-      "nextAction": "execute Task 1 of the plan (checkExport).",
-      "startWith": "docs/superpowers/plans/2026-11-20-docs-site-consumer-ready.md",
-      "decisions": "shared `checkExport` in `lib/schema-version.ts`; boundary pattern in `src/lib/ref-boundary.ts`, shared by `linkify` and `test/scan.ts`; RefLink fallback through `refText` in `src/lib/references.ts`. `docsHref` and the Node floor need tests only.",
-      "context": "none",
-      "openQuestion": null
-    }
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
+    "brief": null,
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
+    "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-20-docs-site-consumer-ready.md",
-    "checked": 33,
-    "total": 33,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "A non-object export fails with the pm-export hint",
-        "checked": 5,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing tests**",
-            "checked": true
-          },
-          {
-            "text": "**Step 2: Run to verify they fail**",
-            "checked": true
-          },
-          {
-            "text": "**Step 3: Implement `checkExport` and use it**",
-            "checked": true
-          },
-          {
-            "text": "**Step 4: Run to verify they pass**",
-            "checked": true
-          },
-          {
-            "text": "**Step 5: Commit**",
-            "checked": true
-          }
-        ]
-      },
-      {
-        "number": 2,
-        "title": "The CLI warns when a flag is ignored",
-        "checked": 5,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing test**",
-            "checked": true
-          },
-          {
-            "text": "**Step 2: Run to verify it fails**",
-            "checked": true
-          },
-          {
-            "text": "**Step 3: Implement the warning in `loadSiteOptions`; add one README line under `## CLI` saying the flags apply only to a site without an `astro.config.*` and are otherwise ignored with a warning.**",
-            "checked": true
-          },
-          {
-            "text": "**Step 4: Run to verify it passes**",
-            "checked": true
-          },
-          {
-            "text": "**Step 5: Commit**",
-            "checked": true
-          }
-        ]
-      },
-      {
-        "number": 3,
-        "title": "A consumer build shows no repository text and no docs warnings",
-        "checked": 5,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Extend the failing test**",
-            "checked": true
-          },
-          {
-            "text": "**Step 2: Run to verify it fails**",
-            "checked": true
-          },
-          {
-            "text": "**Step 3: Implement**",
-            "checked": true
-          },
-          {
-            "text": "**Step 4: Run to verify it passes**",
-            "checked": true
-          },
-          {
-            "text": "**Step 5: Commit**",
-            "checked": true
-          }
-        ]
-      },
-      {
-        "number": 4,
-        "title": "linkify uses the link scanner's boundaries",
-        "checked": 5,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing test**",
-            "checked": true
-          },
-          {
-            "text": "**Step 2: Run to verify it fails**",
-            "checked": true
-          },
-          {
-            "text": "**Step 3: Implement**",
-            "checked": true
-          },
-          {
-            "text": "**Step 4: Run to verify it passes**",
-            "checked": true
-          },
-          {
-            "text": "**Step 5: Commit**",
-            "checked": true
-          }
-        ]
-      },
-      {
-        "number": 5,
-        "title": "RefLink prints fallback text for an unknown key",
-        "checked": 5,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing test**",
-            "checked": true
-          },
-          {
-            "text": "**Step 2: Run to verify it fails**",
-            "checked": true
-          },
-          {
-            "text": "**Step 3: Implement `refText`, use it in RefLink, and pass fallbacks**",
-            "checked": true
-          },
-          {
-            "text": "**Step 4: Run to verify it passes**",
-            "checked": true
-          },
-          {
-            "text": "**Step 5: Commit**",
-            "checked": true
-          }
-        ]
-      },
-      {
-        "number": 6,
-        "title": "Pin docsHref prefixes and the Node floor; Windows drive note",
-        "checked": 5,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the tests**",
-            "checked": true
-          },
-          {
-            "text": "**Step 2: Run them**",
-            "checked": true
-          },
-          {
-            "text": "**Step 3: Add the README line**",
-            "checked": true
-          },
-          {
-            "text": "**Step 4: Lint**",
-            "checked": true
-          },
-          {
-            "text": "**Step 5: Commit**",
-            "checked": true
-          }
-        ]
-      },
-      {
-        "number": 7,
-        "title": "Verify the branch",
-        "checked": 3,
-        "total": 3,
-        "steps": [
-          {
-            "text": "**Step 1:** Run `bun test` and `bun run check` in `packages/pm-docs-site/`. Expected: all pass, 0 errors.",
-            "checked": true
-          },
-          {
-            "text": "**Step 2:** Run `just package-test` and `just lint-check` from the repo root. Expected: both exit 0.",
-            "checked": true
-          },
-          {
-            "text": "**Step 3:** Walk R-019's nine `Done when` checks in `planning/NOW.md` and name the test that proves each.",
-            "checked": true
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [
       {
@@ -650,15 +426,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-019",
-          "title": "Docs-site package: consumer-ready for 1.0.0",
-          "owner": "agent",
-          "size": "M",
-          "detail": "execute, 33/33 plan steps"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-026",
@@ -671,6 +439,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-20",
+          "id": "R-019",
+          "title": "Docs-site package: consumer-ready for 1.0.0",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-20-docs-site-consumer-ready.md",
+          "result": "branch feat/r-019-docs-site-package-consumer-ready-for-1-0-0"
+        },
         {
           "date": "2026-11-20",
           "id": "R-020",
@@ -800,6 +577,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-20",
+        "kind": "done",
+        "id": "R-019",
+        "title": "Docs-site package: consumer-ready for 1.0.0",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-019-docs-site-package-consumer-ready-for-1-0-0"
+      },
       {
         "date": "2026-11-20",
         "kind": "done",
@@ -984,6 +770,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-20",
+        "id": "R-019",
+        "title": "Docs-site package: consumer-ready for 1.0.0",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-20-docs-site-consumer-ready.md",
+        "result": "branch feat/r-019-docs-site-package-consumer-ready-for-1-0-0"
+      },
       {
         "date": "2026-11-20",
         "id": "R-020",
@@ -1286,7 +1081,7 @@
       "path": "planning/briefs/2026-11-17-docs-site-package.md",
       "id": "R-013",
       "title": "Docs site as a versioned package",
-      "status": "on roadmap (R-013, R-019, R-027, R-028), R-019 active",
+      "status": "on roadmap (R-013, R-027, R-028)",
       "origin": "user request",
       "updated": "2026-11-19",
       "decision": "2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.",
@@ -1336,7 +1131,7 @@
     "openInbox": 7,
     "discuss": 2,
     "shapingBriefs": 0,
-    "done": 14,
+    "done": 15,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1350,6 +1145,6 @@
     "claimable": [
       "R-026"
     ],
-    "drift": false
+    "drift": true
   }
 }

@@ -11,40 +11,24 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: active
-- Item: R-019 Docs-site package: consumer-ready for 1.0.0
-- Session: feat/r-019-docs-site-package-consumer-ready-for-1-0-0
-- Stage: execute
-- Brief: planning/briefs/2026-11-17-docs-site-package.md
-- Milestone: M1
-- Serves: V4
-- Owner: agent
-- Size: M
-- Depends on: R-021
+- Status: idle
+- Item:
+- Session:
+- Stage:
+- Brief:
+- Milestone:
+- Serves:
+- Owner:
+- Size:
+- Depends on:
 - Revisits:
-- Spec: docs/superpowers/specs/2026-11-20-docs-site-consumer-ready-design.md
-- Plan: docs/superpowers/plans/2026-11-20-docs-site-consumer-ready.md
-- Started: 2026-11-20
+- Spec:
+- Plan:
+- Started:
 
 ## Done when
 
-- The package home page has no `just docs-preview`.
-- A build without the `docs` option logs no Starlight missing-folder or empty-collection warning.
-- `docsHref` returns no link for a spec or plan path no docs source maps, and honours a source `prefix`.
-- RefLink prints fallback text (the entry title, "No milestone") for an unknown key.
-- `linkify` uses the link scanner's boundaries, so an ID inside a path is not linked.
-- The CLI warns when `--title` or `--planning` is ignored.
-- A `planning.json` holding `null` prints the pm-export hint.
-- `check` loads an `astro.config.ts` on the `engines` Node floor.
-- The README names the same-drive requirement on Windows.
-
-## Checkpoint 2026-11-20 11:05
-
-- Stopped at: plan committed (a386b42); no task started.
-- Next action: execute Task 1 of the plan (checkExport).
-- Start with: docs/superpowers/plans/2026-11-20-docs-site-consumer-ready.md
-- Decisions: shared `checkExport` in `lib/schema-version.ts`; boundary pattern in `src/lib/ref-boundary.ts`, shared by `linkify` and `test/scan.ts`; RefLink fallback through `refText` in `src/lib/references.ts`. `docsHref` and the Node floor need tests only.
-- Context: none
+## Checkpoint
 
 <!--
 Active example:
