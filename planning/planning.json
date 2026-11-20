@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T00:11:22+00:00",
+  "generatedAt": "2026-11-20T07:25:55+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 20,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-022-docs-site-package-timeline-hydrates-in-dev",
-    "head": "0e3c4d005ba784d0c1b4701512f175ee2d84fbe8"
+    "branch": "main",
+    "head": "5c2e0d1aad0de2eb6933e1fa56648154f0123ba1"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -1083,6 +1083,6 @@
       "R-019",
       "R-026"
     ],
-    "drift": true
+    "drift": false
   }
 }
