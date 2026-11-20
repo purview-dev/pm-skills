@@ -89,6 +89,32 @@ test('a backdrop click closes the popup; an inside click does not', async ({ pag
 	expect(await page.evaluate(() => document.activeElement?.getAttribute('data-item'))).toBe(id);
 });
 
+test('a drag across the popup edge keeps it open', async ({ page }) => {
+	await page.goto('/plan/board/');
+	const card = page.locator('a[data-item]').first();
+
+	await card.click();
+	const dialog = page.locator('dialog[data-item-dialog]');
+	await expect(dialog).toHaveAttribute('open', '');
+	const body = dialog.locator('[data-item-dialog-body]');
+	const bodyBox = (await body.boundingBox())!;
+
+	// Down inside the dialog body, released on the backdrop: a selection
+	// dragged past the popup's edge must not close it.
+	await page.mouse.move(bodyBox.x + 5, bodyBox.y + 5);
+	await page.mouse.down();
+	await page.mouse.move(5, 5);
+	await page.mouse.up();
+	await expect(dialog).toHaveAttribute('open', '');
+
+	// The reverse drag: down on the backdrop, released inside the body.
+	await page.mouse.move(5, 5);
+	await page.mouse.down();
+	await page.mouse.move(bodyBox.x + 5, bodyBox.y + 5);
+	await page.mouse.up();
+	await expect(dialog).toHaveAttribute('open', '');
+});
+
 test('popup section headings sit below the dialog title', async ({ page }) => {
 	await page.goto('/plan/board/');
 	const card = page.locator('a[data-item="R-012"]').first();
