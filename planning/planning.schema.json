@@ -823,22 +823,6 @@
         }
       }
     },
-    "itemRef": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id",
-        "title"
-      ],
-      "properties": {
-        "id": {
-          "$ref": "#/$defs/id"
-        },
-        "title": {
-          "type": "string"
-        }
-      }
-    },
     "nowItem": {
       "type": "object",
       "additionalProperties": false,
