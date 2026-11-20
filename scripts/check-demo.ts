@@ -22,6 +22,26 @@ export const ALLOWED: { page: RegExp; text: string; reason: string }[] = [
   },
 ];
 
+/**
+ * Placeholders a view prints without the plan-empty class: the whole text of an
+ * element, never a part of a sentence. `allowed` is how many a page may hold.
+ */
+export const PLACEHOLDERS: { text: string; allowed: number; reason: string }[] = [
+  { text: "No focus set", allowed: 0, reason: "strategy.astro: STRATEGY.md has no Current focus" },
+  { text: "No plan", allowed: 0, reason: "now.astro: the active item's plan is not in the export" },
+  { text: "No target", allowed: 0, reason: "Timeline.tsx: a milestone without a Target date" },
+  {
+    text: "No status",
+    allowed: 1,
+    reason: "milestones/index.astro: a milestone without a Status; the one allowed is the No milestone group, which has none",
+  },
+];
+
+function placeholderCount(html: string, text: string): number {
+  const escaped = text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return (html.match(new RegExp(`>\\s*${escaped}\\s*<`, "g")) ?? []).length;
+}
+
 function htmlPages(distDir: string): string[] {
   return (readdirSync(distDir, { recursive: true }) as string[])
     .filter((file) => file.endsWith(".html"))
@@ -72,9 +92,13 @@ export function checkDemo(distDir: string, expectedPages: string[]): string[] {
     ...pages.filter((page) => !expected.includes(page)).map((page) => `unexpected page: ${page}`),
   ];
   for (const page of pages.filter((path) => path.startsWith("plan/"))) {
-    for (const text of emptyStates(readFileSync(join(distDir, page), "utf8"))) {
+    const html = readFileSync(join(distDir, page), "utf8");
+    for (const text of emptyStates(html)) {
       if (ALLOWED.some((entry) => entry.page.test(page) && entry.text === text)) continue;
       failures.push(`${page}: empty state "${text}"`);
+    }
+    for (const entry of PLACEHOLDERS) {
+      if (placeholderCount(html, entry.text) > entry.allowed) failures.push(`${page}: placeholder "${entry.text}"`);
     }
   }
   return failures;

@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 
 import { afterEach, describe, expect, it } from "bun:test";
 
-import { ALLOWED, checkDemo } from "./check-demo.ts";
+import { ALLOWED, checkDemo, PLACEHOLDERS } from "./check-demo.ts";
 
 const dirs: string[] = [];
 
@@ -71,6 +71,31 @@ describe("checkDemo", () => {
     const dir = dist({ "index.html": '<p class="plan-empty">Nothing is in progress.</p>' });
 
     expect(checkDemo(dir, ["index.html"])).toEqual([]);
+  });
+
+  it("reports a placeholder that has no plan-empty class", () => {
+    const dir = dist({ "plan/now/index.html": "<dl><dt>Plan steps</dt><dd>No plan</dd></dl>" });
+
+    expect(checkDemo(dir, ["plan/now/index.html"])).toEqual(['plan/now/index.html: placeholder "No plan"']);
+  });
+
+  it("does not take a placeholder's words inside longer text", () => {
+    const dir = dist({ "plan/now/index.html": "<p>No plan survives first contact.</p>" });
+
+    expect(checkDemo(dir, ["plan/now/index.html"])).toEqual([]);
+  });
+
+  it("allows a placeholder up to its allowed count on a page", () => {
+    const one = dist({ "plan/milestones/index.html": "<td>No status</td><td>active</td>" });
+    const two = dist({ "plan/milestones/index.html": "<td>No status</td><td> No status </td>" });
+
+    expect(checkDemo(one, ["plan/milestones/index.html"])).toEqual([]);
+    expect(checkDemo(two, ["plan/milestones/index.html"])).toEqual(['plan/milestones/index.html: placeholder "No status"']);
+  });
+
+  it("gives every placeholder a reason", () => {
+    expect(PLACEHOLDERS.length).toBeGreaterThan(0);
+    for (const entry of PLACEHOLDERS) expect(entry.reason.trim(), entry.text).not.toBe("");
   });
 
   it("gives every allowlist entry a reason", () => {
