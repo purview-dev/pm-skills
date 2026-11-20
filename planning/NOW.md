@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-023 Docs-site package: stable browser tests
 - Session: feat/r-023-docs-site-package-stable-browser-tests
-- Stage: plan
+- Stage: execute
 - Brief:
 - Milestone: M1
 - Serves: V4
@@ -23,7 +23,7 @@ Milestone: optional; the item's milestone while it is active
 - Depends on: none
 - Revisits:
 - Spec: docs/superpowers/specs/2026-11-20-docs-site-package-stable-browser-tests-design.md
-- Plan:
+- Plan: docs/superpowers/plans/2026-11-20-docs-site-package-stable-browser-tests.md
 - Started: 2026-11-20
 
 ## Done when
