@@ -1203,6 +1203,12 @@ installed site. `@purview-dev/pm-docs-site` reads `schemaVersion` 4 only
 from its next release; a site built on the published prerelease keeps
 reading a `schemaVersion` 3 export until it upgrades.
 
+Version 21 removes the unused `itemRef` definition from the export schema,
+so a consumer's `<PM root>/planning.schema.json` differs from `pm-export`'s
+until it re-exports: run `pm-export` once. The export stays at
+`schemaVersion` 4. `pm-board`'s Now card names `NOW.md`'s `Owner` and
+`Size` as the source of its owner and size. No setting is added.
+
 ## Asking the user (mandatory)
 
 - **Every question uses the agent's interactive question tool** (for
