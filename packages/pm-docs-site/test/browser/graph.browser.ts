@@ -40,28 +40,56 @@ interface GraphFrame {
  * almost always lands while the page is still pending, so it cannot catch a
  * transient frame where the wrong layout is visible between the pending mark
  * being removed and the right layout being applied; sampling every frame can.
+ * It also samples once at document start and on every change of the pending
+ * mark, so a mark set and cleared between two frames is still seen.
  */
 async function sampleFrames(page: Page, path: string): Promise<GraphFrame[]> {
 	await page.addInitScript(() => {
 		const frames: { pending: boolean; visible: boolean; layout: string | null }[] = [];
 		let stopAtFrame: number | null = null;
 
-		const sample = () => {
+		const record = (pending = document.documentElement?.hasAttribute('data-graph-pending') ?? false) => {
 			const graph = document.querySelector('.plan-graph');
-			const toolbar = document.querySelector('.plan-graph__toolbar');
 			const style = graph ? getComputedStyle(graph) : null;
 
 			frames.push({
-				pending: document.documentElement.hasAttribute('data-graph-pending'),
+				pending,
 				visible: style !== null && style.visibility !== 'hidden' && style.display !== 'none',
 				layout: graph?.getAttribute('data-layout') ?? null,
 			});
+		};
 
+		// The inline script in graph.astro sets the pending mark while the page
+		// parses, and hydration can clear it before the first animation frame,
+		// so every change of the mark is recorded as it happens: a removal first
+		// records the state it ends (still pending), then the state after it.
+		// The observer watches `document`, not `<html>`: an init script can run
+		// before `<html>` exists.
+		const observer = new MutationObserver((mutations) => {
+			for (const mutation of mutations) {
+				if (mutation.target !== document.documentElement) continue;
+				if (mutation.oldValue !== null) record(true);
+				record();
+			}
+		});
+
+		observer.observe(document, {
+			subtree: true,
+			attributes: true,
+			attributeFilter: ['data-graph-pending'],
+			attributeOldValue: true,
+		});
+
+		const sample = () => {
+			record();
+
+			const toolbar = document.querySelector('.plan-graph__toolbar');
 			const toolbarShown = toolbar !== null && !toolbar.hasAttribute('hidden');
 
 			if (toolbarShown && stopAtFrame === null) stopAtFrame = frames.length + 5;
 
 			if (stopAtFrame !== null && frames.length >= stopAtFrame) {
+				observer.disconnect();
 				(window as unknown as { graphFrames: typeof frames }).graphFrames = frames;
 				return;
 			}
@@ -69,6 +97,7 @@ async function sampleFrames(page: Page, path: string): Promise<GraphFrame[]> {
 			requestAnimationFrame(sample);
 		};
 
+		record();
 		requestAnimationFrame(sample);
 	});
 
