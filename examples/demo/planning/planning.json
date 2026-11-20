@@ -1,0 +1,1004 @@
+{
+  "$schema": "./planning.schema.json",
+  "schemaVersion": 4,
+  "generatedAt": "2026-11-20T09:53:31+00:00",
+  "generator": {
+    "skill": "pm-export",
+    "skillsVersion": 20,
+    "rulesVersion": 20
+  },
+  "project": {
+    "pmRoot": "planning/",
+    "defaultBranch": "main",
+    "branchPattern": "feat/<id>-<slug>"
+  },
+  "source": {
+    "branch": "feat/r-020-docs-site-demo-fixture",
+    "head": "7d701c35297abc6ce8e5d26fb9bf16d666401e01"
+  },
+  "vision": {
+    "problem": "Small fitness and craft studios take bookings by message and spreadsheet, so classes double-book and no-shows go unpaid.",
+    "customer": "Owners of studios with one to three rooms and up to 400 regular clients, who pay a monthly fee.",
+    "outcomes": [
+      {
+        "id": "V1",
+        "text": "A client books a class from the studio's page in under a minute, and the slot can no longer be double-booked."
+      },
+      {
+        "id": "V2",
+        "text": "A client pays at booking, and the studio sees the payment in its dashboard the same day."
+      },
+      {
+        "id": "V3",
+        "text": "Every booking sends a confirmation email in the studio's own timezone."
+      },
+      {
+        "id": "V4",
+        "text": "A studio owner sets up a new studio without help in under 30 minutes."
+      }
+    ],
+    "outOfScope": [
+      "Native mobile apps.",
+      "Marketplaces that list many studios together."
+    ],
+    "constraints": {
+      "timeAvailable": "20 hours per week",
+      "budget": "150 EUR per month for hosting and tools",
+      "stack": "TypeScript, Postgres, one hosted payment provider"
+    }
+  },
+  "strategy": {
+    "focus": {
+      "milestone": "M2",
+      "whyNow": "the eight pilot studios book through Slotwise every day, and five of them asked to take payment at booking (LOG.md, 2026-11-18)."
+    },
+    "milestones": [
+      {
+        "id": "M1",
+        "name": "Bookable calendar",
+        "serves": [
+          "V1",
+          "V3"
+        ],
+        "exitCriteria": "a pilot studio takes 50 bookings in one week with no double booking.",
+        "target": "2026-10-30",
+        "status": "done (2026-11-03)"
+      },
+      {
+        "id": "M2",
+        "name": "Paid bookings",
+        "serves": [
+          "V2",
+          "V3"
+        ],
+        "exitCriteria": "three pilot studios take card payments at booking for two weeks.",
+        "target": "2026-12-18",
+        "status": "active"
+      },
+      {
+        "id": "M3",
+        "name": "Studios that grow",
+        "serves": [
+          "V4"
+        ],
+        "exitCriteria": "a studio with two locations and three staff runs a week without support.",
+        "target": "2027-02-26",
+        "status": "planned"
+      }
+    ],
+    "bets": [
+      {
+        "id": "B1",
+        "statement": "We believe taking payment at booking will cut no-shows by half for pilot studios.",
+        "evidence": "two pilots that ask for a deposit by bank transfer report 4% no-shows against 11% for the rest.",
+        "signal": "no-shows in the dashboard fall below 6% for paying studios.",
+        "status": "open"
+      },
+      {
+        "id": "B2",
+        "statement": "We believe a ten-minute setup checklist will let owners onboard alone.",
+        "evidence": "the last three pilots needed a call only to set opening hours.",
+        "signal": "two studios finish setup without contacting us.",
+        "status": "won (2026-11-14)"
+      }
+    ],
+    "assumptions": [
+      {
+        "id": "A1",
+        "statement": "Studios accept a 1.5% card fee on top of the monthly price.",
+        "test": "ask the eight pilots before R-007 Online payments at booking ships.",
+        "status": "holds (2026-11-12)"
+      },
+      {
+        "id": "A2",
+        "statement": "Clients book mostly on phones.",
+        "test": "check the device split after 500 bookings.",
+        "status": "untested"
+      },
+      {
+        "id": "A3",
+        "statement": "One timezone per studio is enough.",
+        "test": "the first studio with two locations.",
+        "status": "broken (2026-11-10)"
+      }
+    ],
+    "notDoing": [
+      {
+        "thing": "Native mobile apps",
+        "why": "the booking page works on phones, and an app doubles the release work.",
+        "revisit": "when 30% of bookings come from repeat clients on one device."
+      },
+      {
+        "thing": "SMS reminders",
+        "why": "the cost per message exceeds the budget at pilot volume.",
+        "revisit": "never."
+      }
+    ],
+    "decisions": [
+      {
+        "date": "2026-11-18",
+        "decision": "Focus on M2 Paid bookings.",
+        "why": "five of eight pilots asked for payment at booking.",
+        "rejected": "starting M3 Studios that grow first."
+      },
+      {
+        "date": "2026-11-10",
+        "decision": "A3 is broken: R-011 Confirmations show the studio's timezone revisits R-003 Email confirmations.",
+        "why": "a studio in Lisbon received confirmations in UTC.",
+        "rejected": "a per-client timezone setting."
+      },
+      {
+        "date": "2026-10-20",
+        "decision": "Use one hosted payment provider.",
+        "why": "no card data touches Slotwise servers.",
+        "rejected": "building on a payment gateway API directly."
+      }
+    ]
+  },
+  "now": {
+    "status": "active",
+    "item": {
+      "id": "R-007",
+      "title": "Online payments at booking",
+      "serves": [
+        "V2"
+      ],
+      "owner": "agent",
+      "size": "M",
+      "dependsOn": [
+        "R-002"
+      ],
+      "revisits": null
+    },
+    "stage": "execute",
+    "session": "feat/r-007-online-payments-at-booking",
+    "brief": "planning/briefs/R-007-online-payments.md",
+    "milestone": "M2",
+    "spec": "docs/specs/2026-11-17-online-payments-design.md",
+    "plan": "docs/plans/2026-11-17-online-payments.md",
+    "started": "2026-11-17",
+    "doneWhen": [
+      "A client pays by card on the booking page, and the booking is confirmed only after the payment succeeds.",
+      "The studio dashboard lists the payment with its booking on the same day.",
+      "A failed payment leaves the slot free and shows the client the provider's message."
+    ],
+    "checkpoint": {
+      "at": "2026-11-19 17:20",
+      "stoppedAt": "Task 2, step 3 (the payment intent is created on booking).",
+      "nextAction": "confirm the booking from the provider's webhook.",
+      "startWith": "docs/plans/2026-11-17-online-payments.md",
+      "decisions": "the webhook, not the redirect, confirms a booking, because a client can close the tab before the redirect.",
+      "context": "the provider's test mode signs webhooks with a separate secret.",
+      "openQuestion": null
+    }
+  },
+  "plan": {
+    "path": "docs/plans/2026-11-17-online-payments.md",
+    "checked": 6,
+    "total": 14,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "Payments table",
+        "checked": 3,
+        "total": 3,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing migration test**",
+            "checked": true
+          },
+          {
+            "text": "**Step 2: Add the payments table keyed by booking**",
+            "checked": true
+          },
+          {
+            "text": "**Step 3: Commit**",
+            "checked": true
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "Hosted checkout",
+        "checked": 3,
+        "total": 4,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing test for the checkout redirect**",
+            "checked": true
+          },
+          {
+            "text": "**Step 2: Create the payment intent on booking**",
+            "checked": true
+          },
+          {
+            "text": "**Step 3: Redirect to the hosted checkout**",
+            "checked": true
+          },
+          {
+            "text": "**Step 4: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "Webhook confirms the booking",
+        "checked": 0,
+        "total": 4,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing signature test**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Verify the webhook signature**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Confirm the booking on success, free the slot on failure**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "Dashboard lists payments",
+        "checked": 0,
+        "total": 3,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing dashboard test**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Show each payment beside its booking**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Commit**",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
+  "roadmap": {
+    "next": [
+      {
+        "id": "R-008",
+        "title": "Cancellation policy per studio",
+        "section": "next",
+        "position": 1,
+        "label": "waiting",
+        "serves": [
+          "V2"
+        ],
+        "milestone": "M2",
+        "owner": "agent",
+        "doneWhen": "a client who cancels inside the studio's notice window is charged the studio's late fee, and the dashboard shows the charge.",
+        "size": "S",
+        "dependsOn": [
+          "R-007"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": null,
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-009",
+        "title": "Waitlist for full classes",
+        "section": "next",
+        "position": 2,
+        "label": "next",
+        "serves": [
+          "V1"
+        ],
+        "milestone": "M2",
+        "owner": "agent",
+        "doneWhen": "a client joins the waitlist of a full class and gets the slot by email within a minute of a cancellation.",
+        "size": "M",
+        "dependsOn": [],
+        "status": {
+          "value": "paused",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": null,
+        "revisits": null,
+        "claimable": true
+      },
+      {
+        "id": "R-010",
+        "title": "Write the pricing page copy",
+        "section": "next",
+        "position": 3,
+        "label": "next",
+        "serves": [
+          "V2"
+        ],
+        "milestone": "M2",
+        "owner": "user",
+        "doneWhen": "the pricing page states the monthly price and the card fee, and the copy is approved.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": null,
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-011",
+        "title": "Confirmations show the studio's timezone",
+        "section": "next",
+        "position": 4,
+        "label": "next",
+        "serves": [
+          "V3"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "a booking at a Lisbon studio sends a confirmation that shows the time in Europe/Lisbon.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "From the 2026-11-10 decision (STRATEGY.md): A3 One timezone per studio is broken.",
+        "revisits": "R-003",
+        "claimable": true
+      },
+      {
+        "id": "R-012",
+        "title": "Two-way calendar sync",
+        "section": "next",
+        "position": 5,
+        "label": "blocked",
+        "serves": [
+          "V1"
+        ],
+        "milestone": "M2",
+        "owner": "both",
+        "doneWhen": "a booking appears in the instructor's Google Calendar within five minutes, and a calendar block closes the slot.",
+        "size": "M",
+        "dependsOn": [],
+        "status": {
+          "value": "blocked",
+          "reason": "Waiting for Google API verification",
+          "since": "2026-11-12"
+        },
+        "brief": null,
+        "note": null,
+        "revisits": null,
+        "claimable": false
+      }
+    ],
+    "later": [
+      {
+        "id": "R-016",
+        "title": "Retry failed card payments",
+        "section": "later",
+        "position": 1,
+        "label": "waiting",
+        "serves": [
+          "V2"
+        ],
+        "milestone": "M2",
+        "owner": "agent",
+        "doneWhen": "a declined card is retried once after 24 hours, and the client gets one email with a link to pay.",
+        "size": "S",
+        "dependsOn": [
+          "R-007"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": null,
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-013",
+        "title": "Studios with several locations",
+        "section": "later",
+        "position": 2,
+        "label": "waiting",
+        "serves": [
+          "V4"
+        ],
+        "milestone": "M3",
+        "owner": "agent",
+        "doneWhen": "an owner adds a second location with its own rooms, hours, and timezone, and clients choose the location when they book.",
+        "size": "M",
+        "dependsOn": [
+          "R-011"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/R-013-several-locations.md",
+        "note": null,
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-014",
+        "title": "Staff accounts and roles",
+        "section": "later",
+        "position": 3,
+        "label": "waiting",
+        "serves": [
+          "V4"
+        ],
+        "milestone": "M3",
+        "owner": "both",
+        "doneWhen": "an owner invites an instructor who can see their own classes and nothing else.",
+        "size": "M",
+        "dependsOn": [
+          "R-013"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": null,
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-015",
+        "title": "Dark theme for the booking page",
+        "section": "later",
+        "position": 4,
+        "label": "later",
+        "serves": [
+          "V1"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "the booking page follows the device's dark setting and passes a contrast check.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": null,
+        "revisits": null,
+        "claimable": false
+      }
+    ]
+  },
+  "board": {
+    "columns": {
+      "now": [
+        {
+          "id": "R-007",
+          "title": "Online payments at booking",
+          "owner": "agent",
+          "size": "M",
+          "detail": "execute, 6/14 plan steps"
+        }
+      ],
+      "next": [
+        {
+          "id": "R-009",
+          "title": "Waitlist for full classes",
+          "owner": "agent",
+          "size": "M",
+          "detail": "paused"
+        },
+        {
+          "id": "R-011",
+          "title": "Confirmations show the studio's timezone",
+          "owner": "agent",
+          "size": "S",
+          "detail": "ready"
+        }
+      ],
+      "foryou": [
+        {
+          "id": "R-010",
+          "title": "Write the pricing page copy",
+          "owner": "user",
+          "size": "S",
+          "detail": "ready"
+        }
+      ],
+      "waiting": [
+        {
+          "id": "R-008",
+          "title": "Cancellation policy per studio",
+          "owner": "agent",
+          "size": "S",
+          "detail": "needs R-007 Online payments at booking"
+        },
+        {
+          "id": "R-012",
+          "title": "Two-way calendar sync",
+          "owner": "both",
+          "size": "M",
+          "detail": "blocked: Waiting for Google API verification, since 2026-11-12"
+        }
+      ],
+      "done": [
+        {
+          "date": "2026-11-18",
+          "id": "R-005",
+          "title": "Sign up eight pilot studios",
+          "milestone": "M2",
+          "owner": "user",
+          "plan": null,
+          "result": "eight studios signed the pilot agreement"
+        },
+        {
+          "date": "2026-11-14",
+          "id": "R-004",
+          "title": "Setup checklist for new studios",
+          "milestone": "M2",
+          "owner": "agent",
+          "plan": "docs/plans/2026-11-11-setup-checklist.md",
+          "result": "branch feat/r-004-setup-checklist"
+        }
+      ]
+    },
+    "activity": [
+      {
+        "date": "2026-11-18",
+        "kind": "done",
+        "id": "R-005",
+        "title": "Sign up eight pilot studios",
+        "milestone": "M2",
+        "owner": "user",
+        "result": "eight studios signed the pilot agreement"
+      },
+      {
+        "date": "2026-11-16",
+        "kind": "review",
+        "id": null,
+        "title": null,
+        "milestone": null,
+        "owner": null,
+        "result": "Inbox 7 to 4. Added R-016; 2 files merged, 1 dropped; R-011 moved to Next."
+      },
+      {
+        "date": "2026-11-14",
+        "kind": "done",
+        "id": "R-004",
+        "title": "Setup checklist for new studios",
+        "milestone": "M2",
+        "owner": "agent",
+        "result": "branch feat/r-004-setup-checklist"
+      },
+      {
+        "date": "2026-11-05",
+        "kind": "dropped",
+        "id": "R-006",
+        "title": "SMS reminders",
+        "milestone": null,
+        "owner": null,
+        "result": "Reason: the cost per message exceeds the budget at pilot volume (STRATEGY.md Not doing)"
+      },
+      {
+        "date": "2026-11-03",
+        "kind": "done",
+        "id": "R-003",
+        "title": "Email confirmations",
+        "milestone": "M1",
+        "owner": "both",
+        "result": "branch feat/r-003-email-confirmations"
+      },
+      {
+        "date": "2026-11-02",
+        "kind": "review",
+        "id": null,
+        "title": null,
+        "milestone": null,
+        "owner": null,
+        "result": "Inbox 5 to 2. Next reordered for M2."
+      },
+      {
+        "date": "2026-10-30",
+        "kind": "dropped",
+        "id": null,
+        "title": "Loyalty points for regular clients",
+        "milestone": null,
+        "owner": null,
+        "result": "Reason: no pilot studio asked for it, and it needs payments first"
+      },
+      {
+        "date": "2026-10-24",
+        "kind": "done",
+        "id": "R-002",
+        "title": "Choose the payment provider",
+        "milestone": "M1",
+        "owner": "user",
+        "result": "hosted checkout chosen; account approved on 2026-10-24"
+      },
+      {
+        "date": "2026-10-21",
+        "kind": "done",
+        "id": "R-001",
+        "title": "Bookable class calendar",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-001-class-calendar"
+      }
+    ]
+  },
+  "log": {
+    "done": [
+      {
+        "date": "2026-11-18",
+        "id": "R-005",
+        "title": "Sign up eight pilot studios",
+        "milestone": "M2",
+        "owner": "user",
+        "plan": null,
+        "result": "eight studios signed the pilot agreement"
+      },
+      {
+        "date": "2026-11-14",
+        "id": "R-004",
+        "title": "Setup checklist for new studios",
+        "milestone": "M2",
+        "owner": "agent",
+        "plan": "docs/plans/2026-11-11-setup-checklist.md",
+        "result": "branch feat/r-004-setup-checklist"
+      },
+      {
+        "date": "2026-11-03",
+        "id": "R-003",
+        "title": "Email confirmations",
+        "milestone": "M1",
+        "owner": "both",
+        "plan": "docs/plans/2026-10-28-email-confirmations.md",
+        "result": "branch feat/r-003-email-confirmations"
+      },
+      {
+        "date": "2026-10-24",
+        "id": "R-002",
+        "title": "Choose the payment provider",
+        "milestone": "M1",
+        "owner": "user",
+        "plan": null,
+        "result": "hosted checkout chosen; account approved on 2026-10-24"
+      },
+      {
+        "date": "2026-10-21",
+        "id": "R-001",
+        "title": "Bookable class calendar",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/plans/2026-10-14-class-calendar.md",
+        "result": "branch feat/r-001-class-calendar"
+      }
+    ],
+    "dropped": [
+      {
+        "date": "2026-11-05",
+        "id": "R-006",
+        "title": "SMS reminders",
+        "reason": "the cost per message exceeds the budget at pilot volume (STRATEGY.md Not doing)"
+      },
+      {
+        "date": "2026-10-30",
+        "id": null,
+        "title": "Loyalty points for regular clients",
+        "reason": "no pilot studio asked for it, and it needs payments first"
+      }
+    ],
+    "reviews": [
+      {
+        "date": "2026-11-16",
+        "summary": "Inbox 7 to 4. Added R-016; 2 files merged, 1 dropped; R-011 moved to Next."
+      },
+      {
+        "date": "2026-11-02",
+        "summary": "Inbox 5 to 2. Next reordered for M2."
+      }
+    ]
+  },
+  "inbox": [
+    {
+      "file": "planning/inbox/2026-11-10-1400-gift-vouchers.md",
+      "title": "Gift vouchers",
+      "captured": "2026-11-10 14:00",
+      "source": "user",
+      "kind": "feature",
+      "severity": null,
+      "affects": null,
+      "context": null,
+      "discuss": "no",
+      "related": [
+        "R-007"
+      ],
+      "brief": "planning/briefs/2026-11-10-gift-vouchers.md",
+      "reviewed": "2026-11-16",
+      "idea": "Let clients buy a voucher for a friend that pays for any class at the studio."
+    },
+    {
+      "file": "planning/inbox/2026-11-15-1030-instructor-bios-on-class-pages.md",
+      "title": "Instructor bios on class pages",
+      "captured": "2026-11-15 10:30",
+      "source": "user",
+      "kind": "improvement",
+      "severity": null,
+      "affects": null,
+      "context": null,
+      "discuss": "yes",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Clients ask who teaches a class before they book. Show a short bio and a photo of the instructor on each class page."
+    },
+    {
+      "file": "planning/inbox/2026-11-18-1610-do-studios-need-invoices.md",
+      "title": "Do studios need invoices for each payment?",
+      "captured": "2026-11-18 16:10",
+      "source": "agent (R-007 design)",
+      "kind": "question",
+      "severity": null,
+      "affects": "R-007",
+      "context": "R-007 design",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Some countries require a numbered invoice for each card payment. Does the provider's receipt cover it, or must Slotwise issue invoices?"
+    },
+    {
+      "file": "planning/inbox/2026-11-19-0915-double-booking-on-fast-clicks.md",
+      "title": "Double booking on fast clicks",
+      "captured": "2026-11-19 09:15",
+      "source": "user",
+      "kind": "bug",
+      "severity": "major",
+      "affects": "R-001",
+      "context": "R-007 execute",
+      "discuss": "no",
+      "related": [
+        "R-001"
+      ],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Two clients booked the last place in the Thursday pottery class within a second of each other, and both got a confirmation."
+    }
+  ],
+  "briefs": [
+    {
+      "path": "planning/briefs/2026-11-10-gift-vouchers.md",
+      "id": null,
+      "title": "Gift vouchers",
+      "status": "parked",
+      "origin": "planning/inbox/2026-11-10-1400-gift-vouchers.md",
+      "updated": "2026-11-16",
+      "decision": "2026-11-16 Keep it parked. Why: it needs R-007 Online payments at booking first.",
+      "problem": "Clients want to give a class as a present, and studios sell paper vouchers by hand.",
+      "doneWhen": "A client buys a voucher, and the recipient books a class with its code.",
+      "revisions": []
+    },
+    {
+      "path": "planning/briefs/R-007-online-payments.md",
+      "id": "R-007",
+      "title": "Online payments at booking",
+      "status": "on roadmap (R-007), active",
+      "origin": "R-007",
+      "updated": "2026-11-17",
+      "decision": "2026-11-17 Build it now. Why: the M2 focus, and five pilots asked for it.",
+      "problem": "Clients book and do not show up, and studios chase payment by bank transfer afterwards.",
+      "doneWhen": "A client pays by card on the booking page, and the booking is confirmed only after the payment succeeds.",
+      "revisions": []
+    },
+    {
+      "path": "planning/briefs/R-013-several-locations.md",
+      "id": "R-013",
+      "title": "Studios with several locations",
+      "status": "on roadmap (R-013)",
+      "origin": "user request",
+      "updated": "2026-11-12",
+      "decision": "2026-11-12 Add to Later under M3. Why: it serves V4, and M2 comes first.",
+      "problem": "A studio with a second location runs two Slotwise accounts and two calendars.",
+      "doneWhen": "An owner adds a second location with its own rooms, hours, and timezone, and clients choose the location when they book.",
+      "revisions": []
+    }
+  ],
+  "risks": {
+    "open": [
+      {
+        "id": "RK-001",
+        "title": "Card payments fail at launch",
+        "likelihood": "high",
+        "impact": "high",
+        "rag": "red",
+        "ragOverride": null,
+        "status": "mitigating",
+        "owner": "agent",
+        "affects": "R-007",
+        "trigger": "more than 2% of payments in the provider's test mode end in an error",
+        "mitigation": "R-016",
+        "raised": "2026-11-17 (agent (R-007 design))",
+        "reviewed": "2026-11-19",
+        "closed": null
+      },
+      {
+        "id": "RK-002",
+        "title": "Pilot studios leave before payments ship",
+        "likelihood": "medium",
+        "impact": "high",
+        "rag": "red",
+        "ragOverride": null,
+        "status": "open",
+        "owner": "user",
+        "affects": "M2",
+        "trigger": "a pilot studio misses two weekly check-ins",
+        "mitigation": "weekly call with each pilot until M2 is done",
+        "raised": "2026-11-18 (user)",
+        "reviewed": "2026-11-18",
+        "closed": null
+      },
+      {
+        "id": "RK-003",
+        "title": "Google API verification takes months",
+        "likelihood": "medium",
+        "impact": "medium",
+        "rag": "amber",
+        "ragOverride": null,
+        "status": "open",
+        "owner": "both",
+        "affects": "R-012",
+        "trigger": "no answer from Google by 2026-12-01",
+        "mitigation": null,
+        "raised": "2026-11-12 (agent (R-012 design))",
+        "reviewed": "2026-11-16",
+        "closed": null
+      },
+      {
+        "id": "RK-004",
+        "title": "Daylight-saving changes shift class times",
+        "likelihood": "low",
+        "impact": "high",
+        "rag": "amber",
+        "ragOverride": null,
+        "status": "accepted",
+        "owner": "agent",
+        "affects": "R-011",
+        "trigger": "a class booked before 2027-03-28 shows a different time after it",
+        "mitigation": null,
+        "raised": "2026-11-10 (agent (R-011 review))",
+        "reviewed": "2026-11-16",
+        "closed": null
+      },
+      {
+        "id": "RK-006",
+        "title": "Confirmation emails land in spam",
+        "likelihood": "low",
+        "impact": "medium",
+        "rag": "amber",
+        "ragOverride": "confirmations are the only receipt a pilot client gets, so one lost email costs a support call",
+        "status": "open",
+        "owner": "agent",
+        "affects": "V3",
+        "trigger": "a pilot reports a missing confirmation",
+        "mitigation": null,
+        "raised": "2026-11-04 (user)",
+        "reviewed": "2026-11-16",
+        "closed": null
+      },
+      {
+        "id": "RK-005",
+        "title": "Hosting costs pass the budget",
+        "likelihood": "low",
+        "impact": "low",
+        "rag": "green",
+        "ragOverride": null,
+        "status": "open",
+        "owner": "user",
+        "affects": null,
+        "trigger": "the monthly bill passes 120 EUR",
+        "mitigation": null,
+        "raised": "2026-10-20 (user)",
+        "reviewed": "never",
+        "closed": null
+      }
+    ],
+    "closed": [
+      {
+        "id": "RK-007",
+        "title": "Payment provider terms unclear",
+        "likelihood": "medium",
+        "impact": "medium",
+        "rag": "amber",
+        "ragOverride": null,
+        "status": "closed",
+        "owner": "user",
+        "affects": "R-002",
+        "trigger": null,
+        "mitigation": "R-002",
+        "raised": "2026-10-14 (user)",
+        "reviewed": "2026-10-24",
+        "closed": "2026-10-24: the provider confirmed the fee and payout terms in writing."
+      }
+    ],
+    "removed": [
+      {
+        "date": "2026-11-05",
+        "id": "RK-008",
+        "title": "Pilot studios leave",
+        "reason": "duplicate of RK-002"
+      }
+    ]
+  },
+  "counts": {
+    "next": 5,
+    "later": 4,
+    "nextMax": 5,
+    "openInbox": 3,
+    "discuss": 1,
+    "shapingBriefs": 0,
+    "done": 5,
+    "dropped": 2,
+    "blockers": 1,
+    "openRisks": 6,
+    "redRisks": 2,
+    "amberRisks": 3,
+    "greenRisks": 1
+  },
+  "checks": {
+    "reviewDue": false,
+    "lastReview": "2026-11-16",
+    "claimable": [
+      "R-009",
+      "R-011"
+    ],
+    "drift": false
+  }
+}

@@ -1,0 +1,15 @@
+{
+	"name": "pm-docs-site-demo",
+	"private": true,
+	"type": "module",
+	"description": "The pm-docs-site demo: an invented plan that fills every view.",
+	"scripts": {
+		"dev": "pm-docs-site dev",
+		"build": "pm-docs-site build",
+		"check": "pm-docs-site check",
+		"preview": "astro preview"
+	},
+	"dependencies": {
+		"@purview-dev/pm-docs-site": "file:../../packages/pm-docs-site"
+	}
+}
