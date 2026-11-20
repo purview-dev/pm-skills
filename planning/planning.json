@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T15:19:44+00:00",
+  "generatedAt": "2026-11-20T15:36:14+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-026-checkpoint-keeps-item-fields",
-    "head": "fed56d31b412945b63f364dd99e9e8eca370e6e1"
+    "branch": "main",
+    "head": "bbaf0a1e53e1063dba83ac995214f071ee9cce0f"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -1116,6 +1116,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Minors from the R-026 pm-checkpoint keeps every item field final review, deferred: (1) `skills/pm-lint/scripts/structure.ts` comment on `NOW_NOTE` says \"rules 22\"; the change shipped on rules 21 (21.0.0-pre.2). (2) The R-026 spec (design item 6) and plan (Task 3) still describe `just bump major` to rules 22; add a superseded line. (3) The `now/fields` rule text in `rules.md`, `rules.ts`, and the `checkNow` message says \"and then an optional Note\", readable as after `Started`; say \"an optional Note after Revisits\". (4) `pm-checkpoint` `switch` recovery runs only when `Serves`/`Size` are missing and never restores `Note`, so an item claimed under 21.0.0-pre.1 (whose `pm-next` dropped the Note) switches back without it; also restore `Note` from the claim-commit block when `NOW.md` lacks one. (5) `pm-next` steps 3 and 5 can each hold a `Note:`, but step 7 joins \"a held note\" in the singular; state the order for two. (6) A blank `- Note:` on an item: say \"a non-empty Note\" in `pm-next` step 7 and `pm-rejoin` step 3. (7) No test pins that a `Note` without the five item fields fails `now/fields`."
+    },
+    {
+      "file": "planning/inbox/2026-11-20-1528-technology-and-engineering-principles.md",
+      "title": "Technology and engineering principles sections",
+      "captured": "2026-11-20 15:28",
+      "source": "user",
+      "kind": "feature",
+      "severity": null,
+      "affects": "pm-init, pm-setup, pm-checkpoint, pm-purview, pm-lint",
+      "context": null,
+      "discuss": "no",
+      "related": [],
+      "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
+      "reviewed": "never",
+      "idea": "Include a 'technology' and 'engineering principals' section. It should be part of init/ updatable later and new packages and rules and technologies are introducted.\n\nIt should be also work things out based on existing repos.\n\nAll checklist items must be checked off against the relevent technology/ patterns rules."
     }
   ],
   "briefs": [
@@ -1141,6 +1156,18 @@
       "decision": "2026-11-18 Added to Next (top) as R-021 Docs-site package: TypeScript source with a build step (agent, M, serves V4, M1). R-017 Docs-site package: in-repo dev hydrates and R-019 Docs-site package: consumer-ready for 1.0.0 depend on it; R-019 moved to the top of Later. Why: the user chose a build step so the source is TypeScript and Node consumers keep working.",
       "problem": "The user's rule (2026-11-18): TypeScript only (`.mts`/`.ts`/`.tsx`, run with Bun), never `.js` or `.mjs`. The `@purview-dev/pm-docs-site` package still has ten JavaScript files, and R-017 Docs-site package: in-repo dev hydrates cannot add its helper until the package can load TypeScript.",
       "doneWhen": "`git ls-files packages/pm-docs-site` lists no `.js`, `.mjs`, or `.cjs` file.",
+      "revisions": []
+    },
+    {
+      "path": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
+      "id": null,
+      "title": "Technology and engineering principles sections",
+      "status": "parked",
+      "origin": "planning/inbox/2026-11-20-1528-technology-and-engineering-principles.md",
+      "updated": "2026-11-20",
+      "decision": "2026-11-20 Keep it parked. Reason: SCOPE CHANGE to v1; no `V` line or milestone covers it and M1 Reproducible docs site is the current focus. Next: `pm-strategy` adds a `V` line and a milestone after M1, then the four slices go to Later under it.",
+      "problem": "A solo developer's technology choices, adopted packages, and engineering principles are decided once and then lost: nothing in PM state records what was adopted and why (answer 2026-11-20).",
+      "doneWhen": "`pm-init` in a scratch repository with a `package.json` and an `AGENTS.md` writes `planning/ENGINEERING.md` with `## Technology` and `## Principles`, each entry citing its `Source`, and `pm-lint check` passes on it.",
       "revisions": []
     },
     {
@@ -1170,7 +1197,7 @@
     "next": 0,
     "later": 7,
     "nextMax": 5,
-    "openInbox": 10,
+    "openInbox": 11,
     "discuss": 2,
     "shapingBriefs": 0,
     "done": 17,
@@ -1185,6 +1212,6 @@
     "reviewDue": true,
     "lastReview": "2026-11-19",
     "claimable": [],
-    "drift": true
+    "drift": false
   }
 }
