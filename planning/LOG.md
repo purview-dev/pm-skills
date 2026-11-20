@@ -38,6 +38,7 @@
 
 ## Reviews
 
+- 2026-11-20 Inbox 12 to 3. Added R-029, R-030, R-031, R-032; 7 files merged or collected, 1 to shape, 1 kept parked; R-013 now depends on R-029 and R-031; Next filled from Later with R-028, R-031, R-029, R-025, R-013.
 - 2026-11-19 Inbox 19 to 3. Added R-022, R-023, R-024, R-025, R-026; 9 files merged, 1 dropped, 2 to shape; R-019 promoted to Next for re-slicing; Next reordered.
 
 <!-- - 2026-10-29 Inbox 12 to 0. Next reordered. 1 item dropped. -->

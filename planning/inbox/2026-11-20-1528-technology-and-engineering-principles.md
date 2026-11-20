@@ -8,7 +8,7 @@
 - Discuss: no
 - Related: none
 - Brief: planning/briefs/2026-11-20-technology-and-engineering-principles.md
-- Reviewed: never
+- Reviewed: 2026-11-20
 
 ## Idea
 
