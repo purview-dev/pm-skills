@@ -43,7 +43,7 @@
 			"default": "./dist/index.js"
 		}
 	},
-	"files": ["dist", "src", "lib/repo-docs.ts", "lib/schema-version.ts", "README.md", "LICENSE.md"],
+	"files": ["dist", "src", "lib/repo-docs.ts", "lib/schema-version.ts", "lib/types.ts", "README.md", "LICENSE.md"],
 	"scripts": {
 		"build": "node scripts/build.ts",
 		"prepack": "node scripts/build.ts && node scripts/check-exports.ts",

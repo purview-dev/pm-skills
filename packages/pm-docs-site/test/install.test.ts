@@ -3,7 +3,7 @@
 // dependency resolution and SSR bundling can fail, and in-tree builds cannot see it.
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 
 import { afterAll, describe, expect, it } from 'bun:test';
 
@@ -14,6 +14,18 @@ const tmp = mkdtempSync(join(tmpdir(), 'pm-docs-site-install-'));
 // Windows can take longer than the default hook timeout to remove a real
 // node_modules tree, so give the cleanup room to finish.
 afterAll(() => rmSync(tmp, { recursive: true, force: true }), 60_000);
+
+// Paths under `dir`, at any depth, whose name matches `pattern`.
+function filesUnder(dir: string, pattern: RegExp): string[] {
+	return (readdirSync(dir, { recursive: true }) as string[]).filter((name) => pattern.test(name));
+}
+
+// The `./` and `../` specifiers a file imports or re-exports.
+function relativeImports(file: string): string[] {
+	const source = readFileSync(file, 'utf8');
+
+	return [...source.matchAll(/(?:from|import\()\s*(['"])(\.\.?\/[^'"]+)\1/g)].map((match) => match[2]!);
+}
 
 function run(cmd: string[], cwd: string): void {
 	const result = Bun.spawnSync(cmd, { cwd, stdout: 'pipe', stderr: 'pipe' });
@@ -31,10 +43,10 @@ describe('an installed package', () => {
 			const tarball = readdirSync(tmp).find((file) => file.endsWith('.tgz'));
 			expect(tarball).toBeDefined();
 
-			// The built entry points ship; the TypeScript entry points do not. The two
+			// The built entry points ship; the TypeScript entry points do not. The three
 			// lib/ files ship because src/ imports them and Vite compiles them.
 			const listing = Bun.spawnSync(['tar', '-tzf', tarball!], { cwd: tmp, stdout: 'pipe' }).stdout.toString().split(/\r?\n/);
-			for (const file of ['dist/cli.js', 'dist/index.js', 'dist/index.d.ts', 'lib/repo-docs.ts', 'lib/schema-version.ts']) {
+			for (const file of ['dist/cli.js', 'dist/index.js', 'dist/index.d.ts', 'lib/repo-docs.ts', 'lib/schema-version.ts', 'lib/types.ts']) {
 				expect(listing).toContain(`package/${file}`);
 			}
 			expect(listing).not.toContain('package/lib/index.ts');
@@ -55,13 +67,26 @@ describe('an installed package', () => {
 			);
 			run(['bun', 'install'], consumer);
 
-			// Every declaration import resolves inside the tarball: a `.ts` specifier
-			// left in a .d.ts would point at a file that does not ship.
-			const installed = join(consumer, 'node_modules', '@purview-dev', 'pm-docs-site', 'dist');
-			for (const file of readdirSync(installed).filter((name) => name.endsWith('.d.ts'))) {
-				for (const [, specifier] of readFileSync(join(installed, file), 'utf8').matchAll(/from '(\.\/[^']+)'/g)) {
+			// Every declaration import resolves inside the tarball, at any depth: a
+			// `.ts` specifier left in a .d.ts would point at a file that does not ship.
+			const pkgDir = join(consumer, 'node_modules', '@purview-dev', 'pm-docs-site');
+			const installed = join(pkgDir, 'dist');
+			for (const file of filesUnder(installed, /\.d\.ts$/)) {
+				for (const specifier of relativeImports(join(installed, file))) {
 					expect(specifier, `${file} imports ${specifier}`).toEndWith('.js');
-					expect(existsSync(join(installed, specifier!.replace(/\.js$/, '.d.ts'))), `${file} imports ${specifier}`).toBe(true);
+					const target = join(installed, dirname(file), specifier.replace(/\.js$/, '.d.ts'));
+					expect(existsSync(target), `${file} imports ${specifier}`).toBe(true);
+				}
+			}
+
+			// Every relative import in the shipped src/ resolves inside the tarball,
+			// including the type-only imports of lib/ that Vite and astro check read.
+			const shippedSrc = join(pkgDir, 'src');
+			for (const file of filesUnder(shippedSrc, /\.(ts|tsx|astro)$/)) {
+				for (const specifier of relativeImports(join(shippedSrc, file))) {
+					const base = join(shippedSrc, dirname(file), specifier);
+					const found = ['', '.ts', '.tsx', '/index.ts'].some((suffix) => existsSync(base + suffix));
+					expect(found, `src/${file} imports ${specifier}`).toBe(true);
 				}
 			}
 
