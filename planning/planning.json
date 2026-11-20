@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T14:02:52+00:00",
+  "generatedAt": "2026-11-20T14:22:48+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-027-docs-site-package-build-hardening",
-    "head": "86ef2f61c9fb80526353630078c232607cd98f44"
+    "head": "0d65ae571380de0b8218cdac44baf46a98fa3bc7"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -177,177 +177,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-027",
-      "title": "Docs-site package: build hardening",
-      "serves": [
-        "V4"
-      ],
-      "owner": "agent",
-      "size": "S",
-      "dependsOn": [],
-      "revisits": null
-    },
-    "stage": "execute",
-    "session": "feat/r-027-docs-site-package-build-hardening",
-    "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-    "milestone": "M1",
-    "spec": "docs/superpowers/specs/2026-11-20-docs-site-package-build-hardening-design.md",
-    "plan": "docs/superpowers/plans/2026-11-20-docs-site-package-build-hardening.md",
-    "started": "2026-11-20",
-    "doneWhen": [
-      "`@types/node` is in `packages/pm-docs-site` `devDependencies`; `scripts/build.ts` and the install-test guard walk `dist/` recursively; `scripts/check-exports.ts` accepts `.mjs` and `.cjs` entry points and rejects a `.d.ts` outside a `types` condition; every type import in the packed tarball resolves; the `astro.config.ts` examples in `packages/pm-docs-site/README.md` and `docs/wiki/guide/Docs-Site-Package.md` are fenced as `ts`; and no file names `0.1.0-pre.1` as the published version."
-    ],
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
+    "brief": null,
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-20-docs-site-package-build-hardening.md",
-    "checked": 0,
-    "total": 25,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "`@types/node` and a recursive build rewrite",
-        "checked": 0,
-        "total": 6,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing test** `it('rewrites .ts specifiers in nested declarations')` in `test/build.test.ts`. It writes `lib/__probe__/b.ts` (`export type B = string;`) and `lib/__probe__/a.ts` (`export type { B } from './b.ts';\\nexport type { ResolvedOptions } from '../types.ts';`), runs `node scripts/build.ts`, and asserts `dist/__probe__/a.d.ts` contains `'./b.js'` and `'../types.js'` and does not match `/\\.ts'/`. In a `finally`, remove `lib/__probe__` and rerun the build, so `dist/` holds no probe output.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run it and see it fail**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Walk `dist/` recursively in `scripts/build.ts`** with `readdirSync(join(root, 'dist'), { recursive: true }) as string[]`, filtering `.d.ts`; the regex already covers `../`. Update the file comment to say \"every declaration under `dist/`\".",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Add `\"@types/node\": \"26.6.6\"`** to `devDependencies` (the version already in `bun.lock`), in alphabetical order, then `bun install` in `packages/pm-docs-site`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Run the tests**",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Commit** `fix(pm-docs-site): rewrite nested declarations and pin @types/node (R-027)` with `package.json`, `bun.lock`, `scripts/build.ts`, `test/build.test.ts`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 2,
-        "title": "`check-exports` accepts `.mjs`/`.cjs` and places `.d.ts` under `types`",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing tests** in `test/check-exports.test.ts`. A helper `check(pkg: object, files: string[]): { code: number; output: string }` writes `package.json` and empty `files` into a `mkdtempSync` folder and spawns `node scripts/check-exports.ts <dir>` from `PACKAGE`. Cases:",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run them and see them fail**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement it in `scripts/check-exports.ts`.** `root` is `resolve(process.argv[2])` when given. Walk `exports` with the condition key: a string reached under the key `types` must end `.d.ts`, `.d.mts`, or `.d.cts`. Every other `exports` string and every `bin` must end `.js`, `.mjs`, or `.cjs`, and must not end `.d.ts`. Update the message to `exports or bin point at the wrong kind of file`, and the comment to match.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run the tests**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit** `fix(pm-docs-site): check-exports reads conditions and .mjs/.cjs (R-027)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 3,
-        "title": "Ship `lib/types.ts` and resolve every import in the tarball",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing assertions** in `test/install.test.ts`:",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run it and see it fail**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Add `\"lib/types.ts\"`** to `files` after `lib/schema-version.ts`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run it**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit** `fix(pm-docs-site): ship lib/types.ts and resolve every tarball import (R-027)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 4,
-        "title": "Docs name no stale version, and `just validate` keeps the pin",
-        "checked": 0,
-        "total": 7,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing tests** in `scripts/package-docs.test.ts`: `pinnedVersions` returns `['0.1.0-pre.2']` for a README snippet with one pin. `versionDrift('README.md', snippet, '0.1.0-pre.2')` is `[]`; with `'0.1.0-pre.3'` it is one message naming both versions; for text with no pin it is the \"no pinned\" message.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run them and see them fail**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement both functions** in `scripts/package-docs.ts`. In `scripts/validate.ts`, inside the existing `packages/pm-docs-site/package.json` block, read the package version and `fail` each `versionDrift` message for `packages/pm-docs-site/README.md` and `docs/wiki/guide/Docs-Site-Package.md`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run validate and see it fail** on both files.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Edit the docs.**",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Verify**",
-            "checked": false
-          },
-          {
-            "text": "**Step 7: Commit** `docs(pm-docs-site): pin the example to package.json and fence configs as ts (R-027)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 5,
-        "title": "Whole-branch verification",
-        "checked": 0,
-        "total": 2,
-        "steps": [
-          {
-            "text": "**Step 1:** Run `just test`, `just validate`, `just package-test`, and `bunx markdownlint-cli2 \"**/*.md\" \"#node_modules\"`. Expected: every command exits 0.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2:** Run `cd packages/pm-docs-site; npm pack --dry-run`. Expected: `prepack` passes, and the listing includes `lib/types.ts` and no `lib/__probe__`.",
-            "checked": false
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [
       {
@@ -586,15 +428,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-027",
-          "title": "Docs-site package: build hardening",
-          "owner": "agent",
-          "size": "S",
-          "detail": "execute, 0/25 plan steps"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-019",
@@ -614,6 +448,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-20",
+          "id": "R-027",
+          "title": "Docs-site package: build hardening",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-20-docs-site-package-build-hardening.md",
+          "result": "branch feat/r-027-docs-site-package-build-hardening"
+        },
         {
           "date": "2026-11-20",
           "id": "R-020",
@@ -743,6 +586,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-20",
+        "kind": "done",
+        "id": "R-027",
+        "title": "Docs-site package: build hardening",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-027-docs-site-package-build-hardening"
+      },
       {
         "date": "2026-11-20",
         "kind": "done",
@@ -927,6 +779,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-20",
+        "id": "R-027",
+        "title": "Docs-site package: build hardening",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-20-docs-site-package-build-hardening.md",
+        "result": "branch feat/r-027-docs-site-package-build-hardening"
+      },
       {
         "date": "2026-11-20",
         "id": "R-020",
@@ -1192,6 +1053,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Four minor findings from the R-020 final review, deferred: (1) `scripts/check-demo.ts` scans only `plan/` pages, so the home page's empty states (\"Nothing in Next can be started.\", \"No open risk is red.\") are not checked; include `index.html`. (2) The `Nothing links here yet.` allowlist entry is unused in today's demo build; drop it until a feature page needs it. (3) The demo export records this repository's branch and head (`feat/r-020-docs-site-demo-fixture`, `c2220cd`) as its source, now frozen by `export.ts write --frozen`; pin a neutral source. (4) The opening-tag regex in `emptyStates` also matches `data-class=`, and an unclosed `plan-empty` element swallows the rest of the page (loud false positives only)."
+    },
+    {
+      "file": "planning/inbox/2026-11-20-1421-r-027-deferred-review-minors.md",
+      "title": "R-027 deferred review minors",
+      "captured": "2026-11-20 14:21",
+      "source": "agent (R-027 execute)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site",
+      "context": "R-027 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Minors from the R-027 Docs-site package: build hardening final review, deferred: (1) `test/build.test.ts` probe test can leave `lib/__probe__` behind if the run is killed, and `prepack` would then ship `dist/__probe__/`; the restoring rebuild in `finally` ignores its exit code (gitignore `lib/__probe__/` or assert the exit code). (2) `test/install.test.ts` `relativeImports` skips side-effect imports (`import '../styles/x.css'`, `import '../scripts/plan.ts'`). (3) The install test counts a bare directory as a resolved import (the `''` suffix); use `statSync(...).isFile()`. (4) \"non-JavaScript\" wording remains in `.github/workflows/publish-pm-docs-site.yml:151`, `docs/wiki/contributing/Repository-Layout.md:57`, and `packages/pm-docs-site/README.md:219`; `check-exports` now reports \"the wrong kind of file\". (5) `docs/wiki/contributing/Development.md:71` uses `0.1.0-pre.1` as a format example; mark it \"for example\" so it is not read as the current release."
     }
   ],
   "briefs": [
@@ -1199,7 +1075,7 @@
       "path": "planning/briefs/2026-11-17-docs-site-package.md",
       "id": "R-013",
       "title": "Docs site as a versioned package",
-      "status": "on roadmap (R-013, R-019, R-027, R-028), R-027 active",
+      "status": "on roadmap (R-013, R-019, R-028)",
       "origin": "user request",
       "updated": "2026-11-19",
       "decision": "2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.",
@@ -1246,10 +1122,10 @@
     "next": 2,
     "later": 7,
     "nextMax": 5,
-    "openInbox": 5,
+    "openInbox": 6,
     "discuss": 2,
     "shapingBriefs": 0,
-    "done": 14,
+    "done": 15,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1264,6 +1140,6 @@
       "R-019",
       "R-026"
     ],
-    "drift": false
+    "drift": true
   }
 }

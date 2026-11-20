@@ -11,24 +11,22 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: active
-- Item: R-027 Docs-site package: build hardening
-- Session: feat/r-027-docs-site-package-build-hardening
-- Stage: execute
-- Brief: planning/briefs/2026-11-17-docs-site-package.md
-- Milestone: M1
-- Serves: V4
-- Owner: agent
-- Size: S
-- Depends on: none
+- Status: idle
+- Item:
+- Session:
+- Stage:
+- Brief:
+- Milestone:
+- Serves:
+- Owner:
+- Size:
+- Depends on:
 - Revisits:
-- Spec: docs/superpowers/specs/2026-11-20-docs-site-package-build-hardening-design.md
-- Plan: docs/superpowers/plans/2026-11-20-docs-site-package-build-hardening.md
-- Started: 2026-11-20
+- Spec:
+- Plan:
+- Started:
 
 ## Done when
-
-- `@types/node` is in `packages/pm-docs-site` `devDependencies`; `scripts/build.ts` and the install-test guard walk `dist/` recursively; `scripts/check-exports.ts` accepts `.mjs` and `.cjs` entry points and rejects a `.d.ts` outside a `types` condition; every type import in the packed tarball resolves; the `astro.config.ts` examples in `packages/pm-docs-site/README.md` and `docs/wiki/guide/Docs-Site-Package.md` are fenced as `ts`; and no file names `0.1.0-pre.1` as the published version.
 
 ## Checkpoint
 
