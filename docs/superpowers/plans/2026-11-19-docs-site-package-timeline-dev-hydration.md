@@ -42,7 +42,7 @@
 - Produces, from `src/lib/timeline-state.ts`, unchanged in name and signature: `MilestoneState`, `MilestoneStatus`, `TimelineMilestone`, `TimelineLayout`, `parseTimelineQuery(search: string): TimelineLayout`, `timelineQuery(layout: TimelineLayout, search: string): string`, `ZOOM`, `PINCH_STEP`, `zoomStep(zoom: number, direction: 1 | -1): number`, `zoomFromWheel(zoom: number, pending: number, deltaY: number, deltaMode: number): { zoom: number; pending: number }`, `wheelScrollsStrip(...)`, and the private constants `ZOOM_TICKS_PER_UNIT`, `ZOOM_MIN_TICKS`, `ZOOM_MAX_TICKS` (lines 104-106). `DONE` (line 31) stays in `timeline.ts`.
 - `src/lib/timeline.ts` keeps `parseMilestoneStatus`, `timelineMilestones`, the `normaliseTarget` re-export, and adds `export * from './timeline-state';`.
 
-- [ ] **Step 1: Write the failing dev tests**
+- [x] **Step 1: Write the failing dev tests**
 
 In `dev.browser.ts`, extract the existing console and pageerror collection into `function collectErrors(page: Page): string[]` and use it in the Board test. Update the file's header comment to say it covers every island page. Add:
 
@@ -76,38 +76,38 @@ test('the dependency graph hydrates under pm-docs-site dev', async ({ page }) =>
 });
 ```
 
-- [ ] **Step 2: Run them to see the timeline test fail**
+- [x] **Step 2: Run them to see the timeline test fail**
 
 Run: `bunx playwright test --project=dev`
 Expected: the Board and Graph tests pass; the roadmap timeline test FAILS on `expect(errors).toEqual([])` with an error naming `node:fs` (or the failed island import). If the Graph test fails, stop and report: R-012's fix has regressed and is outside this plan.
 
-- [ ] **Step 3: Create `src/lib/timeline-state.ts` and move the browser-safe declarations into it**
+- [x] **Step 3: Create `src/lib/timeline-state.ts` and move the browser-safe declarations into it**
 
 Move the declarations listed under Interfaces verbatim (bodies and doc comments unchanged), with a header comment in the style of `graph-state.ts`: the island's types, URL layout state, and zoom and wheel maths, kept apart from `timeline.ts` because it imports `planning.ts`, which imports `node:fs`, and under `pm-docs-site dev` every module an island imports reaches the browser. Remove them from `timeline.ts`, add `export * from './timeline-state';` there, and have `timeline.ts` import `MilestoneStatus` and `TimelineMilestone` as types from `./timeline-state`.
 
-- [ ] **Step 4: Point the islands at `timeline-state.ts`**
+- [x] **Step 4: Point the islands at `timeline-state.ts`**
 
 In `Timeline.tsx` and `useTimelineLayout.ts`, change both the value and `import type` lines from `'../../lib/timeline'` to `'../../lib/timeline-state'`.
 
 Run: `git grep -n "lib/timeline'" -- src/components`
 Expected: no output.
 
-- [ ] **Step 5: Run the dev tests to see them pass**
+- [x] **Step 5: Run the dev tests to see them pass**
 
 Run: `bunx playwright test --project=dev`
 Expected: 3 passed.
 
-- [ ] **Step 6: Run the unit tests, type check, and built-site browser tests**
+- [x] **Step 6: Run the unit tests, type check, and built-site browser tests**
 
 Run: `bun test && bun run check && bunx playwright test --project=chromium`
 Expected: all pass; `astro-check` reports 0 errors; `test/timeline.test.ts` passes unchanged.
 
-- [ ] **Step 7: Run the repository checks**
+- [x] **Step 7: Run the repository checks**
 
 Run (repository root): `just lint-check`
 Expected: exits 0.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add packages/pm-docs-site/src/lib/timeline-state.ts packages/pm-docs-site/src/lib/timeline.ts packages/pm-docs-site/src/components/timeline/Timeline.tsx packages/pm-docs-site/src/components/timeline/useTimelineLayout.ts packages/pm-docs-site/test/browser/dev.browser.ts
