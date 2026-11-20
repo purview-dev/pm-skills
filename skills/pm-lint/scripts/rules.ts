@@ -60,7 +60,7 @@ export const RULES: Rule[] = [
   rule("strategy/decision-order", "error", true, "Decisions are newest first."),
 
   // NOW.md
-  rule("now/fields", "error", false, "NOW.md lists Status, Item, Session, Stage, Brief, Milestone, Spec, Plan, and Started, in that order, optionally with Serves, Owner, Size, Depends on, and Revisits after Milestone."),
+  rule("now/fields", "error", false, "NOW.md lists Status, Item, Session, Stage, Brief, Milestone, Spec, Plan, and Started, in that order, optionally with Serves, Owner, Size, Depends on, and Revisits after Milestone, and then an optional Note."),
   rule("now/sections", "error", false, "NOW.md has `## Done when` and `## Checkpoint`."),
   rule("now/status", "error", false, "Status is idle or active."),
   rule("now/idle", "error", false, "When idle, every field except Status is empty."),
