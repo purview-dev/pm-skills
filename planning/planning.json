@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T13:56:57+00:00",
+  "generatedAt": "2026-11-20T14:02:52+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-027-docs-site-package-build-hardening",
-    "head": "e73467a8d64e26feca01e8e4d7f1497ec1e6d0e5"
+    "head": "86ef2f61c9fb80526353630078c232607cd98f44"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -189,19 +189,165 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-027-docs-site-package-build-hardening",
     "brief": "planning/briefs/2026-11-17-docs-site-package.md",
     "milestone": "M1",
     "spec": "docs/superpowers/specs/2026-11-20-docs-site-package-build-hardening-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-20-docs-site-package-build-hardening.md",
     "started": "2026-11-20",
     "doneWhen": [
       "`@types/node` is in `packages/pm-docs-site` `devDependencies`; `scripts/build.ts` and the install-test guard walk `dist/` recursively; `scripts/check-exports.ts` accepts `.mjs` and `.cjs` entry points and rejects a `.d.ts` outside a `types` condition; every type import in the packed tarball resolves; the `astro.config.ts` examples in `packages/pm-docs-site/README.md` and `docs/wiki/guide/Docs-Site-Package.md` are fenced as `ts`; and no file names `0.1.0-pre.1` as the published version."
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-20-docs-site-package-build-hardening.md",
+    "checked": 0,
+    "total": 25,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "`@types/node` and a recursive build rewrite",
+        "checked": 0,
+        "total": 6,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing test** `it('rewrites .ts specifiers in nested declarations')` in `test/build.test.ts`. It writes `lib/__probe__/b.ts` (`export type B = string;`) and `lib/__probe__/a.ts` (`export type { B } from './b.ts';\\nexport type { ResolvedOptions } from '../types.ts';`), runs `node scripts/build.ts`, and asserts `dist/__probe__/a.d.ts` contains `'./b.js'` and `'../types.js'` and does not match `/\\.ts'/`. In a `finally`, remove `lib/__probe__` and rerun the build, so `dist/` holds no probe output.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run it and see it fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Walk `dist/` recursively in `scripts/build.ts`** with `readdirSync(join(root, 'dist'), { recursive: true }) as string[]`, filtering `.d.ts`; the regex already covers `../`. Update the file comment to say \"every declaration under `dist/`\".",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Add `\"@types/node\": \"26.6.6\"`** to `devDependencies` (the version already in `bun.lock`), in alphabetical order, then `bun install` in `packages/pm-docs-site`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Run the tests**",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Commit** `fix(pm-docs-site): rewrite nested declarations and pin @types/node (R-027)` with `package.json`, `bun.lock`, `scripts/build.ts`, `test/build.test.ts`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "`check-exports` accepts `.mjs`/`.cjs` and places `.d.ts` under `types`",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** in `test/check-exports.test.ts`. A helper `check(pkg: object, files: string[]): { code: number; output: string }` writes `package.json` and empty `files` into a `mkdtempSync` folder and spawns `node scripts/check-exports.ts <dir>` from `PACKAGE`. Cases:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run them and see them fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement it in `scripts/check-exports.ts`.** `root` is `resolve(process.argv[2])` when given. Walk `exports` with the condition key: a string reached under the key `types` must end `.d.ts`, `.d.mts`, or `.d.cts`. Every other `exports` string and every `bin` must end `.js`, `.mjs`, or `.cjs`, and must not end `.d.ts`. Update the message to `exports or bin point at the wrong kind of file`, and the comment to match.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run the tests**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit** `fix(pm-docs-site): check-exports reads conditions and .mjs/.cjs (R-027)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "Ship `lib/types.ts` and resolve every import in the tarball",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing assertions** in `test/install.test.ts`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run it and see it fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Add `\"lib/types.ts\"`** to `files` after `lib/schema-version.ts`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run it**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit** `fix(pm-docs-site): ship lib/types.ts and resolve every tarball import (R-027)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "Docs name no stale version, and `just validate` keeps the pin",
+        "checked": 0,
+        "total": 7,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** in `scripts/package-docs.test.ts`: `pinnedVersions` returns `['0.1.0-pre.2']` for a README snippet with one pin. `versionDrift('README.md', snippet, '0.1.0-pre.2')` is `[]`; with `'0.1.0-pre.3'` it is one message naming both versions; for text with no pin it is the \"no pinned\" message.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run them and see them fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement both functions** in `scripts/package-docs.ts`. In `scripts/validate.ts`, inside the existing `packages/pm-docs-site/package.json` block, read the package version and `fail` each `versionDrift` message for `packages/pm-docs-site/README.md` and `docs/wiki/guide/Docs-Site-Package.md`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run validate and see it fail** on both files.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Edit the docs.**",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Verify**",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Commit** `docs(pm-docs-site): pin the example to package.json and fence configs as ts (R-027)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 5,
+        "title": "Whole-branch verification",
+        "checked": 0,
+        "total": 2,
+        "steps": [
+          {
+            "text": "**Step 1:** Run `just test`, `just validate`, `just package-test`, and `bunx markdownlint-cli2 \"**/*.md\" \"#node_modules\"`. Expected: every command exits 0.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2:** Run `cd packages/pm-docs-site; npm pack --dry-run`. Expected: `prepack` passes, and the listing includes `lib/types.ts` and no `lib/__probe__`.",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -446,7 +592,7 @@
           "title": "Docs-site package: build hardening",
           "owner": "agent",
           "size": "S",
-          "detail": "plan"
+          "detail": "execute, 0/25 plan steps"
         }
       ],
       "next": [
