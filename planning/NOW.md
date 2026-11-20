@@ -11,24 +11,22 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: active
-- Item: R-026 pm-checkpoint keeps every item field through switch, push, and pop
-- Session: feat/r-026-checkpoint-keeps-item-fields
-- Stage: execute
+- Status: idle
+- Item:
+- Session:
+- Stage:
 - Brief:
 - Milestone:
-- Serves: V2
-- Owner: agent
-- Size: S
-- Depends on: none
+- Serves:
+- Owner:
+- Size:
+- Depends on:
 - Revisits:
-- Spec: docs/superpowers/specs/2026-11-20-checkpoint-keeps-item-fields-design.md
-- Plan: docs/superpowers/plans/2026-11-20-checkpoint-keeps-item-fields.md
-- Started: 2026-11-20
+- Spec:
+- Plan:
+- Started:
 
 ## Done when
-
-- an item claimed with a `Note` and then moved with `pm-checkpoint` `switch`, or `push` then `pop`, returns to `ROADMAP.md` with every field it had before the claim, including `Note`, and `just test` covers the field list.
 
 ## Checkpoint
 

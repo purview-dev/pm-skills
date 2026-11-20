@@ -1,5 +1,7 @@
 # Log
 
+- 2026-11-20 R-026 pm-checkpoint keeps every item field through switch, push, and pop. Milestone: none. Owner: agent. Plan: docs/superpowers/plans/2026-11-20-checkpoint-keeps-item-fields.md. Result: branch feat/r-026-checkpoint-keeps-item-fields.
+
 <!-- Newest first in each section. Nothing is deleted without a line here. -->
 
 ## Done

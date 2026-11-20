@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T15:02:47+00:00",
+  "generatedAt": "2026-11-20T15:18:57+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-026-checkpoint-keeps-item-fields",
-    "head": "f61d4e4447ab214d4cf8e58e1621085168075901"
+    "head": "8c6372c7be2a975d421134d50c09ded3bef78faf"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -177,129 +177,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-026",
-      "title": "pm-checkpoint keeps every item field through switch, push, and pop",
-      "serves": [
-        "V2"
-      ],
-      "owner": "agent",
-      "size": "S",
-      "dependsOn": [],
-      "revisits": null
-    },
-    "stage": "execute",
-    "session": "feat/r-026-checkpoint-keeps-item-fields",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
     "brief": null,
     "milestone": null,
-    "spec": "docs/superpowers/specs/2026-11-20-checkpoint-keeps-item-fields-design.md",
-    "plan": "docs/superpowers/plans/2026-11-20-checkpoint-keeps-item-fields.md",
-    "started": "2026-11-20",
-    "doneWhen": [
-      "an item claimed with a `Note` and then moved with `pm-checkpoint` `switch`, or `push` then `pop`, returns to `ROADMAP.md` with every field it had before the claim, including `Note`, and `just test` covers the field list."
-    ],
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-20-checkpoint-keeps-item-fields.md",
-    "checked": 0,
-    "total": 17,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "pm-lint accepts `Note` in NOW.md and stack entries",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing tests** in `lint.test.ts`:",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bun test skills/pm-lint/scripts/lint.test.ts` — expected: the Note-accepting tests FAIL (`now/fields`, `fields/unknown`).",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement.** Add `\"Note\"` to `KEYS.now` and `KEYS.stack` after `\"Revisits\"`. Define `NOW_NOTE = \"Note\"`, keep `NOW_ITEM_FIELDS` as the five, `NOW_LEGACY_FIELDS = KEYS.now` minus the five and `Note`, and accept the three sequences in `checkNow`. Update the `now/fields` message and the rule text in `rules.ts` and `rules.md` identically: `NOW.md lists Status, Item, Session, Stage, Brief, Milestone, Spec, Plan, and Started, in that order, optionally with Serves, Owner, Size, Depends on, and Revisits after Milestone, and then an optional Note.` In the `pm-init` `NOW.md` comment add: `Note: optional; the claimed item's Note, written only when it has one.`",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run** `bun test skills/pm-lint/scripts/lint.test.ts` — expected: PASS (including the catalogue/`rules.md` and fresh-`pm-init` tests).",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit** `fix(pm-lint): accept the item Note in NOW.md and stack entries (R-026)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 2,
-        "title": "the skills carry `Note`, and the field list is tested",
-        "checked": 0,
-        "total": 7,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing test** `it(\"carries every roadmap item field through NOW.md and the push template\")`:",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bun test skills/pm-lint/scripts/lint.test.ts` — expected: FAIL, `Note` missing from the push template.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Edit `pm-checkpoint`.**",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Edit `pm-next`.** Step 7 writes `Note` (from the item) after `Revisits`, only when the item has one. Steps 3 and 5 hold their `Note:`, and step 7 writes it as the `Note`. When the item already has one, the held note is appended as `<existing> <YYYY-MM-DD>: <held note>`. Step 8 drops \"apply the writes held from steps 3 to 5\" for the `Note:` (split items still apply).",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Edit `pm-rejoin` step 3** (write `Note` from the item, when it has one, after `Revisits`) and the **`pm-revise` rewind keep-list** (add `Note`).",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Run** `bun test skills/pm-lint/scripts/lint.test.ts` and `bunx markdownlint-cli2 skills/pm-next/SKILL.md skills/pm-checkpoint/SKILL.md skills/pm-rejoin/SKILL.md skills/pm-revise/SKILL.md` — expected: PASS, 0 errors.",
-            "checked": false
-          },
-          {
-            "text": "**Step 7: Commit** `fix(pm-checkpoint): keep the item Note through claim, switch, and pop (R-026)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 3,
-        "title": "rules 22",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Run** `just bump major` — expected: `package.json` `22.0.0`, marker `version=22`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2:** In `AGENTS-section.md`, after the `Version 21` note, add: `Version 22 carries the claimed item's Note: pm-next writes it to NOW.md after Revisits, pm-checkpoint push and pop carry it through STACK.md, and switch writes it back to ROADMAP.md. switch recovers missing item fields from the claim commit before it writes the roadmap block. The export stays at schemaVersion 4. No setting is added.` In the `Shared definitions` stack-entry definition, add `note` to the held fields list (`... depends on, revisits, and note ...`).",
-            "checked": false
-          },
-          {
-            "text": "**Step 3:** Install the section as `pm-setup` would: replace the text between the markers in `AGENTS.md` with the reference minus `version=22`, and set `- Rules version: 22` in `planning/config.md`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run** `just lint-check` and `just version-check` — expected: both pass.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit** `chore(release): rules 22 for the item Note (R-026)`, without `planning/`: the `Rules version` line is PM state, and the next PM commit (`pm-checkpoint` `done`) carries it, as after `pm-setup`.",
-            "checked": false
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [],
     "later": [
@@ -487,15 +377,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-026",
-          "title": "pm-checkpoint keeps every item field through switch, push, and pop",
-          "owner": "agent",
-          "size": "S",
-          "detail": "execute, 0/17 plan steps"
-        }
-      ],
+      "now": [],
       "next": [],
       "foryou": [],
       "waiting": [],
@@ -1192,6 +1074,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Minors from the R-027 Docs-site package: build hardening final review, deferred: (1) `test/build.test.ts` probe test can leave `lib/__probe__` behind if the run is killed, and `prepack` would then ship `dist/__probe__/`; the restoring rebuild in `finally` ignores its exit code (gitignore `lib/__probe__/` or assert the exit code). (2) `test/install.test.ts` `relativeImports` skips side-effect imports (`import '../styles/x.css'`, `import '../scripts/plan.ts'`). (3) The install test counts a bare directory as a resolved import (the `''` suffix); use `statSync(...).isFile()`. (4) \"non-JavaScript\" wording remains in `.github/workflows/publish-pm-docs-site.yml:151`, `docs/wiki/contributing/Repository-Layout.md:57`, and `packages/pm-docs-site/README.md:219`; `check-exports` now reports \"the wrong kind of file\". (5) `docs/wiki/contributing/Development.md:71` uses `0.1.0-pre.1` as a format example; mark it \"for example\" so it is not read as the current release."
+    },
+    {
+      "file": "planning/inbox/2026-11-20-1518-r-026-deferred-review-minors.md",
+      "title": "R-026 deferred review minors",
+      "captured": "2026-11-20 15:18",
+      "source": "agent (R-026 execute)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "skills/pm-lint, skills/pm-checkpoint, skills/pm-next",
+      "context": "R-026 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Minors from the R-026 pm-checkpoint keeps every item field final review, deferred: (1) `skills/pm-lint/scripts/structure.ts` comment on `NOW_NOTE` says \"rules 22\"; the change shipped on rules 21 (21.0.0-pre.2). (2) The R-026 spec (design item 6) and plan (Task 3) still describe `just bump major` to rules 22; add a superseded line. (3) The `now/fields` rule text in `rules.md`, `rules.ts`, and the `checkNow` message says \"and then an optional Note\", readable as after `Started`; say \"an optional Note after Revisits\". (4) `pm-checkpoint` `switch` recovery runs only when `Serves`/`Size` are missing and never restores `Note`, so an item claimed under 21.0.0-pre.1 (whose `pm-next` dropped the Note) switches back without it; also restore `Note` from the claim-commit block when `NOW.md` lacks one. (5) `pm-next` steps 3 and 5 can each hold a `Note:`, but step 7 joins \"a held note\" in the singular; state the order for two. (6) A blank `- Note:` on an item: say \"a non-empty Note\" in `pm-next` step 7 and `pm-rejoin` step 3. (7) No test pins that a `Note` without the five item fields fails `now/fields`."
     }
   ],
   "briefs": [
@@ -1246,7 +1143,7 @@
     "next": 0,
     "later": 7,
     "nextMax": 5,
-    "openInbox": 9,
+    "openInbox": 10,
     "discuss": 2,
     "shapingBriefs": 0,
     "done": 16,
@@ -1258,9 +1155,9 @@
     "greenRisks": 0
   },
   "checks": {
-    "reviewDue": false,
+    "reviewDue": true,
     "lastReview": "2026-11-19",
     "claimable": [],
-    "drift": false
+    "drift": true
   }
 }
