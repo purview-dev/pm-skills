@@ -1,6 +1,6 @@
 // The package build: scripts/build.ts emits lib/ into dist/ as JavaScript and
 // declarations, the files Node loads from an installed package.
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { describe, expect, it } from 'bun:test';
@@ -33,4 +33,24 @@ describe('the package build', () => {
 		}
 		expect(readFileSync(join(PACKAGE, 'dist', 'index.d.ts'), 'utf8')).toContain("export type * from './types.js';");
 	}, 60_000);
+
+	it('rewrites .ts specifiers in nested declarations', () => {
+		const probe = join(PACKAGE, 'lib', '__probe__');
+		mkdirSync(probe, { recursive: true });
+		writeFileSync(join(probe, 'b.ts'), 'export type B = string;\n');
+		writeFileSync(join(probe, 'a.ts'), "export type { B } from './b.ts';\nexport type { ResolvedOptions } from '../types.ts';\n");
+
+		try {
+			const result = Bun.spawnSync(['node', 'scripts/build.ts'], { cwd: PACKAGE, stdout: 'pipe', stderr: 'pipe' });
+
+			expect(result.exitCode, result.stdout.toString() + result.stderr.toString()).toBe(0);
+			const declaration = readFileSync(join(PACKAGE, 'dist', '__probe__', 'a.d.ts'), 'utf8');
+			expect(declaration).toContain("'./b.js'");
+			expect(declaration).toContain("'../types.js'");
+			expect(declaration).not.toMatch(/\.ts'/);
+		} finally {
+			rmSync(probe, { recursive: true, force: true });
+			Bun.spawnSync(['node', 'scripts/build.ts'], { cwd: PACKAGE, stdout: 'pipe', stderr: 'pipe' });
+		}
+	}, 120_000);
 });
