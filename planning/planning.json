@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T15:58:56+00:00",
+  "generatedAt": "2026-11-20T18:45:13+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-028-docs-site-package-accessible-board-popup-and-timeline",
-    "head": "4a7bc70d29523087ea92e7998b4986722e146fdb"
+    "head": "217f49a9fb266bf119cb918ad483e7c3d931c583"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -177,263 +177,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-028",
-      "title": "Docs-site package: accessible board, popup, and timeline",
-      "serves": [
-        "V4"
-      ],
-      "owner": "agent",
-      "size": "M",
-      "dependsOn": [
-        "R-020"
-      ],
-      "revisits": null
-    },
-    "stage": "execute",
-    "session": "feat/r-028-docs-site-package-accessible-board-popup-and-timeline",
-    "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-    "milestone": "M1",
-    "spec": "docs/superpowers/specs/2026-11-20-docs-site-accessible-board-popup-timeline-design.md",
-    "plan": "docs/superpowers/plans/2026-11-20-docs-site-accessible-board-popup-timeline.md",
-    "started": "2026-11-20",
-    "doneWhen": [
-      "Browser tests show the card's popup trigger with `aria-haspopup=\"dialog\"`, a backdrop click closing the item dialog, popup section headings below the dialog title's level, one tab stop per card, Board collapse toggles hidden without JavaScript, the timeline's zoom buttons keeping focus at their limits, line-mode wheel deltas scaled, the zoom anchor holding across two zoom changes before one render, the timeline's `planned` and `other` markers rendered, the Now item de-duplicated when it is also logged done or queued, a `localStorage` that throws leaving the Board usable, and no `No milestone` card on the Milestones page without an open unassigned item."
-    ],
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
+    "brief": null,
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-20-docs-site-accessible-board-popup-timeline.md",
-    "checked": 0,
-    "total": 40,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "Item popup: trigger, backdrop, and heading levels",
-        "checked": 0,
-        "total": 7,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing tests** in `popup.browser.ts`:",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run them to verify they fail**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Add `aria-haspopup=\"dialog\"`** beside `data-item` on the five links listed under Files. React: `aria-haspopup={itemId ? 'dialog' : undefined}`; Astro: `aria-haspopup={itemId ? 'dialog' : undefined}`. Add one line to each kit file's header comment naming the change.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Backdrop close.** In `ItemDialog.astro` wrap the head, body, and foot in `<div class=\"plan-dialog__frame\">`. In `components.css` move `.plan-dialog`'s `padding: 1.25rem 1.5rem` to `.plan-dialog__frame` and set `.plan-dialog { padding: 0; }`. In `plan.ts`'s click listener, before the close-button check: `if (target instanceof HTMLDialogElement && target.matches('dialog[data-item-dialog]')) target.close();`. Update the `plan.ts` header comment.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Heading levels.** `FeatureSummary.astro` takes `headingLevel?: 2 | 3` and renders its four section headings with `const Heading = headingLevel === 3 ? 'h3' : 'h2'`; `ItemDetail.astro` passes `headingLevel={3}`. If `.plan-dialog` CSS targets `h2` inside the body, retarget it to keep today's look.",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Run the tests to verify they pass**",
-            "checked": false
-          },
-          {
-            "text": "**Step 7: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 2,
-        "title": "One tab stop per card",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing test** `cards are not tab stops on <path>` for `/plan/board/`, `/plan/roadmap/`, `/plan/inbox/`: `page.locator('.k-item[tabindex], .task-card[tabindex]').count()` is `0`, and `.k-item` count on `/plan/inbox/` is > 0.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run it to verify it fails**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Edit `KanbanItemCard.astro`:** remove `tabindex=\"0\"`, `role=\"article\"`, and `aria-label` from the root `div`; remove `cursor: grab`, `outline: none`, and the `.k-item:focus-visible` rules (keep `.k-item:hover`). Add to the header comment: \"the card is not focusable and has no role (one tab stop per link), and the drag cursor is gone\", matching the React port.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run it to verify it passes**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 3,
-        "title": "Board collapse toggles and storage that throws",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing tests** in `board.browser.ts`:",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run them to verify they fail**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Render the toggle only when hydrated.** In `Board.tsx`, inside each column's `h2`: when `hydrated`, today's `<button className=\"plan-column__toggle\" …>`; otherwise `<span className=\"plan-column__toggle plan-column__toggle--static\">` with the same two child spans and no `aria-*`. The shared class keeps the collapsed-column CSS (`components.css:224-228`) applying before hydration. Update the header comment: toggles appear once the island has hydrated.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run the tests to verify they pass**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 4,
-        "title": "Timeline zoom limits, wheel deltas, and the zoom anchor",
-        "checked": 0,
-        "total": 8,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing unit test** in `timeline.test.ts`, `describe('wheelPixels')`:",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Write the failing browser tests** in `timeline.browser.ts`:",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Run them to verify they fail**",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Implement `wheelPixels`** in `timeline-state.ts`: mode `0` returns `deltaY`, mode `1` `deltaY * lineHeight`, mode `2` `deltaY * pageSize`. In `Timeline.tsx` the plain-wheel branch uses `element.scrollLeft += wheelPixels(event.deltaY, event.deltaMode, lineHeightOf(element), element.clientWidth)`, where a local `lineHeightOf` is `parseFloat(getComputedStyle(element).lineHeight)` with a fallback of `16` when it is `NaN` (`normal`).",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: `aria-disabled` zoom buttons.** Replace each `disabled={…}` with `aria-disabled={…}`; each `onClick` returns without calling `changeZoom` when its condition holds (`zoom <= ZOOM.min`, `zoom >= ZOOM.max`, `zoom === ZOOM.default`). In `timeline.css:45` change `button:disabled` to `button[aria-disabled='true']` (same declarations, plus `cursor: default`).",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Header note.** Add a line to `Timeline.tsx`'s header: it imports only types from `lib/timeline`; its values come from `lib/timeline-state.ts`, so the island never pulls `lib/planning` into the browser (as `Graph.tsx:5-7`).",
-            "checked": false
-          },
-          {
-            "text": "**Step 7: Run the tests to verify they pass**",
-            "checked": false
-          },
-          {
-            "text": "**Step 8: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 5,
-        "title": "Fixture: planned and other milestones, Now item listed once",
-        "checked": 0,
-        "total": 4,
-        "steps": [
-          {
-            "text": "**Step 1: Edit the fixture** so it stays an export `pm-export` could write (`schemaVersion` unchanged, `counts` consistent):",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Write the failing tests:**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Run the whole suite** and fix tests the fixture changed (counts of milestones, lanes, items, pages); each fix updates the expected value to the new fixture, never weakens the assertion.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 6,
-        "title": "No empty `No milestone` card on the Milestones page",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing tests:**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run them to verify they fail**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement `milestoneCards`**; use it in `milestones/index.astro` instead of `milestoneSummaries`, and in `timelineMilestones` in place of its own `.filter`, so the two pages share one rule. Update the `planning.ts:139` comment to name `milestoneCards`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run them to verify they pass**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 7,
-        "title": "Island import guard",
-        "checked": 0,
-        "total": 3,
-        "steps": [
-          {
-            "text": "**Step 1: Write the test** `islands import only types from server-only libs`: walk `src/components/**/*.tsx` and `src/components/**/*.ts`; for each `import` statement (single or multi-line), fail when the specifier ends in `lib/planning`, `lib/timeline`, `lib/graph`, or `lib/graph-layout` (with or without `.ts`) and the statement is not `import type`. The failure message names the file and the specifier. A second test `the guard catches a value import` runs the same checker on the string `import { features } from '../../lib/planning';` and expects one finding, and on `import type { Feature } from '../../lib/planning';` and expects none.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run it**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 8,
-        "title": "Full verification",
-        "checked": 0,
-        "total": 3,
-        "steps": [
-          {
-            "text": "**Step 1: Run** from the repository root: `just lint-check`",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Check the Done when** in `planning/NOW.md` line by line against the tests from Tasks 1 to 6. The \"No milestone\" clause reads as \"without an unassigned item that is not dropped\" (spec, Decisions by the user).",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Commit** any fixes from Step 1 with a `fix(pm-docs-site): …` or `test(pm-docs-site): …` message.",
-            "checked": false
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [
       {
@@ -694,15 +450,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-028",
-          "title": "Docs-site package: accessible board, popup, and timeline",
-          "owner": "agent",
-          "size": "M",
-          "detail": "execute, 0/40 plan steps"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-031",
@@ -733,10 +481,19 @@
           "title": "Docs-site package: publish and migrate",
           "owner": "both",
           "size": "M",
-          "detail": "needs R-028 Docs-site package: accessible board, popup, and timeline, R-029 Docs-site package: dev browser webserver starts reliably, R-031 Docs-site package: review follow-ups"
+          "detail": "needs R-029 Docs-site package: dev browser webserver starts reliably, R-031 Docs-site package: review follow-ups"
         }
       ],
       "done": [
+        {
+          "date": "2026-11-20",
+          "id": "R-028",
+          "title": "Docs-site package: accessible board, popup, and timeline",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-20-docs-site-accessible-board-popup-timeline.md",
+          "result": "branch feat/r-028-docs-site-package-accessible-board-popup-and-timeline"
+        },
         {
           "date": "2026-11-20",
           "id": "R-026",
@@ -893,6 +650,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-20",
+        "kind": "done",
+        "id": "R-028",
+        "title": "Docs-site package: accessible board, popup, and timeline",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-028-docs-site-package-accessible-board-popup-and-timeline"
+      },
       {
         "date": "2026-11-20",
         "kind": "done",
@@ -1113,6 +879,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-20",
+        "id": "R-028",
+        "title": "Docs-site package: accessible board, popup, and timeline",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-20-docs-site-accessible-board-popup-timeline.md",
+        "result": "branch feat/r-028-docs-site-package-accessible-board-popup-and-timeline"
+      },
       {
         "date": "2026-11-20",
         "id": "R-026",
@@ -1362,6 +1137,66 @@
       "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
       "reviewed": "2026-11-20",
       "idea": "Include a 'technology' and 'engineering principals' section. It should be part of init/ updatable later and new packages and rules and technologies are introducted.\n\nIt should be also work things out based on existing repos.\n\nAll checklist items must be checked off against the relevent technology/ patterns rules."
+    },
+    {
+      "file": "planning/inbox/2026-11-20-1844-import-guard-skips-astro.md",
+      "title": "Island import guard skips Astro files",
+      "captured": "2026-11-20 18:44",
+      "source": "agent (R-028 execute, final review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site/test/island-imports.test.ts",
+      "context": "R-028 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "R-028 final review: `test/island-imports.test.ts` scans only `.ts` and `.tsx` under `src/components`. An `.astro` component script that value-imports a server-only lib inside a client `<script>` would not be caught. Decide whether `.astro` client scripts need the same guard."
+    },
+    {
+      "file": "planning/inbox/2026-11-20-1844-plan-ts-listeners-stack.md",
+      "title": "Popup script listeners stack on re-run",
+      "captured": "2026-11-20 18:44",
+      "source": "agent (R-028 execute, final review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site/src/scripts/plan.ts",
+      "context": "R-028 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "R-028 final review: `start()` in `src/scripts/plan.ts` adds `pointerdown`, `pointerup`, and `click` listeners on `document` each time it runs. If it ever runs twice on one page (for example under Astro view transitions), the listeners stack. Guard `start()` so it runs once per document."
+    },
+    {
+      "file": "planning/inbox/2026-11-20-1844-storage-test-starlight-counts.md",
+      "title": "Board storage test pins Starlight error counts",
+      "captured": "2026-11-20 18:44",
+      "source": "agent (R-028 execute, final review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site/test/browser/board.browser.ts",
+      "context": "R-028 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "R-028: the test `a localStorage that throws leaves the Board usable` excludes Starlight theme-script errors by name, message, and an exact count per `<starlight-theme-select>`. A Starlight upgrade that changes those scripts will fail it with no fault in the package; update the expected counts then, or report the unguarded `localStorage` read upstream to Starlight."
+    },
+    {
+      "file": "planning/inbox/2026-11-20-1844-template-kit-a11y-gaps.md",
+      "title": "Template site keeps R-028 accessibility gaps",
+      "captured": "2026-11-20 18:44",
+      "source": "agent (R-028 execute, final review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "skills/pm-docs-site/templates/, docs-site/",
+      "context": "R-028 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "R-028 fixed the popup trigger, backdrop close, heading levels, card tab stops, collapse toggles, and timeline zoom focus in `packages/pm-docs-site` only. The copies in `skills/pm-docs-site/templates/` and the rendered `docs-site/` keep the old gaps until R-013 Docs-site package: publish and migrate moves the site onto the package. Check R-013 removes them, or port the fixes if R-013 slips."
     }
   ],
   "briefs": [
@@ -1369,9 +1204,9 @@
       "path": "planning/briefs/2026-11-17-docs-site-package.md",
       "id": "R-013",
       "title": "Docs site as a versioned package",
-      "status": "on roadmap (R-013, R-028), active (R-028)",
+      "status": "on roadmap (R-013)",
       "origin": "user request",
-      "updated": "2026-11-19",
+      "updated": "2026-11-20",
       "decision": "2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.",
       "problem": "The docs site is chaotic to maintain and builds non-deterministically: each consumer carries its own copy of the templates, resolves its own package versions, and any template change forces a rules-major bump on every consumer.",
       "doneWhen": "`docs-site/` contains only `package.json`, `astro.config.mjs`, and `bun.lock` (plus `.gitignore`), and `just docs-check` passes.",
@@ -1428,10 +1263,10 @@
     "next": 4,
     "later": 6,
     "nextMax": 5,
-    "openInbox": 2,
+    "openInbox": 6,
     "discuss": 1,
     "shapingBriefs": 0,
-    "done": 17,
+    "done": 18,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1447,6 +1282,6 @@
       "R-029",
       "R-025"
     ],
-    "drift": false
+    "drift": true
   }
 }
