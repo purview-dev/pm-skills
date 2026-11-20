@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { COLUMNS as BOARD_COLUMNS } from '../../src/lib/board';
+
 const STORAGE_KEY = 'pm-docs-site:board:collapsed';
 const COLUMNS = ['now', 'next', 'foryou', 'waiting', 'done'];
 
@@ -159,7 +161,47 @@ test('without JavaScript the full board renders', async ({ browser }) => {
 	await page.goto('/plan/board/');
 	await expect(page.locator('[data-card]:visible')).toHaveCount(9);
 	await expect(page.locator('.plan-board__filters')).not.toBeVisible();
+	await expect(page.locator('button.plan-column__toggle')).toHaveCount(0);
+	for (const { name, title } of BOARD_COLUMNS) await expect(page.locator(`section[data-column="${name}"] h2`)).toContainText(title);
 	await context.close();
+});
+
+test('once hydrated, every column has its collapse button', async ({ page }) => {
+	await openBoard(page);
+
+	await expect(page.locator('button.plan-column__toggle')).toHaveCount(5);
+});
+
+test('a localStorage that throws leaves the Board usable', async ({ page }) => {
+	const errors: Error[] = [];
+
+	page.on('pageerror', (error) => errors.push(error));
+	await page.addInitScript(() =>
+		Object.defineProperty(window, 'localStorage', {
+			configurable: true,
+			get() {
+				throw new DOMException('blocked', 'SecurityError');
+			},
+		}),
+	);
+	await openBoard(page);
+	// Starlight's own ThemeProvider/ThemeSelect scripts (@astrojs/starlight's
+	// dist/components/{ThemeProvider,ThemeSelect}.astro) read `typeof localStorage` unguarded
+	// during the initial page load, which still throws when the property getter itself throws.
+	// That vendor script is out of this task's scope, so only errors from here on (the Board's
+	// own reads and writes, which do guard every localStorage access) count towards the pin.
+	const beforeInteraction = errors.length;
+
+	await page.locator('[data-column="next"] .plan-column__toggle').click();
+	await expect(page.locator('html')).toHaveAttribute('data-board-collapsed', /next/);
+
+	await page.selectOption('#board-owner', 'agent');
+	const visible = page.locator('[data-card]:visible');
+
+	await expect(visible).not.toHaveCount(0);
+	await expect(visible).toHaveCount(await page.locator('[data-card][data-owner="agent"]:visible').count());
+
+	expect(errors.slice(beforeInteraction)).toEqual([]);
 });
 
 /** The lanes' keys and their header counts, in page order. */

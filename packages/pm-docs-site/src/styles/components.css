@@ -162,11 +162,15 @@
 	justify-content: space-between;
 	gap: 0.5rem;
 	width: 100%;
-	cursor: pointer;
 	border-radius: 6px;
 }
 
-.plan-column__toggle:focus-visible {
+/* Only the hydrated button is clickable; the pre-hydration static span (plan-column__toggle--static) shares its layout but never looks interactive. */
+button.plan-column__toggle {
+	cursor: pointer;
+}
+
+button.plan-column__toggle:focus-visible {
 	outline: 2px solid var(--sl-color-accent);
 	outline-offset: 2px;
 }
