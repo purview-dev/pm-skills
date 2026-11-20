@@ -159,7 +159,8 @@ The CLI runs under Node 24 or later.
 
 - `pm-docs-site build [site-dir]` and `pm-docs-site dev [site-dir]` run Astro
   on the site. A site with no `astro.config.*` builds from
-  `--title <title>` and `--planning <path>`.
+  `--title <title>` and `--planning <path>`. A site with an `astro.config.*`
+  takes its options from that file: the flags are ignored, with a warning.
 - `pm-docs-site check [site-dir]` builds nothing. It reads the export, checks
   its `schemaVersion`, and checks every docs source folder exists, then exits
   0, or 1 with one line per problem.

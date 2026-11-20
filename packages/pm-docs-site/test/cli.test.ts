@@ -134,6 +134,15 @@ describe('pm-docs-site check', () => {
 		expect(existsSync(join(dir, 'site', 'dist'))).toBe(false);
 	}, CHECK);
 
+	it('warns that --title and --planning are ignored when the site has a config file', () => {
+		const result = runCli(['check', FIXTURE_SITE, '--title', 'X', '--planning', 'nope.json']);
+
+		expect(result.code, result.stderr).toBe(0);
+		expect(result.stderr).toContain('pm-docs-site: --title is ignored:');
+		expect(result.stderr).toContain('pm-docs-site: --planning is ignored:');
+		expect(result.stderr).toContain('astro.config.ts sets the options.');
+	}, CHECK);
+
 	it('fails with the pm-export hint when planning.json holds null', () => {
 		const dir = scratchFixture('null-');
 		writeFileSync(join(dir, 'planning.json'), 'null');
