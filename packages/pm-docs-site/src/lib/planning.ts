@@ -136,7 +136,7 @@ export function roadmapGroups(planning: Planning): RoadmapGroup[] {
 		progress: progressFor(milestone.id),
 	}));
 
-	// The same rule as the `No milestone` card: shown only when it counts an item.
+	// The same rule as milestoneCards: shown only when it counts an item.
 	const unassignedProgress = progressFor(null);
 
 	return unassignedProgress.total > 0 ? [...groups, { milestone: null, events: eventsFor(null), progress: unassignedProgress }] : groups;
@@ -385,6 +385,17 @@ export function milestoneSummaries(planning: Planning, all: Feature[] = features
 	const unassigned = summary(null);
 
 	return unassigned.features.length > 0 ? [...groups, unassigned] : groups;
+}
+
+/**
+ * `milestoneSummaries`, with `No milestone` dropped when every unassigned
+ * item is dropped (its `progress.total` is then `0`, since dropped items are
+ * never counted). The Milestones page and the Roadmap page's timeline share
+ * this rule; `milestoneSummaries` itself is unchanged, because the `none`
+ * milestone page still lists a dropped unassigned item.
+ */
+export function milestoneCards(planning: Planning, all: Feature[] = features(planning)): MilestoneSummary[] {
+	return milestoneSummaries(planning, all).filter((summary) => summary.id !== null || summary.progress.total > 0);
 }
 
 /** An inbox file's source as a card's initials: `agent (…)` → `AG`, anything else (the user) → `YOU`. */

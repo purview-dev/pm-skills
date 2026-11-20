@@ -2,7 +2,7 @@
 // strategy order, their status and target text, and their progress. All from
 // planning.json through milestoneSummaries; nothing here touches the DOM.
 
-import { milestoneSummaries, normaliseTarget } from './planning';
+import { milestoneCards, normaliseTarget } from './planning';
 import type { Planning } from './planning-types';
 import type { MilestoneStatus, TimelineMilestone } from './timeline-state';
 
@@ -27,26 +27,25 @@ export function parseMilestoneStatus(status: string | null): MilestoneStatus {
 }
 
 /**
- * The timeline's cards, in strategy order, then `No milestone` last. Drops the
- * `No milestone` card when every one of its items is dropped (its progress is
- * then `0` of `0`, since dropped items are never counted).
+ * The timeline's cards, in strategy order, then `No milestone` last, from
+ * `milestoneCards`: it drops `No milestone` when every one of its items is
+ * dropped (its progress is then `0` of `0`, since dropped items are never
+ * counted).
  */
 export function timelineMilestones(planning: Planning, known: Map<string, { href: string | null }>): TimelineMilestone[] {
-	return milestoneSummaries(planning)
-		.filter((summary) => summary.id !== null || summary.progress.total > 0)
-		.map((summary) => {
-			const key = summary.id ?? 'none';
-			const { done, total } = summary.progress;
+	return milestoneCards(planning).map((summary) => {
+		const key = summary.id ?? 'none';
+		const { done, total } = summary.progress;
 
-			return {
-				id: summary.id,
-				key,
-				name: summary.name,
-				href: known.get(key)?.href ?? null,
-				isFocus: summary.isFocus,
-				status: parseMilestoneStatus(summary.status),
-				target: normaliseTarget(summary.target),
-				progress: { done, total, percent: total === 0 ? 0 : Math.round((done / total) * 100) },
-			};
-		});
+		return {
+			id: summary.id,
+			key,
+			name: summary.name,
+			href: known.get(key)?.href ?? null,
+			isFocus: summary.isFocus,
+			status: parseMilestoneStatus(summary.status),
+			target: normaliseTarget(summary.target),
+			progress: { done, total, percent: total === 0 ? 0 : Math.round((done / total) * 100) },
+		};
+	});
 }

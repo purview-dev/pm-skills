@@ -16,6 +16,7 @@ import {
 	features,
 	initials,
 	loadPlanning,
+	milestoneCards,
 	milestoneHref,
 	milestoneId,
 	milestoneSummaries,
@@ -393,6 +394,32 @@ describe('milestoneSummaries', () => {
 			{ done: 2, total: 4 },
 		]);
 		expect(summaries[4]!.features.map((feature) => feature.id)).toEqual(['R-012', 'R-024', 'R-011', 'R-003', 'R-009']);
+	});
+});
+
+describe('milestoneCards', () => {
+	it('keeps No milestone while an unassigned item is not dropped', () => {
+		// The fixture's unassigned items are R-012, R-024, R-011, and R-003 (not
+		// dropped) plus R-009 (dropped); only the last entry is dropped.
+		const cards = milestoneCards(loadPlanning(FIXTURE));
+
+		expect(cards.map((card) => card.slug)).toEqual(['m1', 'm2', 'm3', 'm4', 'none']);
+	});
+
+	it('drops No milestone when every unassigned item is dropped', () => {
+		const planning = loadPlanning(FIXTURE);
+		const clone = JSON.parse(JSON.stringify(planning)) as Planning;
+		const unassigned = (milestone: string | null) => milestone === null || milestone === 'none';
+
+		clone.now.milestone = 'M1';
+		clone.roadmap.next = clone.roadmap.next.map((item) => (unassigned(item.milestone) ? { ...item, milestone: 'M1' } : item));
+		clone.roadmap.later = clone.roadmap.later.map((item) => (unassigned(item.milestone) ? { ...item, milestone: 'M1' } : item));
+		clone.log.done = clone.log.done.map((entry) => (unassigned(entry.milestone) ? { ...entry, milestone: 'M1' } : entry));
+		// log.dropped carries no milestone field: features() always treats a dropped
+		// item as unassigned, so R-009 keeps the No milestone group non-empty.
+
+		expect(milestoneSummaries(clone).map((summary) => summary.id ?? 'none')).toContain('none');
+		expect(milestoneCards(clone).map((card) => card.id ?? 'none')).not.toContain('none');
 	});
 });
 
