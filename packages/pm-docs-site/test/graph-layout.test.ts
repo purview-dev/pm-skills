@@ -112,9 +112,8 @@ describe('graphLayouts', () => {
 				{ id: 'R-300>R-302:depends:0', source: 'R-300', target: 'R-302', kind: 'depends', fromChip: true },
 			];
 			const twoLane = graphLayouts({ nodes, edges }, planning)['lanes-done'];
-			const chipBoxes = Object.keys(twoLane.boxes).filter((id) => id === 'R-300');
-
-			expect(chipBoxes).toHaveLength(1);
+			// One box per node: an extra box for the chip, under any key, fails this.
+			expect(Object.keys(twoLane.boxes).sort()).toEqual(['R-300', 'R-301', 'R-302']);
 
 			const band = twoLane.lanes.find((candidate) => candidate.key === 'M1')!;
 			const box = twoLane.boxes['R-300']!;
