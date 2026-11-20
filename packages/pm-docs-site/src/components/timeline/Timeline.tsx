@@ -11,8 +11,8 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 
-import { wheelScrollsStrip, ZOOM, zoomFromWheel, zoomStep } from '../../lib/timeline';
-import type { TimelineMilestone } from '../../lib/timeline';
+import { wheelScrollsStrip, ZOOM, zoomFromWheel, zoomStep } from '../../lib/timeline-state';
+import type { TimelineMilestone } from '../../lib/timeline-state';
 import { useTimelineLayout } from './useTimelineLayout';
 
 function Card({ milestone }: { milestone: TimelineMilestone }) {

@@ -8,8 +8,8 @@
 // rendered, so a vertical link never flashes horizontal first.
 import { useEffect, useState } from 'react';
 
-import { parseTimelineQuery, timelineQuery } from '../../lib/timeline';
-import type { TimelineLayout } from '../../lib/timeline';
+import { parseTimelineQuery, timelineQuery } from '../../lib/timeline-state';
+import type { TimelineLayout } from '../../lib/timeline-state';
 
 export function useTimelineLayout(): [TimelineLayout, (layout: TimelineLayout) => void, boolean] {
 	const [layout, setLayout] = useState<TimelineLayout>('horizontal');
