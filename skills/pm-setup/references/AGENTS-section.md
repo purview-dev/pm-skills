@@ -166,7 +166,7 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   file is an empty stack. It is session memory, not a plan, so `pm-export`
   does not export it. A **stack entry** holds the item, its `Done when`, the
   branch, the stage, the brief, spec, plan, milestone, the item's serves,
-  owner, size, depends on, and revisits, the started date, the reason it
+  owner, size, depends on, revisits, and note, the started date, the reason it
   was suspended, and its checkpoint block.
 - **Pause file:** `<PM root>/PAUSE.md`, the session's position written by
   `pm-pause`: `Paused`, `Session` (a branch, matched like `NOW.md`),
@@ -941,7 +941,11 @@ Version 21 removes the unused `itemRef` definition from the export schema,
 so a consumer's `<PM root>/planning.schema.json` differs from `pm-export`'s
 until it re-exports: run `pm-export` once. The export stays at
 `schemaVersion` 4. `pm-board`'s Now card names `NOW.md`'s `Owner` and
-`Size` as the source of its owner and size. No setting is added.
+`Size` as the source of its owner and size. Version 21 also carries the
+claimed item's `Note`: `pm-next` writes it to `NOW.md` after `Revisits`,
+`pm-checkpoint` `push` and `pop` carry it through `STACK.md`, and `switch`
+writes it back to `ROADMAP.md`, recovering `Serves` and `Size` from the
+claim commit when `NOW.md` lacks them. No setting is added.
 
 ## Asking the user (mandatory)
 

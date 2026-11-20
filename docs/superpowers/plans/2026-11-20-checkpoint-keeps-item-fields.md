@@ -33,12 +33,14 @@
 ### Task 1: pm-lint accepts `Note` in NOW.md and stack entries
 
 **Files:**
+
 - Modify: `skills/pm-lint/scripts/structure.ts:56-65` (`KEYS.now`, `KEYS.stack`), `:113-115` (shapes), `checkNow` `:486-491`
 - Modify: `skills/pm-lint/scripts/rules.ts:63`, `skills/pm-lint/references/rules.md:132`
 - Modify: `skills/pm-init/templates/NOW.md` comment (lines 12-13)
 - Test: `skills/pm-lint/scripts/lint.test.ts` (`describe("structure rules")`, next to `accepts NOW.md with or without the item fields`)
 
 **Interfaces:**
+
 - Produces: `KEYS.now` includes `"Note"` after `"Revisits"`; `KEYS.stack` includes `"Note"` after `"Revisits"`. `now/fields` accepts exactly three key sequences: `KEYS.now`, `KEYS.now` without `Note`, and `NOW_LEGACY_FIELDS` (no item fields, no `Note`).
 
 - [ ] **Step 1: Write the failing tests** in `lint.test.ts`:
@@ -58,12 +60,14 @@
 ### Task 2: the skills carry `Note`, and the field list is tested
 
 **Files:**
+
 - Modify: `skills/pm-next/SKILL.md` steps 3, 7, 8
 - Modify: `skills/pm-checkpoint/SKILL.md` steps 6 (switch), 7 (push template and group paragraph), 8 (pop)
 - Modify: `skills/pm-rejoin/SKILL.md` step 3 (`:132-141`), `skills/pm-revise/SKILL.md` rewind keep-list (`:111-113`)
 - Test: `skills/pm-lint/scripts/lint.test.ts` (new `describe("item fields ride NOW.md and the stack")`)
 
 **Interfaces:**
+
 - Consumes: `KEYS` from `./structure.ts` (Task 1).
 
 - [ ] **Step 1: Write the failing test** `it("carries every roadmap item field through NOW.md and the push template")`:
@@ -89,6 +93,7 @@
 ### Task 3: rules 22
 
 **Files:**
+
 - Modify (by script): `package.json`, `skills/pm-setup/references/AGENTS-section.md` marker, `skills/pm-init/templates/config.md`
 - Modify: `skills/pm-setup/references/AGENTS-section.md` upgrade notes; `AGENTS.md` managed section; `planning/config.md` `Rules version`
 
