@@ -124,6 +124,9 @@ describe('pm-docs-site build', () => {
 			const html = readFileSync(join(dir, 'site', 'dist', 'plan', 'milestones', 'index.html'), 'utf8');
 
 			expect(result.code, result.stderr).toBe(0);
+			// Positive control: the page is not simply blank or broken, it renders
+			// the M1 card the reassigned items now belong to.
+			expect(html).toContain('First release');
 			expect(html).not.toContain('No milestone');
 		},
 		BUILD,
