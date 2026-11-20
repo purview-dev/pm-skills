@@ -11,22 +11,28 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: idle
-- Item:
-- Session:
-- Stage:
-- Brief:
-- Milestone:
-- Serves:
-- Owner:
-- Size:
-- Depends on:
+- Status: active
+- Item: R-020 Docs-site package: rich demo planning fixture
+- Session: feat/r-020-docs-site-demo-fixture
+- Stage: design
+- Brief: planning/briefs/R-020-docs-site-demo-fixture.md
+- Milestone: M1
+- Serves: V4
+- Owner: agent
+- Size: M
+- Depends on: none
 - Revisits:
 - Spec:
 - Plan:
-- Started:
+- Started: 2026-11-20
 
 ## Done when
+
+- `bun skills/pm-export/scripts/export.ts validate examples/demo/planning.json` passes on a synthetic export with at least 3 milestones with targets, `Depends on` and `Revisits` edges including one into the active node, risks in red, amber, and green, inbox files, briefs, Done and Dropped log lines, and an active Now item.
+- `just demo` builds `examples/demo/` against the local `packages/pm-docs-site` and serves it at <http://localhost:4321>.
+- `just package-test` validates and builds `examples/demo/` and fails when a built `plan/` page has no content.
+- `now.astro` reads owner and size from `now.item` only, `skills/pm-board/SKILL.md`'s Now card step says they come from `NOW.md`, `$defs/itemRef` is gone from the export schema, `graph.test.ts` has no `as unknown as Planning`, and the package fixture has an edge into the active node.
+- `just lint-check` passes.
 
 ## Checkpoint
 

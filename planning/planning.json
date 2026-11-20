@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T08:55:49+00:00",
+  "generatedAt": "2026-11-20T08:56:32+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 20,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "main",
-    "head": "fa9c8f308472a5e59cc0caceb3218dff121a07c0"
+    "branch": "feat/r-020-docs-site-demo-fixture",
+    "head": "7c25de88f3b7d9927ad76fe488dac97ff8978fab"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -177,50 +177,42 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
-    "brief": null,
-    "milestone": null,
+    "status": "active",
+    "item": {
+      "id": "R-020",
+      "title": "Docs-site package: rich demo planning fixture",
+      "serves": [
+        "V4"
+      ],
+      "owner": "agent",
+      "size": "M",
+      "dependsOn": [],
+      "revisits": null
+    },
+    "stage": "design",
+    "session": "feat/r-020-docs-site-demo-fixture",
+    "brief": "planning/briefs/R-020-docs-site-demo-fixture.md",
+    "milestone": "M1",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-20",
+    "doneWhen": [
+      "`bun skills/pm-export/scripts/export.ts validate examples/demo/planning.json` passes on a synthetic export with at least 3 milestones with targets, `Depends on` and `Revisits` edges including one into the active node, risks in red, amber, and green, inbox files, briefs, Done and Dropped log lines, and an active Now item.",
+      "`just demo` builds `examples/demo/` against the local `packages/pm-docs-site` and serves it at <http://localhost:4321>.",
+      "`just package-test` validates and builds `examples/demo/` and fails when a built `plan/` page has no content.",
+      "`now.astro` reads owner and size from `now.item` only, `skills/pm-board/SKILL.md`'s Now card step says they come from `NOW.md`, `$defs/itemRef` is gone from the export schema, `graph.test.ts` has no `as unknown as Planning`, and the package fixture has an edge into the active node.",
+      "`just lint-check` passes."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-020",
-        "title": "Docs-site package: rich demo planning fixture",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "`bun skills/pm-export/scripts/export.ts validate examples/demo/planning.json` passes on a synthetic export with at least 3 milestones with targets, `Depends on` and `Revisits` edges including one into the active node, risks in red, amber, and green, inbox files, briefs, Done and Dropped log lines, and an active Now item; `just demo` builds `examples/demo/` against the local `packages/pm-docs-site` and serves it at <http://localhost:4321>; `just package-test` validates and builds `examples/demo/` and fails when a built `plan/` page has no content; `now.astro` reads owner and size from `now.item` only, `skills/pm-board/SKILL.md`'s Now card step says they come from `NOW.md`, `$defs/itemRef` is gone from the export schema, `graph.test.ts` has no `as unknown as Planning`, and the package fixture has an edge into the active node; `just lint-check` passes.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/R-020-docs-site-demo-fixture.md",
-        "note": "2026-11-20 shaped with pm-shape: a separate consumer-shaped demo in `examples/demo/`, checked by `just package-test`; all five tidy-ups below stay in this item at the user's choice; the `pm-board` change raises the rules to 21. 2026-11-19 review, from the user (2026-11-18): \"This needs a demo site in repo, that shows all of the various features off\". 2026-11-19 review, from the R-018 final re-review: `packages/pm-docs-site/src/routes/plan/now.astro` reads the active item's owner and size from `board.columns.now[0]` while `features()` reads `now.item` (equal by construction, two sources); `pm-board`'s Now card step does not say they come from `NOW.md`; the export schema's `$defs/itemRef` is unreferenced; `graph.test.ts` builds a partial `Planning` with `as unknown as Planning` instead of spreading the fixture; the shared package fixture draws no edge into the active node. Tidy these in one pass.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-019",
         "title": "Docs-site package: consumer-ready for 1.0.0",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4"
@@ -246,7 +238,7 @@
         "id": "R-026",
         "title": "pm-checkpoint keeps every item field through switch, push, and pop",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V2"
@@ -476,15 +468,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-020",
           "title": "Docs-site package: rich demo planning fixture",
           "owner": "agent",
           "size": "M",
-          "detail": "ready"
-        },
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-019",
           "title": "Docs-site package: consumer-ready for 1.0.0",
@@ -1070,7 +1063,7 @@
       "path": "planning/briefs/R-020-docs-site-demo-fixture.md",
       "id": "R-020",
       "title": "Docs-site package: rich demo planning fixture",
-      "status": "on roadmap (R-020)",
+      "status": "on roadmap (R-020), active",
       "origin": "R-020",
       "updated": "2026-11-20",
       "decision": "2026-11-20 Build it now. R-020 keeps its ID and place at Next 1, with this brief and the Done when above. Why: it serves the M1 focus, and the user chose to build it now over adding it to Next or Later.",
@@ -1085,7 +1078,7 @@
     "removed": []
   },
   "counts": {
-    "next": 3,
+    "next": 2,
     "later": 8,
     "nextMax": 5,
     "openInbox": 4,
@@ -1103,10 +1096,9 @@
     "reviewDue": false,
     "lastReview": "2026-11-19",
     "claimable": [
-      "R-020",
       "R-019",
       "R-026"
     ],
-    "drift": false
+    "drift": true
   }
 }

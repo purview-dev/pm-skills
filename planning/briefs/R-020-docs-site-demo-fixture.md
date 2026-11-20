@@ -1,6 +1,6 @@
 # Docs-site package: rich demo planning fixture
 
-- Status: on roadmap (R-020)
+- Status: on roadmap (R-020), active
 - Origin: R-020
 - Updated: 2026-11-20
 
