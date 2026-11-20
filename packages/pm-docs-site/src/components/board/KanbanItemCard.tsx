@@ -9,7 +9,9 @@
  * tagHref), and the due-date line (and a title that is not a link) links known IDs; the pill
  * shows the item's size (S, M, L in the kit's low, medium, high colours) and is omitted without
  * one; a RAG dot sits beside it; the assignee chip is omitted for a card with no owner; and the
- * card is not focusable and has no role. Its styles are in src/styles/kanban.css.
+ * card is not focusable and has no role. The title link carries
+ * `aria-haspopup="dialog"` when it is the popup trigger. Its styles are in
+ * src/styles/kanban.css.
  */
 import type { CardRag, LinkRun } from '../../lib/board';
 import type { Size } from '../../lib/planning-types';
@@ -79,7 +81,7 @@ export default function KanbanItemCard({ title, titleRuns, size, rag, tag, tagHr
 
 			<h4 className="k-item__title">
 				{href ? (
-					<a className="plan-item-link" href={href} data-item={itemId ?? undefined}>
+					<a className="plan-item-link" href={href} data-item={itemId ?? undefined} aria-haspopup={itemId ? 'dialog' : undefined}>
 						{title}
 					</a>
 				) : (

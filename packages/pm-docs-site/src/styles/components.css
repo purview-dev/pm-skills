@@ -162,11 +162,15 @@
 	justify-content: space-between;
 	gap: 0.5rem;
 	width: 100%;
-	cursor: pointer;
 	border-radius: 6px;
 }
 
-.plan-column__toggle:focus-visible {
+/* Only the hydrated button is clickable; the pre-hydration static span (plan-column__toggle--static) shares its layout but never looks interactive. */
+button.plan-column__toggle {
+	cursor: pointer;
+}
+
+button.plan-column__toggle:focus-visible {
 	outline: 2px solid var(--sl-color-accent);
 	outline-offset: 2px;
 }
@@ -260,15 +264,34 @@
 .plan-dialog {
 	width: min(42rem, calc(100vw - 2rem));
 	max-height: calc(100vh - 4rem);
-	padding: 1.25rem 1.5rem;
+	padding: 0;
 	border: 1px solid var(--sl-color-hairline);
 	border-radius: 12px;
 	background: var(--sl-color-bg);
 	color: var(--sl-color-text);
+	/* Not the default `auto`: with the rounded corners above, a browser clips
+	   a child's hit box out of the corners, so a click just inside an edge
+	   would miss .plan-dialog__frame and land on this element (the backdrop
+	   click target in src/scripts/plan.ts) instead. The frame scrolls itself. */
+	overflow: visible;
 }
 
 .plan-dialog::backdrop {
 	background: rgb(0 0 0 / 0.45);
+}
+
+/* Fills the dialog's box, so only a click on the dialog element itself (the
+   backdrop, never this frame) closes the popup (src/scripts/plan.ts). Not
+   rounded, so it scrolls long content itself without the parent's corner
+   clipping taking its hit box away (see .plan-dialog's overflow above).
+   max-height is not `inherit`: that copies .plan-dialog's own max-height
+   value, which bounds its border box, not its content box; with the 1px
+   border on each side, inheriting it would let the frame (and its
+   scrollbar) run 2px past the dialog's border. */
+.plan-dialog__frame {
+	padding: 1.25rem 1.5rem;
+	max-height: calc(100vh - 4rem - 2px);
+	overflow: auto;
 }
 
 .plan-dialog__head {

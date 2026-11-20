@@ -1,7 +1,18 @@
 // The Board and Roadmap in the browser: a plain click on a card opens its item
 // popup (any other click is the browser's). Without this script every card is
-// a link. The Board's column collapse lives in its island
+// a link. A click on the dialog element itself (the backdrop; its content
+// sits in `.plan-dialog__frame`, never directly in the dialog) closes the
+// popup. The Board's column collapse lives in its island
 // (src/components/board/Board.tsx).
+//
+// When a mousedown and the matching mouseup land on different elements (a
+// drag, or a text selection released past the dialog's edge), the browser
+// retargets the synthesised `click` event to their nearest common ancestor,
+// which is the dialog itself whenever either end was the backdrop. So a
+// click's own target cannot tell a genuine backdrop click from a drag that
+// merely started or ended there: `pointerdown` and `pointerup` are not
+// retargeted, so this records both separately and closes only when neither
+// end of the gesture left the backdrop.
 
 function openItem(link: HTMLAnchorElement): void {
 	const dialog = document.querySelector<HTMLDialogElement>('dialog[data-item-dialog]');
@@ -19,7 +30,23 @@ function openItem(link: HTMLAnchorElement): void {
 	dialog.showModal();
 }
 
+/** True for the dialog element itself (the backdrop), never its frame. */
+function isDialogBackdrop(target: EventTarget | null): target is HTMLDialogElement {
+	return target instanceof HTMLDialogElement && target.matches('dialog[data-item-dialog]');
+}
+
 function start(): void {
+	let pointerDownOnBackdrop = false;
+	let pointerUpOnBackdrop = false;
+
+	document.addEventListener('pointerdown', (event) => {
+		pointerDownOnBackdrop = isDialogBackdrop(event.target);
+	});
+
+	document.addEventListener('pointerup', (event) => {
+		pointerUpOnBackdrop = isDialogBackdrop(event.target);
+	});
+
 	document.addEventListener('click', (event) => {
 		const target = event.target as Element | null;
 		const link = target?.closest<HTMLAnchorElement>('a[data-item]');
@@ -28,6 +55,11 @@ function start(): void {
 			if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
 			event.preventDefault();
 			openItem(link);
+			return;
+		}
+
+		if (isDialogBackdrop(target) && pointerDownOnBackdrop && pointerUpOnBackdrop) {
+			target.close();
 			return;
 		}
 

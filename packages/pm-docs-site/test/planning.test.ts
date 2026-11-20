@@ -16,6 +16,7 @@ import {
 	features,
 	initials,
 	loadPlanning,
+	milestoneCards,
 	milestoneHref,
 	milestoneId,
 	milestoneSummaries,
@@ -93,7 +94,7 @@ describe('roadmapGroups', () => {
 	});
 
 	it('orders by strategy.milestones and puts no-milestone last', () => {
-		expect(groups.map((group) => group.milestone?.id ?? null)).toEqual(['M1', 'M2', null]);
+		expect(groups.map((group) => group.milestone?.id ?? null)).toEqual(['M1', 'M2', 'M3', 'M4', null]);
 	});
 
 	it('marks the focus milestone', () => {
@@ -117,14 +118,36 @@ describe('roadmapGroups', () => {
 			['R-003', 'done'],
 			['R-012', 'active'],
 			['R-024', 'pending'],
-			['R-020', 'pending'],
 		]);
+	});
+
+	it('lists the Now item once, as active, when it is also queued', () => {
+		// The fixture queues R-012 again, in Later under M2, while it is still the active Now item.
+		const events = groups.flatMap((group) => group.events);
+		const r012Events = events.filter((event) => event.id === 'R-012');
+
+		expect(r012Events).toHaveLength(1);
+		expect(r012Events[0]!.status).toBe('active');
+	});
+
+	it('lists the Now item once, as active, when it is also logged done', () => {
+		const planning = structuredClone(loadPlanning(FIXTURE));
+
+		planning.log.done.push({ date: '2026-11-11', id: 'R-012', title: 'Invoice export', milestone: 'M1', owner: 'agent', plan: null, result: 'Not really done.' });
+
+		const events = roadmapGroups(planning).flatMap((group) => group.events);
+		const r012Events = events.filter((event) => event.id === 'R-012');
+
+		expect(r012Events).toHaveLength(1);
+		expect(r012Events[0]!.status).toBe('active');
 	});
 
 	it("counts each milestone's progress: done items of all its items", () => {
 		expect(groups.find((group) => group.milestone?.id === 'M2')?.progress).toEqual({ done: 1, total: 4 });
 		expect(groups.find((group) => group.milestone?.id === 'M1')?.progress).toEqual({ done: 1, total: 3 });
-		expect(groups.at(-1)?.progress).toEqual({ done: 2, total: 5 });
+		expect(groups.find((group) => group.milestone?.id === 'M3')?.progress).toEqual({ done: 0, total: 1 });
+		expect(groups.find((group) => group.milestone?.id === 'M4')?.progress).toEqual({ done: 0, total: 1 });
+		expect(groups.at(-1)?.progress).toEqual({ done: 2, total: 4 });
 	});
 
 	it('keeps milestones with no items', () => {
@@ -304,6 +327,7 @@ describe('features', () => {
 			['R-023', 'next'],
 			['R-024', 'next'],
 			['R-020', 'later'],
+			['R-026', 'later'],
 			['R-025', 'done'],
 			['R-011', 'done'],
 			['R-010', 'done'],
@@ -355,6 +379,8 @@ describe('milestoneSummaries', () => {
 		expect(summaries.map((summary) => [summary.slug, summary.name, summary.isFocus])).toEqual([
 			['m1', 'First release', false],
 			['m2', 'Billing', true],
+			['m3', 'Self-serve upgrades', false],
+			['m4', 'Partner billing', false],
 			['none', 'No milestone', false],
 		]);
 	});
@@ -363,9 +389,37 @@ describe('milestoneSummaries', () => {
 		expect(summaries.map((summary) => summary.progress)).toEqual([
 			{ done: 1, total: 3 },
 			{ done: 1, total: 4 },
-			{ done: 2, total: 5 },
+			{ done: 0, total: 1 },
+			{ done: 0, total: 1 },
+			{ done: 2, total: 4 },
 		]);
-		expect(summaries[2]!.features.map((feature) => feature.id)).toEqual(['R-012', 'R-024', 'R-020', 'R-011', 'R-003', 'R-009']);
+		expect(summaries[4]!.features.map((feature) => feature.id)).toEqual(['R-012', 'R-024', 'R-011', 'R-003', 'R-009']);
+	});
+});
+
+describe('milestoneCards', () => {
+	it('keeps No milestone while an unassigned item is not dropped', () => {
+		// The fixture's unassigned items are R-012, R-024, R-011, and R-003 (not
+		// dropped) plus R-009 (dropped); only the last entry is dropped.
+		const cards = milestoneCards(loadPlanning(FIXTURE));
+
+		expect(cards.map((card) => card.slug)).toEqual(['m1', 'm2', 'm3', 'm4', 'none']);
+	});
+
+	it('drops No milestone when every unassigned item is dropped', () => {
+		const planning = loadPlanning(FIXTURE);
+		const clone = JSON.parse(JSON.stringify(planning)) as Planning;
+		const unassigned = (milestone: string | null) => milestone === null || milestone === 'none';
+
+		clone.now.milestone = 'M1';
+		clone.roadmap.next = clone.roadmap.next.map((item) => (unassigned(item.milestone) ? { ...item, milestone: 'M1' } : item));
+		clone.roadmap.later = clone.roadmap.later.map((item) => (unassigned(item.milestone) ? { ...item, milestone: 'M1' } : item));
+		clone.log.done = clone.log.done.map((entry) => (unassigned(entry.milestone) ? { ...entry, milestone: 'M1' } : entry));
+		// log.dropped carries no milestone field: features() always treats a dropped
+		// item as unassigned, so R-009 keeps the No milestone group non-empty.
+
+		expect(milestoneSummaries(clone).map((summary) => summary.id ?? 'none')).toContain('none');
+		expect(milestoneCards(clone).map((card) => card.id ?? 'none')).not.toContain('none');
 	});
 });
 

@@ -83,10 +83,12 @@ describe('graphLayouts', () => {
 			return box.y >= band.y && box.y + box.height <= band.y + band.height;
 		};
 
-		it('stacks the lanes M1, M2, then none, labelled and with the focus marked', () => {
-			expect(layout.lanes.map((band) => band.key)).toEqual(['M1', 'M2', 'none']);
+		it('stacks the lanes M1, M2, M3, M4, then none, labelled and with the focus marked', () => {
+			expect(layout.lanes.map((band) => band.key)).toEqual(['M1', 'M2', 'M3', 'M4', 'none']);
 			expect(lane('M1')).toMatchObject({ label: 'M1 First release', isFocus: false });
 			expect(lane('M2')).toMatchObject({ label: 'M2 Billing', isFocus: true });
+			expect(lane('M3')).toMatchObject({ label: 'M3 Self-serve upgrades', isFocus: false });
+			expect(lane('M4')).toMatchObject({ label: 'M4 Partner billing', isFocus: false });
 			expect(lane('none')).toMatchObject({ label: 'No milestone', isFocus: false });
 			expect(layout.tray).toBeNull();
 		});
@@ -100,8 +102,8 @@ describe('graphLayouts', () => {
 		it("puts each chip in its first dependant's lane", () => {
 			expect(inLane('R-010', 'M2')).toBe(true);
 			expect(inLane('R-009', 'M1')).toBe(true);
-			expect(inLane('R-099', 'none')).toBe(true);
-			expect(inLane('R-025', 'none')).toBe(true);
+			expect(inLane('R-099', 'M3')).toBe(true);
+			expect(inLane('R-025', 'M3')).toBe(true);
 		});
 
 		it('gives a chip two open items in different lanes both depend on exactly one box, in the first dependant lane in lane order', () => {
@@ -159,7 +161,7 @@ describe('graphLayouts', () => {
 
 		expect(layout.lanes).toEqual([]);
 		expect(tray).not.toBeNull();
-		expect(isolated.sort()).toEqual(['R-023']);
+		expect(isolated.sort()).toEqual(['R-023', 'R-026']);
 		for (const id of isolated) expect(layout.boxes[id]!.y, id).toBeGreaterThanOrEqual(tray.y);
 		for (const id of linkedIds) {
 			const box = layout.boxes[id]!;

@@ -4,6 +4,7 @@
 
 ## Done
 
+- 2026-11-20 R-028 Docs-site package: accessible board, popup, and timeline. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-20-docs-site-accessible-board-popup-timeline.md. Result: branch feat/r-028-docs-site-package-accessible-board-popup-and-timeline.
 - 2026-11-20 R-026 pm-checkpoint keeps every item field through switch, push, and pop. Milestone: none. Owner: agent. Plan: docs/superpowers/plans/2026-11-20-checkpoint-keeps-item-fields.md. Result: branch feat/r-026-checkpoint-keeps-item-fields.
 - 2026-11-20 R-027 Docs-site package: build hardening. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-20-docs-site-package-build-hardening.md. Result: branch feat/r-027-docs-site-package-build-hardening.
 - 2026-11-20 R-019 Docs-site package: consumer-ready for 1.0.0. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-20-docs-site-consumer-ready.md. Result: branch feat/r-019-docs-site-package-consumer-ready-for-1-0-0.
@@ -38,6 +39,7 @@
 
 ## Reviews
 
+- 2026-11-20 Inbox 12 to 3. Added R-029, R-030, R-031, R-032; 7 files merged or collected, 1 to shape, 1 kept parked; R-013 now depends on R-029 and R-031; Next filled from Later with R-028, R-031, R-029, R-025, R-013.
 - 2026-11-19 Inbox 19 to 3. Added R-022, R-023, R-024, R-025, R-026; 9 files merged, 1 dropped, 2 to shape; R-019 promoted to Next for re-slicing; Next reordered.
 
 <!-- - 2026-10-29 Inbox 12 to 0. Next reordered. 1 item dropped. -->

@@ -7,6 +7,7 @@
  * source; the only changes are that hard-coded dark-theme colours use Starlight theme variables,
  * so the card reads in light and dark themes, and that the task can be a link, for the site's
  * item popup and backlinks (href, itemId), and a task that is not a link links known IDs.
+ * The task link carries `aria-haspopup="dialog"` when it is the popup trigger.
  *
  * @param {string} task - The description of the task being managed.
  * @param {string} date - Visual date string indicator (e.g. 'Oct 28').
@@ -50,7 +51,7 @@ const priorityLabels = { low: 'Low', med: 'Medium', high: 'High' };
 		<span class="task-card__pct">{progress}%</span>
 	</div>
 
-	<p class="task-card__desc">{href ? <a class="plan-item-link" href={href} data-item={itemId}>{task}</a> : <LinkedText text={task} />}</p>
+	<p class="task-card__desc">{href ? <a class="plan-item-link" href={href} data-item={itemId} aria-haspopup={itemId ? 'dialog' : undefined}>{task}</a> : <LinkedText text={task} />}</p>
 
 	<div
 		class="task-card__progress-wrap"

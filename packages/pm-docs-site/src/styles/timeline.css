@@ -42,7 +42,7 @@
 	color: var(--sl-color-accent-high);
 }
 
-.plan-timeline__toolbar button:disabled {
+.plan-timeline__toolbar button[aria-disabled='true'] {
 	cursor: default;
 	opacity: 0.5;
 }

@@ -16,7 +16,9 @@
     "focus": { "milestone": "M2 Billing", "whyNow": "Tenants ask for their invoices every month." },
     "milestones": [
       { "id": "M1", "name": "First release", "serves": ["V1"], "exitCriteria": "A tenant signs up without help.", "target": "none", "status": "done (2026-11-03)" },
-      { "id": "M2", "name": "Billing", "serves": ["V2", "V1"], "exitCriteria": "A tenant sees and downloads its invoices.", "target": "2026-12-15", "status": "active" }
+      { "id": "M2", "name": "Billing", "serves": ["V2", "V1"], "exitCriteria": "A tenant sees and downloads its invoices.", "target": "2026-12-15", "status": "active" },
+      { "id": "M3", "name": "Self-serve upgrades", "serves": ["V1"], "exitCriteria": "A tenant changes its own plan without asking.", "target": "2027-02-01", "status": "planned" },
+      { "id": "M4", "name": "Partner billing", "serves": ["V2"], "exitCriteria": "A partner bills its own tenants through us.", "target": "none", "status": "on hold" }
     ],
     "bets": [{ "id": "B1", "statement": "We believe CSV export ends the invoice emails.", "evidence": "Nine requests in October.", "signal": "No invoice request for a month.", "status": "open" }],
     "assumptions": [{ "id": "A1", "statement": "Accountants open CSV.", "test": "Ask three tenants.", "status": "holds" }],
@@ -55,7 +57,9 @@
       { "id": "R-024", "title": "Dunning emails", "section": "next", "position": 6, "label": "waiting", "serves": ["V2"], "milestone": null, "owner": "agent", "doneWhen": "A tenant with a failed payment gets a dunning email sequence.", "size": "S", "dependsOn": ["R-022", "R-012"], "status": { "value": "ready", "reason": null, "since": null }, "brief": null, "note": null, "revisits": null, "claimable": false }
     ],
     "later": [
-      { "id": "R-020", "title": "README matches the code", "section": "later", "position": 1, "label": "later", "serves": ["V1"], "milestone": null, "owner": "agent", "doneWhen": "README.md lists every command in the justfile.", "size": "S", "dependsOn": ["R-099"], "status": { "value": "ready", "reason": null, "since": null }, "brief": null, "note": null, "revisits": "R-025", "claimable": false }
+      { "id": "R-012", "title": "Invoice export", "section": "later", "position": 1, "label": "later", "serves": [], "milestone": "M2", "owner": "agent", "doneWhen": "An invoice downloads as CSV.", "size": "S", "dependsOn": [], "status": { "value": "ready", "reason": null, "since": null }, "brief": null, "note": null, "revisits": null, "claimable": false },
+      { "id": "R-020", "title": "README matches the code", "section": "later", "position": 2, "label": "later", "serves": ["V1"], "milestone": "M3", "owner": "agent", "doneWhen": "README.md lists every command in the justfile.", "size": "S", "dependsOn": ["R-099"], "status": { "value": "ready", "reason": null, "since": null }, "brief": null, "note": null, "revisits": "R-025", "claimable": false },
+      { "id": "R-026", "title": "Partner invoice feed", "section": "later", "position": 3, "label": "later", "serves": ["V2"], "milestone": "M4", "owner": "agent", "doneWhen": "A partner downloads its tenants' invoices through one feed.", "size": "S", "dependsOn": [], "status": { "value": "ready", "reason": null, "since": null }, "brief": null, "note": null, "revisits": null, "claimable": false }
     ]
   },
   "board": {
@@ -111,6 +115,6 @@
     ],
     "removed": [{ "date": "2026-11-06", "id": "RK-003", "title": "Mail provider limits", "reason": "duplicate of RK-002" }]
   },
-  "counts": { "next": 6, "later": 1, "nextMax": 6, "openInbox": 2, "discuss": 1, "shapingBriefs": 1, "done": 4, "dropped": 2, "blockers": 0, "openRisks": 7, "redRisks": 2, "amberRisks": 2, "greenRisks": 3 },
+  "counts": { "next": 6, "later": 3, "nextMax": 6, "openInbox": 2, "discuss": 1, "shapingBriefs": 1, "done": 4, "dropped": 2, "blockers": 0, "openRisks": 7, "redRisks": 2, "amberRisks": 2, "greenRisks": 3 },
   "checks": { "reviewDue": false, "lastReview": "2026-11-04", "claimable": ["R-013", "R-022"], "drift": false }
 }

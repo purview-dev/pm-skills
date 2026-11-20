@@ -1,11 +1,13 @@
 // The Board island: the filter bar, the five column headers with their
 // collapse toggles, and the cards in lanes, in one CSS grid (.plan-columns in
 // board.astro, components.css). It is server-rendered, so without JavaScript
-// every card shows and the filter bar stays hidden. The item popup is not
-// here: a card's title keeps `a.plan-item-link[data-item]`, which
-// src/scripts/plan.ts opens from the page's ItemDetail templates. The filter
-// and group state lives in the URL (useBoardUrlState.ts); `.plan-board__body`
-// (the header row and the lanes) is hidden while <html> has the pending mark.
+// every card shows and the filter bar stays hidden; the collapse toggles
+// appear only once the island has hydrated (a static, unclickable span holds
+// their place before then). The item popup is not here: a card's title keeps
+// `a.plan-item-link[data-item]`, which src/scripts/plan.ts opens from the
+// page's ItemDetail templates. The filter and group state lives in the URL
+// (useBoardUrlState.ts); `.plan-board__body` (the header row and the lanes)
+// is hidden while <html> has the pending mark.
 import { useEffect, useState } from 'react';
 
 import { COLUMNS, DEFAULT_STATE, isFiltered, lanes, matches } from '../../lib/board';
@@ -209,9 +211,15 @@ export default function Board({ cards, milestones }: Props) {
 					return (
 						<section key={name} className={grouped ? 'plan-column' : 'plan-column plan-column--joined'} data-column={name} data-collapsed={shut ? '' : undefined} aria-labelledby={`col-${name}`}>
 							<h2 id={`col-${name}`}>
-								<button type="button" className="plan-column__toggle" aria-expanded={!shut} aria-controls={rows.map((lane) => cellId(name, lane.key)).join(' ')} onClick={() => toggle(name)}>
-									<span className="plan-column__name">{title}</span> <span className="plan-column__count">{visible.filter((card) => card.column === name).length}</span>
-								</button>
+								{hydrated ? (
+									<button type="button" className="plan-column__toggle" aria-expanded={!shut} aria-controls={rows.map((lane) => cellId(name, lane.key)).join(' ')} onClick={() => toggle(name)}>
+										<span className="plan-column__name">{title}</span> <span className="plan-column__count">{visible.filter((card) => card.column === name).length}</span>
+									</button>
+								) : (
+									<span className="plan-column__toggle plan-column__toggle--static">
+										<span className="plan-column__name">{title}</span> <span className="plan-column__count">{visible.filter((card) => card.column === name).length}</span>
+									</span>
+								)}
 							</h2>
 						</section>
 					);

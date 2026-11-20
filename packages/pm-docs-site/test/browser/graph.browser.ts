@@ -1,9 +1,10 @@
 import { expect, test, type Page } from '@playwright/test';
 
 // The fixture (test/fixtures/planning.json): M1 First release, M2 Billing
-// (focus). Open items, with their milestone: R-012 now (none, the active
-// item), R-013 next (M2), R-014 next (M2), R-021 next (M1), R-022 next (M1),
-// R-023 next (M2, blocked, isolated), R-024 next (none), R-020 later (none).
+// (focus), M3 Self-serve upgrades, M4 Partner billing. Open items, with their
+// milestone: R-012 now (none, the active item), R-013 next (M2), R-014 next
+// (M2), R-021 next (M1), R-022 next (M1), R-023 next (M2, blocked, isolated),
+// R-024 next (none), R-020 later (M3), R-026 later (M4, isolated).
 // The seven edges in `lanes-done`: R-010>R-013:depends:0,
 // R-021>R-013:depends:0, R-013>R-014:depends:0, R-009>R-021:depends:0,
 // R-022>R-024:depends:0, R-099>R-020:depends:0 (R-099 missing),
@@ -181,13 +182,13 @@ test('item nodes link to their feature pages; known chips link, the missing chip
 	await expect(node(page, 'R-099').locator('a')).toHaveCount(0);
 });
 
-test('the default layout is lanes-done, with M1, M2, none lanes in order and M2 focused', async ({ page }) => {
+test('the default layout is lanes-done, with M1, M2, M3, M4, none lanes in order and M2 focused', async ({ page }) => {
 	await openGraph(page);
 
 	await expect(graph(page)).toHaveAttribute('data-layout', 'lanes-done');
 	const keys = await page.locator('.plan-graph__lane').evaluateAll((elements) => elements.map((element) => element.getAttribute('data-lane')));
 
-	expect(keys).toEqual(['M1', 'M2', 'none']);
+	expect(keys).toEqual(['M1', 'M2', 'M3', 'M4', 'none']);
 	await expect(lane(page, 'M2').locator('.plan-graph__focus')).toHaveText('Focus');
 	await expect(lane(page, 'M1').locator('.plan-graph__focus')).toHaveCount(0);
 });

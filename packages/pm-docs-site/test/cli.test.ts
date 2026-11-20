@@ -106,6 +106,33 @@ describe('pm-docs-site build', () => {
 	);
 
 	it(
+		'has no No milestone card when every unassigned item is dropped',
+		() => {
+			const dir = scratchFixture('no-milestone-');
+			const planningPath = join(dir, 'planning.json');
+			const planning = JSON.parse(readFileSync(planningPath, 'utf8'));
+			const unassigned = (milestone: string | null) => milestone === null || milestone === 'none';
+
+			planning.now.milestone = 'M1';
+			planning.roadmap.next = planning.roadmap.next.map((item: { milestone: string | null }) => (unassigned(item.milestone) ? { ...item, milestone: 'M1' } : item));
+			planning.roadmap.later = planning.roadmap.later.map((item: { milestone: string | null }) => (unassigned(item.milestone) ? { ...item, milestone: 'M1' } : item));
+			planning.log.done = planning.log.done.map((entry: { milestone: string | null }) => (unassigned(entry.milestone) ? { ...entry, milestone: 'M1' } : entry));
+			writeFileSync(planningPath, JSON.stringify(planning));
+			writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'M', planning: '../planning.json', views: ['milestones'] }`));
+
+			const result = runCli(['build', join(dir, 'site')]);
+			const html = readFileSync(join(dir, 'site', 'dist', 'plan', 'milestones', 'index.html'), 'utf8');
+
+			expect(result.code, result.stderr).toBe(0);
+			// Positive control: the page is not simply blank or broken, it renders
+			// the M1 card the reassigned items now belong to.
+			expect(html).toContain('First release');
+			expect(html).not.toContain('No milestone');
+		},
+		BUILD,
+	);
+
+	it(
 		'fails with the export message when the planning file is missing',
 		() => {
 			const dir = scratchFixture('missing-');

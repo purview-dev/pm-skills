@@ -49,3 +49,87 @@ test('a click on a card milestone tag goes to the milestone page, with no popup'
 	await page.waitForURL(`**${href}`);
 	expect(new URL(page.url()).pathname).toBe(href);
 });
+
+for (const path of ['/plan/board/', '/plan/roadmap/']) {
+	test(`every card link on ${path} says it opens a dialog`, async ({ page }) => {
+		await page.goto(path);
+
+		expect(await page.locator('a[data-item]').count()).toBeGreaterThan(0);
+		expect(await page.locator('a[data-item]:not([aria-haspopup="dialog"])').count()).toBe(0);
+	});
+}
+
+test('after filtering, card links still say they open a dialog', async ({ page }) => {
+	await page.goto('/plan/board/');
+	await expect(page.locator('.plan-board__filters')).toBeVisible();
+	await page.selectOption('#board-owner', 'agent');
+
+	expect(await page.locator('a[data-item]').count()).toBeGreaterThan(0);
+	expect(await page.locator('a[data-item]:not([aria-haspopup="dialog"])').count()).toBe(0);
+});
+
+test('a backdrop click closes the popup; an inside click does not', async ({ page }) => {
+	await page.goto('/plan/board/');
+	const card = page.locator('a[data-item]').first();
+	const id = (await card.getAttribute('data-item'))!;
+
+	await card.click();
+	const dialog = page.locator('dialog[data-item-dialog]');
+	await expect(dialog).toHaveAttribute('open', '');
+	const dialogBox = (await dialog.boundingBox())!;
+
+	await page.mouse.click(dialogBox.x + 2, dialogBox.y + 2);
+	await expect(dialog).toHaveAttribute('open', '');
+
+	await dialog.locator('[data-item-dialog-body]').click();
+	await expect(dialog).toHaveAttribute('open', '');
+
+	await page.mouse.click(5, 5);
+	await expect(dialog).not.toHaveAttribute('open', '');
+	expect(await page.evaluate(() => document.activeElement?.getAttribute('data-item'))).toBe(id);
+});
+
+test('a drag across the popup edge keeps it open', async ({ page }) => {
+	await page.goto('/plan/board/');
+	const card = page.locator('a[data-item]').first();
+
+	await card.click();
+	const dialog = page.locator('dialog[data-item-dialog]');
+	await expect(dialog).toHaveAttribute('open', '');
+	const body = dialog.locator('[data-item-dialog-body]');
+	const bodyBox = (await body.boundingBox())!;
+
+	// Down inside the dialog body, released on the backdrop: a selection
+	// dragged past the popup's edge must not close it.
+	await page.mouse.move(bodyBox.x + 5, bodyBox.y + 5);
+	await page.mouse.down();
+	await page.mouse.move(5, 5);
+	await page.mouse.up();
+	await expect(dialog).toHaveAttribute('open', '');
+
+	// The reverse drag: down on the backdrop, released inside the body.
+	await page.mouse.move(5, 5);
+	await page.mouse.down();
+	await page.mouse.move(bodyBox.x + 5, bodyBox.y + 5);
+	await page.mouse.up();
+	await expect(dialog).toHaveAttribute('open', '');
+});
+
+test('popup section headings sit below the dialog title', async ({ page }) => {
+	await page.goto('/plan/board/');
+	const card = page.locator('a[data-item="R-012"]').first();
+
+	await card.click();
+	const dialog = page.locator('dialog[data-item-dialog]');
+	await expect(dialog).toHaveAttribute('open', '');
+
+	expect(await page.locator('#plan-dialog-title').evaluate((el) => el.tagName)).toBe('H2');
+	expect(await page.locator('[data-item-dialog-body] h2').count()).toBe(0);
+	expect(await page.locator('[data-item-dialog-body] h3').count()).toBeGreaterThan(0);
+});
+
+test('a feature page keeps its section headings at h2', async ({ page }) => {
+	await page.goto('/plan/features/r-013/');
+
+	await expect(page.getByRole('heading', { level: 2, name: 'Done when' })).toBeVisible();
+});

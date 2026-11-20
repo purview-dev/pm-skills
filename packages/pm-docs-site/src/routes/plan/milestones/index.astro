@@ -6,11 +6,11 @@ import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import ExportStamp from '../../../components/ExportStamp.astro';
 import LinkedText from '../../../components/LinkedText.astro';
 import RefLink from '../../../components/RefLink.astro';
-import { FEATURE_STATES, loadPlanning, milestoneSummaries, type FeatureState } from '../../../lib/planning';
+import { FEATURE_STATES, loadPlanning, milestoneCards, type FeatureState } from '../../../lib/planning';
 import '../../../styles/components.css';
 
 const planning = loadPlanning();
-const summaries = milestoneSummaries(planning);
+const summaries = milestoneCards(planning);
 const states = Object.keys(FEATURE_STATES) as FeatureState[];
 const byState = (summary: (typeof summaries)[number]) =>
 	states
