@@ -32,9 +32,11 @@
 ### Task 1: Graph sampler records every pending change
 
 **Files:**
+
 - Modify: `test/browser/graph.browser.ts:44-80` (`sampleFrames`)
 
 **Interfaces:**
+
 - Consumes: none.
 - Produces: `sampleFrames(page: Page, path: string): Promise<GraphFrame[]>`, signature unchanged; callers at lines 187 and 326 unchanged.
 
@@ -55,6 +57,7 @@ git commit -m "test(pm-docs-site): graph sampler sees every pending change (R-02
 ### Task 2: One web server per Playwright run
 
 **Files:**
+
 - Modify: `playwright.config.ts`
 - Create: `playwright.dev.config.ts`
 - Modify: `package.json:52` (scripts)
@@ -63,6 +66,7 @@ git commit -m "test(pm-docs-site): graph sampler sees every pending change (R-02
 - Modify: `.github/workflows/ci.yml` (package job, after `Browser tests`)
 
 **Interfaces:**
+
 - Consumes: none.
 - Produces: scripts `test:browser` (`playwright test`) and `test:browser:dev` (`playwright test -c playwright.dev.config.ts`).
 
@@ -82,16 +86,18 @@ git commit -m "test(pm-docs-site): one web server per browser test run (R-023)"
 ### Task 3: Assertions that can fail
 
 **Files:**
+
 - Modify: `test/graph-layout.test.ts:107-118`
 - Modify: `test/browser/graph.browser.ts:347-365` (`arrowheadFill`) and its two callers
 
 **Interfaces:**
+
 - Consumes: `graphLayouts(...)['lanes-done'].boxes: Record<string, Box>` (existing).
 - Produces: `arrowheadFill(page: Page, edgeId: string): Promise<string>`, which throws instead of returning `null`.
 
 - [ ] **Step 1: Chip test.** Replace the `chipBoxes` filter and `toHaveLength(1)` with `expect(Object.keys(twoLane.boxes).sort()).toEqual(['R-300', 'R-301', 'R-302'])`, so an extra box for the chip under any key fails. Keep the lane assertions that follow.
 - [ ] **Step 2: Run** `bun test test/graph-layout.test.ts`. Expected: PASS.
-- [ ] **Step 3: `arrowheadFill`.** Return a `{ fill: string | null; markerEnd: string | null; reason: string | null }` from `page.evaluate`, with `reason` set to `'marker-end is not url(#id)'`, `'no marker element'`, or `'no polyline'`. Outside the evaluate, throw `new Error(\`arrowheadFill(${edgeId}): ${reason} (marker-end: ${markerEnd})\`)` when `reason` is set; otherwise return `fill`. Update the doc comment to say it fails loudly when React Flow's marker format changes. Remove the two `expect(...).not.toBeNull()` lines at the callers, which the throw replaces.
+- [ ] **Step 3: `arrowheadFill`.** Return a `{ fill: string | null; markerEnd: string | null; reason: string | null }` from `page.evaluate`, with `reason` set to `'marker-end is not url(#id)'`, `'no marker element'`, or `'no polyline'`. Outside the evaluate, throw an `Error` whose message is `arrowheadFill(<edgeId>): <reason> (marker-end: <markerEnd>)` when `reason` is set; otherwise return `fill`. Update the doc comment to say it fails loudly when React Flow's marker format changes. Remove the two `expect(...).not.toBeNull()` lines at the callers, which the throw replaces.
 - [ ] **Step 4: Run** `npx playwright test test/browser/graph.browser.ts --project=chromium -g "arrowhead"`. Expected: PASS.
 - [ ] **Step 5: Commit**
 
@@ -103,10 +109,12 @@ git commit -m "test(pm-docs-site): chip and arrowhead checks can fail (R-023)"
 ### Task 4: fs-allow tests find the plugin by name
 
 **Files:**
+
 - Modify: `test/integration.test.ts:180-215`
 - Modify: `lib/index.ts:143-146` (comment only)
 
 **Interfaces:**
+
 - Consumes: `setup({ title })[0]!.vite.plugins` (existing test helper).
 - Produces: none.
 
