@@ -59,11 +59,14 @@ test('the dependency graph hydrates under pm-docs-site dev', async ({ page }) =>
 
 	await page.goto('/plan/graph/', { timeout: 90_000 });
 
-	const html = page.locator('html');
+	// The toolbar shows only once the island has applied its state; the nodes
+	// and `data-graph-pending` (absent without `lanes=off` or `done=off`) are
+	// already right in the server HTML, so neither proves hydration.
+	const toolbar = page.locator('.plan-graph__toolbar');
 
-	await expect(html).not.toHaveAttribute('data-graph-pending', { timeout: 30_000 }).catch(() => {});
+	await expect(toolbar).toBeVisible({ timeout: 30_000 }).catch(() => {});
 	expect(errors).toEqual([]);
-	await expect(html).not.toHaveAttribute('data-graph-pending', { timeout: 1_000 });
+	await expect(toolbar).toBeVisible({ timeout: 1_000 });
 	await expect(page.locator('.react-flow__node').first()).toBeVisible();
 	expect(errors).toEqual([]);
 });
