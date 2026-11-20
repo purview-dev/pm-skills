@@ -14,18 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-019 Docs-site package: consumer-ready for 1.0.0
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: the package home page has no `just docs-preview`; a build without the `docs` option logs no Starlight missing-folder or empty-collection warning; `docsHref` returns no link for a spec or plan path no docs source maps (and honours a source `prefix`); RefLink prints fallback text (the entry title, "No milestone") for an unknown key; `linkify` uses the link scanner's boundaries, so an ID inside a path is not linked; the CLI warns when `--title` or `--planning` is ignored, a `planning.json` holding `null` prints the pm-export hint, `check` loads an `astro.config.ts` on the `engines` Node floor, and the README names the same-drive requirement on Windows.
-- Size: M
-- Depends on: R-021
-- Status: ready
-- Brief: planning/briefs/2026-11-17-docs-site-package.md
-- Note: Folds five inbox files from the R-008 and R-009 final reviews (CLI gaps, consumer text, dead doc links, RefLink fallbacks, IDs linked inside paths). Affects `packages/pm-docs-site/lib/cli.ts`, `lib/site-options.ts`, `README.md`, `src/pages/index.astro`, `src/content.config.ts`, `src/lib/planning.ts`, `src/components/RefLink.astro`, `src/lib/references.ts`. 2026-11-19 re-sliced with pm-shape: the `dev` check left the `Done when` (`test/browser/dev.browser.ts` passes it since R-017); the build-hardening Note moved to R-027 Docs-site package: build hardening, and the accessibility, timeline, and empty-card Notes moved to R-028 Docs-site package: accessible board, popup, and timeline.
-
 ### R-026 pm-checkpoint keeps every item field through switch, push, and pop
 
 - Serves: V2
