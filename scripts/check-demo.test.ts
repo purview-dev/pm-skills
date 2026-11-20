@@ -85,12 +85,10 @@ describe("checkDemo", () => {
     expect(checkDemo(dir, ["plan/now/index.html"])).toEqual([]);
   });
 
-  it("allows a placeholder up to its allowed count on a page", () => {
-    const one = dist({ "plan/milestones/index.html": "<td>No status</td><td>active</td>" });
-    const two = dist({ "plan/milestones/index.html": "<td>No status</td><td> No status </td>" });
+  it("reports a placeholder with whitespace around it once per page", () => {
+    const dir = dist({ "plan/milestones/index.html": "<td>No status</td><td> No status </td>" });
 
-    expect(checkDemo(one, ["plan/milestones/index.html"])).toEqual([]);
-    expect(checkDemo(two, ["plan/milestones/index.html"])).toEqual(['plan/milestones/index.html: placeholder "No status"']);
+    expect(checkDemo(dir, ["plan/milestones/index.html"])).toEqual(['plan/milestones/index.html: placeholder "No status"']);
   });
 
   it("gives every placeholder a reason", () => {
