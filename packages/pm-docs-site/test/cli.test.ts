@@ -44,6 +44,15 @@ describe('pm-docs-site build', () => {
 				expect(pages.filter((page) => page.startsWith(`plan/${view}/`))).toEqual([]);
 			}
 			expect(pages.filter((page) => page.startsWith('docs/'))).toEqual([]);
+
+			// A consumer build: no repository-only text, and no Starlight docs warnings without the docs option.
+			const output = result.stdout + result.stderr;
+			const home = readFileSync(join(dir, 'site', 'dist', 'index.html'), 'utf8');
+
+			expect(home).not.toContain('just docs-preview');
+			expect(home).toContain('pm-docs-site build');
+			expect(output).not.toMatch(/src[\\/]content[\\/]docs/);
+			expect(output).not.toMatch(/collection "(docs|i18n)" does not exist or is empty/);
 		},
 		BUILD,
 	);
