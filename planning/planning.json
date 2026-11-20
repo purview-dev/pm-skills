@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T15:18:57+00:00",
+  "generatedAt": "2026-11-20T15:19:17+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-026-checkpoint-keeps-item-fields",
-    "head": "8c6372c7be2a975d421134d50c09ded3bef78faf"
+    "head": "659da4a96c0fe98a0bcaa1272c6c3b5fcb714dba"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -384,6 +384,15 @@
       "done": [
         {
           "date": "2026-11-20",
+          "id": "R-026",
+          "title": "pm-checkpoint keeps every item field through switch, push, and pop",
+          "milestone": null,
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-20-checkpoint-keeps-item-fields.md",
+          "result": "branch feat/r-026-checkpoint-keeps-item-fields"
+        },
+        {
+          "date": "2026-11-20",
           "id": "R-027",
           "title": "Docs-site package: build hardening",
           "milestone": "M1",
@@ -529,6 +538,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-20",
+        "kind": "done",
+        "id": "R-026",
+        "title": "pm-checkpoint keeps every item field through switch, push, and pop",
+        "milestone": null,
+        "owner": "agent",
+        "result": "branch feat/r-026-checkpoint-keeps-item-fields"
+      },
       {
         "date": "2026-11-20",
         "kind": "done",
@@ -731,6 +749,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-20",
+        "id": "R-026",
+        "title": "pm-checkpoint keeps every item field through switch, push, and pop",
+        "milestone": null,
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-20-checkpoint-keeps-item-fields.md",
+        "result": "branch feat/r-026-checkpoint-keeps-item-fields"
+      },
       {
         "date": "2026-11-20",
         "id": "R-027",
@@ -1146,7 +1173,7 @@
     "openInbox": 10,
     "discuss": 2,
     "shapingBriefs": 0,
-    "done": 16,
+    "done": 17,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
