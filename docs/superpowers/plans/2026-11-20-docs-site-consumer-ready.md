@@ -43,7 +43,7 @@
 
 - Produces: `export function checkExport(value: unknown, path: string): asserts value is { schemaVersion: number }` in `lib/schema-version.ts`. Throws `PlanningExportError(`${path} does not hold a plan export (found ${kind}).`)` where `kind` is `null`, `an array`, or `typeof value`, when `value` is not a non-array object; otherwise calls `checkSchemaVersion(value.schemaVersion, path)`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 In `test/schema-version.test.ts`:
 
@@ -79,21 +79,21 @@ it('fails with the pm-export hint when planning.json holds null', () => {
 }, CHECK);
 ```
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `bun test test/schema-version.test.ts test/cli.test.ts -t "checkExport|holds null"`
 Expected: FAIL (`checkExport` is not exported; the CLI prints a TypeError).
 
-- [ ] **Step 3: Implement `checkExport` and use it**
+- [x] **Step 3: Implement `checkExport` and use it**
 
 Add `checkExport` to `lib/schema-version.ts`. In `lib/cli.ts` `problems`, replace `checkSchemaVersion(planning.schemaVersion, ...)` with `checkExport(planning, options.planning)`. In `loadPlanning`, type the parsed value as `unknown` and call `checkExport(planning, path)` instead of `checkSchemaVersion`. Re-export nothing new from `planning.ts`.
 
-- [ ] **Step 4: Run to verify they pass**
+- [x] **Step 4: Run to verify they pass**
 
 Run: `bun test test/schema-version.test.ts test/cli.test.ts test/planning.test.ts`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add lib/schema-version.ts lib/cli.ts src/lib/planning.ts test/schema-version.test.ts test/cli.test.ts
@@ -113,7 +113,7 @@ git commit -m "fix(pm-docs-site): a non-object export fails with the pm-export h
 - Consumes: `loadSiteOptions(siteDir, flags)` (unchanged signature).
 - Produces: one `console.warn` line per flag given while a config file exists, exactly `pm-docs-site: --<flag> is ignored: <configFile> sets the options.` (`<flag>` is `title` or `planning`), before the config is loaded.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 it('warns that --title and --planning are ignored when the site has a config file', () => {
@@ -126,19 +126,19 @@ it('warns that --title and --planning are ignored when the site has a config fil
 }, CHECK);
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `bun test test/cli.test.ts -t "are ignored"`
 Expected: FAIL (no warning on stderr).
 
-- [ ] **Step 3: Implement the warning in `loadSiteOptions`; add one README line under `## CLI` saying the flags apply only to a site without an `astro.config.*` and are otherwise ignored with a warning.**
+- [x] **Step 3: Implement the warning in `loadSiteOptions`; add one README line under `## CLI` saying the flags apply only to a site without an `astro.config.*` and are otherwise ignored with a warning.**
 
-- [ ] **Step 4: Run to verify it passes**
+- [x] **Step 4: Run to verify it passes**
 
 Run: `bun test test/cli.test.ts -t "check|usage"`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add lib/site-options.ts README.md test/cli.test.ts
@@ -157,7 +157,7 @@ git commit -m "feat(pm-docs-site): warn when a CLI flag is ignored (R-019)"
 
 - Produces: nothing other tasks use.
 
-- [ ] **Step 1: Extend the failing test**
+- [x] **Step 1: Extend the failing test**
 
 Add to `'leaves out the pages of views that are off'`, after the existing assertions:
 
@@ -171,21 +171,21 @@ expect(output).not.toContain('src/content/docs');
 expect(output).not.toMatch(/collection "docs" (does not exist|is empty)/);
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `bun test test/cli.test.ts -t "views that are off"`
 Expected: FAIL on `just docs-preview` and the Starlight base-directory warning.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 `index.astro`: the Search line reads `Search — every page above is in the site search once the site is built (<code>pm-docs-site build</code>)`. `content.config.ts`: when `config.docs` is null use `loader: () => []` instead of `docsLoader()`, drop the `docsLoader` import, and update the header comment. If Astro still logs an empty-collection warning, find its source in `node_modules/astro` and remove the cause (for example a `getCollection('docs')` call that Starlight makes only when entries exist); do not filter the log.
 
-- [ ] **Step 4: Run to verify it passes**
+- [x] **Step 4: Run to verify it passes**
 
 Run: `bun test test/cli.test.ts -t "build"` then `bun run check`
 Expected: PASS; `astro-check` reports 0 errors.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/pages/index.astro src/content.config.ts test/cli.test.ts
@@ -208,7 +208,7 @@ git commit -m "fix(pm-docs-site): no repository text or docs warnings in a consu
   - `export const REF_AFTER = String.raw`(?![\w-])``
   - `export function refPattern(alternatives: string[]): RegExp` — `new RegExp(`${REF_BEFORE}(?:${alternatives.join('|')})${REF_AFTER}`, 'g')`; callers pass escaped alternatives, longest first.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 it('never links an ID inside a path or a longer token', () => {
@@ -219,21 +219,21 @@ it('never links an ID inside a path or a longer token', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `bun test test/references.test.ts -t "inside a path"`
 Expected: FAIL (three `R-012` links).
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 `linkify` builds its pattern with `refPattern([...briefPaths, 'RK-\\d{3,}', 'R-\\d{3,}', 'M\\d+'])`, brief paths escaped and sorted longest first; remove the `\b`-bounded `ID` constant. `test/scan.ts` builds its pattern with `refPattern(keys)` and its own `escape` stays.
 
-- [ ] **Step 4: Run to verify it passes**
+- [x] **Step 4: Run to verify it passes**
 
 Run: `bun test test/references.test.ts test/links.test.ts`
 Expected: PASS, including the existing `(RK-002)` and brief-path assertions and the whole-site link test.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/ref-boundary.ts src/lib/references.ts test/scan.ts test/references.test.ts
@@ -254,7 +254,7 @@ git commit -m "fix(pm-docs-site): linkify uses the link scanner's boundaries (R-
 - Produces: `export function refText(target: Target | undefined, ref: string | null | undefined, label: 'full' | 'id', fallback?: string): string` — with a target: `target.label` for `full`, `ref` for `id`; without one: `fallback ?? ref ?? ''`.
 - RefLink gains `fallback?: string` and renders `refText(...)`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 describe('refText', () => {
@@ -274,21 +274,21 @@ describe('refText', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `bun test test/references.test.ts -t refText`
 Expected: FAIL (`refText` is not exported).
 
-- [ ] **Step 3: Implement `refText`, use it in RefLink, and pass fallbacks**
+- [x] **Step 3: Implement `refText`, use it in RefLink, and pass fallbacks**
 
 `log.astro`: `<RefLink ref={entry.id} fallback={`${entry.id} ${entry.title}`} />`. The three milestone call sites pass `fallback="No milestone"` (on `roadmap.astro` only when the ref is `'none'`; the others are `feature.milestone ?? 'none'`, so pass `fallback={feature.milestone ?? 'No milestone'}`).
 
-- [ ] **Step 4: Run to verify it passes**
+- [x] **Step 4: Run to verify it passes**
 
 Run: `bun test test/references.test.ts test/links.test.ts` then `bun run check`
 Expected: PASS; 0 errors.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/references.ts src/components/RefLink.astro src/pages/plan/log.astro src/pages/plan/roadmap.astro src/components/FeatureSummary.astro src/components/FeatureTable.astro test/references.test.ts
@@ -306,7 +306,7 @@ git commit -m "fix(pm-docs-site): RefLink prints fallback text for an unknown ke
 
 - Consumes: `docsPages(docs)`, `docsHref(path, pages)` (unchanged).
 
-- [ ] **Step 1: Write the tests**
+- [x] **Step 1: Write the tests**
 
 `test/planning.test.ts`:
 
@@ -333,21 +333,21 @@ it('declares a Node floor that strips the TypeScript of astro.config.ts', () => 
 
 (`PACKAGE` is exported by `test/helpers.ts`; add it to the import.)
 
-- [ ] **Step 2: Run them**
+- [x] **Step 2: Run them**
 
 Run: `bun test test/planning.test.ts test/cli.test.ts -t "source prefix|Node floor"`
 Expected: PASS (behaviour already in place; these tests pin it). If either fails, fix the code before continuing.
 
-- [ ] **Step 3: Add the README line**
+- [x] **Step 3: Add the README line**
 
 Under `## A consumer site`: on Windows, keep the site and the installed package on the same drive; a package linked from another drive fails the build.
 
-- [ ] **Step 4: Lint**
+- [x] **Step 4: Lint**
 
 Run (repo root): `bunx markdownlint-cli2 packages/pm-docs-site/README.md`
 Expected: 0 errors.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add test/planning.test.ts test/cli.test.ts README.md
@@ -356,6 +356,6 @@ git commit -m "test(pm-docs-site): pin docs prefixes and the Node floor; Windows
 
 ### Task 7: Verify the branch
 
-- [ ] **Step 1:** Run `bun test` and `bun run check` in `packages/pm-docs-site/`. Expected: all pass, 0 errors.
-- [ ] **Step 2:** Run `just package-test` and `just lint-check` from the repo root. Expected: both exit 0.
-- [ ] **Step 3:** Walk R-019's nine `Done when` checks in `planning/NOW.md` and name the test that proves each.
+- [x] **Step 1:** Run `bun test` and `bun run check` in `packages/pm-docs-site/`. Expected: all pass, 0 errors.
+- [x] **Step 2:** Run `just package-test` and `just lint-check` from the repo root. Expected: both exit 0.
+- [x] **Step 3:** Walk R-019's nine `Done when` checks in `planning/NOW.md` and name the test that proves each.
