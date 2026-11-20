@@ -1,5 +1,5 @@
 // Every island page under `pm-docs-site dev` in a packed-install consumer
-// (dev-server.ts, playwright.config.ts project `dev`): the Board, the Roadmap
+// (dev-server.ts, playwright.dev.config.ts project `dev`): the Board, the Roadmap
 // timeline, and the Graph. The built site cannot show this: Vite serves
 // dependencies differently in dev, a dependency it does not pre-bundle reaches
 // the browser as raw CommonJS, and every module an island imports reaches the

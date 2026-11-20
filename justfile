@@ -76,3 +76,4 @@ package-test:
     bun run check
     bunx playwright install chromium
     bun run test:browser
+    bun run test:browser:dev
