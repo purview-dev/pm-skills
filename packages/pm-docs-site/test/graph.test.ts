@@ -27,7 +27,7 @@ describe('graphData', () => {
 	const nodeById = new Map(data.nodes.map((node) => [node.id, node]));
 
 	it('lists the open items, in features() order, then chips sorted by ID', () => {
-		expect(data.nodes.map((node) => node.id)).toEqual(['R-012', 'R-013', 'R-014', 'R-021', 'R-022', 'R-023', 'R-024', 'R-020', 'R-009', 'R-010', 'R-025', 'R-099']);
+		expect(data.nodes.map((node) => node.id)).toEqual(['R-012', 'R-013', 'R-014', 'R-021', 'R-022', 'R-023', 'R-024', 'R-020', 'R-026', 'R-009', 'R-010', 'R-025', 'R-099']);
 	});
 
 	it('gives each chip its kind, and a missing chip a null title and href', () => {
@@ -178,7 +178,7 @@ describe('dependencyRows', () => {
 	const rowById = new Map(rows.map((row) => [row.id, row]));
 
 	it('gives one row per item node, in node order', () => {
-		expect(rows.map((row) => row.id)).toEqual(['R-012', 'R-013', 'R-014', 'R-021', 'R-022', 'R-023', 'R-024', 'R-020']);
+		expect(rows.map((row) => row.id)).toEqual(['R-012', 'R-013', 'R-014', 'R-021', 'R-022', 'R-023', 'R-024', 'R-020', 'R-026']);
 	});
 
 	it("labels R-013's waitsOn and waitedOnBy", () => {

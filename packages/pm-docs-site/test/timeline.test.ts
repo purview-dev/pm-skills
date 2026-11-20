@@ -67,7 +67,7 @@ describe('timelineMilestones', () => {
 	const milestones = timelineMilestones(planning, known);
 
 	it('orders by strategy.milestones and adds none last', () => {
-		expect(milestones.map((milestone) => milestone.key)).toEqual(['M1', 'M2', 'none']);
+		expect(milestones.map((milestone) => milestone.key)).toEqual(['M1', 'M2', 'M3', 'M4', 'none']);
 	});
 
 	it('gives M2 its focus, status, target, and progress', () => {
@@ -93,7 +93,7 @@ describe('timelineMilestones', () => {
 		const none = milestones.find((milestone) => milestone.key === 'none')!;
 
 		expect(none.name).toBe('No milestone');
-		expect(none.progress).toEqual({ done: 2, total: 5, percent: 40 });
+		expect(none.progress).toEqual({ done: 2, total: 4, percent: 50 });
 		expect(none.href).toBe(known.get('none')?.href ?? null);
 	});
 

@@ -2,7 +2,10 @@ import { expect, test, type Page } from '@playwright/test';
 
 // The fixture (test/fixtures/planning.json): M1 First release (done
 // 2026-11-03, no target), M2 Billing (active, focus, target 2026-12-15, 1 of 4
-// done), and the No milestone card.
+// done), M3 Self-serve upgrades (planned, target 2027-02-01), M4 Partner
+// billing (on hold, no target), and the No milestone card. The Now item,
+// R-012, is also queued in Later under M2; the Roadmap page lists it once,
+// as active (roadmapGroups in src/lib/planning.ts dedupes).
 
 /** Waits for the Timeline island to hydrate: the toolbar shows once the URL state is applied. */
 async function hydrated(page: Page): Promise<void> {
@@ -30,7 +33,7 @@ test('each card links to its milestone page', async ({ page }) => {
 
 	const keys = await page.locator('li.plan-timeline__card').evaluateAll((elements) => elements.map((element) => element.getAttribute('data-milestone')));
 
-	expect(keys).toEqual(['M1', 'M2', 'none']);
+	expect(keys).toEqual(['M1', 'M2', 'M3', 'M4', 'none']);
 	await expect(card(page, 'M1').locator('a')).toHaveAttribute('href', '/plan/milestones/m1/');
 	await expect(card(page, 'M1').locator('a')).toHaveText('M1 First release');
 	await expect(card(page, 'M1')).toContainText('No target');
@@ -39,6 +42,30 @@ test('each card links to its milestone page', async ({ page }) => {
 
 	for (const text of ['Focus', 'active', '2026-12-15', '1 of 4 done']) await expect(m2).toContainText(text);
 	await expect(card(page, 'none')).toContainText('No milestone');
+});
+
+test('planned and other milestones render their state and marker', async ({ page }) => {
+	await openRoadmap(page);
+
+	const m3 = card(page, 'M3');
+
+	await expect(m3).toHaveAttribute('data-state', 'planned');
+	await expect(m3).toContainText('planned');
+	await expect(m3.locator('.plan-timeline__marker')).toBeVisible();
+
+	const m4 = card(page, 'M4');
+
+	await expect(m4).toHaveAttribute('data-state', 'other');
+	await expect(m4).toContainText('on hold');
+	await expect(m4.locator('.plan-timeline__marker')).toBeVisible();
+});
+
+test('the Now item is listed once on the Roadmap page', async ({ page }) => {
+	await openRoadmap(page);
+
+	// Scoped to the event feed (StatusTimelineFeed): the timeline strip's cards
+	// and the item popup templates are not roadmap item links.
+	await expect(page.locator('.status-feed a[data-item="R-012"]')).toHaveCount(1);
 });
 
 test('the toggle switches layout and keeps other parameters', async ({ page }) => {

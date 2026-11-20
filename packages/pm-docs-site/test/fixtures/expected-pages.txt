@@ -19,12 +19,15 @@ plan/features/r-022/index.html
 plan/features/r-023/index.html
 plan/features/r-024/index.html
 plan/features/r-025/index.html
+plan/features/r-026/index.html
 plan/graph/index.html
 plan/inbox/index.html
 plan/log/index.html
 plan/milestones/index.html
 plan/milestones/m1/index.html
 plan/milestones/m2/index.html
+plan/milestones/m3/index.html
+plan/milestones/m4/index.html
 plan/milestones/none/index.html
 plan/now/index.html
 plan/risks/index.html
