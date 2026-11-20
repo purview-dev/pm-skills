@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-19T23:35:29+00:00",
+  "generatedAt": "2026-11-20T07:25:55+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 20,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "main",
-    "head": "7b72fa31e4d27c773c0f7f3910feffbc8e7fdd20"
+    "head": "5c2e0d1aad0de2eb6933e1fa56648154f0123ba1"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -193,34 +193,10 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-022",
-        "title": "Docs-site package: timeline hydrates in dev",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "under `pm-docs-site dev` in a packed-install consumer, `/plan/roadmap/` shows the timeline toolbar with no `node:fs` error in the browser console, and `test/browser/dev.browser.ts` asserts it.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "Bug (minor) from R-012 execute (2026-11-19): the Roadmap Timeline island imports `src/lib/timeline.ts`, which imports `src/lib/planning.ts`, which imports `node:fs`, so the client bundle fails in dev. R-012 fixed the same problem for the Graph island by moving its client functions into `src/lib/graph-state.ts`; the timeline needs the same split. Reproduce: pack and install into a consumer outside the repository (as `test/browser/dev-server.ts` does), run `pm-docs-site dev`, open `/plan/roadmap/`; every time.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-023",
         "title": "Docs-site package: stable browser tests",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4"
@@ -244,7 +220,7 @@
         "id": "R-020",
         "title": "Docs-site package: rich demo planning fixture",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -268,7 +244,7 @@
         "id": "R-019",
         "title": "Docs-site package: consumer-ready for 1.0.0",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -294,7 +270,7 @@
         "id": "R-026",
         "title": "pm-checkpoint keeps every item field through switch, push, and pop",
         "section": "next",
-        "position": 5,
+        "position": 4,
         "label": "next",
         "serves": [
           "V2"
@@ -527,13 +503,6 @@
       "now": [],
       "next": [
         {
-          "id": "R-022",
-          "title": "Docs-site package: timeline hydrates in dev",
-          "owner": "agent",
-          "size": "S",
-          "detail": "ready"
-        },
-        {
           "id": "R-023",
           "title": "Docs-site package: stable browser tests",
           "owner": "agent",
@@ -565,6 +534,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-20",
+          "id": "R-022",
+          "title": "Docs-site package: timeline hydrates in dev",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-19-docs-site-package-timeline-dev-hydration.md",
+          "result": "branch feat/r-022-docs-site-package-timeline-hydrates-in-dev"
+        },
         {
           "date": "2026-11-19",
           "id": "R-018",
@@ -667,6 +645,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-20",
+        "kind": "done",
+        "id": "R-022",
+        "title": "Docs-site package: timeline hydrates in dev",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-022-docs-site-package-timeline-hydrates-in-dev"
+      },
       {
         "date": "2026-11-19",
         "kind": "done",
@@ -824,6 +811,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-20",
+        "id": "R-022",
+        "title": "Docs-site package: timeline hydrates in dev",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-19-docs-site-package-timeline-dev-hydration.md",
+        "result": "branch feat/r-022-docs-site-package-timeline-hydrates-in-dev"
+      },
       {
         "date": "2026-11-19",
         "id": "R-018",
@@ -1015,6 +1011,21 @@
       "brief": "planning/briefs/2026-11-17-docs-site-package.md",
       "reviewed": "2026-11-19",
       "idea": "Minor findings from R-010's task and final reviews, triaged \"can wait\":\n\n- The 3s reveal of a pending board also fires on a slow but successful hydration (brief unfiltered view, then the filtered one); say so in `components.css` and the `useBoardUrlState.ts` header, or tune it.\n- The pending mark is also set on `/plan/roadmap/?owner=...` (inert today); scope it to the Board page when R-011 adds Roadmap filters.\n- `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`.\n- The lane header is a plain `div`; an `h3` or `role=\"heading\"` would make lanes navigable.\n- Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed.\n- The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page; watch it for R-011 and R-012.\n- A collapsed column's vertical title stretches the shared header row.\n- `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab` (suggests drag and drop); its header comment lists only some changes.\n- `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array.\n- `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id` (key fallback, `href: null`, and the Done-tag rule untested); `tagHref` never asserted.\n- `integration.test.ts` asserts the integration names two ways.\n- `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`.\n- The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP."
+    },
+    {
+      "file": "planning/inbox/2026-11-20-0010-timeline-island-import-rule-note.md",
+      "title": "Timeline island lacks its import-rule note",
+      "captured": "2026-11-20 00:10",
+      "source": "agent (R-022 execute, final review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site/src/components/timeline/Timeline.tsx",
+      "context": "R-022 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Deferred minor from the R-022 final review: `Graph.tsx:5-7` states in the island itself that it may import only types from `lib/graph`, but `Timeline.tsx` has no matching note that it may import only types from `lib/timeline` (values come from `lib/timeline-state.ts`). Add a one-line header note so the next edit keeps the rule. The reviewer also suggested a `bun test` guard that walks `src/components/**` and fails on a value import of `lib/planning`, `lib/timeline`, `lib/graph`, or `lib/graph-layout` (option 2 in the R-022 design, not chosen then)."
     }
   ],
   "briefs": [
@@ -1049,13 +1060,13 @@
     "removed": []
   },
   "counts": {
-    "next": 5,
+    "next": 4,
     "later": 8,
     "nextMax": 5,
-    "openInbox": 2,
+    "openInbox": 3,
     "discuss": 2,
     "shapingBriefs": 0,
-    "done": 11,
+    "done": 12,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1067,7 +1078,6 @@
     "reviewDue": false,
     "lastReview": "2026-11-19",
     "claimable": [
-      "R-022",
       "R-023",
       "R-020",
       "R-019",

@@ -14,17 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-022 Docs-site package: timeline hydrates in dev
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: under `pm-docs-site dev` in a packed-install consumer, `/plan/roadmap/` shows the timeline toolbar with no `node:fs` error in the browser console, and `test/browser/dev.browser.ts` asserts it.
-- Size: S
-- Depends on: none
-- Status: ready
-- Note: Bug (minor) from R-012 execute (2026-11-19): the Roadmap Timeline island imports `src/lib/timeline.ts`, which imports `src/lib/planning.ts`, which imports `node:fs`, so the client bundle fails in dev. R-012 fixed the same problem for the Graph island by moving its client functions into `src/lib/graph-state.ts`; the timeline needs the same split. Reproduce: pack and install into a consumer outside the repository (as `test/browser/dev-server.ts` does), run `pm-docs-site dev`, open `/plan/roadmap/`; every time.
-
 ### R-023 Docs-site package: stable browser tests
 
 - Serves: V4
