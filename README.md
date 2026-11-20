@@ -73,8 +73,8 @@ other skill are in [The loop](docs/wiki/guide/The-Loop.md).
 the project site from `planning.json` as an npm package, so a site is
 `package.json`, a lockfile, and `astro.config.ts`, with Astro and
 Starlight pinned by the package, instead of a copy of the `pm-docs-site`
-templates. It is in prerelease: `0.1.0-pre.1` is on npm under the
-`prerelease` dist-tag, and until R-013 migrates the skill onto it,
+templates. It is in prerelease on npm under the `prerelease` dist-tag,
+and until R-013 migrates the skill onto it,
 `pm-docs-site` still renders the templates. It is versioned and tagged on its own
 (`pm-docs-site-v<version>`) and published from
 `.github/workflows/publish-pm-docs-site.yml`. See

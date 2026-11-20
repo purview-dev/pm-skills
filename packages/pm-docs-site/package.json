@@ -43,7 +43,7 @@
 			"default": "./dist/index.js"
 		}
 	},
-	"files": ["dist", "src", "lib/repo-docs.ts", "lib/schema-version.ts", "README.md", "LICENSE.md"],
+	"files": ["dist", "src", "lib/repo-docs.ts", "lib/schema-version.ts", "lib/types.ts", "README.md", "LICENSE.md"],
 	"scripts": {
 		"build": "node scripts/build.ts",
 		"prepack": "node scripts/build.ts && node scripts/check-exports.ts",
@@ -65,6 +65,7 @@
 		"@astrojs/check": "0.9.12",
 		"@playwright/test": "1.65.1",
 		"@types/bun": "1.4.4",
+		"@types/node": "26.6.6",
 		"@types/react": "19.3.0",
 		"@types/react-dom": "19.3.0",
 		"typescript": "6.0.3"

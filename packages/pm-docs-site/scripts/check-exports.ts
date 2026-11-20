@@ -1,35 +1,46 @@
 // Refuses a publish whose package.json points at files the package does not
-// carry: every `exports` target, every `bin`, and every `files` entry must
-// exist. A version published without them cannot be imported, and npm never
-// lets the same version be published again. Run by `prepack`, after the build, and by the
-// publish workflow. Plain Node, so npm can run it without Bun.
+// carry, or at the wrong kind of file: every `exports` target, every `bin`, and
+// every `files` entry must exist; a `types` condition must name a declaration,
+// and every other `exports` target and every `bin` must be built JavaScript. A
+// version published without them cannot be imported, and npm never lets the
+// same version be published again. Run by `prepack`, after the build, and by
+// the publish workflow, on this package or on the root given as the first
+// argument. Plain Node, so npm can run it without Bun.
 
 import { existsSync, readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const root = process.argv[2] ? resolve(process.argv[2]) : join(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
 
+const DECLARATION = /\.d\.[mc]?ts$/;
+const JAVASCRIPT = /\.[mc]?js$/;
+
 const targets: string[] = [];
-const entryPoints: string[] = [];
-const walk = (value: unknown, into: string[]): void => {
-	if (typeof value === 'string') into.push(value);
-	else if (value && typeof value === 'object') for (const child of Object.values(value)) walk(child, into);
+const wrongKind: string[] = [];
+const entry = (target: string, isTypes: boolean): void => {
+	targets.push(target);
+	const ok = isTypes ? DECLARATION.test(target) : JAVASCRIPT.test(target);
+
+	if (!ok) wrongKind.push(target);
 };
-walk(pkg.exports ?? {}, entryPoints);
-walk(pkg.bin ?? {}, entryPoints);
-targets.push(...entryPoints);
-for (const entry of (pkg.files ?? []) as string[]) if (!entry.startsWith('!')) targets.push(entry);
+const walk = (value: unknown, isTypes: boolean): void => {
+	if (typeof value === 'string') entry(value, isTypes);
+	// Once under a `types` condition, every nested condition names a declaration.
+	else if (value && typeof value === 'object') for (const [key, child] of Object.entries(value)) walk(child, isTypes || key === 'types');
+};
+walk(pkg.exports ?? {}, false);
+// Node refuses to strip types under node_modules, so every bin is built JavaScript.
+if (typeof pkg.bin === 'string') entry(pkg.bin, false);
+else for (const target of Object.values(pkg.bin ?? {}) as string[]) entry(target, false);
+for (const file of (pkg.files ?? []) as string[]) if (!file.startsWith('!')) targets.push(file);
 
 const missing = [...new Set(targets)].filter((target) => !existsSync(join(root, target)));
 
-// Node refuses to strip types under node_modules, so every entry point is built JavaScript.
-const notJavaScript = [...new Set(entryPoints)].filter((target) => !target.endsWith('.js') && !target.endsWith('.d.ts'));
-
-if (notJavaScript.length > 0) {
-	console.error(`refusing to publish ${pkg.name}@${pkg.version}: exports or bin point at non-JavaScript files`);
-	for (const target of notJavaScript) console.error(`  - ${target}`);
+if (wrongKind.length > 0) {
+	console.error(`refusing to publish ${pkg.name}@${pkg.version}: exports or bin point at the wrong kind of file`);
+	for (const target of new Set(wrongKind)) console.error(`  - ${target}`);
 	process.exit(1);
 }
 

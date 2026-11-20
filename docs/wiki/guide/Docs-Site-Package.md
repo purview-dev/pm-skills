@@ -11,7 +11,7 @@ and lockfile render the same pages.
 
 ## Status
 
-The package is in prerelease: `0.1.0-pre.1` is on npm under the `prerelease` dist-tag, so install it
+The package is in prerelease on npm under the `prerelease` dist-tag, so install it
 with `bun add @purview-dev/pm-docs-site@prerelease`. Board filters, the milestone timeline, and the
 dependency graph are still being built. Until roadmap item R-013 (publish and migrate) moves the
 `pm-docs-site` skill onto the package, the skill still renders the templates, and this repository's
@@ -32,11 +32,11 @@ the integration points Astro at the package's pages.
     "build": "pm-docs-site build",
     "check": "pm-docs-site check"
   },
-  "dependencies": { "@purview-dev/pm-docs-site": "0.1.0-pre.1" }
+  "dependencies": { "@purview-dev/pm-docs-site": "0.1.0-pre.2" }
 }
 ```
 
-```js
+```ts
 // astro.config.ts
 import pmDocsSite from '@purview-dev/pm-docs-site';
 

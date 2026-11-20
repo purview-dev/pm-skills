@@ -28,18 +28,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Grouped by milestone where one is set. Same item format. -->
 
-### R-027 Docs-site package: build hardening
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: `@types/node` is in `packages/pm-docs-site` `devDependencies`; `scripts/build.ts` and the install-test guard walk `dist/` recursively; `scripts/check-exports.ts` accepts `.mjs` and `.cjs` entry points and rejects a `.d.ts` outside a `types` condition; every type import in the packed tarball resolves; the `astro.config.ts` examples in `packages/pm-docs-site/README.md` and `docs/wiki/guide/Docs-Site-Package.md` are fenced as `ts`; and no file names `0.1.0-pre.1` as the published version.
-- Size: S
-- Depends on: none
-- Status: ready
-- Brief: planning/briefs/2026-11-17-docs-site-package.md
-- Note: Sliced from R-019 Docs-site package: consumer-ready for 1.0.0 with pm-shape on 2026-11-19. Build and docs from the R-021 final review: `tsconfig.build.json` sets `types: ["node"]` but `@types/node` arrives only through `@types/bun` (add it to `devDependencies` so a lockfile change cannot break `prepack`); `scripts/build.ts` rewrites `.ts` specifiers only in the top level of `dist/`, and the install-test guard reads only the top level (use `readdirSync(..., { recursive: true })`); `scripts/check-exports.ts` rejects valid `.mjs`/`.cjs` entry points and accepts a `.d.ts` outside a `types` condition; shipped `src/` type-imports `../lib/types.ts`, which the tarball omits (ship it or note why not); the `astro.config.ts` examples in `packages/pm-docs-site/README.md` and `docs/wiki/guide/Docs-Site-Package.md` are fenced as `js`; `README.md:69` and `.config/purview-docs.yml:23` say `0.1.0-pre.1` is on npm.
-
 ### R-028 Docs-site package: accessible board, popup, and timeline
 
 - Serves: V4

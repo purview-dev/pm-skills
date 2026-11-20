@@ -32,11 +32,11 @@ so a package linked from another drive fails the build.
     "build": "pm-docs-site build",
     "check": "pm-docs-site check"
   },
-  "dependencies": { "@purview-dev/pm-docs-site": "0.1.0-pre.1" }
+  "dependencies": { "@purview-dev/pm-docs-site": "0.1.0-pre.2" }
 }
 ```
 
-```js
+```ts
 // astro.config.ts
 import pmDocsSite from '@purview-dev/pm-docs-site';
 
@@ -222,7 +222,7 @@ installs, tests, type-checks, builds `dist/`, and runs `scripts/check-exports.ts
 The `prepack` script runs the same build and check, so every pack and a local
 `npm publish` build first and cannot burn a version on a package with missing
 or non-JavaScript entry points. It publishes a prerelease
-(`0.1.0-pre.1`) under the `prerelease` dist-tag and a stable version under
+version (one with a `-pre` part) under the `prerelease` dist-tag and a stable version under
 `latest`, skips a version already on the registry, and keeps `latest` on the
 newest prerelease until a stable release exists. Only then does it create the
 tag and a GitHub release, never marked as the repository's latest release.
@@ -243,7 +243,7 @@ environment.
 A trusted publisher is configured on the package, so the package must exist
 on npm first. Once, from an account that can publish to `@purview-dev`:
 
-1. Remove `"private": true`, set the first version (`0.1.0-pre.1`), and
+1. Remove `"private": true`, set a prerelease version, and
    publish it locally: `npm publish --access public --tag prerelease`.
 2. Add the trusted publisher, with *Allow npm publish* and *Allow npm
    dist-tag* ticked (the CLI grants only the first):
