@@ -4,6 +4,7 @@
 
 ## Done
 
+- 2026-11-20 R-020 Docs-site package: rich demo planning fixture. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-20-docs-site-demo.md. Result: branch feat/r-020-docs-site-demo-fixture.
 - 2026-11-20 R-023 Docs-site package: stable browser tests. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-20-docs-site-package-stable-browser-tests.md. Result: branch feat/r-023-docs-site-package-stable-browser-tests.
 - 2026-11-20 R-022 Docs-site package: timeline hydrates in dev. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-19-docs-site-package-timeline-dev-hydration.md. Result: branch feat/r-022-docs-site-package-timeline-hydrates-in-dev.
 - 2026-11-19 R-018 Export the Now card's owner and size. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-19-now-item-owner-size-links.md. Result: branch feat/r-018-export-the-now-cards-owner-and-size.
