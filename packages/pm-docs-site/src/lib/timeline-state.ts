@@ -94,6 +94,14 @@ export function zoomFromWheel(zoom: number, pending: number, deltaY: number, del
 	return { zoom: nextZoom, pending: nextPending };
 }
 
+/** One wheel event's effect in pixels: `deltaY` as-is in pixel mode (`0`), scaled by `lineHeight` in line mode (`1`), or by `pageSize` in page mode (`2`). */
+export function wheelPixels(deltaY: number, deltaMode: number, lineHeight: number, pageSize: number): number {
+	if (deltaMode === 1) return deltaY * lineHeight;
+	if (deltaMode === 2) return deltaY * pageSize;
+
+	return deltaY;
+}
+
 /** Whether the strip's own horizontal scrolling should consume this wheel event, with 1px of tolerance at either end. */
 export function wheelScrollsStrip(
 	e: { deltaX: number; deltaY: number },

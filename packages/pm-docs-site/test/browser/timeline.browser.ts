@@ -93,7 +93,8 @@ test('zoom buttons resize cards and stop at the limits', async ({ page }) => {
 
 	await press(page, 'Zoom in', 3);
 	await expect(readout(page)).toHaveText('200%');
-	await expect(button(page, 'Zoom in')).toBeDisabled();
+	await expect(button(page, 'Zoom in')).toHaveAttribute('aria-disabled', 'true');
+	await expect(button(page, 'Zoom out')).toHaveAttribute('aria-disabled', 'false');
 
 	await press(page, 'Reset zoom');
 	await expect(readout(page)).toHaveText('100%');
@@ -101,7 +102,47 @@ test('zoom buttons resize cards and stop at the limits', async ({ page }) => {
 
 	await press(page, 'Zoom out', 2);
 	await expect(readout(page)).toHaveText('50%');
-	await expect(button(page, 'Zoom out')).toBeDisabled();
+	await expect(button(page, 'Zoom out')).toHaveAttribute('aria-disabled', 'true');
+	await expect(button(page, 'Zoom in')).toHaveAttribute('aria-disabled', 'false');
+});
+
+test('a zoom button keeps focus and stays at the limit', async ({ page }) => {
+	await openRoadmap(page);
+
+	const zoomIn = button(page, 'Zoom in');
+
+	await zoomIn.focus();
+	for (let i = 0; i < 4; i++) await page.keyboard.press('Enter');
+	await expect(readout(page)).toHaveText('200%');
+	await expect(zoomIn).toBeFocused();
+	await expect(zoomIn).toHaveAttribute('aria-label', 'Zoom in');
+
+	await page.keyboard.press('Enter');
+	await expect(readout(page)).toHaveText('200%');
+	await expect(zoomIn).toBeFocused();
+
+	const zoomOut = button(page, 'Zoom out');
+
+	await zoomOut.focus();
+	for (let i = 0; i < 6; i++) await page.keyboard.press('Enter');
+	await expect(readout(page)).toHaveText('50%');
+	await expect(zoomOut).toBeFocused();
+	await expect(zoomOut).toHaveAttribute('aria-label', 'Zoom out');
+
+	await page.keyboard.press('Enter');
+	await expect(readout(page)).toHaveText('50%');
+	await expect(zoomOut).toBeFocused();
+
+	const reset = button(page, 'Reset zoom');
+
+	await reset.focus();
+	await page.keyboard.press('Enter');
+	await expect(readout(page)).toHaveText('100%');
+	await expect(reset).toBeFocused();
+
+	await page.keyboard.press('Enter');
+	await expect(readout(page)).toHaveText('100%');
+	await expect(reset).toBeFocused();
 });
 
 test('Ctrl + wheel over the strip zooms the strip, not the page', async ({ page }) => {
@@ -137,6 +178,25 @@ test('zooming keeps the point at the centre of the strip', async ({ page }) => {
 	expect(Math.abs((await ratio()) - before)).toBeLessThanOrEqual(0.02);
 });
 
+test('the zoom anchor holds across two zoom changes before one render', async ({ page }) => {
+	await page.setViewportSize({ width: 700, height: 900 });
+	await openRoadmap(page);
+	await press(page, 'Zoom in', 2);
+	await expect(readout(page)).toHaveText('150%');
+	await strip(page).evaluate((element) => (element.scrollLeft = (element.scrollWidth - element.clientWidth) / 2));
+
+	const ratio = () => strip(page).evaluate((element) => (element.scrollLeft + element.clientWidth / 2) / element.scrollWidth);
+	const before = await ratio();
+
+	await strip(page).evaluate((element) => {
+		element.dispatchEvent(new WheelEvent('wheel', { deltaY: -100, ctrlKey: true, cancelable: true, bubbles: true }));
+		element.dispatchEvent(new WheelEvent('wheel', { deltaY: -100, ctrlKey: true, cancelable: true, bubbles: true }));
+	});
+
+	await expect(readout(page)).toHaveText('200%');
+	expect(Math.abs((await ratio()) - before)).toBeLessThanOrEqual(0.02);
+});
+
 /** At 700×900, zooms to 200% so the strip overflows, and hovers it. */
 async function overflowingStrip(page: Page): Promise<void> {
 	await page.setViewportSize({ width: 700, height: 900 });
@@ -146,6 +206,17 @@ async function overflowingStrip(page: Page): Promise<void> {
 	await strip(page).hover();
 	expect(await strip(page).evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
 }
+
+test('a line-mode wheel scrolls the strip by lines', async ({ page }) => {
+	await overflowingStrip(page);
+	await strip(page).evaluate((element) => (element.scrollLeft = 0));
+
+	await strip(page).evaluate((element) => {
+		element.dispatchEvent(new WheelEvent('wheel', { deltaY: 3, deltaMode: 1, bubbles: true, cancelable: true }));
+	});
+
+	expect(await strip(page).evaluate((element) => element.scrollLeft)).toBeGreaterThan(3);
+});
 
 test('a plain wheel scrolls an overflowing strip sideways', async ({ page }) => {
 	await overflowingStrip(page);

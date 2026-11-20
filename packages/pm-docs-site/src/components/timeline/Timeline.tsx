@@ -8,12 +8,22 @@
 // the browser's own scrolling; the wheel listener below only adds Ctrl/Cmd +
 // wheel zoom and a plain vertical wheel that scrolls a horizontal strip
 // sideways while it can. It never calls scrollIntoView, which would move the page.
+// This island imports only types from `lib/timeline`; its values come from
+// `lib/timeline-state.ts`, so the island never pulls `lib/planning` into the
+// browser (as Graph.tsx:5-7).
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 
-import { wheelScrollsStrip, ZOOM, zoomFromWheel, zoomStep } from '../../lib/timeline-state';
+import { wheelPixels, wheelScrollsStrip, ZOOM, zoomFromWheel, zoomStep } from '../../lib/timeline-state';
 import type { TimelineMilestone } from '../../lib/timeline-state';
 import { useTimelineLayout } from './useTimelineLayout';
+
+/** The element's computed line height in pixels, falling back to `16` when it is `normal` (`NaN`). */
+function lineHeightOf(element: HTMLElement): number {
+	const parsed = parseFloat(getComputedStyle(element).lineHeight);
+
+	return Number.isNaN(parsed) ? 16 : parsed;
+}
 
 function Card({ milestone }: { milestone: TimelineMilestone }) {
 	const { key, id, name, href, isFocus, status, target, progress } = milestone;
@@ -111,7 +121,7 @@ export default function Timeline({ milestones }: { milestones: TimelineMilestone
 
 			if (layout === 'horizontal' && wheelScrollsStrip(event, element)) {
 				event.preventDefault();
-				element.scrollLeft += event.deltaY;
+				element.scrollLeft += wheelPixels(event.deltaY, event.deltaMode, lineHeightOf(element), element.clientWidth);
 			}
 			// Every other wheel passes through, so the page scrolls.
 		};
@@ -134,16 +144,39 @@ export default function Timeline({ milestones }: { milestones: TimelineMilestone
 					</button>
 				</div>
 				<div className="plan-timeline__group" role="group" aria-label="Zoom">
-					<button type="button" aria-label="Zoom out" disabled={zoom <= ZOOM.min} onClick={() => changeZoom(zoomStep(zoom, -1))}>
+					<button
+						type="button"
+						aria-label="Zoom out"
+						aria-disabled={zoom <= ZOOM.min}
+						onClick={() => {
+							if (zoom <= ZOOM.min) return;
+							changeZoom(zoomStep(zoom, -1));
+						}}
+					>
 						−
 					</button>
 					<output className="plan-timeline__zoom" aria-live="polite">
 						{Math.round(zoom * 100)}%
 					</output>
-					<button type="button" aria-label="Zoom in" disabled={zoom >= ZOOM.max} onClick={() => changeZoom(zoomStep(zoom, 1))}>
+					<button
+						type="button"
+						aria-label="Zoom in"
+						aria-disabled={zoom >= ZOOM.max}
+						onClick={() => {
+							if (zoom >= ZOOM.max) return;
+							changeZoom(zoomStep(zoom, 1));
+						}}
+					>
 						+
 					</button>
-					<button type="button" disabled={zoom === ZOOM.default} onClick={() => changeZoom(ZOOM.default)}>
+					<button
+						type="button"
+						aria-disabled={zoom === ZOOM.default}
+						onClick={() => {
+							if (zoom === ZOOM.default) return;
+							changeZoom(ZOOM.default);
+						}}
+					>
 						Reset zoom
 					</button>
 				</div>

@@ -12,6 +12,7 @@ import {
 	PINCH_STEP,
 	timelineMilestones,
 	timelineQuery,
+	wheelPixels,
 	wheelScrollsStrip,
 	ZOOM,
 	zoomFromWheel,
@@ -215,6 +216,24 @@ describe('wheelScrollsStrip', () => {
 
 	it('leaves a mostly sideways gesture to native scrolling', () => {
 		expect(wheelScrollsStrip({ deltaX: 100, deltaY: 10 }, strip)).toBe(false);
+	});
+});
+
+describe('wheelPixels', () => {
+	it('returns deltaY unchanged in pixel mode', () => {
+		expect(wheelPixels(40, 0, 20, 600)).toBe(40);
+	});
+
+	it('scales deltaY by the line height in line mode', () => {
+		expect(wheelPixels(3, 1, 20, 600)).toBe(60);
+	});
+
+	it('scales deltaY by the page size in page mode', () => {
+		expect(wheelPixels(-1, 2, 20, 600)).toBe(-600);
+	});
+
+	it('is 0 when deltaY is 0', () => {
+		expect(wheelPixels(0, 1, 20, 600)).toBe(0);
 	});
 });
 
