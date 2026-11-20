@@ -46,7 +46,7 @@ const facts: { label: string; value: string }[] = [
 		)
 	}
 	{' '}
-	<RefLink ref={feature.milestone ?? 'none'} />
+	<RefLink ref={feature.milestone ?? 'none'} fallback={feature.milestone ?? 'No milestone'} />
 </p>
 
 <dl class="plan-facts">

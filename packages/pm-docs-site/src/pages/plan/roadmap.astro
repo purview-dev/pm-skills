@@ -49,7 +49,7 @@ const groups = roadmapGroups(planning).map((group) => ({
 		groups.map((group) => (
 			<section class="roadmap-group">
 				<h2>
-					<RefLink ref={group.milestone?.id ?? 'none'} />
+					<RefLink ref={group.milestone?.id ?? 'none'} fallback={group.milestone ? `${group.milestone.id} ${group.milestone.name}` : 'No milestone'} />
 					{group.milestone?.isFocus && <span class="roadmap-focus">Focus</span>}
 				</h2>
 				<p class="roadmap-meta">

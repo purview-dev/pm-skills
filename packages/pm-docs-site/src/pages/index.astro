@@ -126,7 +126,7 @@ const redRisks = planning.risks.open.filter((risk) => risk.rag === 'red');
 			{config.views.inbox && <li><a href="/plan/inbox/">Inbox</a> — parked ideas, bugs and questions</li>}
 			{config.views.briefs && <li><a href="/plan/briefs/">Briefs</a> — shaped ideas and their decisions</li>}
 			{config.views.strategy && <li><a href="/plan/strategy/">Strategy</a> — the vision, bets, assumptions and decisions</li>}
-			<li>Search — every page above is in the site search once it is built (<code>just docs-preview</code>)</li>
+			<li>Search — every page above is in the site search once the site is built (<code>pm-docs-site build</code>)</li>
 			{config.docs !== null && <li>Documentation — the repository's Markdown, grouped in the sidebar</li>}
 		</ul>
 	</section>

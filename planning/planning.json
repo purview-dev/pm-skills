@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T10:16:45+00:00",
+  "generatedAt": "2026-11-20T13:28:02+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-020-docs-site-demo-fixture",
-    "head": "c8d4a4df74dae5d5c6b84876aef1da187fb80b29"
+    "branch": "feat/r-019-docs-site-package-consumer-ready-for-1-0-0",
+    "head": "e5bbf3fdf9cd9a5025d4ffaabc005e6e0a9a914b"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -193,36 +193,10 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-019",
-        "title": "Docs-site package: consumer-ready for 1.0.0",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "the package home page has no `just docs-preview`; a build without the `docs` option logs no Starlight missing-folder or empty-collection warning; `docsHref` returns no link for a spec or plan path no docs source maps (and honours a source `prefix`); RefLink prints fallback text (the entry title, \"No milestone\") for an unknown key; `linkify` uses the link scanner's boundaries, so an ID inside a path is not linked; the CLI warns when `--title` or `--planning` is ignored, a `planning.json` holding `null` prints the pm-export hint, `check` loads an `astro.config.ts` on the `engines` Node floor, and the README names the same-drive requirement on Windows.",
-        "size": "M",
-        "dependsOn": [
-          "R-021"
-        ],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-        "note": "Folds five inbox files from the R-008 and R-009 final reviews (CLI gaps, consumer text, dead doc links, RefLink fallbacks, IDs linked inside paths). Affects `packages/pm-docs-site/lib/cli.ts`, `lib/site-options.ts`, `README.md`, `src/pages/index.astro`, `src/content.config.ts`, `src/lib/planning.ts`, `src/components/RefLink.astro`, `src/lib/references.ts`. 2026-11-19 re-sliced with pm-shape: the `dev` check left the `Done when` (`test/browser/dev.browser.ts` passes it since R-017); the build-hardening Note moved to R-027 Docs-site package: build hardening, and the accessibility, timeline, and empty-card Notes moved to R-028 Docs-site package: accessible board, popup, and timeline.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-026",
         "title": "pm-checkpoint keeps every item field through switch, push, and pop",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V2"
@@ -455,13 +429,6 @@
       "now": [],
       "next": [
         {
-          "id": "R-019",
-          "title": "Docs-site package: consumer-ready for 1.0.0",
-          "owner": "agent",
-          "size": "M",
-          "detail": "ready"
-        },
-        {
           "id": "R-026",
           "title": "pm-checkpoint keeps every item field through switch, push, and pop",
           "owner": "agent",
@@ -472,6 +439,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-20",
+          "id": "R-019",
+          "title": "Docs-site package: consumer-ready for 1.0.0",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-20-docs-site-consumer-ready.md",
+          "result": "branch feat/r-019-docs-site-package-consumer-ready-for-1-0-0"
+        },
         {
           "date": "2026-11-20",
           "id": "R-020",
@@ -601,6 +577,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-20",
+        "kind": "done",
+        "id": "R-019",
+        "title": "Docs-site package: consumer-ready for 1.0.0",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-019-docs-site-package-consumer-ready-for-1-0-0"
+      },
       {
         "date": "2026-11-20",
         "kind": "done",
@@ -785,6 +770,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-20",
+        "id": "R-019",
+        "title": "Docs-site package: consumer-ready for 1.0.0",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-20-docs-site-consumer-ready.md",
+        "result": "branch feat/r-019-docs-site-package-consumer-ready-for-1-0-0"
+      },
       {
         "date": "2026-11-20",
         "id": "R-020",
@@ -1050,6 +1044,51 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Four minor findings from the R-020 final review, deferred: (1) `scripts/check-demo.ts` scans only `plan/` pages, so the home page's empty states (\"Nothing in Next can be started.\", \"No open risk is red.\") are not checked; include `index.html`. (2) The `Nothing links here yet.` allowlist entry is unused in today's demo build; drop it until a feature page needs it. (3) The demo export records this repository's branch and head (`feat/r-020-docs-site-demo-fixture`, `c2220cd`) as its source, now frozen by `export.ts write --frozen`; pin a neutral source. (4) The opening-tag regex in `emptyStates` also matches `data-class=`, and an unclosed `plan-empty` element swallows the rest of the page (loud false positives only)."
+    },
+    {
+      "file": "planning/inbox/2026-11-20-1116-docs-site-404-entry-warning.md",
+      "title": "Docs-site build warns docs 404 entry missing",
+      "captured": "2026-11-20 11:16",
+      "source": "agent (R-019 execute)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "packages/pm-docs-site/src/content.config.ts",
+      "context": "R-019 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Every pm-docs-site build, with or without the `docs` option, logs `[WARN] [content] Entry docs → 404 was not found.` while rendering /404.html: Starlight's 404 route calls `getEntry('docs', '404')` and falls back to its built-in page when the entry is missing. R-019 removed the missing-folder and empty-collection warnings but not this one. A `404` entry in the docs collection, or Starlight's `disable404Route` with the package's own 404 page, would remove it; check that a `404` entry is not also routed as /404/."
+    },
+    {
+      "file": "planning/inbox/2026-11-20-1140-r-019-deferred-review-minors.md",
+      "title": "R-019 deferred reference review minors",
+      "captured": "2026-11-20 11:40",
+      "source": "agent (R-019 execute, final review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site/src/lib/ref-boundary.ts, packages/pm-docs-site/src/pages/plan/log.astro",
+      "context": "R-019 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Two minor findings from the R-019 final review, deferred: (1) the shared reference boundary `(?<![\\w/-])` in `src/lib/ref-boundary.ts` means an ID after `/` is never linked, so the second ID in `M1/M2` or `R-011/R-012`, and a brief path written `./planning/briefs/x.md`, stay plain text; the link test shares the boundary, so it cannot flag it. Either give IDs a boundary that allows a leading `/` outside a path, or pin `M1/M2` as intended in `test/references.test.ts`. (2) `src/pages/plan/log.astro:41` prints `<id> <title>` as plain text when the entry's ID has no target, so known IDs inside that title are not linked; render `{entry.id} <LinkedText text={entry.title} />` in that case."
+    },
+    {
+      "file": "planning/inbox/2026-11-20-1200-dev-browser-webserver-start-timeout.md",
+      "title": "Dev browser test webserver start timed out",
+      "captured": "2026-11-20 12:00",
+      "source": "agent (R-019 finish)",
+      "kind": "bug",
+      "severity": "minor",
+      "affects": "packages/pm-docs-site/playwright.dev.config.ts",
+      "context": "R-019 finish",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "`just lint-check` (via `package-test`) failed once on R-019's branch: `test:browser:dev` timed out after 300000ms waiting for `config.webServer`. The dev server logged `transport was disconnected, cannot call \"fetchModule\"`, `Listen method has been called more than once without closing`, and `transport invoke timed out after 60000ms`. An immediate re-run of `bun run test:browser:dev` passed 3/3, and R-019 changed nothing on the dev path."
     }
   ],
   "briefs": [
@@ -1057,7 +1096,7 @@
       "path": "planning/briefs/2026-11-17-docs-site-package.md",
       "id": "R-013",
       "title": "Docs site as a versioned package",
-      "status": "on roadmap (R-013, R-019, R-027, R-028)",
+      "status": "on roadmap (R-013, R-027, R-028)",
       "origin": "user request",
       "updated": "2026-11-19",
       "decision": "2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.",
@@ -1101,13 +1140,13 @@
     "removed": []
   },
   "counts": {
-    "next": 2,
+    "next": 1,
     "later": 8,
     "nextMax": 5,
-    "openInbox": 5,
+    "openInbox": 8,
     "discuss": 2,
     "shapingBriefs": 0,
-    "done": 14,
+    "done": 15,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1119,7 +1158,6 @@
     "reviewDue": false,
     "lastReview": "2026-11-19",
     "claimable": [
-      "R-019",
       "R-026"
     ],
     "drift": true

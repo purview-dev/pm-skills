@@ -11,7 +11,7 @@ import { resolve } from 'node:path';
 import type { AstroInlineConfig } from 'astro';
 
 import { resolveOptions } from './options.ts';
-import { checkSchemaVersion } from './schema-version.ts';
+import { parseExport } from './schema-version.ts';
 import { loadSiteOptions } from './site-options.ts';
 import type { ResolvedOptions } from './types.ts';
 
@@ -49,8 +49,7 @@ function problems(options: ResolvedOptions): string[] {
 		found.push(`No plan export at ${options.planning}. Run the pm-export skill to write planning.json.`);
 	} else {
 		try {
-			const planning = JSON.parse(readFileSync(options.planning, 'utf8'));
-			checkSchemaVersion(planning.schemaVersion, options.planning);
+			parseExport(readFileSync(options.planning, 'utf8'), options.planning);
 		} catch (error) {
 			found.push((error as Error).message);
 		}

@@ -23,6 +23,11 @@ export async function loadSiteOptions(
 		};
 	}
 
+	// The config file holds the options; a flag given beside it would be lost silently.
+	for (const flag of ['title', 'planning'] as const) {
+		if (flags[flag] !== undefined) console.warn(`pm-docs-site: --${flag} is ignored: ${configFile} sets the options.`);
+	}
+
 	// Plain Node loads the config, so a TypeScript config may only use what Node
 	// strips: erasable syntax and relative imports that name their file.
 	let config;

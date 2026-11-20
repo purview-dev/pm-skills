@@ -18,6 +18,10 @@ migrates the `pm-docs-site` skill to it, the skill and this repository's
 Three files: `package.json`, a lockfile, and `astro.config.ts`. No `src/`
 folder: the integration points Astro's `srcDir` at the package.
 
+On Windows, keep the site and the installed package on the same drive: Astro
+cannot build a site whose root is on another drive than the package's `src/`,
+so a package linked from another drive fails the build.
+
 ```json
 {
   "name": "my-project-site",
@@ -159,7 +163,8 @@ The CLI runs under Node 24 or later.
 
 - `pm-docs-site build [site-dir]` and `pm-docs-site dev [site-dir]` run Astro
   on the site. A site with no `astro.config.*` builds from
-  `--title <title>` and `--planning <path>`.
+  `--title <title>` and `--planning <path>`. A site with an `astro.config.*`
+  takes its options from that file: the flags are ignored, with a warning.
 - `pm-docs-site check [site-dir]` builds nothing. It reads the export, checks
   its `schemaVersion`, and checks every docs source folder exists, then exits
   0, or 1 with one line per problem.
