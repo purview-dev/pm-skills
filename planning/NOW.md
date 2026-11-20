@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-020 Docs-site package: rich demo planning fixture
 - Session: feat/r-020-docs-site-demo-fixture
-- Stage: design
+- Stage: plan
 - Brief: planning/briefs/R-020-docs-site-demo-fixture.md
 - Milestone: M1
 - Serves: V4
@@ -22,7 +22,7 @@ Milestone: optional; the item's milestone while it is active
 - Size: M
 - Depends on: none
 - Revisits:
-- Spec:
+- Spec: docs/superpowers/specs/2026-11-20-docs-site-demo-design.md
 - Plan:
 - Started: 2026-11-20
 
@@ -48,7 +48,7 @@ Active example:
 - Status: active
 - Item: R-007 Tenant billing
 - Session: feat/r-007-tenant-billing (worktree ../saas-r-007)
-- Stage: design
+- Stage: plan
 - Brief: planning/briefs/R-007-tenant-billing.md
 - Milestone: M1
 - Spec: docs/superpowers/specs/<file>.md

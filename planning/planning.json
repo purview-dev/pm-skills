@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T09:14:11+00:00",
+  "generatedAt": "2026-11-20T09:14:23+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 20,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-020-docs-site-demo-fixture",
-    "head": "98b33e127c195d0abc377c691c9f9ebfa5e76b55"
+    "head": "33f8ccf49f7f7f766dc80c496b486bc9a31e10a3"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -189,11 +189,11 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-020-docs-site-demo-fixture",
     "brief": "planning/briefs/R-020-docs-site-demo-fixture.md",
     "milestone": "M1",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-20-docs-site-demo-design.md",
     "plan": null,
     "started": "2026-11-20",
     "doneWhen": [
@@ -482,7 +482,7 @@
           "title": "Docs-site package: rich demo planning fixture",
           "owner": "agent",
           "size": "M",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
