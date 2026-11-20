@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-20T08:14:20+00:00",
+  "generatedAt": "2026-11-20T08:38:57+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 20,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-023-docs-site-package-stable-browser-tests",
-    "head": "895da997b014786aca4d24fe31f3f7aaf4bda792"
+    "head": "8135629f5b74d7860a85e7ad1be44d7baa8a3729"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -177,174 +177,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-023",
-      "title": "Docs-site package: stable browser tests",
-      "serves": [
-        "V4"
-      ],
-      "owner": "agent",
-      "size": "S",
-      "dependsOn": [],
-      "revisits": null
-    },
-    "stage": "execute",
-    "session": "feat/r-023-docs-site-package-stable-browser-tests",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
     "brief": null,
-    "milestone": "M1",
-    "spec": "docs/superpowers/specs/2026-11-20-docs-site-package-stable-browser-tests-design.md",
-    "plan": "docs/superpowers/plans/2026-11-20-docs-site-package-stable-browser-tests.md",
-    "started": "2026-11-20",
-    "doneWhen": [
-      "`npx playwright test test/browser/graph.browser.ts --project chromium --repeat-each=10` in `packages/pm-docs-site` passes 10 of 10 runs.",
-      "`just package-test` passes twice in a row."
-    ],
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-20-docs-site-package-stable-browser-tests.md",
-    "checked": 0,
-    "total": 24,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "Graph sampler records every pending change",
-        "checked": 0,
-        "total": 4,
-        "steps": [
-          {
-            "text": "**Step 1: Reproduce the flake.** Run (in `packages/pm-docs-site`): `npx playwright test test/browser/graph.browser.ts --project=chromium --repeat-each=10 -g \"both switches off\"`. Expected: at least one failure on `expect(frames.some((frame) => frame.pending)).toBe(true)` is likely but not guaranteed; record the result either way.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Change `sampleFrames`'s init script.**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Run** `npx playwright test test/browser/graph.browser.ts --project=chromium --repeat-each=10`. Expected: every test passes, 10 of 10 runs each.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 2,
-        "title": "One web server per Playwright run",
-        "checked": 0,
-        "total": 7,
-        "steps": [
-          {
-            "text": "**Step 1: `playwright.config.ts`.** Keep `testDir`, `testMatch`, `fullyParallel`, `reporter`. Projects: only `chromium` (keep `testIgnore: '**/dev.browser.ts'`). `webServer`: only the `node test/browser/serve.ts` entry, as an object. Rewrite the header comment: this config is the built fixture site; the dev-server tests live in `playwright.dev.config.ts`, so each run starts one server; pass `--project=chromium` with `=` because `--project` is variadic.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: `playwright.dev.config.ts`.** Same `testDir`, `fullyParallel`, `reporter`; `testMatch: '**/dev.browser.ts'`; one project `dev` with `devices['Desktop Chrome']` and `baseURL` `http://localhost:4398`; `webServer` the `bun test/browser/dev-server.ts` entry exactly as it is today (timeout 300_000, `reuseExistingServer: false`, `env.PORT`). Header comment: the packed-install consumer under `pm-docs-site dev`, run by `bun run test:browser:dev`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Scripts and wiring.** `package.json`: add `\"test:browser:dev\": \"playwright test -c playwright.dev.config.ts\"`. `justfile` `package-test`: add `bun run test:browser:dev` after `bun run test:browser`. `ci.yml`: add a step `- name: Dev browser tests` / `run: bun run test:browser:dev` after `Browser tests`. Update the two comments in `dev-server.ts` and `dev.browser.ts` to name `playwright.dev.config.ts`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run** `bun run test:browser`. Expected: PASS, output lists only `[chromium]` tests, and no `dev-server.ts` output (no `bun pm pack` line) appears.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Run** `bun run test:browser:dev`. Expected: PASS, output lists only `[dev]` tests from `dev.browser.ts`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Run** `bun run check`. Expected: 0 errors (the new config is type-checked by `include: [\"**/*\"]`).",
-            "checked": false
-          },
-          {
-            "text": "**Step 7: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 3,
-        "title": "Assertions that can fail",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Chip test.** Replace the `chipBoxes` filter and `toHaveLength(1)` with `expect(Object.keys(twoLane.boxes).sort()).toEqual(['R-300', 'R-301', 'R-302'])`, so an extra box for the chip under any key fails. Keep the lane assertions that follow.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bun test test/graph-layout.test.ts`. Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: `arrowheadFill`.** Return a `{ fill: string | null; markerEnd: string | null; reason: string | null }` from `page.evaluate`, with `reason` set to `'marker-end is not url(#id)'`, `'no marker element'`, or `'no polyline'`. Outside the evaluate, throw an `Error` whose message is `arrowheadFill(<edgeId>): <reason> (marker-end: <markerEnd>)` when `reason` is set; otherwise return `fill`. Update the doc comment to say it fails loudly when React Flow's marker format changes. Remove the two `expect(...).not.toBeNull()` lines at the callers, which the throw replaces.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run** `npx playwright test test/browser/graph.browser.ts --project=chromium -g \"arrowhead\"`. Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 4,
-        "title": "fs-allow tests find the plugin by name",
-        "checked": 0,
-        "total": 4,
-        "steps": [
-          {
-            "text": "**Step 1: Tests.** Change `plugin()` to `plugins().find((p) => p.name === 'pm-docs-site:fs-allow')!`, where `plugins()` returns `setup({ title: 'T' })[0]!.vite.plugins`. Change the `'is the last plugin'` test to `expect(plugins().at(-1)!.name).toBe('pm-docs-site:fs-allow')`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Comment.** Add to the comment above `name: 'pm-docs-site:fs-allow'`: the entry serves the whole package folder in in-repo and linked dev, `server.fs.deny` still guards it, and on a case-insensitive file system a case-only path difference appends a harmless duplicate entry.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Run** `bun test test/integration.test.ts` and `bun run check`. Expected: PASS, 0 errors.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 5,
-        "title": "Verify Done when",
-        "checked": 0,
-        "total": 4,
-        "steps": [
-          {
-            "text": "**Step 1: Run** (in `packages/pm-docs-site`) `npx playwright test test/browser/graph.browser.ts --project chromium --repeat-each=10`. Expected: all passed, 0 failed.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** (repository root) `just package-test`. Expected: exit 0.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Run** `just package-test` again. Expected: exit 0.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run** `just lint-check`. Expected: exit 0.",
-            "checked": false
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [
       {
@@ -631,15 +476,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-023",
-          "title": "Docs-site package: stable browser tests",
-          "owner": "agent",
-          "size": "S",
-          "detail": "execute, 0/24 plan steps"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-020",
@@ -666,6 +503,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-20",
+          "id": "R-023",
+          "title": "Docs-site package: stable browser tests",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-20-docs-site-package-stable-browser-tests.md",
+          "result": "branch feat/r-023-docs-site-package-stable-browser-tests"
+        },
         {
           "date": "2026-11-20",
           "id": "R-022",
@@ -777,6 +623,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-20",
+        "kind": "done",
+        "id": "R-023",
+        "title": "Docs-site package: stable browser tests",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-023-docs-site-package-stable-browser-tests"
+      },
       {
         "date": "2026-11-20",
         "kind": "done",
@@ -943,6 +798,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-20",
+        "id": "R-023",
+        "title": "Docs-site package: stable browser tests",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-20-docs-site-package-stable-browser-tests.md",
+        "result": "branch feat/r-023-docs-site-package-stable-browser-tests"
+      },
       {
         "date": "2026-11-20",
         "id": "R-022",
@@ -1158,6 +1022,23 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Deferred minor from the R-022 final review: `Graph.tsx:5-7` states in the island itself that it may import only types from `lib/graph`, but `Timeline.tsx` has no matching note that it may import only types from `lib/timeline` (values come from `lib/timeline-state.ts`). Add a one-line header note so the next edit keeps the rule. The reviewer also suggested a `bun test` guard that walks `src/components/**` and fails on a value import of `lib/planning`, `lib/timeline`, `lib/graph`, or `lib/graph-layout` (option 2 in the R-022 design, not chosen then)."
+    },
+    {
+      "file": "planning/inbox/2026-11-20-0838-r-023-deferred-review-minors.md",
+      "title": "R-023 deferred browser test review minors",
+      "captured": "2026-11-20 08:38",
+      "source": "agent (R-023 execute)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site/test/browser/graph.browser.ts, packages/pm-docs-site/playwright.config.ts",
+      "context": "R-023 execute",
+      "discuss": "no",
+      "related": [
+        "R-023"
+      ],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Four minor findings from the R-023 final review, deferred: (1) `sampleFrames` counts observer records toward the 5-frame post-hydration tail (`stopAtFrame = frames.length + 5`), so as few as 3 real animation frames are sampled after hydration; count rAF samples separately. (2) `record(true)` on a pending-mark removal reads `visible` and `layout` after the removal, recording an impossible `pending: true, visible: true` frame; push `visible: false` or comment it as a marker. (3) `arrowheadFill` reports `marker-end is not url(#id) (marker-end: null)` when the edge path itself is missing; add a `no edge path` reason. (4) `playwright.config.ts` could say `--project=dev` now runs only through `bun run test:browser:dev`."
     }
   ],
   "briefs": [
@@ -1195,10 +1076,10 @@
     "next": 3,
     "later": 8,
     "nextMax": 5,
-    "openInbox": 3,
+    "openInbox": 4,
     "discuss": 2,
     "shapingBriefs": 0,
-    "done": 12,
+    "done": 13,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1214,6 +1095,6 @@
       "R-019",
       "R-026"
     ],
-    "drift": false
+    "drift": true
   }
 }

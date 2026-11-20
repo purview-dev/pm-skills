@@ -11,25 +11,22 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: active
-- Item: R-023 Docs-site package: stable browser tests
-- Session: feat/r-023-docs-site-package-stable-browser-tests
-- Stage: execute
+- Status: idle
+- Item:
+- Session:
+- Stage:
 - Brief:
-- Milestone: M1
-- Serves: V4
-- Owner: agent
-- Size: S
-- Depends on: none
+- Milestone:
+- Serves:
+- Owner:
+- Size:
+- Depends on:
 - Revisits:
-- Spec: docs/superpowers/specs/2026-11-20-docs-site-package-stable-browser-tests-design.md
-- Plan: docs/superpowers/plans/2026-11-20-docs-site-package-stable-browser-tests.md
-- Started: 2026-11-20
+- Spec:
+- Plan:
+- Started:
 
 ## Done when
-
-- `npx playwright test test/browser/graph.browser.ts --project chromium --repeat-each=10` in `packages/pm-docs-site` passes 10 of 10 runs.
-- `just package-test` passes twice in a row.
 
 ## Checkpoint
 
