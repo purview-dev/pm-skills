@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-020-docs-site-demo-fixture",
-    "head": "c2220cd4270ba61a5554bd8c6aeb95972c353a6f"
+    "branch": "main",
+    "head": null
   },
   "vision": {
     "problem": "Small fitness and craft studios take bookings by message and spreadsheet, so classes double-book and no-shows go unpaid.",

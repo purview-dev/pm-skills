@@ -62,15 +62,36 @@ describe("checkDemo", () => {
   });
 
   it("ignores an allowed use", () => {
-    const dir = dist({ "plan/features/r-001/index.html": '<p class="plan-empty">Nothing links here yet.</p>' });
+    const dir = dist({ "plan/risks/index.html": '<td class="plan-empty">–</td>' });
 
-    expect(checkDemo(dir, ["plan/features/r-001/index.html"])).toEqual([]);
+    expect(checkDemo(dir, ["plan/risks/index.html"])).toEqual([]);
   });
 
-  it("ignores empty states outside plan/", () => {
-    const dir = dist({ "index.html": '<p class="plan-empty">Nothing is in progress.</p>' });
+  it("reports an empty state on the home page", () => {
+    const dir = dist({ "index.html": '<p class="plan-empty">Nothing in Next can be started.</p>' });
 
-    expect(checkDemo(dir, ["index.html"])).toEqual([]);
+    expect(checkDemo(dir, ["index.html"])).toEqual(['index.html: empty state "Nothing in Next can be started."']);
+  });
+
+  it("ignores empty states outside plan/ and the home page", () => {
+    const dir = dist({ "docs/guide/index.html": '<p class="plan-empty">Nothing is in progress.</p>' });
+
+    expect(checkDemo(dir, ["docs/guide/index.html"])).toEqual([]);
+  });
+
+  it("does not take data-class as a class", () => {
+    const dir = dist({ "plan/now/index.html": '<p data-class="plan-empty">A note</p>' });
+
+    expect(checkDemo(dir, ["plan/now/index.html"])).toEqual([]);
+  });
+
+  it("ends an unclosed plan-empty element at the next one, not at the end of the page", () => {
+    const dir = dist({ "plan/now/index.html": '<div class="plan-empty">A<div class="plan-empty">B</div>' });
+
+    expect(checkDemo(dir, ["plan/now/index.html"])).toEqual([
+      'plan/now/index.html: empty state "A"',
+      'plan/now/index.html: empty state "B"',
+    ]);
   });
 
   it("reports a placeholder that has no plan-empty class", () => {
