@@ -36,6 +36,8 @@ describe('the package build', () => {
 
 	it('rewrites .ts specifiers in nested declarations', () => {
 		const probe = join(PACKAGE, 'lib', '__probe__');
+		// A run killed before `finally` leaves the probe behind (lib/__probe__/ is gitignored); start clean.
+		rmSync(probe, { recursive: true, force: true });
 		mkdirSync(probe, { recursive: true });
 		writeFileSync(join(probe, 'b.ts'), 'export type B = string;\n');
 		writeFileSync(join(probe, 'a.ts'), "export type { B } from './b.ts';\nexport type { ResolvedOptions } from '../types.ts';\n");
@@ -50,7 +52,10 @@ describe('the package build', () => {
 			expect(declaration).not.toMatch(/\.ts'/);
 		} finally {
 			rmSync(probe, { recursive: true, force: true });
-			Bun.spawnSync(['node', 'scripts/build.ts'], { cwd: PACKAGE, stdout: 'pipe', stderr: 'pipe' });
+			// Rebuild without the probe, so dist/ (which prepack ships) never keeps dist/__probe__/.
+			const restore = Bun.spawnSync(['node', 'scripts/build.ts'], { cwd: PACKAGE, stdout: 'pipe', stderr: 'pipe' });
+
+			expect(restore.exitCode, restore.stdout.toString() + restore.stderr.toString()).toBe(0);
 		}
 	}, 120_000);
 });
