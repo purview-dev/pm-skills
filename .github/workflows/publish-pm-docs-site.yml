@@ -148,7 +148,7 @@ jobs:
         run: bun run build
 
       # The same check `prepack` runs, so a version number is never burnt on a
-      # package whose exports point at missing or non-JavaScript files.
+      # package whose exports point at missing files or the wrong kind of file.
       - name: The package carries its entry points
         if: steps.version.outputs.skip != 'true'
         run: node scripts/check-exports.ts

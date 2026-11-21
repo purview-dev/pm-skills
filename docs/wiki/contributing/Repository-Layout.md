@@ -54,7 +54,7 @@ packages/
     dist/                  lib/ built to JavaScript and declarations (gitignored,
                            published; bun run build)
     src/                   the pages and components the integration serves
-    scripts/check-exports.ts   refuses a publish with missing or non-JavaScript entry points
+    scripts/check-exports.ts   refuses a publish whose entry points are missing or the wrong kind of file
     test/                  unit, build, packed-install, and browser tests
     LICENSE.md             a copy of the root licence, checked by validate
 docs/wiki/                 this documentation, published on purview.dev

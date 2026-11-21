@@ -221,8 +221,8 @@ the purview-dev release rules:
 While `package.json` sets `"private": true` it also skips, green. Then it
 installs, tests, type-checks, builds `dist/`, and runs `scripts/check-exports.ts`.
 The `prepack` script runs the same build and check, so every pack and a local
-`npm publish` build first and cannot burn a version on a package with missing
-or non-JavaScript entry points. It publishes a prerelease
+`npm publish` build first and cannot burn a version on a package whose entry points
+are missing or the wrong kind of file. It publishes a prerelease
 version (one with a `-pre` part) under the `prerelease` dist-tag and a stable version under
 `latest`, skips a version already on the registry, and keeps `latest` on the
 newest prerelease until a stable release exists. Only then does it create the
