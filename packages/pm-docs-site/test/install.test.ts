@@ -7,7 +7,7 @@ import { dirname, join } from 'node:path';
 
 import { afterAll, describe, expect, it } from 'bun:test';
 
-import { expectedPages, FIXTURES, htmlPages, PACKAGE } from './helpers';
+import { expectedPages, FIXTURES, htmlPages, PACKAGE, relativeImports, resolvesToFile } from './helpers';
 
 const tmp = mkdtempSync(join(tmpdir(), 'pm-docs-site-install-'));
 
@@ -20,12 +20,6 @@ function filesUnder(dir: string, pattern: RegExp): string[] {
 	return (readdirSync(dir, { recursive: true }) as string[]).filter((name) => pattern.test(name));
 }
 
-// The `./` and `../` specifiers a file imports or re-exports.
-function relativeImports(file: string): string[] {
-	const source = readFileSync(file, 'utf8');
-
-	return [...source.matchAll(/(?:from|import\()\s*(['"])(\.\.?\/[^'"]+)\1/g)].map((match) => match[2]!);
-}
 
 function run(cmd: string[], cwd: string): void {
 	const result = Bun.spawnSync(cmd, { cwd, stdout: 'pipe', stderr: 'pipe' });
@@ -87,7 +81,7 @@ describe('an installed package', () => {
 				for (const file of filesUnder(shipped, /\.(ts|tsx|astro)$/)) {
 					for (const specifier of relativeImports(join(shipped, file))) {
 						const base = join(shipped, dirname(file), specifier);
-						const found = ['', '.ts', '.tsx', '/index.ts'].some((suffix) => existsSync(base + suffix));
+						const found = resolvesToFile(base, ['', '.ts', '.tsx', '/index.ts']);
 						expect(found, `${folder}/${file} imports ${specifier}`).toBe(true);
 					}
 				}

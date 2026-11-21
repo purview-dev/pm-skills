@@ -3,7 +3,12 @@
 // their patterns here, so a reference is linked exactly where the test looks
 // for one. No imports, so the test helper can load it outside Astro.
 
-/** Not inside a word, a path, or a hyphenated token. */
+/**
+ * Not inside a word, a path, or a hyphenated token. An ID after `/` is
+ * deliberately not linked (`M1/M2` links only `M1`, and `./planning/briefs/x.md`
+ * stays plain), because a `/` also starts a path segment (`src/M1`).
+ * test/references.test.ts pins it.
+ */
 export const REF_BEFORE = String.raw`(?<![\w/-])`;
 /** Not followed by more of a word or a hyphenated token. */
 export const REF_AFTER = String.raw`(?![\w-])`;

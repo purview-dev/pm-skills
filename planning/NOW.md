@@ -36,7 +36,7 @@ Active example:
 - Status: active
 - Item: R-007 Tenant billing
 - Session: feat/r-007-tenant-billing (worktree ../saas-r-007)
-- Stage: design
+- Stage: execute
 - Brief: planning/briefs/R-007-tenant-billing.md
 - Milestone: M1
 - Spec: docs/superpowers/specs/<file>.md

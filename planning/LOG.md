@@ -4,6 +4,7 @@
 
 ## Done
 
+- 2026-11-21 R-031 Docs-site package: review follow-ups. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-21-docs-site-review-follow-ups.md. Result: branch feat/r-031-docs-site-package-review-follow-ups.
 - 2026-11-20 R-028 Docs-site package: accessible board, popup, and timeline. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-20-docs-site-accessible-board-popup-timeline.md. Result: branch feat/r-028-docs-site-package-accessible-board-popup-and-timeline.
 - 2026-11-20 R-026 pm-checkpoint keeps every item field through switch, push, and pop. Milestone: none. Owner: agent. Plan: docs/superpowers/plans/2026-11-20-checkpoint-keeps-item-fields.md. Result: branch feat/r-026-checkpoint-keeps-item-fields.
 - 2026-11-20 R-027 Docs-site package: build hardening. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-20-docs-site-package-build-hardening.md. Result: branch feat/r-027-docs-site-package-build-hardening.

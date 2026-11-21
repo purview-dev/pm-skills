@@ -68,7 +68,7 @@ follows purview-dev/astroc4: bump the package's `version` and merge to
 - **Version changes.** `just version-check`, CI, and the pre-push hook fail a
   package version that is not SemVer, is older than the one on `main`, is
   bumped to a version that is already tagged, or is a prerelease of a
-  released version. Prereleases use the `pre` id (`0.1.0-pre.1`).
+  released version. Prereleases use the `pre` id (for example `0.1.0-pre.1`).
 - **Publishing.** `.github/workflows/publish-pm-docs-site.yml` runs when the
   package's `package.json` changes on `main`. It fails a version that is not
   SemVer, and a stable version off `main`; it skips, green, when the tag

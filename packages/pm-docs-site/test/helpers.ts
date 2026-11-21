@@ -1,4 +1,4 @@
-import { cpSync, mkdirSync, mkdtempSync, readdirSync, readFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -54,4 +54,16 @@ export function siteConfig(options: string): string {
 	const index = pathToFileURL(join(PACKAGE, 'lib', 'index.ts')).href;
 
 	return `import pmDocsSite from '${index}';\nexport default { integrations: [pmDocsSite(${options})] };\n`;
+}
+
+/** The `./` and `../` specifiers a file imports, re-exports, imports for side effects, or imports dynamically. */
+export function relativeImports(file: string): string[] {
+	const source = readFileSync(file, 'utf8');
+
+	return [...source.matchAll(/\b(?:from|import\s*\(|import)\s*(['"])(\.\.?\/[^'"]+)\1/g)].map((match) => match[2]!);
+}
+
+/** Whether `base` plus one of `suffixes` is a file (a directory never resolves an import). */
+export function resolvesToFile(base: string, suffixes: string[]): boolean {
+	return suffixes.some((suffix) => existsSync(base + suffix) && statSync(base + suffix).isFile());
 }

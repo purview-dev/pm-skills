@@ -118,6 +118,8 @@ export default function pmDocsSite(options: PmDocsSiteOptions): AstroIntegration
 							title: resolved.title,
 							...(resolved.description ? { description: resolved.description } : {}),
 							sidebar: buildSidebar(resolved),
+							// src/pages/404.astro is the not-found page (it says why).
+							disable404Route: true,
 							// Every page uses the full width (src/styles/width.css).
 							customCss: [fileURLToPath(new URL('../src/styles/width.css', import.meta.url))],
 						}),

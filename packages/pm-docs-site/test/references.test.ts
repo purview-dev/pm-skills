@@ -116,6 +116,14 @@ describe('linkify', () => {
 		expect(linked).toEqual(['R-012']);
 	});
 
+	it('does not link an ID after a slash or a brief path after ./', () => {
+		const text = 'M1/M2 and R-012/R-011; ./planning/briefs/2026-11-07-referrals.md';
+		const runs = linkify(text, known);
+
+		expect(runs.filter((run) => run.target).map((run) => run.text)).toEqual(['M1', 'R-012']);
+		expect(runs.map((run) => run.text).join('')).toBe(text);
+	});
+
 	it('returns one plain run for text with no known ID', () => {
 		expect(linkify('nothing here', known)).toEqual([{ text: 'nothing here' }]);
 	});
