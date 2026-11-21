@@ -30,12 +30,14 @@
 ### Task 1: Silence the Starlight 404 warning
 
 **Files:**
+
 - Create: `packages/pm-docs-site/src/loaders/not-found.ts`
 - Modify: `packages/pm-docs-site/src/content.config.ts`
 - Modify: `packages/pm-docs-site/src/loaders/repo-docs.ts`
 - Test: `packages/pm-docs-site/test/cli.test.ts`, `packages/pm-docs-site/test/not-found.test.ts` (create)
 
 **Interfaces:**
+
 - Produces: `NOT_FOUND_ID = '404'`; `NOT_FOUND_DATA` (`{ title: '404', template: 'splash', draft: true, editUrl: false, pagefind: false, hero: { tagline: 'Page not found. Check the URL or try using the search.' } }`, Starlight's English fallback). The repo-docs loader checks `pages.has(NOT_FOUND_ID)` inline.
 
 - [ ] **Step 1: Write the failing assertions in `test/cli.test.ts`**
@@ -78,11 +80,13 @@ git commit -m "fix(pm-docs-site): give Starlight a draft 404 entry (R-031)"
 ### Task 2: Reference links (R-019 findings)
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/src/lib/ref-boundary.ts` (comment only)
 - Modify: `packages/pm-docs-site/src/pages/plan/log.astro:41`
 - Test: `packages/pm-docs-site/test/references.test.ts`, `packages/pm-docs-site/test/cli.test.ts`
 
 **Interfaces:**
+
 - Consumes: `siteRefs().known` (`src/lib/references`), `RefLink`, `LinkedText`.
 
 - [ ] **Step 1: Pin the slash boundary in `references.test.ts`**
@@ -95,7 +99,7 @@ In `ref-boundary.ts`, above `REF_BEFORE`: an ID after `/` is deliberately not li
 
 - [ ] **Step 3: Write the failing log test in `cli.test.ts`**
 
-`it('links known IDs in the title of a log entry whose ID has no page', ...)`: `scratchFixture('log-')`, push onto `planning.board.activity` `{ date: '2026-11-12', kind: 'dropped', id: 'R-998', title: 'Folded into R-012', milestone: null, owner: null, result: 'Reason: duplicate.' }`, build with `views: ['now']`, and assert `plan/log/index.html` contains `R-998 ` followed by an `<a href=` whose text is R-012's label.
+`it('links known IDs in the title of a log entry whose ID has no page', ...)`: `scratchFixture('log-')`, push onto `planning.board.activity` `{ date: '2026-11-12', kind: 'dropped', id: 'R-998', title: 'Folded into R-012', milestone: null, owner: null, result: 'Reason: duplicate.' }`, build with `views: ['now']`, and assert `plan/log/index.html` contains `R-998` followed by an `<a href=` whose text is R-012's label.
 
 - [ ] **Step 4: Run to verify it fails**
 
@@ -118,6 +122,7 @@ git commit -m "fix(pm-docs-site): link IDs in unlinked log titles, pin the slash
 ### Task 3: Demo check (R-020 findings)
 
 **Files:**
+
 - Modify: `scripts/check-demo.ts`
 - Modify: `examples/demo/planning/planning.json` (`source` only)
 - Test: `scripts/check-demo.test.ts`
@@ -154,6 +159,7 @@ git commit -m "test(demo): check the home page, tighten empty-state parsing, neu
 ### Task 4: Graph browser test helpers (R-023 findings)
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/test/browser/graph.browser.ts:47-109,379-405`
 - Modify: `packages/pm-docs-site/playwright.config.ts:1-7`
 
@@ -185,11 +191,13 @@ git commit -m "test(pm-docs-site): sample real frames after hydration, name a mi
 ### Task 5: Build and install test hygiene (R-027 findings 1 to 3)
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/.gitignore`, `packages/pm-docs-site/test/build.test.ts:37-55`
 - Modify: `packages/pm-docs-site/test/helpers.ts`, `packages/pm-docs-site/test/install.test.ts:23-28,85-94`
 - Test: `packages/pm-docs-site/test/imports.test.ts` (create)
 
 **Interfaces:**
+
 - Produces (in `test/helpers.ts`): `relativeImports(file: string): string[]` (moved from `install.test.ts`) and `resolvesToFile(base: string, suffixes: string[]): boolean`.
 
 - [ ] **Step 1: Write `test/imports.test.ts`**
@@ -220,6 +228,7 @@ git commit -m "test(pm-docs-site): side-effect imports, file-only resolution, pr
 ### Task 6: Wording (R-027 findings 4 and 5)
 
 **Files:**
+
 - Modify: `.github/workflows/publish-pm-docs-site.yml:151`, `docs/wiki/contributing/Repository-Layout.md:57`, `packages/pm-docs-site/README.md:225`, `docs/wiki/contributing/Development.md:71`
 
 - [ ] **Step 1: Edit**
