@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-21T08:47:18+00:00",
+  "generatedAt": "2026-11-21T10:06:00+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-031-docs-site-package-review-follow-ups",
-    "head": "63bcb9a637b75fe62cfaf5c0e6c4617842bf8d95"
+    "head": "01be3eb44304ba1e90792c848d2a48686a9fedb2"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -189,11 +189,11 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-031-docs-site-package-review-follow-ups",
     "brief": null,
     "milestone": "M1",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-21-docs-site-review-follow-ups-design.md",
     "plan": null,
     "started": "2026-11-21",
     "doneWhen": [
@@ -444,7 +444,7 @@
           "title": "Docs-site package: review follow-ups",
           "owner": "agent",
           "size": "M",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
