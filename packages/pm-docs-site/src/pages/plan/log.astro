@@ -7,10 +7,13 @@ import ExportStamp from '../../components/ExportStamp.astro';
 import LinkedText from '../../components/LinkedText.astro';
 import RefLink from '../../components/RefLink.astro';
 import { docsHref, loadPlanning } from '../../lib/planning';
+import { siteRefs } from '../../lib/references';
 import '../../styles/components.css';
 
 const planning = loadPlanning();
 // `activity` carries no plan path; the Done log does.
+// An entry whose ID has no page prints the ID, then its title with the known IDs in it linked.
+const { known } = siteRefs();
 const plans = new Map(planning.log.done.filter((entry) => entry.id).map((entry) => [entry.id, entry.plan]));
 ---
 
@@ -38,7 +41,21 @@ const plans = new Map(planning.log.done.filter((entry) => entry.id).map((entry) 
 								<span class={`log-kind log-kind--${entry.kind}`}>{entry.kind}</span>
 							</td>
 							<td>
-								{entry.id ? <RefLink ref={entry.id} fallback={`${entry.id} ${entry.title}`} /> : <LinkedText text={entry.title} />}
+								{entry.id && known.get(entry.id)?.href ? (
+									<RefLink ref={entry.id} />
+								) : entry.id ? (
+									<>
+										{entry.id}
+										{entry.title && (
+											<>
+												{' '}
+												<LinkedText text={entry.title} />
+											</>
+										)}
+									</>
+								) : (
+									<LinkedText text={entry.title} />
+								)}
 								{plan && (
 									<>
 										{' '}

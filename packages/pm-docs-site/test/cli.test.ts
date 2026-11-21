@@ -85,6 +85,33 @@ describe('pm-docs-site build', () => {
 	);
 
 	it(
+		'links known IDs in the title of a log entry whose ID has no page',
+		() => {
+			const dir = scratchFixture('log-');
+			const planningPath = join(dir, 'planning.json');
+			const planning = JSON.parse(readFileSync(planningPath, 'utf8'));
+			planning.board.activity.unshift({
+				date: '2026-11-12',
+				kind: 'dropped',
+				id: 'R-998',
+				title: 'Folded into R-012',
+				milestone: null,
+				owner: null,
+				result: 'Reason: duplicate.',
+			});
+			writeFileSync(planningPath, JSON.stringify(planning));
+			writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'Log', planning: '../planning.json', views: ['features'] }`));
+
+			const result = runCli(['build', join(dir, 'site')]);
+			const html = readFileSync(join(dir, 'site', 'dist', 'plan', 'log', 'index.html'), 'utf8');
+
+			expect(result.code, result.stderr).toBe(0);
+			expect(html).toMatch(/R-998 Folded into <a href="\/plan\/features\/r-012\/"[^>]*>R-012<\/a>/);
+		},
+		BUILD,
+	);
+
+	it(
 		'still reads a site whose config is astro.config.mjs',
 		() => {
 			const dir = scratchFixture('cli-mjs-');
