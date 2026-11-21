@@ -10,7 +10,6 @@ import type { Loader } from 'astro/loaders';
 
 import type { DocsSource } from '../../lib/types.ts';
 import { pagesOf, readPage } from '../../lib/repo-docs.ts';
-import { NOT_FOUND_DATA, NOT_FOUND_ID } from './not-found.ts';
 
 /** Starlight's `docs` collection over every source; `root` is the docs root, absolute or relative to the site root. */
 export function repoDocsLoader(options: { root: string; sources: DocsSource[] }): Loader {
@@ -46,11 +45,6 @@ export function repoDocsLoader(options: { root: string; sources: DocsSource[] })
 
 			store.clear();
 			await Promise.all([...pages].map(([id, file]) => sync(id, file)));
-
-			if (!pages.has(NOT_FOUND_ID)) {
-				store.set({ id: NOT_FOUND_ID, data: await parseData({ id: NOT_FOUND_ID, data: { ...NOT_FOUND_DATA } }) });
-			}
-
 			logger.info(`loaded ${pages.size} pages from ${options.sources.length} sources`);
 
 			if (!watcher) return;

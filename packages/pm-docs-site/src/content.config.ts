@@ -2,7 +2,6 @@ import { docsSchema, i18nSchema } from '@astrojs/starlight/schema';
 import { defineCollection } from 'astro:content';
 import config from 'virtual:pm-docs-site/config';
 
-import { NOT_FOUND_DATA, NOT_FOUND_ID } from './loaders/not-found';
 import { repoDocsLoader } from './loaders/repo-docs';
 
 // Starlight reads a `docs` and an `i18n` collection. Astro registers a
@@ -14,12 +13,8 @@ import { repoDocsLoader } from './loaders/repo-docs';
 // draft in a production build, so no page is built, and Starlight's own loader
 // never looks for a src/content/docs/ folder inside this package. `i18n` holds
 // one entry for Starlight's default language with no overrides, so every UI
-// string stays Starlight's own. Both loaders also hold the draft `404` entry
-// Starlight's 404 route reads (src/loaders/not-found.ts).
-const NO_DOCS = [
-	{ id: 'pm-docs-site/no-docs', title: 'No repository docs', draft: true },
-	{ id: NOT_FOUND_ID, ...NOT_FOUND_DATA },
-];
+// string stays Starlight's own.
+const NO_DOCS = [{ id: 'pm-docs-site/no-docs', title: 'No repository docs', draft: true }];
 
 export const collections = {
 	docs: defineCollection({

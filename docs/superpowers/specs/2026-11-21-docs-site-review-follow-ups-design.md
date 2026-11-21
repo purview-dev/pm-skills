@@ -37,7 +37,12 @@ document records only the decisions.
 
 ## Decisions
 
-1. 404: approach (a) above; a test asserts a build's log has no
+1. **Superseded 2026-11-21 (final review):** a draft entry makes Starlight's
+   Hero print "This content is a draft" on every production `404.html`, so
+   the package uses approach (b): `disable404Route: true` and its own
+   `src/pages/404.astro` (Starlight's splash 404, `Astro.locals.t('404.text')`).
+   Tests assert no warning, "Page not found", and no "is a draft".
+   Originally: approach (a) above; a test asserts a build's log has no
    `Entry docs → 404` line and `404.html` still renders, and that no
    `404/index.html` is built.
 2. R-019 (1): approach (b). R-019 (2): `log.astro` renders

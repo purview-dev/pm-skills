@@ -60,8 +60,7 @@ describe('repoDocsLoader', () => {
 			logger: { info: mock() },
 		} as never);
 
-		// `404` is the draft entry Starlight's 404 route reads (src/loaders/not-found.ts).
-		expect(set.mock.calls.map(([entry]) => entry.id).sort()).toEqual(['404', 'flow', 'plans/2026-01-01-a', 'plans/2026-02-01-b']);
+		expect(set.mock.calls.map(([entry]) => entry.id).sort()).toEqual(['flow', 'plans/2026-01-01-a', 'plans/2026-02-01-b']);
 	});
 });
 

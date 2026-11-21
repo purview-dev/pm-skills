@@ -27,7 +27,9 @@ describe('pm-docs-site build', () => {
 			expect(htmlPages(join(FIXTURE_SITE, 'dist'))).toEqual(expectedPages());
 			// Starlight's 404 route reads a `404` docs entry; without one Astro warns on every build.
 			expect(result.stdout + result.stderr).not.toMatch(/Entry docs → 404 was not found/);
-			expect(readFileSync(join(FIXTURE_SITE, 'dist', '404.html'), 'utf8')).toContain('Page not found');
+			const notFound = readFileSync(join(FIXTURE_SITE, 'dist', '404.html'), 'utf8');
+			expect(notFound).toContain('Page not found');
+			expect(notFound).not.toContain('is a draft');
 		},
 		BUILD,
 	);
@@ -57,7 +59,9 @@ describe('pm-docs-site build', () => {
 			expect(output).not.toMatch(/src[\\/]content[\\/]docs/);
 			expect(output).not.toMatch(/collection "(docs|i18n)" does not exist or is empty/);
 			expect(output).not.toMatch(/Entry docs → 404 was not found/);
-			expect(readFileSync(join(dir, 'site', 'dist', '404.html'), 'utf8')).toContain('Page not found');
+			const notFound = readFileSync(join(dir, 'site', 'dist', '404.html'), 'utf8');
+			expect(notFound).toContain('Page not found');
+			expect(notFound).not.toContain('is a draft');
 		},
 		BUILD,
 	);
