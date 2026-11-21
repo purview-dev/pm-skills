@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-21T10:09:02+00:00",
+  "generatedAt": "2026-11-21T12:05:39+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-031-docs-site-package-review-follow-ups",
-    "head": "cfcfcc7a842fbecc4a0d0b64590df5fe66577694"
+    "head": "8ade0b14b15b460a533ba2659727538ecedc20da"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -177,225 +177,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-031",
-      "title": "Docs-site package: review follow-ups",
-      "serves": [
-        "V4"
-      ],
-      "owner": "agent",
-      "size": "M",
-      "dependsOn": [],
-      "revisits": null
-    },
-    "stage": "execute",
-    "session": "feat/r-031-docs-site-package-review-follow-ups",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
     "brief": null,
-    "milestone": "M1",
-    "spec": "docs/superpowers/specs/2026-11-21-docs-site-review-follow-ups-design.md",
-    "plan": "docs/superpowers/plans/2026-11-21-docs-site-review-follow-ups.md",
-    "started": "2026-11-21",
-    "doneWhen": [
-      "each finding listed in this item's Note is fixed or pinned by a test, a docs-site build logs no `Entry docs → 404 was not found` warning, and `just lint-check` passes."
-    ],
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-21-docs-site-review-follow-ups.md",
-    "checked": 0,
-    "total": 33,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "Silence the Starlight 404 warning",
-        "checked": 0,
-        "total": 6,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing assertions in `test/cli.test.ts`**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run to verify they fail**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Write `test/not-found.test.ts`**",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Implement**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Run to verify they pass**",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 2,
-        "title": "Reference links (R-019 findings)",
-        "checked": 0,
-        "total": 6,
-        "steps": [
-          {
-            "text": "**Step 1: Pin the slash boundary in `references.test.ts`**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Add the boundary comment**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Write the failing log test in `cli.test.ts`**",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run to verify it fails**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Implement in `log.astro`**",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Run and commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 3,
-        "title": "Demo check (R-020 findings)",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing tests**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run to verify they fail**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement**",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Pin the demo's neutral source**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Verify and commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 4,
-        "title": "Graph browser test helpers (R-023 findings)",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Count animation frames separately**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Record the ended state as hidden**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Name a missing edge path**",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Playwright comment**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Verify and commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 5,
-        "title": "Build and install test hygiene (R-027 findings 1 to 3)",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write `test/imports.test.ts`**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run to verify it fails**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement**",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Probe hygiene**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Verify and commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 6,
-        "title": "Wording (R-027 findings 4 and 5)",
-        "checked": 0,
-        "total": 2,
-        "steps": [
-          {
-            "text": "**Step 1: Edit**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Verify and commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 7,
-        "title": "Final verification",
-        "checked": 0,
-        "total": 4,
-        "steps": [
-          {
-            "text": "**Step 1:** `just lint-check` — exit 0.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2:** `just package-test` — exit 0 (includes `demo-check`).",
-            "checked": false
-          },
-          {
-            "text": "**Step 3:** `just docs-check` — exit 0, and its build output has no `Entry docs → 404` line.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4:** `just version-check` — exit 0 (no `skills/` change).",
-            "checked": false
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [
       {
@@ -632,15 +426,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-031",
-          "title": "Docs-site package: review follow-ups",
-          "owner": "agent",
-          "size": "M",
-          "detail": "execute, 0/33 plan steps"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-029",
@@ -664,10 +450,19 @@
           "title": "Docs-site package: publish and migrate",
           "owner": "both",
           "size": "M",
-          "detail": "needs R-029 Docs-site package: dev browser webserver starts reliably, R-031 Docs-site package: review follow-ups"
+          "detail": "needs R-029 Docs-site package: dev browser webserver starts reliably"
         }
       ],
       "done": [
+        {
+          "date": "2026-11-21",
+          "id": "R-031",
+          "title": "Docs-site package: review follow-ups",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-21-docs-site-review-follow-ups.md",
+          "result": "branch feat/r-031-docs-site-package-review-follow-ups"
+        },
         {
           "date": "2026-11-20",
           "id": "R-028",
@@ -833,6 +628,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-21",
+        "kind": "done",
+        "id": "R-031",
+        "title": "Docs-site package: review follow-ups",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-031-docs-site-package-review-follow-ups"
+      },
       {
         "date": "2026-11-20",
         "kind": "done",
@@ -1062,6 +866,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-21",
+        "id": "R-031",
+        "title": "Docs-site package: review follow-ups",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-21-docs-site-review-follow-ups.md",
+        "result": "branch feat/r-031-docs-site-package-review-follow-ups"
+      },
       {
         "date": "2026-11-20",
         "id": "R-028",
@@ -1380,6 +1193,36 @@
       "brief": null,
       "reviewed": "never",
       "idea": "R-028 fixed the popup trigger, backdrop close, heading levels, card tab stops, collapse toggles, and timeline zoom focus in `packages/pm-docs-site` only. The copies in `skills/pm-docs-site/templates/` and the rendered `docs-site/` keep the old gaps until R-013 Docs-site package: publish and migrate moves the site onto the package. Check R-013 removes them, or port the fixes if R-013 slips."
+    },
+    {
+      "file": "planning/inbox/2026-11-21-1035-template-site-404-warning.md",
+      "title": "Template docs site still logs the 404 warning",
+      "captured": "2026-11-21 10:35",
+      "source": "agent (R-031 execute)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "skills/pm-docs-site/templates/site/src/content.config.ts",
+      "context": "R-031 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "R-031 fixes the `[WARN] [content] Entry docs → 404 was not found.` warning in the package (`packages/pm-docs-site`), but `docs-site/` is still rendered from `skills/pm-docs-site/templates/site`, so `just docs-check` still logs it. Fixing the template is a `skills/` change (a rules bump); R-013's migration to the package removes it, or the template takes the package's fix: Starlight's `disable404Route: true` and its own `src/pages/404.astro` (a draft `404` docs entry is not an option: it prints Starlight's draft notice on the live page)."
+    },
+    {
+      "file": "planning/inbox/2026-11-21-1205-r-031-review-minors.md",
+      "title": "R-031 final-review minors",
+      "captured": "2026-11-21 12:05",
+      "source": "agent (R-031 execute)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site, scripts/check-demo.ts",
+      "context": "R-031 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Deferred minors from the R-031 final review. (1) `relativeImports` in `packages/pm-docs-site/test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports inside comments, and misses template-literal dynamic imports (`` import(`./x`) ``); these give false failures only. (2) In `scripts/check-demo.ts`, the text of a `plan-empty` element is cut off at a nested `plan-empty` element; both are still reported. (3) `src/pages/plan/log.astro` labels an ID that is known but whose page is not built with the logged title, not the export's current title, and no test covers that view-off case."
     }
   ],
   "briefs": [
@@ -1446,10 +1289,10 @@
     "next": 3,
     "later": 6,
     "nextMax": 5,
-    "openInbox": 6,
+    "openInbox": 8,
     "discuss": 1,
     "shapingBriefs": 0,
-    "done": 18,
+    "done": 19,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1464,6 +1307,6 @@
       "R-029",
       "R-025"
     ],
-    "drift": false
+    "drift": true
   }
 }
