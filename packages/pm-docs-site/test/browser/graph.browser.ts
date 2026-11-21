@@ -47,14 +47,17 @@ interface GraphFrame {
 async function sampleFrames(page: Page, path: string): Promise<GraphFrame[]> {
 	await page.addInitScript(() => {
 		const frames: { pending: boolean; visible: boolean; layout: string | null }[] = [];
-		let stopAtFrame: number | null = null;
+		// Animation frames sampled, counted apart from the observer's records, so
+		// the tail after hydration is always 5 real frames.
+		let rafSamples = 0;
+		let stopAtSample: number | null = null;
 
-		const record = (pending = document.documentElement?.hasAttribute('data-graph-pending') ?? false) => {
+		const record = () => {
 			const graph = document.querySelector('.plan-graph');
 			const style = graph ? getComputedStyle(graph) : null;
 
 			frames.push({
-				pending,
+				pending: document.documentElement?.hasAttribute('data-graph-pending') ?? false,
 				visible: style !== null && style.visibility !== 'hidden' && style.display !== 'none',
 				layout: graph?.getAttribute('data-layout') ?? null,
 			});
@@ -63,13 +66,17 @@ async function sampleFrames(page: Page, path: string): Promise<GraphFrame[]> {
 		// The inline script in graph.astro sets the pending mark while the page
 		// parses, and hydration can clear it before the first animation frame,
 		// so every change of the mark is recorded as it happens: a removal first
-		// records the state it ends (still pending), then the state after it.
-		// The observer watches `document`, not `<html>`: an init script can run
-		// before `<html>` exists.
+		// records the state it ends, then the state after it. The ended state is
+		// a marker, not a reading: it is recorded after the removal, so it is
+		// written as the pending CSS rule left it (hidden), with the layout the
+		// removal found. The observer watches `document`, not `<html>`: an init
+		// script can run before `<html>` exists.
 		const observer = new MutationObserver((mutations) => {
 			for (const mutation of mutations) {
 				if (mutation.target !== document.documentElement) continue;
-				if (mutation.oldValue !== null) record(true);
+				if (mutation.oldValue !== null) {
+					frames.push({ pending: true, visible: false, layout: document.querySelector('.plan-graph')?.getAttribute('data-layout') ?? null });
+				}
 				record();
 			}
 		});
@@ -83,13 +90,14 @@ async function sampleFrames(page: Page, path: string): Promise<GraphFrame[]> {
 
 		const sample = () => {
 			record();
+			rafSamples += 1;
 
 			const toolbar = document.querySelector('.plan-graph__toolbar');
 			const toolbarShown = toolbar !== null && !toolbar.hasAttribute('hidden');
 
-			if (toolbarShown && stopAtFrame === null) stopAtFrame = frames.length + 5;
+			if (toolbarShown && stopAtSample === null) stopAtSample = rafSamples + 5;
 
-			if (stopAtFrame !== null && frames.length >= stopAtFrame) {
+			if (stopAtSample !== null && rafSamples >= stopAtSample) {
 				observer.disconnect();
 				(window as unknown as { graphFrames: typeof frames }).graphFrames = frames;
 				return;
@@ -379,7 +387,9 @@ test('every fixture edge carries data-graph-edge on its react-flow__edge element
 async function arrowheadFill(page: Page, edgeId: string): Promise<string> {
 	const { fill, markerEnd, reason } = await page.evaluate((id) => {
 		const path = document.querySelector(`g.react-flow__edge[data-graph-edge="${id}"] path.react-flow__edge-path`);
-		const markerEnd = path?.getAttribute('marker-end') ?? null;
+		if (!path) return { fill: null, markerEnd: null, reason: 'no edge path' };
+
+		const markerEnd = path.getAttribute('marker-end');
 
 		if (!markerEnd?.startsWith('url(') || !markerEnd.endsWith(')')) return { fill: null, markerEnd, reason: 'marker-end is not url(#id)' };
 

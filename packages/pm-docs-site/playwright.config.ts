@@ -4,7 +4,9 @@
 // starts only its own web server. Specs are *.browser.ts so `bun test` (which
 // runs *.test.* and *.spec.*) never picks them up. Pass `--project=chromium`
 // with `=`: `--project` takes several names, so `--project chromium <file>`
-// reads the file as a second project.
+// reads the file as a second project. There is no `dev` project here:
+// `--project=dev` matches nothing, and the dev run is only
+// `bun run test:browser:dev`.
 import { defineConfig, devices } from '@playwright/test';
 
 const PORT = 4399;
