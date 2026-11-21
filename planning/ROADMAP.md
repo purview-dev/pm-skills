@@ -14,17 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-029 Docs-site package: dev browser webserver starts reliably
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: the cause of the `test:browser:dev` webserver timeout is named in the plan, and 5 consecutive `just lint-check` runs on Windows pass `test:browser:dev`.
-- Size: S
-- Depends on: none
-- Status: ready
-- Note: From the 2026-11-20 review (bug, minor). Dev browser test webserver start timed out: `just lint-check` (via `package-test`) failed once on R-019's branch: `test:browser:dev` timed out after 300000ms waiting for `config.webServer`. The dev server logged `transport was disconnected, cannot call "fetchModule"`, `Listen method has been called more than once without closing`, and `transport invoke timed out after 60000ms`. An immediate re-run of `bun run test:browser:dev` passed 3/3, and R-019 changed nothing on the dev path. Reproduction: run `just lint-check` right after the full `bun test` package suite on Windows; seen once in two runs. Files: `packages/pm-docs-site/playwright.dev.config.ts`, `packages/pm-docs-site/test/browser/dev-server.ts`.
-
 ### R-025 Docs-site package: feature pages list revisions
 
 - Serves: V4

@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-21T12:05:39+00:00",
+  "generatedAt": "2026-11-21T12:38:28+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-031-docs-site-package-review-follow-ups",
-    "head": "8ade0b14b15b460a533ba2659727538ecedc20da"
+    "branch": "feat/r-029-dev-browser-webserver",
+    "head": "d48ec7e3b303263d7f9ee38d4ce63f05c05622eb"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -177,50 +177,38 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
+    "status": "active",
+    "item": {
+      "id": "R-029",
+      "title": "Docs-site package: dev browser webserver starts reliably",
+      "serves": [
+        "V4"
+      ],
+      "owner": "agent",
+      "size": "S",
+      "dependsOn": [],
+      "revisits": null
+    },
+    "stage": "design",
+    "session": "feat/r-029-dev-browser-webserver",
     "brief": null,
-    "milestone": null,
+    "milestone": "M1",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-21",
+    "doneWhen": [
+      "the cause of the `test:browser:dev` webserver timeout is named in the plan, and 5 consecutive `just lint-check` runs on Windows pass `test:browser:dev`."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-029",
-        "title": "Docs-site package: dev browser webserver starts reliably",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "the cause of the `test:browser:dev` webserver timeout is named in the plan, and 5 consecutive `just lint-check` runs on Windows pass `test:browser:dev`.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "From the 2026-11-20 review (bug, minor). Dev browser test webserver start timed out: `just lint-check` (via `package-test`) failed once on R-019's branch: `test:browser:dev` timed out after 300000ms waiting for `config.webServer`. The dev server logged `transport was disconnected, cannot call \"fetchModule\"`, `Listen method has been called more than once without closing`, and `transport invoke timed out after 60000ms`. An immediate re-run of `bun run test:browser:dev` passed 3/3, and R-019 changed nothing on the dev path. Reproduction: run `just lint-check` right after the full `bun test` package suite on Windows; seen once in two runs. Files: `packages/pm-docs-site/playwright.dev.config.ts`, `packages/pm-docs-site/test/browser/dev-server.ts`.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-025",
         "title": "Docs-site package: feature pages list revisions",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4"
@@ -244,7 +232,7 @@
         "id": "R-013",
         "title": "Docs-site package: publish and migrate",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "waiting",
         "serves": [
           "V4"
@@ -426,15 +414,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-029",
           "title": "Docs-site package: dev browser webserver starts reliably",
           "owner": "agent",
           "size": "S",
-          "detail": "ready"
-        },
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-025",
           "title": "Docs-site package: feature pages list revisions",
@@ -1286,7 +1275,7 @@
     "removed": []
   },
   "counts": {
-    "next": 3,
+    "next": 2,
     "later": 6,
     "nextMax": 5,
     "openInbox": 8,
@@ -1304,7 +1293,6 @@
     "reviewDue": false,
     "lastReview": "2026-11-20",
     "claimable": [
-      "R-029",
       "R-025"
     ],
     "drift": true
