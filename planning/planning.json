@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-21T10:06:00+00:00",
+  "generatedAt": "2026-11-21T10:09:02+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-031-docs-site-package-review-follow-ups",
-    "head": "01be3eb44304ba1e90792c848d2a48686a9fedb2"
+    "head": "cfcfcc7a842fbecc4a0d0b64590df5fe66577694"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -189,19 +189,213 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-031-docs-site-package-review-follow-ups",
     "brief": null,
     "milestone": "M1",
     "spec": "docs/superpowers/specs/2026-11-21-docs-site-review-follow-ups-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-21-docs-site-review-follow-ups.md",
     "started": "2026-11-21",
     "doneWhen": [
       "each finding listed in this item's Note is fixed or pinned by a test, a docs-site build logs no `Entry docs → 404 was not found` warning, and `just lint-check` passes."
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-21-docs-site-review-follow-ups.md",
+    "checked": 0,
+    "total": 33,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "Silence the Starlight 404 warning",
+        "checked": 0,
+        "total": 6,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing assertions in `test/cli.test.ts`**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run to verify they fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Write `test/not-found.test.ts`**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Implement**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Run to verify they pass**",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "Reference links (R-019 findings)",
+        "checked": 0,
+        "total": 6,
+        "steps": [
+          {
+            "text": "**Step 1: Pin the slash boundary in `references.test.ts`**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Add the boundary comment**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Write the failing log test in `cli.test.ts`**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run to verify it fails**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Implement in `log.astro`**",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Run and commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "Demo check (R-020 findings)",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run to verify they fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Pin the demo's neutral source**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Verify and commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "Graph browser test helpers (R-023 findings)",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Count animation frames separately**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Record the ended state as hidden**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Name a missing edge path**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Playwright comment**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Verify and commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 5,
+        "title": "Build and install test hygiene (R-027 findings 1 to 3)",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write `test/imports.test.ts`**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run to verify it fails**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Probe hygiene**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Verify and commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 6,
+        "title": "Wording (R-027 findings 4 and 5)",
+        "checked": 0,
+        "total": 2,
+        "steps": [
+          {
+            "text": "**Step 1: Edit**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Verify and commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 7,
+        "title": "Final verification",
+        "checked": 0,
+        "total": 4,
+        "steps": [
+          {
+            "text": "**Step 1:** `just lint-check` — exit 0.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2:** `just package-test` — exit 0 (includes `demo-check`).",
+            "checked": false
+          },
+          {
+            "text": "**Step 3:** `just docs-check` — exit 0, and its build output has no `Entry docs → 404` line.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4:** `just version-check` — exit 0 (no `skills/` change).",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -444,7 +638,7 @@
           "title": "Docs-site package: review follow-ups",
           "owner": "agent",
           "size": "M",
-          "detail": "plan"
+          "detail": "execute, 0/33 plan steps"
         }
       ],
       "next": [
