@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-22T14:26:12+00:00",
+  "generatedAt": "2026-11-22T14:43:16+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-033-adr-directory-setting-and-design-handoff",
-    "head": "6e34c3a6656f324c63f87dfc63649c4f4b0b991e"
+    "branch": "feat/r-038-adr-export-and-decisions-view",
+    "head": "ba9b2bde32eb6254c73d6602e8a1338019111293"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -215,52 +215,40 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
-    "brief": null,
-    "milestone": null,
+    "status": "active",
+    "item": {
+      "id": "R-038",
+      "title": "ADR export and Decisions view",
+      "serves": [
+        "V5"
+      ],
+      "owner": "agent",
+      "size": "M",
+      "dependsOn": [
+        "R-033"
+      ],
+      "revisits": null
+    },
+    "stage": "design",
+    "session": "feat/r-038-adr-export-and-decisions-view",
+    "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
+    "milestone": "M4",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-22",
+    "doneWhen": [
+      "`pm-export write` puts `adrs` (read from `planning/decisions/`) in `planning/planning.json` at `schemaVersion` 5 and `pm-export check` passes; the `packages/pm-docs-site` Decisions view lists, searches, and filters ADRs by category and status, with one indexed page per ADR and feature pages listing their ADRs, covered by unit tests; the demo has ADRs; the templates read `schemaVersion` 5; `just validate`, `just test`, and `just demo-check` pass."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-038",
-        "title": "ADR export and Decisions view",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V5"
-        ],
-        "milestone": "M4",
-        "owner": "agent",
-        "doneWhen": "`pm-export write` puts `adrs` (read from `planning/decisions/`) in `planning/planning.json` at `schemaVersion` 5 and `pm-export check` passes; the `packages/pm-docs-site` Decisions view lists, searches, and filters ADRs by category and status, with one indexed page per ADR and feature pages listing their ADRs, covered by unit tests; the demo has ADRs; the templates read `schemaVersion` 5; `just validate`, `just test`, and `just demo-check` pass.",
-        "size": "M",
-        "dependsOn": [
-          "R-033"
-        ],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
-        "note": "Slice 2 of the ADR work (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). Decisions view is a React island: text search, category and status chips, superseded hidden by default, group by category or status, URL state.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-039",
         "title": "ADRs across the PM skills",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V5"
@@ -286,7 +274,7 @@
         "id": "R-025",
         "title": "Docs-site package: feature pages list revisions",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -310,7 +298,7 @@
         "id": "R-013",
         "title": "Docs-site package: publish and migrate",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -345,7 +333,7 @@
         "id": "R-034",
         "title": "Engineering file and pm-engineering skill",
         "section": "next",
-        "position": 5,
+        "position": 4,
         "label": "next",
         "serves": [
           "V5"
@@ -596,15 +584,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-038",
           "title": "ADR export and Decisions view",
           "owner": "agent",
           "size": "M",
-          "detail": "ready"
-        },
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-039",
           "title": "ADRs across the PM skills",
@@ -1519,9 +1508,9 @@
     },
     {
       "path": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
-      "id": null,
+      "id": "R-038",
       "title": "Where do ADRs fit in",
-      "status": "done",
+      "status": "on roadmap (R-038), active",
       "origin": "planning/inbox/2026-11-22-0952-where-do-adrs-fit.md",
       "updated": "2026-11-22",
       "decision": "2026-11-22 Keep it parked. Reason: SCOPE CHANGE to v1; no `V` line or milestone covers it and M1 Reproducible docs site is the current focus. Answer to the question: ADRs record technical decisions only, live in a configurable `docs/adr/`, are written by the design stage, and are read by every session through the managed rules. Next: `pm-strategy` adds a `V` line and a milestone after M1 covering this and the engineering-principles brief.",
@@ -1558,7 +1547,7 @@
     "removed": []
   },
   "counts": {
-    "next": 5,
+    "next": 4,
     "later": 9,
     "nextMax": 5,
     "openInbox": 10,
@@ -1576,7 +1565,6 @@
     "reviewDue": true,
     "lastReview": "2026-11-20",
     "claimable": [
-      "R-038",
       "R-039",
       "R-025",
       "R-013",
