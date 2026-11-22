@@ -35,7 +35,7 @@
 **Interfaces:**
 - Produces: `export function revisers(all: Feature[], id: string): Feature[]`. It returns the items whose `revisits === id`, in `all` order.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Add `revisers` to the import list. Add this case inside `describe('features')`, after the `dependents` case:
 
@@ -52,20 +52,20 @@ it('finds the items that revise an item, an active one included', () => {
 });
 ```
 
-- [ ] **Step 2: Run the test and confirm it fails**
+- [x] **Step 2: Run the test and confirm it fails**
 
 Run: `cd packages/pm-docs-site; bun test test/planning.test.ts`
 Expected: FAIL, because `revisers` is not exported from `../src/lib/planning`.
 
-- [ ] **Step 3: Implement `revisers(all: Feature[], id: string): Feature[]` in `src/lib/planning.ts`**
+- [x] **Step 3: Implement `revisers(all: Feature[], id: string): Feature[]` in `src/lib/planning.ts`**
 
 Put it directly after `dependents()`, with the doc comment `/** The items whose \`Revisits\` names \`id\`. */`, and filter on `feature.revisits === id`.
 
-- [ ] **Step 4: Use it in `FeatureSummary.astro`**
+- [x] **Step 4: Use it in `FeatureSummary.astro`**
 
 Add `revisers` to the import from `'../lib/planning'`, and replace line 25 with `const revisedBy = revisers(all, feature.id);`. Leave the markup unchanged.
 
-- [ ] **Step 5: Run the package checks and confirm they pass**
+- [x] **Step 5: Run the package checks and confirm they pass**
 
 Run: `cd packages/pm-docs-site; bun test test/planning.test.ts`
 Expected: PASS, including the new case.
@@ -73,7 +73,7 @@ Expected: PASS, including the new case.
 Run: `just package-test`
 Expected: exit code 0.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add packages/pm-docs-site/src/lib/planning.ts packages/pm-docs-site/src/components/FeatureSummary.astro packages/pm-docs-site/test/planning.test.ts
