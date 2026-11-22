@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-025 Docs-site package: feature pages list revisions
 - Session: feat/r-025-docs-site-package-feature-pages-list-revisions
-- Stage: design
+- Stage: plan
 - Brief:
 - Milestone: M1
 - Serves: V4
@@ -23,7 +23,7 @@ Milestone: optional; the item's milestone while it is active
 - Depends on: none
 - Revisits:
 - Note: From R-012 design (2026-11-19): `dependents()` in `packages/pm-docs-site/src/lib/planning.ts` looks only at `dependsOn`, so a feature page lists its dependants but not the items whose `Revisits` names it; the R-012 graph already draws Revisits edges.
-- Spec:
+- Spec: docs/superpowers/specs/2026-11-22-feature-pages-list-revisions-design.md
 - Plan:
 - Started: 2026-11-22
 

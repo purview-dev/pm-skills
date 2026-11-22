@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-22T18:04:56+00:00",
+  "generatedAt": "2026-11-22T18:12:57+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-025-docs-site-package-feature-pages-list-revisions",
-    "head": "f6c5f5acf358ab4adfdfd8d0adfd2afb3cfd8f8b"
+    "head": "fc25b86cbc73f73208a5ecba2439b873c6f3f85e"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -227,11 +227,11 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-025-docs-site-package-feature-pages-list-revisions",
     "brief": null,
     "milestone": "M1",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-22-feature-pages-list-revisions-design.md",
     "plan": null,
     "started": "2026-11-22",
     "doneWhen": [
@@ -635,7 +635,7 @@
           "title": "Docs-site package: feature pages list revisions",
           "owner": "agent",
           "size": "S",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
@@ -1434,6 +1434,21 @@
       "brief": "planning/briefs/2026-11-22-github-issue-project-sync.md",
       "reviewed": "2026-11-22",
       "idea": "GitHub issue / Project sync"
+    },
+    {
+      "file": "planning/inbox/2026-11-22-1809-done-revisions-lose-revised-by.md",
+      "title": "Done revisions lose their Revised by link",
+      "captured": "2026-11-22 18:09",
+      "source": "agent (R-025 design)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "skills/pm-export/scripts/planning.ts, packages/pm-docs-site/src/lib/planning.ts",
+      "context": "R-025 design",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "A feature page lists \"Revised by\" only while the revising item is open. `LOG.md` Done lines and the export's `log.done` entries carry no `Revisits`, so `features()` in `packages/pm-docs-site/src/lib/planning.ts` (line 284) gives done items `revisits: null`, and the link disappears once the revision closes. A fix adds `Revisits` to the Done line, the exporter, the schema (schemaVersion 6, which pairs with R-037 Engineering export and docs-site view), the pm-lint rule, and the site."
     }
   ],
   "briefs": [
@@ -1591,7 +1606,7 @@
     "next": 4,
     "later": 11,
     "nextMax": 5,
-    "openInbox": 0,
+    "openInbox": 1,
     "discuss": 0,
     "shapingBriefs": 0,
     "done": 23,
@@ -1611,6 +1626,6 @@
       "R-041",
       "R-040"
     ],
-    "drift": true
+    "drift": false
   }
 }
