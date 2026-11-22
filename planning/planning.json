@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-22T11:42:05+00:00",
+  "generatedAt": "2026-11-22T11:59:33+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-033-adr-directory-setting-and-design-handoff",
-    "head": "28a83fe870faf67c49f6dfb979456a35cb934f99"
+    "head": "80d291d21952245156b2ecced25a0cd5f1c5bafa"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -1380,6 +1380,60 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Deferred minors from the R-031 final review. (1) `relativeImports` in `packages/pm-docs-site/test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports inside comments, and misses template-literal dynamic imports (`` import(`./x`) ``); these give false failures only. (2) In `scripts/check-demo.ts`, the text of a `plan-empty` element is cut off at a nested `plan-empty` element; both are still reported. (3) `src/pages/plan/log.astro` labels an ID that is known but whose page is not built with the logged title, not the export's current title, and no test covers that view-off case."
+    },
+    {
+      "file": "planning/inbox/2026-11-22-1159-adr-export-and-decisions-view.md",
+      "title": "ADR export and Decisions view",
+      "captured": "2026-11-22 11:59",
+      "source": "agent (R-033 design)",
+      "kind": "feature",
+      "severity": null,
+      "affects": "skills/pm-export, packages/pm-docs-site, skills/pm-docs-site/templates",
+      "context": "R-033 design",
+      "discuss": "no",
+      "related": [
+        "R-033",
+        "R-013",
+        "R-037"
+      ],
+      "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
+      "reviewed": "never",
+      "idea": "Slice 2 of the ADR work, approved by the user on 2026-11-22 (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). Add as an M item at the top of Next after R-033, M4, serves V5, depends on R-033: `adrs` in `planning.json` at `schemaVersion` 5, read from `<PM root>/decisions/`; the package's Decisions view (React island with text search, category and status chips, superseded hidden by default, group by category or status, URL state; one search-indexed page per ADR; feature pages list their ADRs); demo ADRs; templates move to `schemaVersion` 5 without a view. Then edit R-013 (its `schemaVersion` 4 check becomes 5) and R-037 (`schemaVersion` 6)."
+    },
+    {
+      "file": "planning/inbox/2026-11-22-1159-adrs-across-the-pm-skills.md",
+      "title": "ADRs across the PM skills",
+      "captured": "2026-11-22 11:59",
+      "source": "agent (R-033 design)",
+      "kind": "feature",
+      "severity": null,
+      "affects": "pm-shape, pm-discover, pm-revise, pm-checkpoint, pm-review, pm-purview, pm-status, pm-help",
+      "context": "R-033 design",
+      "discuss": "no",
+      "related": [
+        "R-033",
+        "R-036"
+      ],
+      "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
+      "reviewed": "never",
+      "idea": "Slice 3 of the ADR work, approved by the user on 2026-11-22 (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). Add as an M item in Next after the ADR export item, M4, serves V5, depends on R-033: `pm-shape` and `pm-discover` read ADRs as evidence and challenge contradictions; `pm-revise` supersedes an ADR when a correction reverses it; `pm-checkpoint` (`done`) checks the spec's ADR IDs exist; `pm-review` lists ADRs `proposed` longer than the review cadence; `pm-purview` records an accepted recommendation as an ADR; `pm-status` counts ADRs by status; `pm-help` diagnoses unaccepted and broken ADRs."
+    },
+    {
+      "file": "planning/inbox/2026-11-22-1159-r-033-rescope-and-brief-revision.md",
+      "title": "R-033 rescope and ADR brief revision",
+      "captured": "2026-11-22 11:59",
+      "source": "agent (R-033 design)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "planning/ROADMAP.md, planning/briefs/2026-11-22-where-do-adrs-fit.md",
+      "context": "R-033 design",
+      "discuss": "no",
+      "related": [
+        "R-033"
+      ],
+      "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
+      "reviewed": "never",
+      "idea": "After the R-033 workflow (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups): R-033's title becomes \"ADR record, pm-adr, and design handoff\", size M, with the spec's Done when (it is in NOW.md now with the old checks; the spec's Done when governs). Add a `## Revisions` line to the ADR brief: ADRs moved into the PM root under `pm-adr`; the `ADR directory` setting and `docs/adr/` default are dropped (user, 2026-11-22)."
     }
   ],
   "briefs": [
@@ -1458,7 +1512,7 @@
     "next": 4,
     "later": 8,
     "nextMax": 5,
-    "openInbox": 8,
+    "openInbox": 11,
     "discuss": 1,
     "shapingBriefs": 0,
     "done": 20,
@@ -1470,13 +1524,13 @@
     "greenRisks": 0
   },
   "checks": {
-    "reviewDue": false,
+    "reviewDue": true,
     "lastReview": "2026-11-20",
     "claimable": [
       "R-025",
       "R-013",
       "R-034"
     ],
-    "drift": true
+    "drift": false
   }
 }
