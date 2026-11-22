@@ -123,7 +123,7 @@ export function linkify(text: string, known: Map<string, Target>): Run[] {
 	return runs;
 }
 
-export type Relation = 'depends on' | 'revisits' | 'milestone' | 'affects' | 'mitigation' | 'related' | 'brief' | 'decision' | 'supersedes' | 'mentions' | 'listed';
+export type Relation = 'depends on' | 'revisits' | 'milestone' | 'affects' | 'mitigation' | 'related' | 'brief' | 'decision' | 'supersedes' | 'superseded by' | 'mentions' | 'listed';
 
 /** The order and heading of each relation in a `Linked from` section. */
 export const RELATION_LABELS: Record<Relation, string> = {
@@ -136,6 +136,7 @@ export const RELATION_LABELS: Record<Relation, string> = {
 	brief: 'Brief',
 	decision: 'Decisions',
 	supersedes: 'Supersedes',
+	'superseded by': 'Superseded by',
 	mentions: 'Mentioned on',
 	listed: 'Listed on',
 };
@@ -244,7 +245,7 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 
 			own.link(adr.item, 'decision');
 			own.link(adr.supersedes, 'supersedes');
-			own.link(adr.supersededBy, 'supersedes');
+			own.link(adr.supersededBy, 'superseded by');
 			for (const text of [adr.source, adr.context, adr.decision, adr.alternatives, adr.consequences]) own.prose(text);
 		}
 	}

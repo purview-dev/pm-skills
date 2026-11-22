@@ -79,7 +79,7 @@ Each site records how it was rendered in `<site root>/pm-docs-site.json`:
 
 ```json
 {
-  "schemaVersion": 4,
+  "schemaVersion": 5,
   "modules": ["repo-docs"],
   "views": ["now", "milestones", "features", "inbox", "briefs", "strategy"],
   "values": { "SITE_TITLE": "...", "SITE_ROOT": "src/docs-site", "...": "..." }

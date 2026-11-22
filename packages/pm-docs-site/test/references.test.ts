@@ -161,7 +161,9 @@ describe('ADR references', () => {
 
 	it('links a supersede both ways', () => {
 		expect(back.get('ADR-001')).toContainEqual({ href: '/plan/decisions/adr-002/', label: 'ADR-002 Store invoices as rows', relation: 'supersedes' });
-		expect(back.get('ADR-002')).toContainEqual({ href: '/plan/decisions/adr-001/', label: 'ADR-001 Store invoices as events', relation: 'supersedes' });
+		// ADR-001 is superseded by ADR-002: on ADR-002's page, ADR-001 is listed under Superseded by, never Supersedes.
+		expect(back.get('ADR-002')).toContainEqual({ href: '/plan/decisions/adr-001/', label: 'ADR-001 Store invoices as events', relation: 'superseded by' });
+		expect(back.get('ADR-002')!.some((link) => link.href === '/plan/decisions/adr-001/' && link.relation === 'supersedes')).toBe(false);
 	});
 
 	it('adds nothing for an Item that is not in the export', () => {
@@ -172,5 +174,6 @@ describe('ADR references', () => {
 	it('labels the new relations', () => {
 		expect(RELATION_LABELS.decision).toBe('Decisions');
 		expect(RELATION_LABELS.supersedes).toBe('Supersedes');
+		expect(RELATION_LABELS['superseded by']).toBe('Superseded by');
 	});
 });
