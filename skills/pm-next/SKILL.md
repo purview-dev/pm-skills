@@ -139,11 +139,12 @@ written to the branch the session is leaving.
     there are none. Tell the design skill to read the ones its decision
     touches before proposing approaches, to record each architecture
     decision the spec makes with `pm-adr new` (or `supersede`), and to name
-    the ADR IDs in the spec.
+    the ADR IDs in the spec (Shared definitions: **Every design handoff**).
 
 If the item has a `Paused checkpoint`, copy it under `## Checkpoint` and set
 `Stage` to the stage recorded there. Then invoke that stage's skill instead
-of design.
+of design. When that stage is `design`, pass step 10's ADR instruction with
+it.
 
 ## Output
 

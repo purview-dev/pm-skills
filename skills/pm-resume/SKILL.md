@@ -89,6 +89,12 @@ directory` setting (default `planning/`).
      Handoffs table.
    - If a Spec, Plan, or Brief path is set but the file does not exist, add
      the Note: `Missing file: <path>.`
+   - If the next action starts the `design` skill, add a bullet to it:
+     `ADRs: <ADR-NNN <title> (<status>), ... | none>`, listing the accepted
+     and proposed ADRs from the decisions folder, and say the design skill
+     reads the ones its decision touches first (Shared definitions:
+     **Every design handoff**). This only lists them; it reads the folder
+     and writes nothing.
 7. **Pause.** When the pause file exists:
    - Its `Session` matches the current session: the pause's `Next action`
      and `Start with` replace the next action from steps 5 and 6, unless
@@ -139,6 +145,7 @@ directory` setting (default `planning/`).
 1. <one action>
    - Start with: <exact command, file, or skill name>
    - Done when: <observable check>
+   - ADRs: <ADR-NNN <title> (<status>), ... | none; only when the action starts design>
 
 ## For you
 

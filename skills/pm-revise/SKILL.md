@@ -141,7 +141,9 @@ only in the conversation, and never resume the interrupted step silently.
    already committed: `docs(pm): revise <ID> <short reason>`.
 10. **Hand back.** Invoke the stage skill from the Handoffs table in
     `config.md` and pass the revision. Never name a development skill that
-    is not in that table.
+    is not in that table. When the stage is `design` (a `rewind` to
+    design), also pass the ADR instruction (Shared definitions:
+    **Every design handoff**), naming any ADR the revision reverses.
 
 ## Output
 

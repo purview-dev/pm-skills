@@ -228,7 +228,8 @@ and `Explain <ID>`.
    then invoke the skill for `Stage` from
    the Handoffs table in `config.md`, passing the checkpoint's
    `Next action`; when the stack still has entries, name the next one as a
-   Note.
+   Note. When the restored `Stage` is `design`, the handoff also passes the
+   ADR instruction (Shared definitions: **Every design handoff**).
 9. **Commit** the PM state (rules: Committing PM state) in every mode,
    after the last PM file is written. In `done`, the commit worktree is the
    worktree that holds the item's branch and the message is
