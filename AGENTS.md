@@ -523,18 +523,19 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
 
   `Category` is free text; the list is the suggested set. An accepted ADR
   is never rewritten: a change is a new ADR that supersedes it.
-  **Decision split:** product decisions (whether and what) go in
+- **Decision split:** product decisions (whether and what) go in
   `STRATEGY.md` `## Decisions` and briefs; technical decisions in ADRs; one
   item's detail in its spec, which names the ADR IDs it writes or follows.
-  **Read before deciding:** any session, inside the lifecycle or not, reads
+- **Read before deciding:** any session, inside the lifecycle or not, reads
   the accepted ADR titles in the decisions folder before a technical
-  decision, follows them, or supersedes one through `pm-adr`. **Every
-  design handoff** (`pm-next` step 10, and a resume, `pop`, `rewind`, or
-  `rejoin` into design) lists the accepted and proposed ADRs (named
-  references) from the decisions folder, or says there are none, and tells
-  the design stage to read the ones its decision touches before proposing
-  approaches, to record each architecture decision the spec makes with
-  `pm-adr new` or `supersede`, and to name the ADR IDs in the spec.
+  decision, follows them, or supersedes one through `pm-adr`.
+- **Every design handoff** (`pm-next` step 10, and a resume, `pop`,
+  `rewind`, or `rejoin` into design) lists the accepted and proposed ADRs
+  (named references) from the decisions folder, or says there are none,
+  and tells the design stage to read the ones its decision touches before
+  proposing approaches, to record each architecture decision the spec
+  makes with `pm-adr new` or `supersede`, and to name the ADR IDs in the
+  spec.
 - **RAG:** a risk's red, amber, or green status. It is derived from
   Likelihood and Impact, scored `low` 1, `medium` 2, `high` 3, by their
   product: 6 or more is `red`, 3 or 4 is `amber`, 2 or less is `green`. An
