@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-033 ADR directory setting and design handoff
 - Session: feat/r-033-adr-directory-setting-and-design-handoff
-- Stage: design
+- Stage: plan
 - Brief: planning/briefs/2026-11-22-where-do-adrs-fit.md
 - Milestone: M4
 - Serves: V5
@@ -22,7 +22,7 @@ Milestone: optional; the item's milestone while it is active
 - Size: M
 - Depends on: none
 - Revisits:
-- Spec:
+- Spec: docs/superpowers/specs/2026-11-22-adr-record-design.md
 - Plan:
 - Started: 2026-11-22
 

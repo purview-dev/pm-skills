@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-22T11:59:33+00:00",
+  "generatedAt": "2026-11-22T11:59:48+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-033-adr-directory-setting-and-design-handoff",
-    "head": "80d291d21952245156b2ecced25a0cd5f1c5bafa"
+    "head": "d3d6e81658e8408ad0278181212d6131f74eb2a9"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -227,11 +227,11 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-033-adr-directory-setting-and-design-handoff",
     "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
     "milestone": "M4",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-22-adr-record-design.md",
     "plan": null,
     "started": "2026-11-22",
     "doneWhen": [
@@ -562,7 +562,7 @@
           "title": "ADR directory setting and design handoff",
           "owner": "agent",
           "size": "M",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
