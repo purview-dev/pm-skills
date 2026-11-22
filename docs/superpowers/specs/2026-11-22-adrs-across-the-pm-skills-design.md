@@ -152,8 +152,8 @@ worktree is chosen:
   file.` This applies to every ID the spec names, because a dangling
   reference is broken whatever its role.
 - Each named ADR that is `proposed` **and whose `Item` is the closing
-  item**: run `pm-adr accept`. List them in the `Note` as `Accepted ADR-NNN
-  <title>.` A proposed ADR the spec only follows or cites (another item's,
+  item**: run `pm-adr accept`. List them in the `Note` as
+  `Accepted ADR-NNN <title>.` A proposed ADR the spec only follows or cites (another item's,
   or `Item: none`) is left proposed, so `proposed` keeps meaning "not yet
   built". Accepted, superseded, and deprecated ADRs are left as they are.
   (Builder's call, from the builder check: limits "the ADRs the spec names"
