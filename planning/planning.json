@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-22T17:15:56+00:00",
+  "generatedAt": "2026-11-22T17:38:27+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "main",
-    "head": "b87f0d874d8d3f8b96afe7b8d907d79f41fb3007"
+    "head": "54a5c2f486f52879850c785cafea305c90f59b0f"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -610,6 +610,30 @@
         },
         "brief": null,
         "note": "From the 2026-11-22 review; review minors in `packages/pm-docs-site` (inbox 2026-11-18-1222, 2026-11-20-1844 x3). R-010 board: (1) the 3s reveal of a pending board also fires on a slow but successful hydration; document it in `components.css` and the `useBoardUrlState.ts` header, or tune it. (2) The pending mark is also set on `/plan/roadmap/?owner=...`; scope it to the Board page. (3) `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`. (4) The lane header is a plain `div`; use an `h3` or `role=\"heading\"`. (5) Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed. (6) The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page. (7) A collapsed column's vertical title stretches the shared header row. (8) `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab`; its header comment lists only some changes. (9) `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array. (10) `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id`; `tagHref` never asserted. (11) `integration.test.ts` asserts the integration names two ways. (12) `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`. (13) The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP. R-028: (14) `test/island-imports.test.ts` scans only `.ts` and `.tsx` under `src/components`, so an `.astro` client `<script>` that value-imports a server-only lib is not caught. (15) `start()` in `src/scripts/plan.ts` adds `pointerdown`, `pointerup`, and `click` listeners on `document` each run, so they stack under view transitions. (16) `test/browser/board.browser.ts` test \"a localStorage that throws leaves the Board usable\" pins Starlight theme-script error counts per `<starlight-theme-select>`; a Starlight upgrade fails it with no fault in the package; loosen it or report the unguarded `localStorage` read upstream. R-031 (inbox 2026-11-21-1205): (17) `relativeImports` in `test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports in comments, and misses template-literal dynamic imports (false failures only). (18) In `scripts/check-demo.ts`, a `plan-empty` element's text is cut off at a nested `plan-empty` element. (19) `src/pages/plan/log.astro` labels a known ID whose page is not built with the logged title, not the export's current title, and no test covers that view-off case.",
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-043",
+        "title": "Per-session context report and upgrade notes move",
+        "section": "later",
+        "position": 11,
+        "label": "later",
+        "serves": [
+          "V2"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "`bun skills/pm-help/scripts/context.ts --root .` prints one line per session type (`always`, `resume`, `claim`, `checkpoint`, `review`) with estimated tokens and the three largest files; the managed section holds no `Version N` paragraphs and `skills/pm-setup/references/upgrade-notes.md` holds them; the report's `always` line is at least 1,400 tokens lower than before; a `planning/research/` report records the before and after table; `just lint-check` and `just validate` pass.",
+        "size": "M",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-22-agent-context-tidy.md",
+        "note": "From pm-shape 2026-11-22 (inbox 2026-11-22-1232). A rules bump. Dependency-free estimate (characters / 4), shipped in `pm-help` diagnose rather than a new skill; the `pm-tidy` archive slice is deferred until the report's PM state line recommends it.",
         "revisits": null,
         "claimable": false
       }
@@ -1406,23 +1430,7 @@
       }
     ]
   },
-  "inbox": [
-    {
-      "file": "planning/inbox/2026-11-22-1232-agent-context-tidy-skill.md",
-      "title": "Agent context analysis and planning tidy skill",
-      "captured": "2026-11-22 12:32",
-      "source": "user",
-      "kind": "improvement",
-      "severity": null,
-      "affects": null,
-      "context": "R-033 execute",
-      "discuss": "yes",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "Do a performance analysis to ensure we are agentic token/ context aware. Keep things relevent for agents. This can be a skill for 'tidying up the planning state'"
-    }
-  ],
+  "inbox": [],
   "briefs": [
     {
       "path": "planning/briefs/2026-11-17-docs-site-package.md",
@@ -1458,6 +1466,18 @@
       "decision": "2026-11-20 Keep it parked. Reason: SCOPE CHANGE to v1; no `V` line or milestone covers it and M1 Reproducible docs site is the current focus. Next: `pm-strategy` adds a `V` line and a milestone after M1, then the four slices go to Later under it.",
       "problem": "A solo developer's technology choices, adopted packages, and engineering principles are decided once and then lost: nothing in PM state records what was adopted and why (answer 2026-11-20).",
       "doneWhen": "`pm-init` in a scratch repository with a `package.json` and an `AGENTS.md` writes `planning/ENGINEERING.md` with `## Technology` and `## Principles`, each entry citing its `Source`, and `pm-lint check` passes on it.",
+      "revisions": []
+    },
+    {
+      "path": "planning/briefs/2026-11-22-agent-context-tidy.md",
+      "id": "R-043",
+      "title": "Agent context analysis and planning tidy skill",
+      "status": "on roadmap (R-043)",
+      "origin": "planning/inbox/2026-11-22-1232-agent-context-tidy-skill.md",
+      "updated": "2026-11-22",
+      "decision": "2026-11-22 Added to Later as R-043 Per-session context report and upgrade notes move (Unassigned, M). Why: preventive work with no observed symptom, serving no milestone, while Next is full of M1 and M4 work.",
+      "problem": "An agent session loads the managed rules (65 KB) on every start, plus each skill it runs, plus the PM files those skills read. Nothing measures that cost per session type, so growth in the rules, the skills, or the planning state goes unnoticed until it hurts (answer 2026-11-22: both rules and state, measured first).",
+      "doneWhen": "`bun skills/pm-help/scripts/context.ts --root .` prints one line per session type (`always`, `resume`, `claim`, `checkpoint`, `review`) with estimated tokens and the three largest files.",
       "revisions": []
     },
     {
@@ -1552,10 +1572,10 @@
   ],
   "counts": {
     "next": 5,
-    "later": 10,
+    "later": 11,
     "nextMax": 5,
-    "openInbox": 1,
-    "discuss": 1,
+    "openInbox": 0,
+    "discuss": 0,
     "shapingBriefs": 0,
     "done": 23,
     "dropped": 5,
