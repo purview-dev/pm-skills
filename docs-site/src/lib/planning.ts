@@ -13,7 +13,7 @@ import type { Brief, InboxEntry, Level, Milestone, Owner, Planning, Rag, Risk, R
 const DEFAULT_PATH = '../planning/planning.json';
 
 /** The pm-export `schemaVersion` this site reads (pm-docs-site keeps it equal to pm-export's schema). */
-export const SCHEMA_VERSION = 4;
+export const SCHEMA_VERSION = 5;
 
 export class PlanningExportError extends Error {
 	constructor(message: string) {

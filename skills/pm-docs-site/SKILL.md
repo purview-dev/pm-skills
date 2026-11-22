@@ -21,7 +21,7 @@ directory` setting (default `planning/`).
 
 Spec: `references/spec.md` in this skill's folder. Templates:
 `templates/site/` (the core) and `templates/<module>/` with its
-`MODULE.md`. This skill reads schemaVersion 4.
+`MODULE.md`. This skill reads schemaVersion 5.
 
 ## Modes
 
