@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-044 Merge-proof PM sync
 - Session: feat/r-044-merge-proof-pm-sync
-- Stage: plan
+- Stage: execute
 - Brief:
 - Milestone:
 - Serves: V2, V3
@@ -24,7 +24,7 @@ Milestone: optional; the item's milestone while it is active
 - Revisits:
 - Note: Added and claimed 2026-11-22 at the user's request ("teach it about all merges so this can never happen. Do this now"), ahead of the M1 focus, after a squash-merged PR left local main diverged and planning/planning.json conflicting on pull. Design approved in the conversation and recorded in the spec.
 - Spec: docs/superpowers/specs/2026-11-22-merge-proof-pm-sync-design.md
-- Plan:
+- Plan: docs/superpowers/plans/2026-11-22-merge-proof-pm-sync.md
 - Started: 2026-11-22
 
 ## Done when

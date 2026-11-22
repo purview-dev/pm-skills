@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-22T18:50:30+00:00",
+  "generatedAt": "2026-11-22T18:52:38+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-044-merge-proof-pm-sync",
-    "head": "54c5db1537e708a1fb7174c3fa3bb06792e1d2cb"
+    "head": "b6b8e3115a77c037580d19062083e3cc688ef0ba"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -228,12 +228,12 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-044-merge-proof-pm-sync",
     "brief": null,
     "milestone": null,
     "spec": "docs/superpowers/specs/2026-11-22-merge-proof-pm-sync-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-22-merge-proof-pm-sync.md",
     "started": "2026-11-22",
     "doneWhen": [
       "In a scratch repository with a bare remote, for each of a merge commit, a squash, and a rebase merge of an item branch that carries idle PM commits, `git switch main` then `git pull --ff-only` succeeds and `planning/` equals the remote.",
@@ -243,7 +243,117 @@
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-22-merge-proof-pm-sync.md",
+    "checked": 0,
+    "total": 20,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "`sync.ts`, with `release` and `pull`",
+        "checked": 0,
+        "total": 7,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** in `skills/pm-next/scripts/sync.test.ts`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run the tests and confirm they fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement `sync.ts`** to the Interfaces and Behaviour above.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Update the spec's Design item 2** to the 3-way apply rule (see Ruling above).",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Add `skills/pm-next/`** to the `justfile` `test` recipe.",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Run the tests and confirm they pass**",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "The `planning.json` merge driver",
+        "checked": 0,
+        "total": 6,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run the tests and confirm they fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement `driver`** in `sync.ts`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Register it in this repository**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Run the tests and confirm they pass**",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "Rules and skills use the sync script",
+        "checked": 0,
+        "total": 7,
+        "steps": [
+          {
+            "text": "**Step 1: Managed section**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: `pm-next` step 6**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: `pm-setup` Step 5 item 6, \"Merge driver\"**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: `pm-help` check 29**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Bump the version.** Run `just bump prerelease`. Expected: `package.json` version `21.0.0-pre.6`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Verify**",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Commit**",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -639,7 +749,7 @@
           "title": "Merge-proof PM sync",
           "owner": "agent",
           "size": "M",
-          "detail": "plan"
+          "detail": "execute, 0/20 plan steps"
         }
       ],
       "next": [
@@ -1674,6 +1784,6 @@
       "R-041",
       "R-040"
     ],
-    "drift": true
+    "drift": false
   }
 }
