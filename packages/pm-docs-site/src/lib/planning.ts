@@ -340,6 +340,11 @@ export function dependents(all: Feature[], id: string): Feature[] {
 	return all.filter((feature) => feature.dependsOn.includes(id));
 }
 
+/** The items whose `Revisits` names `id`. */
+export function revisers(all: Feature[], id: string): Feature[] {
+	return all.filter((feature) => feature.revisits === id);
+}
+
 /** The ADRs whose `Item` is this item, by ID number. */
 export function adrsOf(planning: Planning, itemId: string): Adr[] {
 	return planning.adrs.filter((adr) => adr.item === itemId).sort((a, b) => Number(a.id.slice(4)) - Number(b.id.slice(4)));

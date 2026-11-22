@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-22T16:33:35+00:00",
+  "generatedAt": "2026-11-22T18:21:15+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-039-adrs-across-the-pm-skills",
-    "head": "ca4905efa5b7b943fb2b69e96ba542713064db6e"
+    "branch": "feat/r-025-docs-site-package-feature-pages-list-revisions",
+    "head": "c37812bbf8e8681237b6af2f28930f289792d11f"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -231,8 +231,8 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-025",
-        "title": "Docs-site package: feature pages list revisions",
+        "id": "R-013",
+        "title": "Docs-site package: publish and migrate",
         "section": "next",
         "position": 1,
         "label": "next",
@@ -240,32 +240,8 @@
           "V4"
         ],
         "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "a feature page for an item that another item's `Revisits` names lists that item under \"Revised by\", and a unit test in `packages/pm-docs-site` covers it.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "From R-012 design (2026-11-19): `dependents()` in `packages/pm-docs-site/src/lib/planning.ts` looks only at `dependsOn`, so a feature page lists its dependants but not the items whose `Revisits` names it; the R-012 graph already draws Revisits edges.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
-        "id": "R-013",
-        "title": "Docs-site package: publish and migrate",
-        "section": "next",
-        "position": 2,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
         "owner": "both",
-        "doneWhen": "`npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore` and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; and a scratch export at schemaVersion 5 fails the build until the package's range includes it.",
+        "doneWhen": "`npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore` and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; and a scratch export at schemaVersion 6 fails the build until the package's range includes it.",
         "size": "M",
         "dependsOn": [
           "R-009",
@@ -285,7 +261,7 @@
           "since": null
         },
         "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-        "note": "Rewrites `pm-docs-site` and Non-interruption rule 9, so it bumps the rules major.",
+        "note": "Rewrites `pm-docs-site` and Non-interruption rule 9, so it bumps the rules major. From the 2026-11-22 review: (1) Done when moved to schemaVersion 6, because R-038 moved the export to 5 (inbox 2026-11-22-1501). (2) R-028's accessibility fixes (popup trigger, backdrop close, heading levels, card tab stops, collapse toggles, timeline zoom focus) exist only in `packages/pm-docs-site`; confirm the migrated `docs-site/` no longer carries the gaps of `skills/pm-docs-site/templates/`, or port the fixes if R-013 slips (inbox 2026-11-20-1844). (3) `just docs-check` still logs `[WARN] [content] Entry docs → 404 was not found.` from the template site; confirm it is gone after the migration, or give the template the package's fix (Starlight `disable404Route: true` and its own `src/pages/404.astro`; not a draft `404` entry, which prints a draft notice) (inbox 2026-11-21-1035). (4) The brief's Performance ramification (\"Render static HTML first and enhance with small islands\") is superseded: R-010 design (2026-11-18) chose rich interactive React islands for every view (React over Preact), and its Ramifications omit the React runtime dependency every consumer now gets (inbox 2026-11-18-0911; spec `docs/superpowers/specs/2026-11-18-docs-site-package-board-filters-design.md`).",
         "revisits": null,
         "claimable": true
       },
@@ -293,7 +269,7 @@
         "id": "R-034",
         "title": "Engineering file and pm-engineering skill",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V5"
@@ -310,6 +286,55 @@
         },
         "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
         "note": null,
+        "revisits": null,
+        "claimable": true
+      },
+      {
+        "id": "R-041",
+        "title": "ADR skill follow-ups",
+        "section": "next",
+        "position": 3,
+        "label": "next",
+        "serves": [
+          "V5"
+        ],
+        "milestone": "M4",
+        "owner": "agent",
+        "doneWhen": "`pm-discover` and `pm-revise` write the `Supersedes` Notes line with its `<YYYY-MM-DD>` prefix; `pm-purview` step 6 excludes `check` mode; `pm-checkpoint` (`done`) finds an item's ADRs written in the main worktree; `pm-shape` and `pm-review` reuse a `## For this discussion` legend for an ADR; `pm-checkpoint` (`done`) commits or names captures written mid-workflow instead of stopping; `just lint-check` passes.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "From the 2026-11-22 review; R-039 final-review minors (inbox 2026-11-22-1632), a rules bump. (1) `pm-discover` and `pm-revise` write `Supersedes ADR-NNN <title> in design.` under an inbox file's `## Notes` without the `<YYYY-MM-DD>` prefix. (2) `pm-purview` in `check` mode, run inside `pm-shape` or `pm-discover`, is not stopped before step 6, whose ADR write contradicts \"This skill never runs `pm-adr`\" in those skills. (3) `pm-checkpoint` (`done`) looks for the item's ADRs on its branch; a design stage run in a separate worktree writes them in the main worktree (`pm-adr` Guard), so `done` stops with \"has no file\". (4) `pm-shape` and `pm-review` print `## For this question` for an ADR even when `## For this discussion` lists it. (5) An ADR or inbox file written mid-workflow is uncommitted at `done`, whose guard stops on uncommitted PM state in the item's worktree (predates R-039; applies to `pm-park` too). Spec: `docs/superpowers/specs/2026-11-22-adrs-across-the-pm-skills-design.md`.",
+        "revisits": null,
+        "claimable": true
+      },
+      {
+        "id": "R-040",
+        "title": "ADR link and export edge cases",
+        "section": "next",
+        "position": 4,
+        "label": "next",
+        "serves": [
+          "V4",
+          "V5"
+        ],
+        "milestone": "M4",
+        "owner": "agent",
+        "doneWhen": "an ADR whose Context holds `_R-012_`, `[R-012](https://x)`, and `![a > R-012](x.png)` builds with matching links and Linked from entries and an intact alt attribute (`test/links.test.ts` passes); an ADR section keeps a `` inside a code span through `pm-export write`; a file `ADR-004-x.md` headed `# ADR-003` fails the export or exports as ADR-004; the Decisions view's empty-status, no-status, single-category, and no-JavaScript states have tests that pin the chosen behaviour; `just test` and `just package-test` pass.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "From the 2026-11-22 review; R-038 final-review findings (inbox 2026-11-22-1554, 1555, 1556). (1) Bug, minor: `references()` linkifies an ADR's raw Markdown while the ADR page links the rendered HTML, so `_R-012_` gives a link with no Linked from entry, and `[R-012](url)` or image alt text gives a Linked from entry with no link. `linkHtml` also splits tags on a `>` inside an attribute value, and links IDs inside raw script and style blocks. Fix: build the ADR page's references from the rendered HTML (or have `linkHtml` return the keys it linked), and use the tag pattern `<(?:\"[^\"]*\"|'[^']*'|[^'\">])*>`. Files: `packages/pm-docs-site/src/lib/link-html.ts`, `src/lib/references.ts`. (2) Bug, minor: the exporter strips HTML comments everywhere, so an ADR section showing `` in code loses it, although ADR-002 promises sections verbatim; `parseAdr` takes the ID from the heading before the file name, so a mismatched heading duplicates an ID and the site overwrites one page. Fix: keep comments inside code in ADR sections, and prefer the file-name ID or fail on a duplicate. File: `skills/pm-export/scripts/planning.ts` (a rules bump). (3) Decisions view: turning every status chip off writes `?status=`, which reloads as the default; ADRs with no status ignore the status chips; with one category there is no category chip, so a shared `?category=x` filters invisibly until Clear; without JavaScript the superseded rows cannot be shown. Files: `packages/pm-docs-site/src/lib/decisions.ts`, `src/components/decisions/Decisions.tsx`.",
         "revisits": null,
         "claimable": true
       }
@@ -528,7 +553,7 @@
         "milestone": null,
         "owner": "agent",
         "doneWhen": "`pm-checkpoint` `switch` restores `Note` from the claim commit when `NOW.md` lacks one, the `now/fields` rule text says \"an optional Note after Revisits\", a `lint.test.ts` case fails a `Note` without the five item fields, and `just lint-check` passes.",
-        "size": "S",
+        "size": "M",
         "dependsOn": [],
         "status": {
           "value": "ready",
@@ -536,7 +561,55 @@
           "since": null
         },
         "brief": null,
-        "note": "From the 2026-11-20 review; R-026 final-review minors, a rules bump. (1) `skills/pm-lint/scripts/structure.ts` comment on `NOW_NOTE` says \"rules 22\"; the change shipped on rules 21 (21.0.0-pre.2). (2) The R-026 spec (design item 6) and plan (Task 3) still describe `just bump major` to rules 22; add a superseded line. (3) The `now/fields` rule text in `rules.md`, `rules.ts`, and the `checkNow` message says \"and then an optional Note\", readable as after `Started`; say \"an optional Note after Revisits\". (4) `pm-checkpoint` `switch` recovery runs only when `Serves`/`Size` are missing and never restores `Note`, so an item claimed under 21.0.0-pre.1 switches back without it; also restore `Note` from the claim-commit block. (5) `pm-next` steps 3 and 5 can each hold a `Note:`, but step 7 joins \"a held note\" in the singular; state the order for two. (6) A blank `- Note:` on an item: say \"a non-empty Note\" in `pm-next` step 7 and `pm-rejoin` step 3. (7) No test pins that a `Note` without the five item fields fails `now/fields`.",
+        "note": "From the 2026-11-20 review; R-026 final-review minors, a rules bump. (1) `skills/pm-lint/scripts/structure.ts` comment on `NOW_NOTE` says \"rules 22\"; the change shipped on rules 21 (21.0.0-pre.2). (2) The R-026 spec (design item 6) and plan (Task 3) still describe `just bump major` to rules 22; add a superseded line. (3) The `now/fields` rule text in `rules.md`, `rules.ts`, and the `checkNow` message says \"and then an optional Note\", readable as after `Started`; say \"an optional Note after Revisits\". (4) `pm-checkpoint` `switch` recovery runs only when `Serves`/`Size` are missing and never restores `Note`, so an item claimed under 21.0.0-pre.1 switches back without it; also restore `Note` from the claim-commit block. (5) `pm-next` steps 3 and 5 can each hold a `Note:`, but step 7 joins \"a held note\" in the singular; state the order for two. (6) A blank `- Note:` on an item: say \"a non-empty Note\" in `pm-next` step 7 and `pm-rejoin` step 3. (7) No test pins that a `Note` without the five item fields fails `now/fields`. From the 2026-11-22 review (inbox 2026-11-22-1425): (8) `expandTargets` in `skills/pm-lint/scripts/lint.ts` (added in `981977a`) expands a folder argument one level only, so `check planning/` misses `inbox/`, `briefs/`, and `decisions/` files; recurse, and test it. (9) No test covers `--staged` with a folder argument. (10) Cosmetic: ADR-001's Alternatives row says ADRs are \"exported\" (quoted from the spec), and the `pm-init` template row keeps \"(new project only)\" inside the code span because `scripts/validate.ts` parses it.",
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-042",
+        "title": "Docs-site package: deferred review minors",
+        "section": "later",
+        "position": 10,
+        "label": "later",
+        "serves": [
+          "V4"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "each finding listed in this Note is fixed or has a one-line won't-fix reason in the item's plan, `.astro` client scripts are covered by the island import guard, `start()` in `src/scripts/plan.ts` registers its listeners once per document, and `just package-test` passes.",
+        "size": "M",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "From the 2026-11-22 review; review minors in `packages/pm-docs-site` (inbox 2026-11-18-1222, 2026-11-20-1844 x3). R-010 board: (1) the 3s reveal of a pending board also fires on a slow but successful hydration; document it in `components.css` and the `useBoardUrlState.ts` header, or tune it. (2) The pending mark is also set on `/plan/roadmap/?owner=...`; scope it to the Board page. (3) `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`. (4) The lane header is a plain `div`; use an `h3` or `role=\"heading\"`. (5) Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed. (6) The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page. (7) A collapsed column's vertical title stretches the shared header row. (8) `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab`; its header comment lists only some changes. (9) `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array. (10) `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id`; `tagHref` never asserted. (11) `integration.test.ts` asserts the integration names two ways. (12) `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`. (13) The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP. R-028: (14) `test/island-imports.test.ts` scans only `.ts` and `.tsx` under `src/components`, so an `.astro` client `<script>` that value-imports a server-only lib is not caught. (15) `start()` in `src/scripts/plan.ts` adds `pointerdown`, `pointerup`, and `click` listeners on `document` each run, so they stack under view transitions. (16) `test/browser/board.browser.ts` test \"a localStorage that throws leaves the Board usable\" pins Starlight theme-script error counts per `<starlight-theme-select>`; a Starlight upgrade fails it with no fault in the package; loosen it or report the unguarded `localStorage` read upstream. R-031 (inbox 2026-11-21-1205): (17) `relativeImports` in `test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports in comments, and misses template-literal dynamic imports (false failures only). (18) In `scripts/check-demo.ts`, a `plan-empty` element's text is cut off at a nested `plan-empty` element. (19) `src/pages/plan/log.astro` labels a known ID whose page is not built with the logged title, not the export's current title, and no test covers that view-off case.",
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-043",
+        "title": "Per-session context report and upgrade notes move",
+        "section": "later",
+        "position": 11,
+        "label": "later",
+        "serves": [
+          "V2"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "`bun skills/pm-help/scripts/context.ts --root .` prints one line per session type (`always`, `resume`, `claim`, `checkpoint`, `review`) with estimated tokens and the three largest files; the managed section holds no `Version N` paragraphs and `skills/pm-setup/references/upgrade-notes.md` holds them; the report's `always` line is at least 1,400 tokens lower than before; a `planning/research/` report records the before and after table; `just lint-check` and `just validate` pass.",
+        "size": "M",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-22-agent-context-tidy.md",
+        "note": "From pm-shape 2026-11-22 (inbox 2026-11-22-1232). A rules bump. Dependency-free estimate (characters / 4), shipped in `pm-help` diagnose rather than a new skill; the `pm-tidy` archive slice is deferred until the report's PM state line recommends it.",
         "revisits": null,
         "claimable": false
       }
@@ -546,13 +619,6 @@
     "columns": {
       "now": [],
       "next": [
-        {
-          "id": "R-025",
-          "title": "Docs-site package: feature pages list revisions",
-          "owner": "agent",
-          "size": "S",
-          "detail": "ready"
-        },
         {
           "id": "R-013",
           "title": "Docs-site package: publish and migrate",
@@ -566,11 +632,34 @@
           "owner": "agent",
           "size": "M",
           "detail": "ready"
+        },
+        {
+          "id": "R-041",
+          "title": "ADR skill follow-ups",
+          "owner": "agent",
+          "size": "S",
+          "detail": "ready"
+        },
+        {
+          "id": "R-040",
+          "title": "ADR link and export edge cases",
+          "owner": "agent",
+          "size": "S",
+          "detail": "ready"
         }
       ],
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-22",
+          "id": "R-025",
+          "title": "Docs-site package: feature pages list revisions",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-22-feature-pages-list-revisions.md",
+          "result": "branch feat/r-025-docs-site-package-feature-pages-list-revisions"
+        },
         {
           "date": "2026-11-22",
           "id": "R-039",
@@ -784,6 +873,15 @@
       {
         "date": "2026-11-22",
         "kind": "done",
+        "id": "R-025",
+        "title": "Docs-site package: feature pages list revisions",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-025-docs-site-package-feature-pages-list-revisions"
+      },
+      {
+        "date": "2026-11-22",
+        "kind": "done",
         "id": "R-039",
         "title": "ADRs across the PM skills",
         "milestone": "M4",
@@ -816,6 +914,15 @@
         "milestone": "M1",
         "owner": "agent",
         "result": "branch feat/r-029-dev-browser-webserver"
+      },
+      {
+        "date": "2026-11-22",
+        "kind": "review",
+        "id": null,
+        "title": null,
+        "milestone": null,
+        "owner": null,
+        "result": "Inbox 15 to 1. Added R-040, R-041, R-042; 11 files merged into R-013, R-032, R-040, and R-042, 1 to shape; R-013 Done when moved to schemaVersion 6; R-032 resized to M; Next filled from Later with R-041 and R-040."
       },
       {
         "date": "2026-11-21",
@@ -1055,6 +1162,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-22",
+        "id": "R-025",
+        "title": "Docs-site package: feature pages list revisions",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-22-feature-pages-list-revisions.md",
+        "result": "branch feat/r-025-docs-site-package-feature-pages-list-revisions"
+      },
       {
         "date": "2026-11-22",
         "id": "R-039",
@@ -1297,6 +1413,10 @@
     ],
     "reviews": [
       {
+        "date": "2026-11-22",
+        "summary": "Inbox 15 to 1. Added R-040, R-041, R-042; 11 files merged into R-013, R-032, R-040, and R-042, 1 to shape; R-013 Done when moved to schemaVersion 6; R-032 resized to M; Next filled from Later with R-041 and R-040."
+      },
+      {
         "date": "2026-11-20",
         "summary": "Inbox 12 to 3. Added R-029, R-030, R-031, R-032; 7 files merged or collected, 1 to shape, 1 kept parked; R-013 now depends on R-029 and R-031; Next filled from Later with R-028, R-031, R-029, R-025, R-013."
       },
@@ -1308,239 +1428,51 @@
   },
   "inbox": [
     {
-      "file": "planning/inbox/2026-11-18-0911-brief-static-first-superseded.md",
-      "title": "Brief still says docs-site views are static first",
-      "captured": "2026-11-18 09:11",
-      "source": "agent (R-010 design)",
-      "kind": "tech-debt",
+      "file": "planning/inbox/2026-11-22-1739-github-issue-project-sync.md",
+      "title": "GitHub issue and Project sync",
+      "captured": "2026-11-22 17:39",
+      "source": "user",
+      "kind": "feature",
       "severity": null,
-      "affects": "planning/briefs/2026-11-17-docs-site-package.md",
-      "context": "R-010 design",
-      "discuss": "yes",
-      "related": [
-        "R-010",
-        "R-011",
-        "R-012"
-      ],
-      "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-      "reviewed": "never",
-      "idea": "In R-010 design (2026-11-18) the user chose rich interactive components for every docs-site view, with React islands (React over Preact, so R-011 and R-012 can use React-first libraries such as React Flow). The brief's Performance ramification still says \"Render static HTML first and enhance with small islands\", and its Ramifications do not mention the React runtime dependency every consumer now gets. Update the brief (pm-shape) so R-011 and R-012 design from the new direction."
+      "affects": null,
+      "context": null,
+      "discuss": "no",
+      "related": [],
+      "brief": "planning/briefs/2026-11-22-github-issue-project-sync.md",
+      "reviewed": "2026-11-22",
+      "idea": "GitHub issue / Project sync"
     },
     {
-      "file": "planning/inbox/2026-11-18-1222-r-010-deferred-board-polish.md",
-      "title": "R-010 deferred board polish",
-      "captured": "2026-11-18 12:22",
-      "source": "agent (R-010 execute, final review)",
+      "file": "planning/inbox/2026-11-22-1809-done-revisions-lose-revised-by.md",
+      "title": "Done revisions lose their Revised by link",
+      "captured": "2026-11-22 18:09",
+      "source": "agent (R-025 design)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "skills/pm-export/scripts/planning.ts, packages/pm-docs-site/src/lib/planning.ts",
+      "context": "R-025 design",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "A feature page lists \"Revised by\" only while the revising item is open. `LOG.md` Done lines and the export's `log.done` entries carry no `Revisits`, so `features()` in `packages/pm-docs-site/src/lib/planning.ts` (line 284) gives done items `revisits: null`, and the link disappears once the revision closes. A fix adds `Revisits` to the Done line, the exporter, the schema (schemaVersion 6, which pairs with R-037 Engineering export and docs-site view), the pm-lint rule, and the site."
+    },
+    {
+      "file": "planning/inbox/2026-11-22-1821-r-025-review-minors.md",
+      "title": "R-025 final review minors",
+      "captured": "2026-11-22 18:21",
+      "source": "agent (R-025 execute)",
       "kind": "tech-debt",
       "severity": null,
       "affects": "packages/pm-docs-site",
-      "context": "R-010 execute",
+      "context": "R-025 execute",
       "discuss": "no",
       "related": [
-        "R-011",
-        "R-012"
-      ],
-      "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-      "reviewed": "2026-11-19",
-      "idea": "Minor findings from R-010's task and final reviews, triaged \"can wait\":\n\n- The 3s reveal of a pending board also fires on a slow but successful hydration (brief unfiltered view, then the filtered one); say so in `components.css` and the `useBoardUrlState.ts` header, or tune it.\n- The pending mark is also set on `/plan/roadmap/?owner=...` (inert today); scope it to the Board page when R-011 adds Roadmap filters.\n- `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`.\n- The lane header is a plain `div`; an `h3` or `role=\"heading\"` would make lanes navigable.\n- Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed.\n- The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page; watch it for R-011 and R-012.\n- A collapsed column's vertical title stretches the shared header row.\n- `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab` (suggests drag and drop); its header comment lists only some changes.\n- `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array.\n- `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id` (key fallback, `href: null`, and the Done-tag rule untested); `tagHref` never asserted.\n- `integration.test.ts` asserts the integration names two ways.\n- `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`.\n- The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP."
-    },
-    {
-      "file": "planning/inbox/2026-11-20-1844-import-guard-skips-astro.md",
-      "title": "Island import guard skips Astro files",
-      "captured": "2026-11-20 18:44",
-      "source": "agent (R-028 execute, final review)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "packages/pm-docs-site/test/island-imports.test.ts",
-      "context": "R-028 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "R-028 final review: `test/island-imports.test.ts` scans only `.ts` and `.tsx` under `src/components`. An `.astro` component script that value-imports a server-only lib inside a client `<script>` would not be caught. Decide whether `.astro` client scripts need the same guard."
-    },
-    {
-      "file": "planning/inbox/2026-11-20-1844-plan-ts-listeners-stack.md",
-      "title": "Popup script listeners stack on re-run",
-      "captured": "2026-11-20 18:44",
-      "source": "agent (R-028 execute, final review)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "packages/pm-docs-site/src/scripts/plan.ts",
-      "context": "R-028 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "R-028 final review: `start()` in `src/scripts/plan.ts` adds `pointerdown`, `pointerup`, and `click` listeners on `document` each time it runs. If it ever runs twice on one page (for example under Astro view transitions), the listeners stack. Guard `start()` so it runs once per document."
-    },
-    {
-      "file": "planning/inbox/2026-11-20-1844-storage-test-starlight-counts.md",
-      "title": "Board storage test pins Starlight error counts",
-      "captured": "2026-11-20 18:44",
-      "source": "agent (R-028 execute, final review)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "packages/pm-docs-site/test/browser/board.browser.ts",
-      "context": "R-028 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "R-028: the test `a localStorage that throws leaves the Board usable` excludes Starlight theme-script errors by name, message, and an exact count per `<starlight-theme-select>`. A Starlight upgrade that changes those scripts will fail it with no fault in the package; update the expected counts then, or report the unguarded `localStorage` read upstream to Starlight."
-    },
-    {
-      "file": "planning/inbox/2026-11-20-1844-template-kit-a11y-gaps.md",
-      "title": "Template site keeps R-028 accessibility gaps",
-      "captured": "2026-11-20 18:44",
-      "source": "agent (R-028 execute, final review)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "skills/pm-docs-site/templates/, docs-site/",
-      "context": "R-028 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "R-028 fixed the popup trigger, backdrop close, heading levels, card tab stops, collapse toggles, and timeline zoom focus in `packages/pm-docs-site` only. The copies in `skills/pm-docs-site/templates/` and the rendered `docs-site/` keep the old gaps until R-013 Docs-site package: publish and migrate moves the site onto the package. Check R-013 removes them, or port the fixes if R-013 slips."
-    },
-    {
-      "file": "planning/inbox/2026-11-21-1035-template-site-404-warning.md",
-      "title": "Template docs site still logs the 404 warning",
-      "captured": "2026-11-21 10:35",
-      "source": "agent (R-031 execute)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "skills/pm-docs-site/templates/site/src/content.config.ts",
-      "context": "R-031 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "R-031 fixes the `[WARN] [content] Entry docs → 404 was not found.` warning in the package (`packages/pm-docs-site`), but `docs-site/` is still rendered from `skills/pm-docs-site/templates/site`, so `just docs-check` still logs it. Fixing the template is a `skills/` change (a rules bump); R-013's migration to the package removes it, or the template takes the package's fix: Starlight's `disable404Route: true` and its own `src/pages/404.astro` (a draft `404` docs entry is not an option: it prints Starlight's draft notice on the live page)."
-    },
-    {
-      "file": "planning/inbox/2026-11-21-1205-r-031-review-minors.md",
-      "title": "R-031 final-review minors",
-      "captured": "2026-11-21 12:05",
-      "source": "agent (R-031 execute)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "packages/pm-docs-site, scripts/check-demo.ts",
-      "context": "R-031 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "Deferred minors from the R-031 final review. (1) `relativeImports` in `packages/pm-docs-site/test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports inside comments, and misses template-literal dynamic imports (`` import(`./x`) ``); these give false failures only. (2) In `scripts/check-demo.ts`, the text of a `plan-empty` element is cut off at a nested `plan-empty` element; both are still reported. (3) `src/pages/plan/log.astro` labels an ID that is known but whose page is not built with the logged title, not the export's current title, and no test covers that view-off case."
-    },
-    {
-      "file": "planning/inbox/2026-11-22-1232-agent-context-tidy-skill.md",
-      "title": "Agent context analysis and planning tidy skill",
-      "captured": "2026-11-22 12:32",
-      "source": "user",
-      "kind": "improvement",
-      "severity": null,
-      "affects": null,
-      "context": "R-033 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "Do a performance analysis to ensure we are agentic token/ context aware. Keep things relevent for agents. This can be a skill for 'tidying up the planning state'"
-    },
-    {
-      "file": "planning/inbox/2026-11-22-1425-lint-folder-argument-hardening.md",
-      "title": "Harden the pm-lint folder argument",
-      "captured": "2026-11-22 14:25",
-      "source": "agent (R-033 finish)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "skills/pm-lint/scripts/lint.ts",
-      "context": "R-033 execute",
-      "discuss": "no",
-      "related": [
-        "R-033",
-        "R-039"
+        "R-042"
       ],
       "brief": null,
       "reviewed": "never",
-      "idea": "`expandTargets` in `skills/pm-lint/scripts/lint.ts` (added in `981977a`) expands a folder argument one level only, so `check planning/` would miss `inbox/`, `briefs/`, and `decisions/` files; and no test covers `--staged` combined with a folder argument. Also cosmetic: ADR-001's Alternatives row says ADRs are \"exported\" (quoted from the spec), and the `pm-init` template row keeps \"(new project only)\" inside the code span because `scripts/validate.ts` parses it."
-    },
-    {
-      "file": "planning/inbox/2026-11-22-1501-r-013-schema-check-moves-to-6.md",
-      "title": "R-013 schema check moves to 6",
-      "captured": "2026-11-22 15:01",
-      "source": "agent (R-038 design)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "R-013",
-      "context": "R-038 design",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "R-038 moves the export to schemaVersion 5, so the `Done when` of R-013 Docs-site package: publish and migrate (\"a scratch export at schemaVersion 5 fails the build\") must become 6. Edit with `pm-item` once R-038 merges (spec docs/superpowers/specs/2026-11-22-adr-export-and-decisions-view-design.md, Follow-ups)."
-    },
-    {
-      "file": "planning/inbox/2026-11-22-1554-adr-page-link-edge-cases.md",
-      "title": "ADR page link edge cases",
-      "captured": "2026-11-22 15:54",
-      "source": "agent (R-038 final review)",
-      "kind": "bug",
-      "severity": "minor",
-      "affects": "packages/pm-docs-site/src/lib/link-html.ts, src/lib/references.ts",
-      "context": "R-038 finish",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "references() linkifies an ADR's raw Markdown while the ADR page links the rendered HTML, so `_R-012_` gives a link with no Linked from entry, and `[R-012](url)` or image alt text gives a Linked from entry with no link. linkHtml also splits tags on a `>` inside an attribute value (image alt text), which breaks the markup, and links IDs inside raw script and style blocks. Fix: build the ADR page's references from the rendered HTML (or have linkHtml return the keys it linked), and use the tag pattern `<(?:\"[^\"]*\"|'[^']*'|[^'\">])*>`."
-    },
-    {
-      "file": "planning/inbox/2026-11-22-1555-adr-export-edge-cases.md",
-      "title": "ADR export edge cases",
-      "captured": "2026-11-22 15:55",
-      "source": "agent (R-038 final review)",
-      "kind": "bug",
-      "severity": "minor",
-      "affects": "skills/pm-export/scripts/planning.ts",
-      "context": "R-038 finish",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "The exporter strips HTML comments everywhere, so an ADR section that shows `` in a code span or fence loses it, although ADR-002 promises sections verbatim. parseAdr takes the ID from the heading before the file name, so an unlinted `ADR-004-x.md` headed `# ADR-003` duplicates ADR-003 and the site silently overwrites one page. Fix: keep comments inside code in ADR sections, and prefer the file-name ID or fail the export on a duplicate ID."
-    },
-    {
-      "file": "planning/inbox/2026-11-22-1556-decisions-view-filter-edge-states.md",
-      "title": "Decisions view filter edge states",
-      "captured": "2026-11-22 15:56",
-      "source": "agent (R-038 final review)",
-      "kind": "improvement",
-      "severity": null,
-      "affects": "packages/pm-docs-site/src/lib/decisions.ts, src/components/decisions/Decisions.tsx",
-      "context": "R-038 finish",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "In the Decisions view, turning every status chip off writes `?status=`, which reloads as the default; ADRs with no status ignore the status chips; with one category there is no category chip, so a shared `?category=x` filters invisibly until Clear; and without JavaScript the superseded rows cannot be shown. Decide the intended behaviour and pin it with tests."
-    },
-    {
-      "file": "planning/inbox/2026-11-22-1632-r-039-review-minors.md",
-      "title": "R-039 final review minors",
-      "captured": "2026-11-22 16:32",
-      "source": "agent (R-039 execute)",
-      "kind": "improvement",
-      "severity": null,
-      "affects": "skills/pm-discover/SKILL.md, skills/pm-revise/SKILL.md, skills/pm-purview/SKILL.md, skills/pm-checkpoint/SKILL.md, skills/pm-shape/SKILL.md, skills/pm-review/SKILL.md",
-      "context": "R-039 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "Minor findings from the R-039 final review, deferred:\n\n- `pm-discover` and `pm-revise` write `Supersedes ADR-NNN <title> in design.` under an inbox file's `## Notes` without the `<YYYY-MM-DD>` prefix the Inbox file format uses.\n- `pm-purview` in `check` mode, run inside `pm-shape` or `pm-discover`, is not explicitly stopped before step 6, whose ADR write contradicts \"This skill never runs `pm-adr`\" in those skills; exclude `check` mode from step 6.\n- `pm-checkpoint` (`done`) looks for the item's ADRs on its branch; a design stage run in a separate worktree writes them in the main worktree (`pm-adr` Guard), so `done` would stop with \"has no file\".\n- `pm-shape` and `pm-review` print `## For this question` for an ADR even when a `## For this discussion` legend already lists it; the Communication contract says to reuse it.\n- An ADR or inbox file written mid-workflow is uncommitted at `done`, whose guard stops on uncommitted PM state in the item's worktree (predates R-039; applies to `pm-park` too)."
+      "idea": "Deferred minors from the R-025 final review. (1) `revisers()` order is not pinned by a test: every assertion in `test/planning.test.ts` (the revisers case) returns one item; give a second item `revisits: 'R-003'` in the populated case and assert both IDs in `features()` order. (2) `src/lib/references.ts` line 188 still checks `other.dependsOn.includes(feature.id) || other.revisits === feature.id` inline; it could reuse `dependents()` and `revisers()`."
     }
   ],
   "briefs": [
@@ -1578,6 +1510,30 @@
       "decision": "2026-11-20 Keep it parked. Reason: SCOPE CHANGE to v1; no `V` line or milestone covers it and M1 Reproducible docs site is the current focus. Next: `pm-strategy` adds a `V` line and a milestone after M1, then the four slices go to Later under it.",
       "problem": "A solo developer's technology choices, adopted packages, and engineering principles are decided once and then lost: nothing in PM state records what was adopted and why (answer 2026-11-20).",
       "doneWhen": "`pm-init` in a scratch repository with a `package.json` and an `AGENTS.md` writes `planning/ENGINEERING.md` with `## Technology` and `## Principles`, each entry citing its `Source`, and `pm-lint check` passes on it.",
+      "revisions": []
+    },
+    {
+      "path": "planning/briefs/2026-11-22-agent-context-tidy.md",
+      "id": "R-043",
+      "title": "Agent context analysis and planning tidy skill",
+      "status": "on roadmap (R-043)",
+      "origin": "planning/inbox/2026-11-22-1232-agent-context-tidy-skill.md",
+      "updated": "2026-11-22",
+      "decision": "2026-11-22 Added to Later as R-043 Per-session context report and upgrade notes move (Unassigned, M). Why: preventive work with no observed symptom, serving no milestone, while Next is full of M1 and M4 work.",
+      "problem": "An agent session loads the managed rules (65 KB) on every start, plus each skill it runs, plus the PM files those skills read. Nothing measures that cost per session type, so growth in the rules, the skills, or the planning state goes unnoticed until it hurts (answer 2026-11-22: both rules and state, measured first).",
+      "doneWhen": "`bun skills/pm-help/scripts/context.ts --root .` prints one line per session type (`always`, `resume`, `claim`, `checkpoint`, `review`) with estimated tokens and the three largest files.",
+      "revisions": []
+    },
+    {
+      "path": "planning/briefs/2026-11-22-github-issue-project-sync.md",
+      "id": null,
+      "title": "GitHub issue and Project sync",
+      "status": "parked",
+      "origin": "planning/inbox/2026-11-22-1739-github-issue-project-sync.md",
+      "updated": "2026-11-22",
+      "decision": "2026-11-22 Kept parked. Why: no V line covers capture from outside, and there is no measured evidence yet (0 issues on this repository). Revisit when a consumer reports a lost issue, or when v1 is done.",
+      "problem": "Bug reports and requests filed as GitHub issues, on purview-dev/pm-skills or on a consumer's repository, never reach `planning/`. They have to be copied in by hand, and some are lost (answers 2026-11-22).",
+      "doneWhen": "With `Issue import: gh issue list --state open --json number,title,body,url`, `pm-review` in a scratch repository lists only the open issues not already linked from an inbox file, and parks the chosen ones as inbox files that pass `pm-lint check`.",
       "revisions": []
     },
     {
@@ -1671,13 +1627,13 @@
     }
   ],
   "counts": {
-    "next": 3,
-    "later": 9,
+    "next": 4,
+    "later": 11,
     "nextMax": 5,
-    "openInbox": 15,
-    "discuss": 1,
+    "openInbox": 2,
+    "discuss": 0,
     "shapingBriefs": 0,
-    "done": 23,
+    "done": 24,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1686,12 +1642,13 @@
     "greenRisks": 0
   },
   "checks": {
-    "reviewDue": true,
-    "lastReview": "2026-11-20",
+    "reviewDue": false,
+    "lastReview": "2026-11-22",
     "claimable": [
-      "R-025",
       "R-013",
-      "R-034"
+      "R-034",
+      "R-041",
+      "R-040"
     ],
     "drift": true
   }

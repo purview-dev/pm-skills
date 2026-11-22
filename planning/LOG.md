@@ -4,6 +4,7 @@
 
 ## Done
 
+- 2026-11-22 R-025 Docs-site package: feature pages list revisions. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-22-feature-pages-list-revisions.md. Result: branch feat/r-025-docs-site-package-feature-pages-list-revisions.
 - 2026-11-22 R-039 ADRs across the PM skills. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-22-adrs-across-the-pm-skills.md. Result: branch feat/r-039-adrs-across-the-pm-skills.
 - 2026-11-22 R-038 ADR export and Decisions view. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-22-adr-export-and-decisions-view.md. Result: branch feat/r-038-adr-export-and-decisions-view.
 - 2026-11-22 R-033 ADR record, pm-adr, and design handoff. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-22-adr-record.md. Result: branch feat/r-033-adr-directory-setting-and-design-handoff.
@@ -44,6 +45,7 @@
 
 ## Reviews
 
+- 2026-11-22 Inbox 15 to 1. Added R-040, R-041, R-042; 11 files merged into R-013, R-032, R-040, and R-042, 1 to shape; R-013 Done when moved to schemaVersion 6; R-032 resized to M; Next filled from Later with R-041 and R-040.
 - 2026-11-20 Inbox 12 to 3. Added R-029, R-030, R-031, R-032; 7 files merged or collected, 1 to shape, 1 kept parked; R-013 now depends on R-029 and R-031; Next filled from Later with R-028, R-031, R-029, R-025, R-013.
 - 2026-11-19 Inbox 19 to 3. Added R-022, R-023, R-024, R-025, R-026; 9 files merged, 1 dropped, 2 to shape; R-019 promoted to Next for re-slicing; Next reordered.
 

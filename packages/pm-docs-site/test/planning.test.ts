@@ -24,6 +24,7 @@ import {
 	milestoneSummaries,
 	PlanningExportError,
 	planProgress,
+	revisers,
 	riskMatrix,
 	roadmapGroups,
 	severityToPriority,
@@ -371,6 +372,17 @@ describe('features', () => {
 		expect(dependents(all, 'R-020')).toEqual([]);
 		expect(briefOf(planning, all[0]!)?.path).toBe('planning/briefs/2026-11-09-invoice-export.md');
 		expect(briefOf(planning, { id: 'R-013', brief: null })).toBeNull();
+	});
+
+	it('finds the items that revise an item, an active one included', () => {
+		expect(revisers(all, 'R-025').map((feature) => [feature.id, feature.title])).toEqual([['R-020', 'README matches the code']]);
+		expect(revisers(all, 'R-013')).toEqual([]);
+
+		const populated = {
+			...planning,
+			now: { ...planning.now, item: { id: 'R-012', title: 'Invoice export', serves: [], owner: 'agent', size: 'S', dependsOn: [], revisits: 'R-003' } },
+		} as unknown as Planning;
+		expect(revisers(features(populated), 'R-003').map((feature) => feature.id)).toEqual(['R-012']);
 	});
 });
 
