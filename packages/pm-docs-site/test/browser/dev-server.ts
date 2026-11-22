@@ -9,22 +9,17 @@
 // exit handler, so the next run cleans up after the last. Its dev.log holds the
 // last run's dev server output, with a `[dev-server]` line for each restart.
 import { spawn, spawnSync } from 'node:child_process';
-import { appendFileSync, cpSync, mkdirSync, readdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { appendFileSync, cpSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { classifyDevLine } from './dev-log.ts';
+import { classifyDevLine, DEV_LOG, DIR } from './dev-log.ts';
 
 const PORT = Number(process.env.PORT ?? 4398);
 const PACKAGE = fileURLToPath(new URL('../../', import.meta.url));
 const FIXTURES = join(PACKAGE, 'test', 'fixtures');
-// The long path: Windows' temp folder can be an 8.3 short name, which Vite's
-// serving allow list (a real path) does not match.
-const DIR = join(realpathSync.native(tmpdir()), 'pm-docs-site-dev-browser');
 // The space is deliberate, as in install.test.ts: site paths must survive it.
 const CONSUMER = join(DIR, 'consumer site');
-const DEV_LOG = join(DIR, 'dev.log');
 
 function run(cmd: string[], cwd: string): void {
 	const result = spawnSync(cmd[0]!, cmd.slice(1), { cwd, stdio: 'inherit' });

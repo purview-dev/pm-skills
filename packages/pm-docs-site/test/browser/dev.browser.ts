@@ -4,8 +4,12 @@
 // dependencies differently in dev, a dependency it does not pre-bundle reaches
 // the browser as raw CommonJS, and every module an island imports reaches the
 // browser, so one that imports `node:fs` breaks the island.
+import { readFileSync } from 'node:fs';
+
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
+
+import { DEV_LOG } from './dev-log.ts';
 
 /** Collects the page's console errors and page errors. Astro reports a failed island with console.error, not a page error. */
 function collectErrors(page: Page): string[] {
@@ -18,6 +22,17 @@ function collectErrors(page: Page): string[] {
 
 	return errors;
 }
+
+test('pm-docs-site dev starts without an update check or a restart', () => {
+	// dev-server.ts writes the dev server's output to dev.log before Playwright
+	// starts the tests. The update check's settings write restarts the server
+	// mid-start on Windows, which leaves every page answering 500 (R-029).
+	const log = readFileSync(DEV_LOG, 'utf8');
+
+	expect(log).toContain('ready in');
+	expect(log).not.toContain('New version of Astro available');
+	expect(log).not.toContain('[dev-server]');
+});
 
 test('a filtered board hydrates under pm-docs-site dev', async ({ page }) => {
 	test.setTimeout(120_000);

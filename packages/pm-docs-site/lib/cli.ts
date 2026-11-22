@@ -10,6 +10,7 @@ import { resolve } from 'node:path';
 
 import type { AstroInlineConfig } from 'astro';
 
+import { disableUpdateCheck } from './dev-env.ts';
 import { resolveOptions } from './options.ts';
 import { parseExport } from './schema-version.ts';
 import { loadSiteOptions } from './site-options.ts';
@@ -98,6 +99,7 @@ async function main(): Promise<number | null> {
 		return 0;
 	}
 
+	disableUpdateCheck(process.env);
 	await astro.dev(inline);
 	// The dev server keeps the process alive until it is stopped.
 	return null;
