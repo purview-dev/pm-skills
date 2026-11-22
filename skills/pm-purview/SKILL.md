@@ -108,6 +108,16 @@ snapshot of `https://purview.dev/llms.txt`.
    build` passes with Purview.BuildSdk imported and no warnings", `Size`,
    `Note:` with the docs URL and report path). Park the ones the user
    wants to think about as inbox files with `Discuss: yes`.
+   - **Record each accepted one as an ADR.** Read the accepted ADR titles
+     in the decisions folder (Shared definitions: **Read before
+     deciding**). When one covers the same decision, apply `pm-adr
+     supersede <ADR-NNN>`; otherwise apply `pm-adr new` with `Status:
+     accepted`, `Category: tooling` unless another suggested word fits
+     better, and `Item: none`. The decision is the recommendation; its
+     alternatives and the challenge from step 4 go under `## Alternatives`.
+     Apply only their write steps, with no `pm-adr` question, output, or
+     commit: the user's acceptance is the decision, and step 7 commits
+     the ADRs.
    - For a new project, the first item is usually the repository
      foundation (Build SDK and the small scale profile). Put it first, as
      every later item builds on it.
@@ -128,6 +138,7 @@ snapshot of `https://purview.dev/llms.txt`.
 - Recommended: <n> (<names> | none)
 - Ruled out: <n>
 - Report: <path>
+- ADRs: <ADR-NNN <title> (accepted), ... | none>
 - PM state: <commit result>
 
 ## Do this next
