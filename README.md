@@ -42,6 +42,7 @@ skill set, other install options, and the first run are in
 | [`pm-park`](skills/pm-park/SKILL.md) | Capture an idea, bug, question, or inspiration in one line | Any time |
 | [`pm-bug`](skills/pm-bug/SKILL.md) | Log a defect with the facts a fix needs, and route it | Any time |
 | [`pm-risk`](skills/pm-risk/SKILL.md) | Capture a risk in one line; add, update, re-rate (RAG), review, mitigate, close, or remove risks | Any time (capture and view mid-task) |
+| [`pm-adr`](skills/pm-adr/SKILL.md) | Record, supersede, accept, deprecate, view, check, or import architecture decision records | Any time (record and view mid-task) |
 | [`pm-revise`](skills/pm-revise/SKILL.md) | Correct built work: rewind a stage, fix in place, or open a revision item | Built work is wrong, even mid-workflow |
 | [`pm-shape`](skills/pm-shape/SKILL.md) | Brainstorm and challenge one idea into a brief and a decision | No active workflow |
 | [`pm-discover`](skills/pm-discover/SKILL.md) | Analyse code, history, and usage for evidence; answer product questions | No active workflow |
