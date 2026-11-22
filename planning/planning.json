@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-22T10:12:03+00:00",
+  "generatedAt": "2026-11-22T11:32:55+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-029-dev-browser-webserver",
-    "head": "11a51a0a52a6cdce1557340c537cd35e5ba97a19"
+    "branch": "main",
+    "head": "9de741b00e5c1c4d67b8ebda3cda9986ea8220e4"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -1228,9 +1228,11 @@
       "severity": null,
       "affects": null,
       "context": "R-029 execute",
-      "discuss": "yes",
-      "related": [],
-      "brief": null,
+      "discuss": "no",
+      "related": [
+        "planning/briefs/2026-11-20-technology-and-engineering-principles.md"
+      ],
+      "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
       "reviewed": "never",
       "idea": "Where do ADRs fit in to the overall project? Given we also make use of a technology/ stack."
     }
@@ -1273,6 +1275,18 @@
       "revisions": []
     },
     {
+      "path": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
+      "id": null,
+      "title": "Where do ADRs fit in",
+      "status": "parked",
+      "origin": "planning/inbox/2026-11-22-0952-where-do-adrs-fit.md",
+      "updated": "2026-11-22",
+      "decision": "2026-11-22 Keep it parked. Reason: SCOPE CHANGE to v1; no `V` line or milestone covers it and M1 Reproducible docs site is the current focus. Answer to the question: ADRs record technical decisions only, live in a configurable `docs/adr/`, are written by the design stage, and are read by every session through the managed rules. Next: `pm-strategy` adds a `V` line and a milestone after M1 covering this and the engineering-principles brief.",
+      "problem": "Technical decisions (why this library, why this pattern) are buried in each item's design spec and are not findable later, by the user or by an agent (answer 2026-11-22).",
+      "doneWhen": "`pm-init` in a scratch repository with `docs/adr/` writes `ADR directory: docs/adr/` to `planning/config.md`, and `pm-lint check` passes.",
+      "revisions": []
+    },
+    {
       "path": "planning/briefs/R-020-docs-site-demo-fixture.md",
       "id": "R-020",
       "title": "Docs-site package: rich demo planning fixture",
@@ -1300,7 +1314,7 @@
     "later": 6,
     "nextMax": 5,
     "openInbox": 9,
-    "discuss": 2,
+    "discuss": 1,
     "shapingBriefs": 0,
     "done": 20,
     "dropped": 5,
@@ -1317,6 +1331,6 @@
       "R-025",
       "R-013"
     ],
-    "drift": true
+    "drift": false
   }
 }
