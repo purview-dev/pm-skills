@@ -6,12 +6,15 @@
 //
 // The scratch folder is fixed and removed at the start of every run:
 // Playwright ends this process with a tree kill on Windows, which skips any
-// exit handler, so the next run cleans up after the last.
+// exit handler, so the next run cleans up after the last. Its dev.log holds the
+// last run's dev server output, with a `[dev-server]` line for each restart.
 import { spawn, spawnSync } from 'node:child_process';
-import { cpSync, mkdirSync, readdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import { appendFileSync, cpSync, mkdirSync, readdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { classifyDevLine } from './dev-log.ts';
 
 const PORT = Number(process.env.PORT ?? 4398);
 const PACKAGE = fileURLToPath(new URL('../../', import.meta.url));
@@ -21,6 +24,7 @@ const FIXTURES = join(PACKAGE, 'test', 'fixtures');
 const DIR = join(realpathSync.native(tmpdir()), 'pm-docs-site-dev-browser');
 // The space is deliberate, as in install.test.ts: site paths must survive it.
 const CONSUMER = join(DIR, 'consumer site');
+const DEV_LOG = join(DIR, 'dev.log');
 
 function run(cmd: string[], cwd: string): void {
 	const result = spawnSync(cmd[0]!, cmd.slice(1), { cwd, stdio: 'inherit' });
@@ -62,8 +66,28 @@ writeFileSync(
 // Through the installed package's CLI under Node, as a consumer's `dev` script runs it.
 const dev = spawn(process.platform === 'win32' ? 'node.exe' : 'node', [join(CONSUMER, 'node_modules', '@purview-dev', 'pm-docs-site', 'dist', 'cli.js'), 'dev'], {
 	cwd: CONSUMER,
-	stdio: 'inherit',
+	stdio: ['ignore', 'pipe', 'pipe'],
 });
+
+// Echo the dev server's output and keep it in dev.log, flagging every line that
+// shows a restart. Appended per chunk: the tree kill skips any exit handler.
+function record(chunk: Buffer, out: NodeJS.WriteStream): void {
+	out.write(chunk);
+	appendFileSync(DEV_LOG, chunk);
+
+	for (const line of chunk.toString('utf8').split(/\r?\n/)) {
+		const event = classifyDevLine(line);
+
+		if (event) {
+			const note = `[dev-server] ${new Date().toISOString()} ${event}\n`;
+			process.stderr.write(note);
+			appendFileSync(DEV_LOG, note);
+		}
+	}
+}
+
+dev.stdout.on('data', (chunk: Buffer) => record(chunk, process.stdout));
+dev.stderr.on('data', (chunk: Buffer) => record(chunk, process.stderr));
 
 const stop = () => {
 	dev.kill();
