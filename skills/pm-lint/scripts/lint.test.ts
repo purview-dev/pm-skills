@@ -374,6 +374,16 @@ describe("the command line and hooks", () => {
     }
   });
 
+  it("expands a folder argument into the PM files under it", async () => {
+    const root = repo({ "decisions/ADR-009-bad.md": adr("ADR-009", "Bad", { Status: "maybe" }) });
+    const restore = quiet();
+    try {
+      expect(await main(["check", "planning/decisions", "--root", root, "--no-export"])).toBe(1);
+    } finally {
+      restore();
+    }
+  });
+
   it("prints hook configuration for lefthook, husky, and plain git", () => {
     for (const kind of ["lefthook", "husky", "git"]) expect(hookSnippet(kind, SKILLS)).toContain("check --staged");
     expect(hookSnippet("lefthook", join(SKILLS, ".."))).toContain("bun skills/pm-lint/scripts/lint.ts check --staged");
