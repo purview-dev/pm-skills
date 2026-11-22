@@ -195,8 +195,18 @@ git commit -m "feat(pm-setup): define ADRs and let pm-adr write during the desig
   - `import <folder>`: one confirmation question listing the files; for each, new ID in source order (numeric order of the source file names), header from field bullets, MADR YAML frontmatter (`status`, `date`, `category`), or a `## Status` section's first line; missing `Category` is `uncategorised`, missing `Date` is the file's first commit date (`git log --diff-filter=A --format=%as -- <file>`), `Source` is the original path, the body verbatim under the four sections (unmatched source headings go under `## Context`); the originals are left in place.
   - Output template: `## ADR` (`- ADR: ADR-NNN <title> (<status>)`, `- Category`, `- Path`), `## Do this next` (one action), `## Note` (commit result); `view` prints a table grouped by category then status.
 - [ ] **Step 2: Add the table rows**
-  - README: `| [\`pm-adr\`](skills/pm-adr/SKILL.md) | Record, supersede, accept, deprecate, view, check, or import architecture decision records | Any time (record and view mid-task) |`
-  - pm-help guide: `| \`pm-adr\` | A technical decision to record, or the ADRs to see or check: new, supersede, accept, deprecate, view, check, import | "record an ADR for using Bun", "show the ADRs", "import docs/adr" | \`decisions/ADR-NNN-<slug>.md\` |`
+  - README:
+
+    ```markdown
+    | [`pm-adr`](skills/pm-adr/SKILL.md) | Record, supersede, accept, deprecate, view, check, or import architecture decision records | Any time (record and view mid-task) |
+    ```
+
+  - pm-help guide:
+
+    ```markdown
+    | `pm-adr` | A technical decision to record, or the ADRs to see or check: new, supersede, accept, deprecate, view, check, import | "record an ADR for using Bun", "show the ADRs", "import docs/adr" | `decisions/ADR-NNN-<slug>.md` |
+    ```
+
   - pm-setup: add `` `pm-adr` `` to the inventory list and change the three `25`s to `26`.
 - [ ] **Step 3: Verify**
 
