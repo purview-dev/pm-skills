@@ -108,7 +108,7 @@ git commit -m "docs(plan): name the R-029 dev server timeout cause"
 
 **3A: Late dependency discovery.** Files: `packages/pm-docs-site/lib/index.ts` (`BROWSER_DEPENDENCIES`, line 69), `packages/pm-docs-site/test/integration.test.ts`.
 
-- [ ] **Step 1:** Update the two expectations in `integration.test.ts` (`include: [...]` at lines 152 and 159) to list the dependencies `## Cause` names after the existing two, in that order, prefixed `@purview-dev/pm-docs-site > ` in the installed case. Run `bun test test/integration.test.ts`; expected FAIL.
+- [ ] **Step 1:** Update the two expectations in `integration.test.ts` (`include: [...]` at lines 152 and 159) to list the dependencies `## Cause` names after the existing two, in that order, prefixed with `@purview-dev/pm-docs-site >` and a space in the installed case. Run `bun test test/integration.test.ts`; expected FAIL.
 - [ ] **Step 2:** Append those names to `BROWSER_DEPENDENCIES`, and extend the JSDoc above `optimizedDependencies` with one sentence on why each was added. Run `bun test test/integration.test.ts`; expected PASS.
 - [ ] **Step 3:** Run `bun run build` in `packages/pm-docs-site`, then `bun run test:browser:dev` and confirm `dev.log` has no `reoptimise` event on the first page load.
 - [ ] **Step 4:** Commit `fix(pm-docs-site): pre-bundle <deps> so dev never re-optimises on first load (R-029)`.
