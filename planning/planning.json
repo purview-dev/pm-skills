@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-22T18:00:09+00:00",
+  "generatedAt": "2026-11-22T18:04:56+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "main",
-    "head": "b73d3fbbde29422719cec32b4f8286f3dee96f09"
+    "branch": "feat/r-025-docs-site-package-feature-pages-list-revisions",
+    "head": "f6c5f5acf358ab4adfdfd8d0adfd2afb3cfd8f8b"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -215,50 +215,38 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
+    "status": "active",
+    "item": {
+      "id": "R-025",
+      "title": "Docs-site package: feature pages list revisions",
+      "serves": [
+        "V4"
+      ],
+      "owner": "agent",
+      "size": "S",
+      "dependsOn": [],
+      "revisits": null
+    },
+    "stage": "design",
+    "session": "feat/r-025-docs-site-package-feature-pages-list-revisions",
     "brief": null,
-    "milestone": null,
+    "milestone": "M1",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-22",
+    "doneWhen": [
+      "a feature page for an item that another item's `Revisits` names lists that item under \"Revised by\", and a unit test in `packages/pm-docs-site` covers it."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-025",
-        "title": "Docs-site package: feature pages list revisions",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "a feature page for an item that another item's `Revisits` names lists that item under \"Revised by\", and a unit test in `packages/pm-docs-site` covers it.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "From R-012 design (2026-11-19): `dependents()` in `packages/pm-docs-site/src/lib/planning.ts` looks only at `dependsOn`, so a feature page lists its dependants but not the items whose `Revisits` names it; the R-012 graph already draws Revisits edges.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-013",
         "title": "Docs-site package: publish and migrate",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4"
@@ -293,7 +281,7 @@
         "id": "R-034",
         "title": "Engineering file and pm-engineering skill",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V5"
@@ -317,7 +305,7 @@
         "id": "R-041",
         "title": "ADR skill follow-ups",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V5"
@@ -341,7 +329,7 @@
         "id": "R-040",
         "title": "ADR link and export edge cases",
         "section": "next",
-        "position": 5,
+        "position": 4,
         "label": "next",
         "serves": [
           "V4",
@@ -641,15 +629,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-025",
           "title": "Docs-site package: feature pages list revisions",
           "owner": "agent",
           "size": "S",
-          "detail": "ready"
-        },
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-013",
           "title": "Docs-site package: publish and migrate",
@@ -1599,7 +1588,7 @@
     }
   ],
   "counts": {
-    "next": 5,
+    "next": 4,
     "later": 11,
     "nextMax": 5,
     "openInbox": 0,
@@ -1617,12 +1606,11 @@
     "reviewDue": false,
     "lastReview": "2026-11-22",
     "claimable": [
-      "R-025",
       "R-013",
       "R-034",
       "R-041",
       "R-040"
     ],
-    "drift": false
+    "drift": true
   }
 }

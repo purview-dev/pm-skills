@@ -14,17 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-025 Docs-site package: feature pages list revisions
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: a feature page for an item that another item's `Revisits` names lists that item under "Revised by", and a unit test in `packages/pm-docs-site` covers it.
-- Size: S
-- Depends on: none
-- Status: ready
-- Note: From R-012 design (2026-11-19): `dependents()` in `packages/pm-docs-site/src/lib/planning.ts` looks only at `dependsOn`, so a feature page lists its dependants but not the items whose `Revisits` names it; the R-012 graph already draws Revisits edges.
-
 ### R-013 Docs-site package: publish and migrate
 
 - Serves: V4
