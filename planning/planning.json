@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-21T12:38:28+00:00",
+  "generatedAt": "2026-11-22T03:07:09+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-029-dev-browser-webserver",
-    "head": "d48ec7e3b303263d7f9ee38d4ce63f05c05622eb"
+    "head": "b7210674408eede5d65fc83ff161c59eed8e2811"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -189,11 +189,11 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-029-dev-browser-webserver",
     "brief": null,
     "milestone": "M1",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-21-dev-browser-webserver-design.md",
     "plan": null,
     "started": "2026-11-21",
     "doneWhen": [
@@ -420,7 +420,7 @@
           "title": "Docs-site package: dev browser webserver starts reliably",
           "owner": "agent",
           "size": "S",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
@@ -1295,6 +1295,6 @@
     "claimable": [
       "R-025"
     ],
-    "drift": true
+    "drift": false
   }
 }
