@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { at, findId, firstDifference, main } from "./export.ts";
-import { build, bullets, SCHEMA_PATH, serialise, stripComments, value } from "./planning.ts";
+import { type Adr, build, bullets, parseAdr, SCHEMA_PATH, serialise, sortAdrs, stripComments, value } from "./planning.ts";
 import { validate } from "./schema.ts";
 
 // A synthetic repository, never this project's own PM state: the tests must not change when the plan does.
@@ -77,12 +77,51 @@ describe("build", () => {
 
   it("reads NOW.md, its checkpoint, and the plan's tasks, skipping fenced checkboxes", () => {
     expect(doc.now.item).toEqual({ id: "R-007", title: "Tenant billing", serves: ["V1"], owner: "both", size: "M", dependsOn: ["R-006"], revisits: null });
-    expect(doc.schemaVersion).toBe(4);
+    expect(doc.schemaVersion).toBe(5);
     expect(doc.now.doneWhen).toHaveLength(2);
     expect(doc.now.checkpoint.at).toBe("2026-11-08 14:10");
     expect(doc.now.checkpoint.openQuestion).toBeNull();
     expect(doc.plan.tasks.map((t: any) => [t.number, t.checked, t.total])).toEqual([[1, 1, 2], [2, 2, 2], [3, 0, 1]]);
     expect([doc.plan.checked, doc.plan.total]).toEqual([3, 5]);
+  });
+
+  it("reads ADRs from decisions/, whole, by ID", () => {
+    expect(doc.adrs.map((a: Adr) => a.id)).toEqual(["ADR-001", "ADR-002"]);
+    const [old, cur] = doc.adrs as Adr[];
+    expect(old).toMatchObject({
+      status: "superseded",
+      supersededBy: "ADR-002",
+      category: "tooling",
+      item: null,
+      supersedes: null,
+      source: null,
+      path: "planning/decisions/ADR-001-use-bun-for-scripts.md",
+      title: "Use Bun for scripts",
+      date: "2026-10-20",
+    });
+    expect(old!.context).toBe("Scripts ran on **Node** with `ts-node`, which was slow to start.");
+    expect(old!.alternatives).toContain("| --- | --- | --- |");
+    expect(old!.consequences).toBe("- Contributors install Bun.");
+    expect(cur).toMatchObject({ status: "accepted", supersedes: "ADR-001", supersededBy: null, item: "R-007", consequences: "None recorded." });
+  });
+
+  it("parseAdr: a missing section is null, an extra heading is ignored, a non-ADR file is skipped", () => {
+    const text =
+      "# ADR-010 Ten\n\n- Status: Accepted\n- Date: 2026-01-01\n- Category: Data\n- Supersedes: none\n- Item: none\n- Source: docs/adr/0003.md\n\n## Context\n\nWhy.\n\n## Notes\n\nExtra.\n\n## Decision\n\nDo it.\n";
+    const adr = parseAdr("ADR-010-ten.md", text, "planning/")!;
+    expect(adr).toMatchObject({ id: "ADR-010", title: "Ten", status: "accepted", category: "data", source: "docs/adr/0003.md", context: "Why.", decision: "Do it.", alternatives: null, consequences: null });
+    expect(parseAdr("README.md", "# Decisions\n", "planning/")).toBeNull();
+  });
+
+  it("parseAdr: an empty section is an empty string", () => {
+    const adr = parseAdr("ADR-003-x.md", "# ADR-003 X\n\n- Status: proposed\n\n## Context\n\n## Decision\n\nYes.\n", "planning/")!;
+    expect(adr.context).toBe("");
+    expect(adr.decision).toBe("Yes.");
+  });
+
+  it("sortAdrs orders by ID number", () => {
+    const ids = sortAdrs([{ id: "ADR-010" }, { id: "ADR-002" }] as Adr[]).map((a) => a.id);
+    expect(ids).toEqual(["ADR-002", "ADR-010"]);
   });
 
   it("labels, splits, and orders roadmap items", () => {

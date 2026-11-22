@@ -1,6 +1,6 @@
 {
   "$schema": "./planning.schema.json",
-  "schemaVersion": 4,
+  "schemaVersion": 5,
   "generatedAt": "2026-11-08T14:22:05+00:00",
   "generator": {
     "skill": "pm-export",
@@ -434,6 +434,40 @@
       }
     ]
   },
+  "adrs": [
+    {
+      "id": "ADR-001",
+      "path": "planning/decisions/ADR-001-store-invoices-as-events.md",
+      "title": "Store invoices as events",
+      "status": "superseded",
+      "supersededBy": "ADR-002",
+      "date": "2026-10-20",
+      "category": "data",
+      "supersedes": null,
+      "item": null,
+      "source": null,
+      "context": "Invoices change after they are sent (credits, refunds).",
+      "decision": "Store each invoice change as an event.",
+      "alternatives": "| Approach | Trade-off | Outcome |\n| --- | --- | --- |\n| Events | Full history, more storage | Chosen |\n| Mutable rows | Simple, history lost | Rejected |",
+      "consequences": "- Reports replay events."
+    },
+    {
+      "id": "ADR-002",
+      "path": "planning/decisions/ADR-002-store-invoices-as-rows-with-an-audit-log.md",
+      "title": "Store invoices as rows with an audit log",
+      "status": "accepted",
+      "supersededBy": null,
+      "date": "2026-11-02",
+      "category": "data",
+      "supersedes": "ADR-001",
+      "item": "R-007",
+      "source": null,
+      "context": "Replaying events made `R-007` reports slow.",
+      "decision": "Store invoices as rows and write every change to an audit log.",
+      "alternatives": "None recorded.",
+      "consequences": "None recorded."
+    }
+  ],
   "counts": {
     "next": 2,
     "later": 1,
