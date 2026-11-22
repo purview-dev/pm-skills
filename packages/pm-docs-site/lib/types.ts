@@ -3,7 +3,7 @@
 // integration itself.
 
 /** An optional plan view. Home, Board, Roadmap, Log and Risks are always on. */
-export type ViewName = 'now' | 'milestones' | 'graph' | 'features' | 'inbox' | 'briefs' | 'strategy';
+export type ViewName = 'now' | 'milestones' | 'graph' | 'features' | 'inbox' | 'briefs' | 'strategy' | 'decisions';
 
 /** One folder of repository Markdown, shown as one sidebar group. */
 export interface DocsSource {

@@ -12,7 +12,7 @@ import config from 'virtual:pm-docs-site/config';
 import type { DocsSource } from '../../lib/types.ts';
 import { pagesOf } from '../../lib/repo-docs.ts';
 import { parseExport, PlanningExportError, SUPPORTED_SCHEMA_VERSIONS } from '../../lib/schema-version.ts';
-import type { Brief, InboxEntry, Level, Milestone, Owner, Planning, Rag, Risk, RoadmapItem, Size, Stage } from './planning-types';
+import type { Adr, Brief, InboxEntry, Level, Milestone, Owner, Planning, Rag, Risk, RoadmapItem, Size, Stage } from './planning-types';
 
 export { PlanningExportError, SUPPORTED_SCHEMA_VERSIONS };
 
@@ -338,6 +338,16 @@ export function features(planning: Planning): Feature[] {
 /** The items whose `Depends on` names `id`. */
 export function dependents(all: Feature[], id: string): Feature[] {
 	return all.filter((feature) => feature.dependsOn.includes(id));
+}
+
+/** The ADRs whose `Item` is this item, by ID number. */
+export function adrsOf(planning: Planning, itemId: string): Adr[] {
+	return planning.adrs.filter((adr) => adr.item === itemId).sort((a, b) => Number(a.id.slice(4)) - Number(b.id.slice(4)));
+}
+
+/** The page of one ADR on this site. */
+export function adrHref(id: string): string {
+	return `/plan/decisions/${id.toLowerCase()}/`;
 }
 
 /** The brief a feature links to, by its `Brief` path, else by the brief's own ID. */

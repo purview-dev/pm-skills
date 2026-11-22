@@ -7,7 +7,7 @@ import { linkify, references, refText, RELATION_LABELS, targets } from '../src/l
 
 const FIXTURE = fileURLToPath(new URL('./fixtures/planning.json', import.meta.url));
 const planning = loadPlanning(FIXTURE);
-const all = { now: true, milestones: true, graph: true, features: true, inbox: true, briefs: true, strategy: true };
+const all = { now: true, milestones: true, graph: true, features: true, inbox: true, briefs: true, strategy: true, decisions: true };
 const known = targets(planning, all);
 
 describe('targets', () => {
@@ -132,5 +132,45 @@ describe('linkify', () => {
 		const off = targets(planning, { ...all, features: false });
 
 		expect(linkify('R-012 waits', off)).toEqual([{ text: 'R-012 waits' }]);
+	});
+});
+
+describe('ADR references', () => {
+	const back = references(planning, all);
+
+	it('targets every ADR at its page', () => {
+		expect(known.get('ADR-002')).toEqual({ kind: 'adr', key: 'ADR-002', href: '/plan/decisions/adr-002/', label: 'ADR-002 Store invoices as rows' });
+	});
+
+	it('drops the ADR href when the Decisions view is off', () => {
+		expect(targets(planning, { ...all, decisions: false }).get('ADR-002')?.href).toBeNull();
+	});
+
+	it('links ADR IDs in prose and never finds R- inside ADR-', () => {
+		const runs = linkify('ADR-002 and R-012, not ADR-001x', known);
+
+		expect(runs.filter((run) => run.target).map((run) => run.text)).toEqual(['ADR-002', 'R-012']);
+		expect(linkify('ADR-012', known).some((run) => run.target?.key === 'R-012')).toBe(false);
+	});
+
+	it('lists an ADR on its item and the item on the ADR', () => {
+		expect(back.get('R-012')).toContainEqual({ href: '/plan/decisions/adr-002/', label: 'ADR-002 Store invoices as rows', relation: 'decision' });
+		expect(back.get('ADR-002')).toContainEqual({ href: '/plan/features/r-012/', label: 'R-012 Invoice export', relation: 'listed' });
+		expect(back.get('ADR-002')).toContainEqual({ href: '/plan/decisions/', label: 'Decisions', relation: 'listed' });
+	});
+
+	it('links a supersede both ways', () => {
+		expect(back.get('ADR-001')).toContainEqual({ href: '/plan/decisions/adr-002/', label: 'ADR-002 Store invoices as rows', relation: 'supersedes' });
+		expect(back.get('ADR-002')).toContainEqual({ href: '/plan/decisions/adr-001/', label: 'ADR-001 Store invoices as events', relation: 'supersedes' });
+	});
+
+	it('adds nothing for an Item that is not in the export', () => {
+		expect(back.has('R-099')).toBe(false);
+		expect(back.get('ADR-003')!.some((link) => link.href.startsWith('/plan/features/'))).toBe(false);
+	});
+
+	it('labels the new relations', () => {
+		expect(RELATION_LABELS.decision).toBe('Decisions');
+		expect(RELATION_LABELS.supersedes).toBe('Supersedes');
 	});
 });
