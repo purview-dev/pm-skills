@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-22T17:38:27+00:00",
+  "generatedAt": "2026-11-22T18:00:09+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "main",
-    "head": "54a5c2f486f52879850c785cafea305c90f59b0f"
+    "head": "b73d3fbbde29422719cec32b4f8286f3dee96f09"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -1430,7 +1430,23 @@
       }
     ]
   },
-  "inbox": [],
+  "inbox": [
+    {
+      "file": "planning/inbox/2026-11-22-1739-github-issue-project-sync.md",
+      "title": "GitHub issue and Project sync",
+      "captured": "2026-11-22 17:39",
+      "source": "user",
+      "kind": "feature",
+      "severity": null,
+      "affects": null,
+      "context": null,
+      "discuss": "no",
+      "related": [],
+      "brief": "planning/briefs/2026-11-22-github-issue-project-sync.md",
+      "reviewed": "2026-11-22",
+      "idea": "GitHub issue / Project sync"
+    }
+  ],
   "briefs": [
     {
       "path": "planning/briefs/2026-11-17-docs-site-package.md",
@@ -1478,6 +1494,18 @@
       "decision": "2026-11-22 Added to Later as R-043 Per-session context report and upgrade notes move (Unassigned, M). Why: preventive work with no observed symptom, serving no milestone, while Next is full of M1 and M4 work.",
       "problem": "An agent session loads the managed rules (65 KB) on every start, plus each skill it runs, plus the PM files those skills read. Nothing measures that cost per session type, so growth in the rules, the skills, or the planning state goes unnoticed until it hurts (answer 2026-11-22: both rules and state, measured first).",
       "doneWhen": "`bun skills/pm-help/scripts/context.ts --root .` prints one line per session type (`always`, `resume`, `claim`, `checkpoint`, `review`) with estimated tokens and the three largest files.",
+      "revisions": []
+    },
+    {
+      "path": "planning/briefs/2026-11-22-github-issue-project-sync.md",
+      "id": null,
+      "title": "GitHub issue and Project sync",
+      "status": "parked",
+      "origin": "planning/inbox/2026-11-22-1739-github-issue-project-sync.md",
+      "updated": "2026-11-22",
+      "decision": "2026-11-22 Kept parked. Why: no V line covers capture from outside, and there is no measured evidence yet (0 issues on this repository). Revisit when a consumer reports a lost issue, or when v1 is done.",
+      "problem": "Bug reports and requests filed as GitHub issues, on purview-dev/pm-skills or on a consumer's repository, never reach `planning/`. They have to be copied in by hand, and some are lost (answers 2026-11-22).",
+      "doneWhen": "With `Issue import: gh issue list --state open --json number,title,body,url`, `pm-review` in a scratch repository lists only the open issues not already linked from an inbox file, and parks the chosen ones as inbox files that pass `pm-lint check`.",
       "revisions": []
     },
     {
