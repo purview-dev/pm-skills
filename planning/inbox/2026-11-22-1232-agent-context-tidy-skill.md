@@ -5,7 +5,7 @@
 - Kind: improvement
 - Affects: none
 - Context: R-033 execute
-- Discuss: no
+- Discuss: yes
 - Related: none
 - Brief: none
 - Reviewed: never
