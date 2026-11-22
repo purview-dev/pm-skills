@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-22T03:08:17+00:00",
+  "generatedAt": "2026-11-22T10:12:03+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-029-dev-browser-webserver",
-    "head": "3ff80284cf82dbe3e102817394c87b3793c81f6e"
+    "head": "11a51a0a52a6cdce1557340c537cd35e5ba97a19"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -177,173 +177,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-029",
-      "title": "Docs-site package: dev browser webserver starts reliably",
-      "serves": [
-        "V4"
-      ],
-      "owner": "agent",
-      "size": "S",
-      "dependsOn": [],
-      "revisits": null
-    },
-    "stage": "execute",
-    "session": "feat/r-029-dev-browser-webserver",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
     "brief": null,
-    "milestone": "M1",
-    "spec": "docs/superpowers/specs/2026-11-21-dev-browser-webserver-design.md",
-    "plan": "docs/superpowers/plans/2026-11-22-dev-browser-webserver.md",
-    "started": "2026-11-21",
-    "doneWhen": [
-      "the cause of the `test:browser:dev` webserver timeout is named in the plan, and 5 consecutive `just lint-check` runs on Windows pass `test:browser:dev`."
-    ],
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-22-dev-browser-webserver.md",
-    "checked": 0,
-    "total": 26,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "Dev log and restart detection",
-        "checked": 0,
-        "total": 7,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing test** `test/dev-log.test.ts`, `describe('classifyDevLine')`:",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run it to verify it fails**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement `classifyDevLine`** as a list of `[RegExp, DevEvent]` pairs, case-insensitive: `/restarting/` → restart, `/new dependencies optimized|optimized dependencies changed/` → reoptimise, `/listen method has been called more than once|ERR_SERVER_ALREADY_LISTEN/` → listen-twice, `/transport was disconnected|transport invoke timed out/` → transport-lost. Check the Astro and Vite wording against `node_modules/astro` and `node_modules/vite` sources (`grep -r \"Restarting\" node_modules/astro/dist`) and adjust the test strings to the real messages if they differ.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run it to verify it passes**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Wire it into `dev-server.ts`.** Spawn the dev server with `stdio: ['ignore', 'pipe', 'pipe']`; for each stdout and stderr chunk, write it to the process's own stream, `appendFileSync(join(DIR, 'dev.log'), chunk)`, and for each line whose `classifyDevLine` is not null append `[dev-server] <ISO time> <event>` to `dev.log` and to stderr. Keep the header comment accurate: add one sentence that `dev.log` in the scratch folder holds the last run's dev output.",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Verify the dev tests still pass and the log is written**",
-            "checked": false
-          },
-          {
-            "text": "**Step 7: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 2,
-        "title": "Reproduce and name the cause",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the loop.** For run 1 to 10: in `packages/pm-docs-site`, run `bun test`, then `bun run test:browser:dev`; after each, copy `$env:TEMP\\pm-docs-site-dev-browser\\dev.log` to `<job tmp>/dev-<n>.log` and record pass or fail. Stop at the first failure.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run it** (background, up to about 60 minutes).",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Read the evidence.** In every `dev-<n>.log`, list the `[dev-server]` events and what preceded them (a re-optimisation naming dependencies, a config restart, a file name). Passes with a `reoptimise` or `restart` event count as evidence too: they show the trigger fires and the race is timing.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Write `## Cause`** in this plan: the trigger, the log lines, runs and failures (for example `1 failure in 4 runs; reoptimise of @astrojs/starlight > ... at first /plan/board/ request`), and which Task 3 branch applies: 3A (late dependency discovery), 3B (config-file restart), or 3C (not reproduced, or neither: most likely cause, with its evidence).",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 3,
-        "title": "Fix the trigger (do the one branch `## Cause` names)",
-        "checked": 0,
-        "total": 11,
-        "steps": [
-          {
-            "text": "**Step 1:** Update the two expectations in `integration.test.ts` (`include: [...]` at lines 152 and 159) to list the dependencies `## Cause` names after the existing two, in that order, prefixed `@purview-dev/pm-docs-site > ` in the installed case. Run `bun test test/integration.test.ts`; expected FAIL.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2:** Append those names to `BROWSER_DEPENDENCIES`, and extend the JSDoc above `optimizedDependencies` with one sentence on why each was added. Run `bun test test/integration.test.ts`; expected PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3:** Run `bun run build` in `packages/pm-docs-site`, then `bun run test:browser:dev` and confirm `dev.log` has no `reoptimise` event on the first page load.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4:** Commit `fix(pm-docs-site): pre-bundle <deps> so dev never re-optimises on first load (R-029)`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 1:** Write the consumer's `astro.config.ts` and `package.json` before `bun install`, so no write lands within the watcher's start window, and set both files' mtimes 10 s in the past with `utimesSync`. Comment why, citing `## Cause`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2:** Run `bun run test:browser:dev`; expected 3 passed and no `restart` event in `dev.log`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3:** Commit `fix(pm-docs-site): stop the dev test consumer restarting on its own config (R-029)`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 1:** In `dev-server.ts`, after spawning, poll `http://localhost:${PORT}` paths `/plan/board/`, `/plan/roadmap/`, `/plan/graph/` with `fetch` every 1 s until all three return 200 in one pass with no `restart`, `listen-twice`, or `transport-lost` event since the pass began; if the dev process exits, exit with its code. Then open `node:http` on `PORT + 1` answering `GET /ready` with 200.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2:** In `playwright.dev.config.ts`, set `webServer.url` to `http://localhost:${DEV_PORT + 1}/ready` with a comment naming the cause from `## Cause`. `baseURL` stays `DEV_PORT`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3:** Run `bun run test:browser:dev`; expected 3 passed.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4:** Commit `fix(pm-docs-site): wait for a stable dev server in the dev browser tests (R-029)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 4,
-        "title": "Verify Done when",
-        "checked": 0,
-        "total": 3,
-        "steps": [
-          {
-            "text": "**Step 1:** From the repository root, run `just lint-check` 5 times in a row on Windows (background; about 5 minutes each), each to its own log in the job temp folder.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2:** If any run fails, return to Task 2 with its `dev.log`; do not mark this step done.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3:** Run `bunx markdownlint-cli2 docs/superpowers/plans/2026-11-22-dev-browser-webserver.md docs/superpowers/specs/2026-11-21-dev-browser-webserver-design.md`; expected 0 errors.",
-            "checked": false
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [
       {
@@ -375,7 +221,7 @@
         "title": "Docs-site package: publish and migrate",
         "section": "next",
         "position": 2,
-        "label": "waiting",
+        "label": "next",
         "serves": [
           "V4"
         ],
@@ -403,7 +249,7 @@
         "brief": "planning/briefs/2026-11-17-docs-site-package.md",
         "note": "Rewrites `pm-docs-site` and Non-interruption rule 9, so it bumps the rules major.",
         "revisits": null,
-        "claimable": false
+        "claimable": true
       }
     ],
     "later": [
@@ -556,15 +402,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-029",
-          "title": "Docs-site package: dev browser webserver starts reliably",
-          "owner": "agent",
-          "size": "S",
-          "detail": "execute, 0/26 plan steps"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-025",
@@ -572,19 +410,27 @@
           "owner": "agent",
           "size": "S",
           "detail": "ready"
-        }
-      ],
-      "foryou": [],
-      "waiting": [
+        },
         {
           "id": "R-013",
           "title": "Docs-site package: publish and migrate",
           "owner": "both",
           "size": "M",
-          "detail": "needs R-029 Docs-site package: dev browser webserver starts reliably"
+          "detail": "ready"
         }
       ],
+      "foryou": [],
+      "waiting": [],
       "done": [
+        {
+          "date": "2026-11-22",
+          "id": "R-029",
+          "title": "Docs-site package: dev browser webserver starts reliably",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-22-dev-browser-webserver.md",
+          "result": "branch feat/r-029-dev-browser-webserver"
+        },
         {
           "date": "2026-11-21",
           "id": "R-031",
@@ -759,6 +605,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-22",
+        "kind": "done",
+        "id": "R-029",
+        "title": "Docs-site package: dev browser webserver starts reliably",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-029-dev-browser-webserver"
+      },
       {
         "date": "2026-11-21",
         "kind": "done",
@@ -997,6 +852,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-22",
+        "id": "R-029",
+        "title": "Docs-site package: dev browser webserver starts reliably",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-22-dev-browser-webserver.md",
+        "result": "branch feat/r-029-dev-browser-webserver"
+      },
       {
         "date": "2026-11-21",
         "id": "R-031",
@@ -1354,6 +1218,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Deferred minors from the R-031 final review. (1) `relativeImports` in `packages/pm-docs-site/test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports inside comments, and misses template-literal dynamic imports (`` import(`./x`) ``); these give false failures only. (2) In `scripts/check-demo.ts`, the text of a `plan-empty` element is cut off at a nested `plan-empty` element; both are still reported. (3) `src/pages/plan/log.astro` labels an ID that is known but whose page is not built with the logged title, not the export's current title, and no test covers that view-off case."
+    },
+    {
+      "file": "planning/inbox/2026-11-22-0952-where-do-adrs-fit.md",
+      "title": "Where do ADRs fit in",
+      "captured": "2026-11-22 09:52",
+      "source": "user",
+      "kind": "question",
+      "severity": null,
+      "affects": null,
+      "context": "R-029 execute",
+      "discuss": "yes",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Where do ADRs fit in to the overall project? Given we also make use of a technology/ stack."
     }
   ],
   "briefs": [
@@ -1420,10 +1299,10 @@
     "next": 2,
     "later": 6,
     "nextMax": 5,
-    "openInbox": 8,
-    "discuss": 1,
+    "openInbox": 9,
+    "discuss": 2,
     "shapingBriefs": 0,
-    "done": 19,
+    "done": 20,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1435,8 +1314,9 @@
     "reviewDue": false,
     "lastReview": "2026-11-20",
     "claimable": [
-      "R-025"
+      "R-025",
+      "R-013"
     ],
-    "drift": false
+    "drift": true
   }
 }
