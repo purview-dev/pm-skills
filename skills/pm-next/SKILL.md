@@ -134,7 +134,12 @@ written to the branch the session is leaving.
     ask those again. Tell it the work happens on `<Item branch>`, which is
     checked out, so it does not create another branch. Start that stage
     from the item, its brief, and this output only; never carry an earlier
-    item's conversation into it (rules: Context budget).
+    item's conversation into it (rules: Context budget). List the accepted
+    and proposed ADRs in the decisions folder as named references, or say
+    there are no ADRs. Tell the design skill to read the ones its decision
+    touches before proposing approaches, to record each architecture
+    decision with `pm-adr new` (or `supersede`), and to name the ADR IDs in
+    the spec.
 
 If the item has a `Paused checkpoint`, copy it under `## Checkpoint` and set
 `Stage` to the stage recorded there. Then invoke that stage's skill instead
