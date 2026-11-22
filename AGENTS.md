@@ -250,6 +250,14 @@ as `18.x.y`, and a prerelease of rules 19 as `19.0.0-pre.N`.
   IDs are `R-NNN` and never reused; `NOW.md` in the configured PM root
   holds the single active item; `ROADMAP.md` separates ordered `Next` from
   `Later`; and parked ideas each have their own inbox file.
+- Every skill feature considers the docs site. When a skill adds or changes
+  PM state, a file format, a setting, or a record a user would browse (items,
+  briefs, risks, ADRs, and the like), its design states how `pm-docs-site`
+  surfaces it: a view, a page, a list with grouping, filters, and search, a
+  field on an existing view, or nothing, with the reason. Build the surface in
+  the same item, or add a roadmap item for it before the item closes. New
+  views go in `packages/pm-docs-site` (Not doing in `planning/STRATEGY.md`
+  freezes the templates), as rich interactive React islands.
 - Keep PM workflow actions bounded: PM skills operate on PM state in the
   main worktree, except a completion record on the item's branch, and commit
   only that PM root, as defined by *Committing PM state* in the managed
