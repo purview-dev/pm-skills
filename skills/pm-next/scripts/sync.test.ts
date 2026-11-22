@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, setDefaultTimeout } from "bun:test";
 import { spawnSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -277,5 +277,120 @@ describe("driver", () => {
     rivals(work);
 
     expect(() => git(work, "merge", "-q", "--no-edit", "b")).toThrow("CONFLICT");
+  });
+});
+
+describe("final review fixes", () => {
+  /** A later upstream PM commit, made after the item merged. */
+  function upstream(dir: string, name: string, change: (hub: string) => void): void {
+    const hub = clone(dir, name);
+    change(hub);
+    git(hub, "add", "-A");
+    git(hub, "commit", "-q", "-m", `docs(pm): ${name}`);
+    git(hub, "push", "-q", "origin", "main");
+  }
+
+  it("does not bring back a delivered inbox file that upstream later deleted", () => {
+    const { dir, work, opts } = scratch();
+    idleThenItem(work);
+    mergeUpstream(dir, "squash");
+    upstream(dir, "triage", (hub) => rmSync(join(hub, "planning/inbox/a.md")));
+    git(work, "switch", "-q", "main");
+
+    const result = pull(opts);
+
+    expect(result).toMatchObject({ action: "repaired", moved: 2 });
+    expect(sha(work, "main")).toBe(sha(work, "origin/main"));
+    expect(existsSync(join(work, "planning/inbox/a.md"))).toBe(false);
+  });
+
+  it("does not bring back a delivered roadmap item that upstream later closed", () => {
+    const { dir, work, opts } = scratch();
+    write(work, "planning/ROADMAP.md", "# Roadmap\n\n## Next\n\n### R-002 Second\n\n- Status: ready\n");
+    git(work, "add", "-A");
+    git(work, "commit", "-q", "-m", "docs(pm): add R-002");
+    git(work, "switch", "-q", "-c", "item");
+    write(work, "src/app.ts", "export const app = 2;\n");
+    git(work, "commit", "-q", "-am", "feat: item");
+    git(work, "push", "-q", "-u", "origin", "item");
+    mergeUpstream(dir, "squash");
+    upstream(dir, "close", (hub) => write(hub, "planning/ROADMAP.md", "# Roadmap\n\n## Next\n"));
+    git(work, "switch", "-q", "main");
+
+    const result = pull(opts);
+
+    expect(result).toMatchObject({ action: "repaired", moved: 1 });
+    expect(readFileSync(join(work, "planning/ROADMAP.md"), "utf8")).toBe("# Roadmap\n\n## Next\n");
+  });
+
+  it("refuses a local merge commit whose resolution changed a path outside the PM root", () => {
+    const { dir, work, opts } = scratch();
+    idleThenItem(work);
+    release(opts);
+    git(work, "switch", "-q", "-c", "side", "main");
+    write(work, "planning/inbox/side.md", "# Side\n");
+    git(work, "add", "-A");
+    git(work, "commit", "-q", "-m", "docs(pm): side");
+    git(work, "switch", "-q", "main");
+    git(work, "merge", "-q", "--no-ff", "--no-commit", "side");
+    write(work, "src/app.ts", "export const app = 99;\n");
+    git(work, "add", "-A");
+    git(work, "commit", "-q", "-m", "merge side");
+    mergeUpstream(dir, "squash");
+    const before = sha(work, "main");
+
+    expect(() => pull(opts)).toThrow("touch paths outside planning/");
+    expect(sha(work, "main")).toBe(before);
+  });
+
+  it("releases main from a linked item worktree while main is checked out elsewhere", () => {
+    const { dir, work, opts } = scratch();
+    write(work, "planning/inbox/a.md", "# Idea A\n");
+    git(work, "add", "-A");
+    git(work, "commit", "-q", "-m", "docs(pm): park a");
+    const itemTree = join(dir, "item-tree");
+    git(work, "worktree", "add", "-q", "-b", "item", itemTree);
+
+    const result = release({ ...opts, root: itemTree });
+
+    expect(result).toMatchObject({ action: "released", moved: 1 });
+    expect(sha(work, "main")).toBe(sha(work, "origin/main"));
+    expect(git(work, "status", "--porcelain")).toBe("");
+    expect(git(itemTree, "log", "-1", "--format=%s")).toBe("docs(pm): park a");
+  });
+
+  it("makes a plain git pull on main refuse to merge once the driver is registered", () => {
+    const { dir, work, opts } = scratch();
+    driver(opts);
+    git(work, "add", ".gitattributes");
+    git(work, "commit", "-q", "-m", "chore: merge driver");
+    git(work, "push", "-q", "origin", "main");
+    write(work, "planning/inbox/local.md", "# Local\n");
+    git(work, "add", "-A");
+    git(work, "commit", "-q", "-m", "docs(pm): local");
+    upstream(dir, "remote", (hub) => write(hub, "planning/inbox/remote.md", "# Remote\n"));
+    const before = sha(work, "main");
+
+    expect(() => git(work, "pull", "-q")).toThrow();
+    expect(sha(work, "main")).toBe(before);
+    expect(existsSync(join(work, ".git/MERGE_HEAD"))).toBe(false);
+  });
+
+  it("carries without depending on commit hooks", () => {
+    const { dir, work, opts } = scratch();
+    idleThenItem(work);
+    release(opts);
+    git(work, "switch", "-q", "main");
+    write(work, "planning/inbox/late.md", "# Late idea\n");
+    git(work, "add", "-A");
+    git(work, "commit", "-q", "-m", "docs(pm): park late");
+    write(work, ".git/hooks/pre-commit", "#!/bin/sh\nexit 1\n");
+    mergeUpstream(dir, "squash");
+
+    const result = pull(opts);
+
+    expect(result).toMatchObject({ action: "carried", moved: 1 });
+    expect(sha(work, "main^")).toBe(sha(work, "origin/main"));
+    expect(git(work, "status", "--porcelain")).toBe("");
   });
 });

@@ -106,7 +106,7 @@ written to the branch the session is leaving.
      `git switch <Item branch>`, then **Pull latest**.
    - Otherwise run `git switch -c <Item branch> <PM base>`. When the PM
      base was the local PM branch ahead of its remote, then run **PM sync**
-     (`bun <this skill>/scripts/sync.ts release`) from the item branch: the
+     (`bun <this skill>/scripts/sync.ts release --root .`) from the item branch's worktree: the
      item branch carries those commits now, so the PM branch moves back to
      `<remote>/<PM branch>` and the pull after this item merges is a
      fast-forward under any merge method. Add its line as a Note (`Moved

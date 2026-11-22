@@ -2,7 +2,7 @@
 
 - Date: 2026-11-22
 - Approved: 2026-11-22 (user), as a roadmap item at the top of Next, shipping as `21.0.0-pre.6`
-- ADRs: write one with `pm-adr new` during plan or execute: "The PM branch never keeps delivered commits"
+- ADRs: writes ADR-004 The PM branch never keeps delivered commits (proposed, Item R-044); follows ADR-001 ADRs live in the PM root
 
 ## Intent
 

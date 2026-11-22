@@ -23,6 +23,10 @@ validate:
 test:
     bun test scripts/ skills/pm-export/ skills/pm-lint/ skills/pm-next/
 
+# Bring main up to date after a pull request merges, whatever the merge method (pm-next's PM sync).
+pm-sync:
+    bun skills/pm-next/scripts/sync.ts pull
+
 # Check planning/ against the PM file format rules (pm-lint). `just pm-lint fix` repairs the layout ones.
 pm-lint command="check":
     bun skills/pm-lint/scripts/lint.ts {{command}}

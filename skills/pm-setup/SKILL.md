@@ -270,8 +270,10 @@ Rules for this step:
    **PM sync**): run `bun <pm-next skill>/scripts/sync.ts driver --root .
    --pm-root <PM state directory>`, which appends
    `<PM state directory>/planning.json merge=pm-export` to `.gitattributes`
-   (creating it when missing) and sets `merge.pm-export.name` and
-   `merge.pm-export.driver` (`true`) in the repository's git config. Show
+   (creating it when missing) and sets `merge.pm-export.name`,
+   `merge.pm-export.driver` (`true`), and `branch.<PM branch>.mergeOptions`
+   (`--ff-only`, so a plain `git pull` on the PM branch never merges) in the
+   repository's git config. Show
    its line. Without Bun, print the `.gitattributes` line and the two
    `git config` commands for the user to run. `pm-setup` does not commit
    `.gitattributes`: it is outside the PM root, so the output Note gives

@@ -5,17 +5,23 @@
 //   release  After an item branch is cut from a PM branch that is ahead of its
 //            remote, move the PM branch back to the remote: the item branch
 //            now carries those commits, so the PM branch never keeps them.
-//   pull     Fast-forward the PM branch, or repair a diverged one: its
-//            local-only commits (PM root only) are merged onto the remote with
-//            a three-way tree merge. Work that was already delivered (by any
-//            merge method) merges to nothing; anything else becomes one carry
-//            commit. A conflict leaves the branch where it was.
-//   driver   Register the merge driver that keeps <PM root>/planning.json,
-//            a derived file, from conflicting in local merges.
+//   pull     Fast-forward the PM branch, or repair a diverged one. Each
+//            local-only commit (PM root only) is delivered when some remote
+//            commit already holds its change (merge commit, squash, or
+//            rebase); the rest are carried onto the remote as one
+//            `docs(pm): carry` commit with the export refreshed. A conflict
+//            stops before anything moves; a later upstream edit or delete of
+//            delivered state is never undone.
+//   driver   Register the merge driver that keeps <PM root>/planning.json, a
+//            derived file, from conflicting in local merges, and make a plain
+//            `git pull` on the PM branch fast-forward only.
 //
-// State-changing git commands used, and only these: fetch, merge --ff-only,
-// branch -f, reset --keep, read-tree -m -u, add, commit, commit-tree, config.
-// It never pushes, stashes, rebases, or runs --hard.
+// State-changing git commands, and only these: fetch, merge --ff-only,
+// branch -f, reset --keep, reset --soft, add, commit-tree, config, and
+// read-tree, update-index, and write-tree on a scratch index. The carry is
+// built with commit-tree, so commit hooks do not run on it (its changes
+// passed them when first committed). It never pushes, stashes, rebases,
+// merges, or runs --hard, and never drops a commit.
 
 import { spawnSync } from "node:child_process";
 import { appendFileSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -67,6 +73,10 @@ function git(cwd: string, args: string[], env?: Record<string, string>): string 
 
 const dir = (pmRoot: string) => pmRoot.replace(/\\/g, "/").replace(/\/+$/, "");
 
+/** Paths from git compared on any platform. */
+const samePath = (a: string, b: string) =>
+  process.platform === "win32" ? resolve(a).toLowerCase() === resolve(b).toLowerCase() : resolve(a) === resolve(b);
+
 /** The worktree path that has `branch` checked out, or null. */
 function checkedOutAt(root: string, branch: string): string | null {
   let path: string | null = null;
@@ -101,13 +111,25 @@ export function release(opts: SyncOptions): SyncResult {
   if (at.ahead === 0 && at.behind === 0) {
     return { action: "none", moved: 0, message: `${opts.pmBranch} already matches ${at.remoteRef}.` };
   }
-  if (checkedOutAt(opts.root, opts.pmBranch)) {
-    return { action: "none", moved: 0, message: `${opts.pmBranch} is checked out. Run release from the item branch.` };
+  const holder = checkedOutAt(opts.root, opts.pmBranch);
+  if (holder && samePath(holder, git(opts.root, ["rev-parse", "--show-toplevel"]))) {
+    return { action: "none", moved: 0, message: `${opts.pmBranch} is checked out here. Run release from the item branch.` };
   }
   if (run(opts.root, ["merge-base", "--is-ancestor", opts.pmBranch, "HEAD"]).status !== 0) {
     return { action: "none", moved: 0, message: `${opts.pmBranch} has commits the current branch does not carry; not moved.` };
   }
-  git(opts.root, ["branch", "-f", opts.pmBranch, at.remoteRef]);
+  if (holder) {
+    // Checked out in another worktree (the main worktree, while the item lives in a linked one).
+    const pm = dir(opts.pmRoot);
+    if (git(holder, ["status", "--porcelain", "--", pm])) {
+      return { action: "none", moved: 0, message: `${opts.pmBranch} has uncommitted changes under ${pm}/ in ${holder}; not moved.` };
+    }
+    if (run(holder, ["reset", "-q", "--keep", at.remoteRef]).status !== 0) {
+      return { action: "none", moved: 0, message: `${opts.pmBranch} in ${holder} could not move to ${at.remoteRef}; not moved.` };
+    }
+  } else {
+    git(opts.root, ["branch", "-f", opts.pmBranch, at.remoteRef]);
+  }
   return {
     action: "released",
     moved: at.ahead,
@@ -164,8 +186,10 @@ export function pull(opts: SyncOptions): SyncResult {
     return { action: "fast-forward", moved: behind, message: `${opts.pmBranch} fast-forwarded ${behind} commits.` };
   }
 
-  // Diverged. Every local-only commit must stay inside the PM root.
-  const outside = git(opts.root, ["log", "--format=", "--name-only", `${remoteRef}..${opts.pmBranch}`])
+  // Diverged. The local-only commits, merges included, must stay inside the PM root.
+  const old = git(opts.root, ["rev-parse", opts.pmBranch]);
+  const base = git(opts.root, ["merge-base", opts.pmBranch, remoteRef]);
+  const outside = git(opts.root, ["diff", "--name-only", base, old])
     .split(/\r?\n/)
     .filter((path) => path && !path.startsWith(`${pm}/`));
   if (outside.length > 0) {
@@ -175,27 +199,55 @@ export function pull(opts: SyncOptions): SyncResult {
     throw new SyncError(`${opts.pmBranch} has uncommitted changes under ${pm}/ in ${worktree}; not moved.`);
   }
 
-  const old = git(opts.root, ["rev-parse", opts.pmBranch]);
-  const base = git(opts.root, ["merge-base", opts.pmBranch, remoteRef]);
-  const local = withoutDerived(opts.root, pm, old, base);
-  const merged = run(opts.root, ["merge-tree", "--write-tree", "--name-only", "--merge-base", base, remoteRef, local]);
-  if (merged.status !== 0) {
-    const conflicts = merged.stdout.split(/\r?\n/).slice(1).filter(Boolean).join(", ");
-    throw new SyncError(
-      `${opts.pmBranch} left at ${old}: carrying it onto ${remoteRef} (${git(opts.root, ["rev-parse", remoteRef])}) conflicts in ${conflicts || "the PM root"}.`,
-    );
-  }
-  const tree = merged.stdout.split(/\r?\n/)[0]!;
-
-  const restore = (reason: string): never => {
-    if (worktree) run(worktree, ["reset", "-q", "--keep", old]);
-    else run(opts.root, ["branch", "-f", opts.pmBranch, old]);
-    throw new SyncError(`restored ${opts.pmBranch} to ${old}; ${reason}`);
+  // A local commit is delivered when some remote commit already holds its change:
+  // merging the commit's own change onto that remote commit changes nothing.
+  // Judged per commit against each remote commit, so a later upstream edit or
+  // delete of delivered state never brings it back.
+  const treeOf = (ref: string) => git(opts.root, ["rev-parse", `${ref}^{tree}`]);
+  const remotes = git(opts.root, ["rev-list", "--reverse", `${base}..${remoteRef}`]).split(/\s+/).filter(Boolean);
+  const remoteTrees = new Map(remotes.map((commit) => [commit, treeOf(commit)]));
+  const locals = git(opts.root, ["rev-list", "--reverse", "--no-merges", `${remoteRef}..${opts.pmBranch}`]).split(/\s+/).filter(Boolean);
+  const change = (commit: string) => {
+    const parent = git(opts.root, ["rev-parse", `${commit}^`]);
+    return { parent, commit: withoutDerived(opts.root, pm, commit, parent) };
   };
+  const delivered = (commit: string) => {
+    const own = change(commit);
+    return remotes.some((remote) => {
+      const merged = run(opts.root, ["merge-tree", "--write-tree", "--merge-base", own.parent, remote, own.commit]);
+      return merged.status === 0 && merged.stdout.split(/\r?\n/)[0] === remoteTrees.get(remote);
+    });
+  };
+  const pending = locals.filter((commit) => !delivered(commit));
 
-  if (tree === git(opts.root, ["rev-parse", `${remoteRef}^{tree}`])) {
-    if (worktree) git(worktree, ["reset", "-q", "--keep", remoteRef]);
-    else git(opts.root, ["branch", "-f", opts.pmBranch, remoteRef]);
+  // Carry the undelivered changes, oldest first, onto the remote: one commit, built
+  // without touching any worktree. A conflict stops here, before anything moves.
+  let tip = remoteRef;
+  for (const commit of pending) {
+    const own = change(commit);
+    const merged = run(opts.root, ["merge-tree", "--write-tree", "--name-only", "--merge-base", own.parent, tip, own.commit]);
+    if (merged.status !== 0) {
+      const conflicts = merged.stdout.split(/\r?\n/).slice(1).filter(Boolean).join(", ");
+      throw new SyncError(
+        `${opts.pmBranch} left at ${old}: carrying ${commit.slice(0, 7)} onto ${remoteRef} (${git(opts.root, ["rev-parse", remoteRef])}) conflicts in ${conflicts || "the PM root"}; not moved.`,
+      );
+    }
+    tip = git(opts.root, ["commit-tree", merged.stdout.split(/\r?\n/)[0]!, "-p", tip, "-m", `pm-sync: carry ${commit.slice(0, 7)}`]);
+  }
+  const tree = treeOf(tip);
+  const carry = tree !== treeOf(remoteRef);
+  const subject = `docs(pm): carry ${pending.length} PM commits onto ${remoteRef}`;
+  const target = carry ? git(opts.root, ["commit-tree", tree, "-p", remoteRef, "-m", subject]) : git(opts.root, ["rev-parse", remoteRef]);
+
+  // One move. reset --keep refuses, leaving everything as it was, if it would lose a change.
+  if (worktree) {
+    const moved = run(worktree, ["reset", "-q", "--keep", target]);
+    if (moved.status !== 0) throw new SyncError(`${opts.pmBranch} left at ${old}: ${moved.stderr || "reset --keep refused"}; not moved.`);
+  } else {
+    git(opts.root, ["branch", "-f", opts.pmBranch, target]);
+  }
+
+  if (!carry) {
     return {
       action: "repaired",
       moved: ahead,
@@ -203,36 +255,26 @@ export function pull(opts: SyncOptions): SyncResult {
     };
   }
 
-  const subject = `docs(pm): carry ${ahead} PM commits onto ${remoteRef}`;
-  if (!worktree) {
-    const commit = git(opts.root, ["commit-tree", tree, "-p", remoteRef, "-m", subject]);
-    git(opts.root, ["branch", "-f", opts.pmBranch, commit]);
-    return {
-      action: "carried",
-      moved: ahead,
-      commit,
-      message: `${opts.pmBranch} carried ${ahead} PM commits onto ${remoteRef} as ${commit.slice(0, 7)}; run pm-export on ${opts.pmBranch}.`,
-    };
-  }
-
-  git(worktree, ["reset", "-q", "--keep", remoteRef]);
-  try {
-    git(worktree, ["read-tree", "-m", "-u", "HEAD", tree]);
-    const refreshed = refreshExport(worktree, opts.pmRoot);
-    git(worktree, ["add", "-A", "--", pm]);
-    git(worktree, ["commit", "-q", "-m", subject, "--", pm]);
-    const commit = git(worktree, ["rev-parse", "HEAD"]);
-    return {
-      action: "carried",
-      moved: ahead,
-      commit,
-      message: `${opts.pmBranch} carried ${ahead} PM commits onto ${remoteRef} as ${commit.slice(0, 7)}${refreshed ? "" : `; run pm-export on ${opts.pmBranch}`}.`,
-    };
-  } catch (error) {
-    return restore(error instanceof Error ? error.message : String(error));
-  }
+  // Fold the refreshed export into the carry commit: stage it, then swap the commit
+  // for one with the refreshed tree (reset --soft moves only the branch). No hooks run.
+  let note = `; run pm-export on ${opts.pmBranch}`;
+  let commit = target;
+  if (worktree && refreshExport(worktree, opts.pmRoot)) {
+    const derived = DERIVED.map((name) => `${pm}/${name}`).filter((path) => existsSync(join(worktree, path)));
+    git(worktree, ["add", "--", ...derived]);
+    const refreshed = git(worktree, ["write-tree"]);
+    if (refreshed !== tree) {
+      commit = git(worktree, ["commit-tree", refreshed, "-p", remoteRef, "-m", subject]);
+      git(worktree, ["reset", "-q", "--soft", commit]);
+    }
+    note = "";
+  }  return {
+    action: "carried",
+    moved: pending.length,
+    commit,
+    message: `${opts.pmBranch} carried ${pending.length} PM commits onto ${remoteRef} as ${commit.slice(0, 7)}${note}.`,
+  };
 }
-
 const ATTRIBUTE = (pm: string) => `${pm}/planning.json merge=pm-export`;
 
 export function driver(opts: SyncOptions): SyncResult {
@@ -240,7 +282,10 @@ export function driver(opts: SyncOptions): SyncResult {
   const file = join(opts.root, ".gitattributes");
   const text = existsSync(file) ? readFileSync(file, "utf8") : "";
   const hasLine = text.split(/\r?\n/).some((line) => line.trim() === ATTRIBUTE(pm));
-  const hasConfig = run(opts.root, ["config", "--get", "merge.pm-export.driver"]).stdout === "true";
+  const ffOnly = `branch.${opts.pmBranch}.mergeOptions`;
+  const hasConfig =
+    run(opts.root, ["config", "--get", "merge.pm-export.driver"]).stdout === "true" &&
+    run(opts.root, ["config", "--get", ffOnly]).stdout === "--ff-only";
   if (hasLine && hasConfig) return { action: "none", moved: 0, message: `Merge driver already registered for ${pm}/planning.json.` };
   if (!hasLine) {
     if (text === "") writeFileSync(file, `${ATTRIBUTE(pm)}\n`);
@@ -248,6 +293,8 @@ export function driver(opts: SyncOptions): SyncResult {
   }
   git(opts.root, ["config", "merge.pm-export.name", "pm-export derived file"]);
   git(opts.root, ["config", "merge.pm-export.driver", "true"]);
+  // A plain `git pull` on the PM branch then fast-forwards or refuses; it never makes a merge.
+  git(opts.root, ["config", ffOnly, "--ff-only"]);
   return { action: "registered", moved: 0, message: `Merge driver registered for ${pm}/planning.json.` };
 }
 
