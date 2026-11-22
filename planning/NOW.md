@@ -11,25 +11,22 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: active
-- Item: R-038 ADR export and Decisions view
-- Session: feat/r-038-adr-export-and-decisions-view
-- Stage: execute
-- Brief: planning/briefs/2026-11-22-where-do-adrs-fit.md
-- Milestone: M4
-- Serves: V5
-- Owner: agent
-- Size: M
-- Depends on: R-033
+- Status: idle
+- Item:
+- Session:
+- Stage:
+- Brief:
+- Milestone:
+- Serves:
+- Owner:
+- Size:
+- Depends on:
 - Revisits:
-- Note: Slice 2 of the ADR work (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). Decisions view is a React island: text search, category and status chips, superseded hidden by default, group by category or status, URL state. 2026-11-22: Started outside the current focus M1 Reproducible docs site at the user's choice, to continue the ADR work after R-033 closed.
-- Spec: docs/superpowers/specs/2026-11-22-adr-export-and-decisions-view-design.md
-- Plan: docs/superpowers/plans/2026-11-22-adr-export-and-decisions-view.md
-- Started: 2026-11-22
+- Spec:
+- Plan:
+- Started:
 
 ## Done when
-
-- `pm-export write` puts `adrs` (read from `planning/decisions/`) in `planning/planning.json` at `schemaVersion` 5 and `pm-export check` passes; the `packages/pm-docs-site` Decisions view lists, searches, and filters ADRs by category and status, with one indexed page per ADR and feature pages listing their ADRs, covered by unit tests; the demo has ADRs; the templates read `schemaVersion` 5; `just validate`, `just test`, and `just demo-check` pass.
 
 ## Checkpoint
 
