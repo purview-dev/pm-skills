@@ -41,14 +41,19 @@ After any pull request merges (merge commit, squash, or rebase), `git switch <PM
    - Add the Note `Moved <n> PM commits from <PM branch> to <Item branch>.`
 2. **Repair (Shared definitions: Pull latest, and PM base).** When the PM branch has diverged from its remote:
    - Every local-only commit (`git rev-list <remote>/<PM branch>..<PM branch>`) must touch only the PM root. Otherwise stop, as today.
-   - **Delivered:** the PM branch is an ancestor of an **Item branch** whose `## Done` line (`Result: branch <name>`) is in `git show <remote>/<PM branch>:<PM root>/LOG.md`. The completion record reaches the PM branch only through that merge, so the test holds for every merge method. Then:
-     - when the PM branch is checked out and its worktree is clean under the PM root, run `git reset --keep <remote>/<PM branch>`;
-     - otherwise run `git branch -f <PM branch> <remote>/<PM branch>`.
-   - **Not delivered:** carry the work forward.
-     - Record the net PM-root change: `git diff <merge base> <PM branch> -- <PM root> ':!<PM root>/planning.json' ':!<PM root>/planning.schema.json'`.
-     - Move the PM branch to the remote as above.
-     - Apply the change with `git apply -3`, refresh the export, and make one PM commit, `docs(pm): carry <n> PM commits onto <remote>/<PM branch>`.
-     - If the apply conflicts, restore the branch with `git reset --keep <old sha>`, print both SHAs, and stop. Nothing is lost.
+   - The worktree that holds the PM branch, if any, must have no uncommitted changes under the PM root. Otherwise stop.
+   - **Three-way tree merge (ruling made while planning; it replaces the `## Done`-line proof).**
+     - Take the local PM branch with its derived files (`planning.json`, `planning.schema.json`) put back to their merge-base state.
+     - Merge it onto `<remote>/<PM branch>` with `git merge-tree --write-tree --merge-base <base>`. This needs git 2.40 or later.
+     - Edits that were already delivered, by any merge method, merge cleanly to the remote's tree. This holds even after the item branch is deleted. (A plain `git apply -3` would fail on files the squash already created.)
+   - **Delivered** (the merged tree equals the remote's tree): move the PM branch to the remote.
+     - When it is checked out, run `git reset --keep <remote>/<PM branch>`.
+     - Otherwise run `git branch -f <PM branch> <remote>/<PM branch>`.
+   - **Not delivered:** move the PM branch to the remote, then bring in the merged tree.
+     - Run `git read-tree -m -u HEAD <tree>`, refresh the export, and make one PM commit, `docs(pm): carry <n> PM commits onto <remote>/<PM branch>`.
+     - When the branch is not checked out, `git commit-tree` builds that commit instead, and the export is left for the next PM commit.
+   - **Conflict:** nothing is moved. The PM branch stays at its old SHA, both SHAs are printed, and the script stops. A failure after the move restores the branch with `git reset --keep <old sha>`. Nothing is ever lost.
+   - The script is `skills/pm-next/scripts/sync.ts` (`release`, `pull`, `driver`).
 3. **Merge driver.**
    - `.gitattributes` gets `<PM root>/planning.json merge=pm-export`.
    - The driver, `git config merge.pm-export.name "pm-export derived file"` and `git config merge.pm-export.driver true`, keeps the current side.
@@ -56,7 +61,7 @@ After any pull request merges (merge commit, squash, or rebase), `git switch <PM
    - Registered by `pm-setup` in consumers (a new, stated write) and by `just install` here.
    - `pm-help` diagnoses a missing attribute or driver.
 4. **Rules.**
-   - Non-interruption rule 6 allows exactly two more state-changing git commands, for these proven cases only: `git branch -f <PM branch> <remote>/<PM branch>` and `git reset --keep`.
+   - Non-interruption rule 6 allows more state-changing git commands, run only by `sync.ts` on the PM branch: `git branch -f`, `git reset --keep`, `git read-tree -m -u`, `git commit-tree`, and `git merge --ff-only`.
    - `pm-setup` may write `.gitattributes` and the two `git config` keys.
    - Add a `Version 21` upgrade note.
    - The managed section and `skills/pm-init/templates/config.md` change together (`scripts/validate.ts`).

@@ -18,9 +18,9 @@ setup-skills *args:
 validate:
     bun scripts/validate.ts
 
-# Test the skills' scripts (pm-export's exporter and pm-lint, against their fixtures).
+# Test the skills' scripts (pm-export's exporter, pm-lint, and pm-next's PM branch sync).
 test:
-    bun test scripts/ skills/pm-export/ skills/pm-lint/
+    bun test scripts/ skills/pm-export/ skills/pm-lint/ skills/pm-next/
 
 # Check planning/ against the PM file format rules (pm-lint). `just pm-lint fix` repairs the layout ones.
 pm-lint command="check":
