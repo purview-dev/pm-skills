@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-22T15:01:40+00:00",
+  "generatedAt": "2026-11-22T15:05:26+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-038-adr-export-and-decisions-view",
-    "head": "9aa605a54a6c552c937ae59ff7436000a584bc21"
+    "head": "5db1a4f61c4fc0a77cdb0b83bf4d01c3d1ffd0c0"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -229,19 +229,233 @@
       ],
       "revisits": null
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-038-adr-export-and-decisions-view",
     "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
     "milestone": "M4",
     "spec": "docs/superpowers/specs/2026-11-22-adr-export-and-decisions-view-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-22-adr-export-and-decisions-view.md",
     "started": "2026-11-22",
     "doneWhen": [
       "`pm-export write` puts `adrs` (read from `planning/decisions/`) in `planning/planning.json` at `schemaVersion` 5 and `pm-export check` passes; the `packages/pm-docs-site` Decisions view lists, searches, and filters ADRs by category and status, with one indexed page per ADR and feature pages listing their ADRs, covered by unit tests; the demo has ADRs; the templates read `schemaVersion` 5; `just validate`, `just test`, and `just demo-check` pass."
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-22-adr-export-and-decisions-view.md",
+    "checked": 0,
+    "total": 36,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "Export ADRs at schemaVersion 5",
+        "checked": 0,
+        "total": 7,
+        "steps": [
+          {
+            "text": "**Step 1: Write the fixture ADRs.** ADR-001 `Use Bun for scripts` (`Status: superseded by ADR-002`, `Category: tooling`, `Item: none`, an `## Alternatives` table) and ADR-002 `Pin the Astro major` (`Status: accepted`, `Supersedes: ADR-001`, `Item: R-001` or any item ID present in the fixture roadmap, `## Consequences` with `None recorded.`). Run `bun skills/pm-lint/scripts/lint.ts check --root scripts/__fixtures__/repo --pm-root planning/`; expected `pm-lint: clean`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Write the failing tests** in `export.test.ts`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Run** `bun test skills/pm-export/scripts/export.test.ts`. Expected: FAIL (`parseAdr` not exported, `schemaVersion` 4).",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Implement** `parseAdr` and the `adrs` key. Use `folder(\"decisions\")`, `stripComments`, `sections(text, 2)`, and `fields`; section bodies trimmed of surrounding blank lines, otherwise verbatim; `status` lower-cased, `superseded by ADR-NNN` split into `status: \"superseded\"` and `supersededBy`; `category` lower-cased; `none` becomes `null`; sort by `Number(id.slice(4))`. Set `SCHEMA_VERSION = 5`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Update the schema** (`$defs/adr` with `additionalProperties: false`, `id` pattern `^ADR-\\\\d{3,}$`, `supersedes`/`supersededBy` the same pattern or `null`, `item` `^R-\\\\d{3,}$` or `null`, `status` enum, the four sections `string | null`), the example (two ADRs, one superseding the other), and `SKILL.md`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Run** `bun test skills/pm-export/scripts/` and `bun skills/pm-export/scripts/export.ts validate skills/pm-export/references/planning.example.json`. Expected: PASS, `valid`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Commit** `feat(pm-export): export ADRs at schemaVersion 5 (R-038)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "Templates, docs-site, and validate read schemaVersion 5",
+        "checked": 0,
+        "total": 4,
+        "steps": [
+          {
+            "text": "**Step 1: Run** `just validate`. Expected: FAIL naming the schema const and the template version.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Make the edits above**, then run the `site.ts write` command.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Run** `just validate` and `bun test skills/pm-docs-site/templates/site/src/lib/planning.test.ts`. Expected: PASS.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Commit** `feat(pm-docs-site): templates read schemaVersion 5 (R-038)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "Package reads schemaVersion 5; decisions state, search, and grouping",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** in `decisions.test.ts`, using the fixture ADRs:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run** `cd packages/pm-docs-site && bun test`. Expected: FAIL (module missing, version 4).",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement** the edits and `decisions.ts`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run** `bun test` and `bun run check` in `packages/pm-docs-site`. Expected: PASS (no ADR pages exist yet, so `expected-pages.txt` is unchanged until Task 5).",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit** `feat(pm-docs-site): read schemaVersion 5 and filter ADRs (R-038)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "ADR references, `adrsOf`, and links inside rendered HTML",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests:**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run** `bun test test/link-html.test.ts test/references.test.ts test/planning.test.ts`. Expected: FAIL.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement.** `views.decisions` comes from Task 5's `ViewName`; add `'decisions'` to `lib/types.ts` `ViewName` and `lib/options.ts` `VIEW_NAMES` (default on) in this task so `Views` type-checks.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run** the same tests and `bun run check`. Expected: PASS.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit** `feat(pm-docs-site): link ADRs across the site (R-038)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 5,
+        "title": "ADR pages, the Decisions view, and feature Decisions lists",
+        "checked": 0,
+        "total": 4,
+        "steps": [
+          {
+            "text": "**Step 1: Update `expected-pages.txt`, `links.test.ts`, and `sidebar.test.ts`** with the new pages and view, then run `bun test`. Expected: FAIL (pages not built).",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Implement** the loader, collection, routes, island, view registration, sidebar, and `FeatureSummary`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Run** `bun test` and `bun run check` in `packages/pm-docs-site`. Expected: PASS, including `links.test.ts` (every rendered link in its target's `Linked from`) and the fixture ADR table rendered as a `<table>` (add that assertion to the page test that reads built HTML).",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Commit** `feat(pm-docs-site): decisions view and ADR pages (R-038)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 6,
+        "title": "Browser test for the Decisions view",
+        "checked": 0,
+        "total": 3,
+        "steps": [
+          {
+            "text": "**Step 1: Write the test:** open `/plan/decisions/`; the superseded fixture ADR is not visible; type a word from one ADR's `context` into `Search decisions` and see only that row; press the `superseded` chip; reload; the search text, the chip's `aria-pressed=\"true\"`, and the row list are the same; `Clear` restores the default and an empty query string.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run** `bun run test:browser -- decisions`. Expected: PASS (`bunx playwright install chromium` first if needed).",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Commit** `test(pm-docs-site): decisions view keeps its state in the url (R-038)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 7,
+        "title": "Demo ADRs",
+        "checked": 0,
+        "total": 4,
+        "steps": [
+          {
+            "text": "**Step 1: Write the ADRs** and run `bun skills/pm-lint/scripts/lint.ts check --root examples/demo --pm-root planning/`. Expected: `pm-lint: clean`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Regenerate the export** and update `expected-pages.txt`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Run** `just demo-check`. Expected: PASS. If `bun install --frozen-lockfile` fails because the package changed, run `bun install` in `examples/demo` and commit its `bun.lock`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Commit** `feat(pm-docs-site): demo ADRs (R-038)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 8,
+        "title": "Versions, upgrade note, and the full checks",
+        "checked": 0,
+        "total": 4,
+        "steps": [
+          {
+            "text": "**Step 1: Make the edits.**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run** `just lint-check`, `just docs-check`, `just package-test`, and `bun skills/pm-export/scripts/export.ts write --root . --pm-root planning/` followed by `bun skills/pm-export/scripts/export.ts check --root . --pm-root planning/`. Expected: all PASS; `planning/planning.json` holds ADR-001 and ADR-002 whole at `schemaVersion` 5. Leave the refreshed `planning/` files for the PM commit (`pm-checkpoint done`).",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Run** `just version-check`. Expected: PASS.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Commit** `chore: version 21.0.0-pre.4 and pm-docs-site 0.1.0-pre.3 (R-038)` (exclude `planning/`).",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -590,7 +804,7 @@
           "title": "ADR export and Decisions view",
           "owner": "agent",
           "size": "M",
-          "detail": "plan"
+          "detail": "execute, 0/36 plan steps"
         }
       ],
       "next": [
