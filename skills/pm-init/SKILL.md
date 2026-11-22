@@ -44,6 +44,11 @@ section of the agent instructions file (`AGENTS.md` or `CLAUDE.md`).
    | `inbox-README.md` | `<PM root>/inbox/README.md` |
    | `briefs-README.md` | `<PM root>/briefs/README.md` |
    | `research-README.md` | `<PM root>/research/README.md` |
+   | `decisions-README.md` | `<PM root>/decisions/README.md (new project only)` |
+
+   `decisions-README.md` is not copied here: step 3 finds whether the
+   repository already has substantial code, and that finding decides
+   whether the decisions folder is created, so it is copied there instead.
 
    The export file (`<PM root>/planning.json`) is not a template:
    `pm-export` creates it, and its schema, on first use.
@@ -68,7 +73,15 @@ section of the agent instructions file (`AGENTS.md` or `CLAUDE.md`).
 3. Read the repository for context before the vision questions: `README*`,
    package or project manifests, top-level folders, and the last 20 lines
    of `git log --oneline`. Record whether the repository already has
-   substantial code (more than a scaffold).
+   substantial code (more than a scaffold). Also check for an outside ADR
+   folder: `docs/adr/`, `docs/decisions/`, `doc/adr/`, or
+   `docs/architecture/decisions/`.
+   - If the repository has no substantial code, copy `decisions-README.md`
+     into `<PM root>/decisions/README.md`, replacing `{{PM_ROOT}}` as in
+     step 2.
+   - If an outside ADR folder exists, add the output Note
+     `Existing ADRs in <folder>. Run pm-adr import <folder> to bring them
+     in.`
 4. Fill `<PM root>/VISION.md` by asking these questions **one at a time**,
    in this order. Use the question tool for each. Offer 2 or 3 drafted
    answers inferred from step 3 as options (when there is nothing to infer
@@ -132,11 +145,12 @@ section of the agent instructions file (`AGENTS.md` or `CLAUDE.md`).
 ```markdown
 ## Set up
 
-- Created: `<PM root>/config.md`, `VISION.md`, `STRATEGY.md`, `NOW.md`, `ROADMAP.md`, `LOG.md`, `STACK.md`, `RISKS.md`, `inbox/`, `briefs/`, `research/`
+- Created: `<PM root>/config.md`, `VISION.md`, `STRATEGY.md`, `NOW.md`, `ROADMAP.md`, `LOG.md`, `STACK.md`, `RISKS.md`, `inbox/`, `briefs/`, `research/`<, `decisions/`: when the repository has no substantial code>
 - Vision: <n> v1 outcomes, <n> out-of-scope items, <n> challenges raised
 - Roadmap: <n> in Next (<n> for you), <n> in Later
 - Last review: never
 - PM state: <committed <short sha> | left uncommitted (policy: never)>
+- Note: <Existing ADRs in <folder>. Run pm-adr import <folder> to bring them in. | none>
 
 ## Do this next
 

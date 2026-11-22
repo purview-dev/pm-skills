@@ -27,7 +27,7 @@ export interface Finding {
   message: string;
 }
 
-export type Kind = "config" | "vision" | "strategy" | "now" | "roadmap" | "log" | "risks" | "stack" | "pause" | "inbox" | "brief" | "markdown";
+export type Kind = "config" | "vision" | "strategy" | "now" | "roadmap" | "log" | "risks" | "stack" | "pause" | "inbox" | "brief" | "adr" | "markdown";
 
 const TOP_FILES: Record<string, Kind> = {
   "config.md": "config",
@@ -48,6 +48,7 @@ export function kindOf(rel: string): Kind {
   if (extra === undefined && name && name.toLowerCase() !== "readme.md") {
     if (folder === "inbox") return "inbox";
     if (folder === "briefs") return "brief";
+    if (folder === "decisions") return "adr";
   }
   return "markdown";
 }
@@ -62,6 +63,7 @@ export const KEYS = {
   risk: ["Likelihood", "Impact", "RAG", "RAG override", "Status", "Owner", "Affects", "Trigger", "Mitigation", "Raised", "Reviewed", "Closed"],
   inbox: ["Captured", "Source", "Kind", "Severity", "Affects", "Context", "Discuss", "Related", "Brief", "Reviewed"],
   brief: ["Status", "Origin", "Updated"],
+  adr: ["Status", "Date", "Category", "Supersedes", "Item", "Source"],
   stack: ["Pushed", "Branch", "Stage", "Brief", "Spec", "Plan", "Milestone", "Serves", "Owner", "Size", "Depends on", "Revisits", "Note", "Started", "Reason", "Done when", "Checkpoint"],
   pause: ["Paused", "Session", "Item", "Running", "Files", "Uncommitted outside PM root"],
   resume: ["Next action", "Start with", "Open question"],
@@ -80,6 +82,7 @@ const FILE_KEYS: Partial<Record<Kind, readonly string[]>> = {
   risks: KEYS.risk,
   inbox: KEYS.inbox,
   brief: KEYS.brief,
+  adr: KEYS.adr,
   stack: KEYS.stack,
   pause: [...KEYS.pause, ...KEYS.resume],
   config: [...KEYS.install, ...KEYS.limits, ...KEYS.commits, ...KEYS.lastReview],
@@ -203,6 +206,7 @@ export interface Context {
   done: { id: string; n: number }[];
   dropped: { id: string; n: number }[];
   nextMax: number | null;
+  adrs: { id: string; rel: string; status: string; supersedes: string; n: number }[];
 }
 
 const blockFields = (lines: Line[], block: Section) => fields(lines, block);
@@ -263,6 +267,15 @@ export function buildContext(files: Map<string, string>): Context {
   const config = docs.get("config.md");
   const limits = config && findSection(config.h2, /^Limits/i);
   const max = limits ? fieldMap(fields(config.lines, limits)).get("max items in next") : undefined;
+  const adrs: Context["adrs"] = [];
+  for (const adrDoc of docs.values()) {
+    if (adrDoc.kind !== "adr") continue;
+    const h1 = headings(adrDoc.lines).find((h) => h.level === 1);
+    const id = h1 && /^(ADR-\d{3,})\b/.exec(h1.text)?.[1];
+    if (!h1 || !id) continue;
+    const map = fieldMap(fields(adrDoc.lines, adrDoc.h2[0]!));
+    adrs.push({ id, rel: adrDoc.rel, status: map.get("status")?.value ?? "", supersedes: map.get("supersedes")?.value ?? "", n: h1.n });
+  }
   return {
     docs,
     vLines,
@@ -274,6 +287,7 @@ export function buildContext(files: Map<string, string>): Context {
     done: logIds(/^Done/i),
     dropped: logIds(/^Dropped/i),
     nextMax: max && /\d+/.test(max.value) ? Number(/\d+/.exec(max.value)![0]) : null,
+    adrs,
   };
 }
 
@@ -292,6 +306,7 @@ export function checkStructure(context: Context): Finding[] {
       risks: checkRisks,
       inbox: checkInbox,
       brief: checkBrief,
+      adr: checkAdr,
       stack: checkStack,
       pause: checkPause,
     };
@@ -309,8 +324,8 @@ export function checkStructure(context: Context): Finding[] {
 
 type Add = (line: number, rule: string, message: string) => void;
 
-/** Duplicate and unknown keys in one block. `exact` also checks the keys and their order. */
-function checkBlockFields(list: Field[], known: readonly string[], add: Add, at: number) {
+/** Duplicate and unknown keys in one block. When `exact` names a rule, also checks the keys and their order under it. */
+function checkBlockFields(list: Field[], known: readonly string[], add: Add, at: number, exact?: string) {
   const seen = new Set<string>();
   for (const field of list) {
     const key = field.key.toLowerCase();
@@ -318,7 +333,11 @@ function checkBlockFields(list: Field[], known: readonly string[], add: Add, at:
     seen.add(key);
     if (!known.some((k) => k.toLowerCase() === key)) add(field.n, "fields/unknown", `\`${field.key}\` is not a field here (known: ${known.join(", ")}).`);
   }
-  void at;
+  if (exact) {
+    const keys = list.map((field) => field.key.toLowerCase()).join("|");
+    const wanted = known.map((key) => key.toLowerCase()).join("|");
+    if (keys !== wanted) add(at, exact, `The fields are ${list.map((field) => field.key).join(", ") || "missing"}; they must be ${known.join(", ")}, in order.`);
+  }
 }
 
 const missing = (map: Map<string, Field>, keys: readonly string[]) => keys.filter((key) => !map.has(key.toLowerCase()));
@@ -784,6 +803,70 @@ function checkBrief(doc: Doc, add: Add) {
     const at = present[first === -1 ? present.length - 1 : first];
     const expected = wanted[first === -1 ? present.length : first];
     add(at?.n ?? 1, "brief/sections", expected ? `Expected \`## ${expected}\` here; the headings are ${BRIEF_HEADINGS.join(", ")}, then optionally Revisions.` : `\`## ${at?.text}\` is not a brief heading.`);
+  }
+}
+
+const ADR_ID = /^ADR-\d{3,}$/;
+const ADR_STATUS = /^(proposed|accepted|deprecated|superseded by (ADR-\d{3,}))$/;
+const ADR_SECTIONS = ["Context", "Decision", "Alternatives", "Consequences"];
+
+function checkAdr(doc: Doc, add: Add, context: Context) {
+  const h1 = headings(doc.lines).find((h) => h.level === 1);
+  const at = h1?.n ?? 1;
+  const titleMatch = h1 && /^(ADR-\d{3,})\s+\S.*$/.exec(h1.text);
+  if (!titleMatch) add(at, "adr/header", `"${h1?.text ?? ""}" is not \`ADR-NNN <Title>\`.`);
+  const selfId = titleMatch?.[1];
+
+  const list = fields(doc.lines, doc.h2[0]!);
+  const map = fieldMap(list);
+  checkBlockFields(list, KEYS.adr, add, at, "adr/header");
+  const get = (key: string) => val(map, key);
+  const fieldAt = (key: string) => lineOf(map, key, at);
+
+  const status = get("Status");
+  const statusMatch = ADR_STATUS.exec(status);
+  if (map.has("status") && !statusMatch) add(fieldAt("Status"), "adr/header", `Status "${status}" is not proposed, accepted, superseded by ADR-NNN, or deprecated.`);
+  if (map.has("date") && !isDate(get("Date"))) add(fieldAt("Date"), "adr/header", `Date "${get("Date")}" is not YYYY-MM-DD.`);
+  if (map.has("category") && get("Category").trim() === "") add(fieldAt("Category"), "adr/header", "Category is empty.");
+  const supersedes = get("Supersedes");
+  const supersedesOk = /^none$/i.test(supersedes) || ADR_ID.test(supersedes);
+  if (map.has("supersedes") && !supersedesOk) add(fieldAt("Supersedes"), "adr/header", `Supersedes "${supersedes}" is not ADR-NNN or none.`);
+  const item = get("Item");
+  const itemMatch = /^(R-\d{3,})$/.exec(item);
+  if (map.has("item") && !/^none$/i.test(item) && !itemMatch) add(fieldAt("Item"), "adr/header", `Item "${item}" is not R-NNN or none.`);
+  if (map.has("source") && get("Source").trim() === "") add(fieldAt("Source"), "adr/header", "Source is empty.");
+
+  // adr/sections
+  const names = doc.h2.slice(1).map((section) => section.heading!.text);
+  if (names.join("|") !== ADR_SECTIONS.join("|")) {
+    add(
+      doc.h2[1]?.heading?.n ?? at,
+      "adr/sections",
+      `The sections are ${names.map((name) => `\`## ${name}\``).join(", ") || "missing"}; they must be ${ADR_SECTIONS.map((name) => `\`## ${name}\``).join(", ")}.`,
+    );
+  }
+
+  // adr/id
+  const name = doc.rel.split("/").at(-1)!;
+  const fileMatch = /^ADR-(\d{3,})-[a-z0-9-]+\.md$/.exec(name);
+  if (!fileMatch) add(at, "adr/id", `"${name}" is not \`ADR-NNN-<slug>.md\`.`);
+  else if (selfId && `ADR-${fileMatch[1]}` !== selfId) add(at, "adr/id", `"${name}"'s heading is ${selfId}, not ADR-${fileMatch[1]}.`);
+  if (selfId) {
+    const dupes = context.adrs.filter((adr) => adr.id === selfId && adr.rel !== doc.rel);
+    if (dupes.length) add(at, "adr/id", `${selfId} is also the heading of ${dupes.map((adr) => adr.rel).join(", ")}.`);
+  }
+
+  // adr/links
+  if (selfId && map.has("supersedes") && supersedesOk && ADR_ID.test(supersedes)) {
+    const target = context.adrs.find((adr) => adr.id === supersedes);
+    if (!target || target.status !== `superseded by ${selfId}`) add(fieldAt("Supersedes"), "adr/links", `Supersedes ${supersedes}, but ${supersedes} is not marked superseded by ${selfId}.`);
+  }
+  if (selfId && statusMatch?.[2]) {
+    const target = context.adrs.find((adr) => adr.id === statusMatch[2]);
+    if (!target || target.supersedes !== selfId) add(fieldAt("Status"), "adr/links", `Status says superseded by ${statusMatch[2]}, but ${statusMatch[2]} does not supersede ${selfId}.`);
+  }
+  if (map.has("item") && !/^none$/i.test(item) && itemMatch && !knownIds(context).has(itemMatch[1]!)) {
+    add(fieldAt("Item"), "adr/links", `${itemMatch[1]} is not an item in ROADMAP.md, NOW.md, or LOG.md.`);
   }
 }
 

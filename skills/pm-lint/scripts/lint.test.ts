@@ -44,7 +44,7 @@ const rulesOf = async (root: string) => (await lint({ root, pmRoot: "planning/",
 function initRoot(): string {
   const root = temp();
   const templates = join(SKILLS, "pm-init", "templates");
-  for (const dir of ["inbox", "briefs", "research"]) mkdirSync(join(root, "planning", dir), { recursive: true });
+  for (const dir of ["inbox", "briefs", "research", "decisions"]) mkdirSync(join(root, "planning", dir), { recursive: true });
   for (const file of readdirSync(templates)) {
     const text = readFileSync(join(templates, file), "utf8").replaceAll("{{PM_ROOT}}", "planning/");
     const target = file.endsWith("-README.md") ? join("planning", file.replace("-README.md", ""), "README.md") : join("planning", file);
@@ -215,6 +215,68 @@ describe("structure rules", () => {
   });
 });
 
+const adr = (id: string, title: string, fields: Partial<Record<string, string>> = {}, sections = ["Context", "Decision", "Alternatives", "Consequences"]) =>
+  () => `# ${id} ${title}\n\n` +
+    ["Status", "Date", "Category", "Supersedes", "Item", "Source"].map((k) => `- ${k}: ${fields[k] ?? { Status: "accepted", Date: "2026-11-22", Category: "architecture", Supersedes: "none", Item: "none", Source: "none" }[k]}`).join("\n") +
+    "\n\n" + sections.map((s) => `## ${s}\n\nText.\n`).join("\n");
+
+describe("ADR rules", () => {
+  it("accepts the default ADR format", async () => {
+    const root = repo({
+      "decisions/ADR-001-use-bun.md": adr("ADR-001", "Use Bun", { Item: "R-008" }),
+      "decisions/ADR-1000-big-id.md": adr("ADR-1000", "Big id"),
+    });
+    expect((await rulesOf(root)).filter((r) => r.startsWith("adr/"))).toEqual([]);
+  });
+  it("ignores the decisions README", async () => {
+    const root = repo({ "decisions/README.md": () => "# Decisions\n\nFree text.\n" });
+    expect((await rulesOf(root)).filter((r) => r.startsWith("adr/"))).toEqual([]);
+  });
+  it("accepts a CRLF ADR", async () => {
+    const root = repo({ "decisions/ADR-001-use-bun.md": () => adr("ADR-001", "Use Bun")().replaceAll("\n", "\r\n") });
+    expect((await rulesOf(root)).filter((r) => r.startsWith("adr/"))).toEqual([]);
+  });
+  it("accepts Item IDs from LOG.md", async () => {
+    // In the fixture's LOG.md, R-006 is in ## Done and R-004 in ## Dropped; neither is in ROADMAP.md.
+    const root = repo({ "decisions/ADR-001-a.md": adr("ADR-001", "A", { Item: "R-006" }), "decisions/ADR-002-b.md": adr("ADR-002", "B", { Item: "R-004" }) });
+    expect(await rulesOf(root)).not.toContain("adr/links");
+  });
+  it("checks the header and sections", async () => {
+    const root = repo({
+      "decisions/ADR-001-a.md": adr("ADR-001", "A", { Status: "maybe", Date: "today", Item: "R-7" }),
+      "decisions/ADR-002-b.md": adr("ADR-002", "B", {}, ["Context", "Decision", "Consequences"]),
+    });
+    const rules = await rulesOf(root);
+    expect(rules).toContain("adr/header");
+    expect(rules).toContain("adr/sections");
+  });
+  it("checks ADR IDs", async () => {
+    const root = repo({
+      "decisions/ADR-001-a.md": adr("ADR-002", "A"),
+      "decisions/ADR-003-b.md": adr("ADR-003", "B"),
+      "decisions/ADR-003-c.md": adr("ADR-003", "C"),
+      "decisions/use-bun.md": adr("ADR-004", "D"),
+    });
+    expect((await rulesOf(root)).filter((r) => r === "adr/id").length).toBeGreaterThanOrEqual(3);
+  });
+  it("checks ADR links", async () => {
+    const root = repo({
+      "decisions/ADR-001-a.md": adr("ADR-001", "A", { Status: "superseded by ADR-002" }),
+      "decisions/ADR-002-b.md": adr("ADR-002", "B"), // one-sided: Supersedes none
+      "decisions/ADR-003-c.md": adr("ADR-003", "C", { Supersedes: "ADR-009" }),
+      "decisions/ADR-004-d.md": adr("ADR-004", "D", { Item: "R-999" }),
+    });
+    expect((await rulesOf(root)).filter((r) => r === "adr/links").length).toBeGreaterThanOrEqual(3);
+  });
+  it("accepts a two-sided supersede", async () => {
+    const root = repo({
+      "decisions/ADR-001-a.md": adr("ADR-001", "A", { Status: "superseded by ADR-002" }),
+      "decisions/ADR-002-b.md": adr("ADR-002", "B", { Supersedes: "ADR-001" }),
+    });
+    expect((await rulesOf(root)).filter((r) => r.startsWith("adr/"))).toEqual([]);
+  });
+});
+
 describe("item fields ride NOW.md and the stack", () => {
   it("carries every roadmap item field through NOW.md and the push template", () => {
     const carried = KEYS.item.filter((k) => !["Status", "Paused checkpoint"].includes(k));
@@ -307,6 +369,16 @@ describe("the command line and hooks", () => {
       expect(await main(["check", "planning/ROADMAP.md", "--root", root, "--no-export"])).toBe(0); // a warning only
       expect(await main(["check", "planning/ROADMAP.md", "--root", root, "--no-export", "--strict"])).toBe(1);
       expect(await main(["nonsense"])).toBe(2);
+    } finally {
+      restore();
+    }
+  });
+
+  it("expands a folder argument into the PM files under it", async () => {
+    const root = repo({ "decisions/ADR-009-bad.md": adr("ADR-009", "Bad", { Status: "maybe" }) });
+    const restore = quiet();
+    try {
+      expect(await main(["check", "planning/decisions", "--root", root, "--no-export"])).toBe(1);
     } finally {
       restore();
     }

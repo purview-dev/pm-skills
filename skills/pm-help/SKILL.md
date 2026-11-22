@@ -45,6 +45,7 @@ asked, the skill's own `SKILL.md` steps.
 | `pm-park` | You or the agent have an idea, bug, question, or inspiration to remember, even mid-task | "park this: ...", "note that ..." | One inbox file |
 | `pm-bug` | A bug to log with the facts a fix needs: symptom, expected and actual, reproduction, severity, evidence | "add a bug", "log a defect" | One inbox file with `Kind: bug`; a roadmap item if routed |
 | `pm-risk` | A risk to note, even mid-task, or the risk register to see or manage: add, update, re-rate (RAG), review, mitigate, close, or remove one risk | "risk: the API may rate-limit us", "show the risks", "close RK-003" | `RISKS.md`; a roadmap item in `mitigate` |
+| `pm-adr` | A technical decision to record, or the ADRs to see or check: new, supersede, accept, deprecate, view, check, import | "record an ADR for using Bun", "show the ADRs", "import docs/adr" | `decisions/ADR-NNN-<slug>.md` |
 | `pm-shape` | You want to brainstorm, discuss, or challenge one idea before committing to it | "let's think through dark mode" | A brief; a roadmap item if accepted |
 | `pm-discover` | You want evidence from the code, history, or usage data, or an answer about how the product works today | "what should we fix next?", "is export used?" | A research report; inbox ideas |
 | `pm-strategy` | Setting focus, milestones, bets, or the vision, or rebuilding the roadmap | "re-plan the roadmap" | `STRATEGY.md`, `VISION.md`, `ROADMAP.md` |

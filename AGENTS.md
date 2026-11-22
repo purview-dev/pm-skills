@@ -250,6 +250,14 @@ as `18.x.y`, and a prerelease of rules 19 as `19.0.0-pre.N`.
   IDs are `R-NNN` and never reused; `NOW.md` in the configured PM root
   holds the single active item; `ROADMAP.md` separates ordered `Next` from
   `Later`; and parked ideas each have their own inbox file.
+- Every skill feature considers the docs site. When a skill adds or changes
+  PM state, a file format, a setting, or a record a user would browse (items,
+  briefs, risks, ADRs, and the like), its design states how `pm-docs-site`
+  surfaces it: a view, a page, a list with grouping, filters, and search, a
+  field on an existing view, or nothing, with the reason. Build the surface in
+  the same item, or add a roadmap item for it before the item closes. New
+  views go in `packages/pm-docs-site` (Not doing in `planning/STRATEGY.md`
+  freezes the templates), as rich interactive React islands.
 - Keep PM workflow actions bounded: PM skills operate on PM state in the
   main worktree, except a completion record on the item's branch, and commit
   only that PM root, as defined by *Committing PM state* in the managed
@@ -293,6 +301,7 @@ repository root.
 | `pm-park` | Capture an idea, bug, question, or inspiration without derailing | Any time (capture mode only during a workflow) |
 | `pm-bug` | Capture a bug with the facts needed to fix it: symptom, expected and actual, reproduction, severity, and evidence | Any time (capture only during a workflow), user asks |
 | `pm-risk` | Capture, add, update, re-rate, close, or remove one risk in the risk register, with its RAG status; turn a mitigation into a roadmap item | Any time (capture and view only during a workflow), user asks |
+| `pm-adr` | Record, supersede, accept, deprecate, view, check, or import architecture decision records in the decisions folder | Any time (new, supersede, accept, view, and check during a workflow), user asks |
 | `pm-shape` | Discuss, challenge, and flesh out one idea; decide park, roadmap, build, or drop | No active workflow, user asks |
 | `pm-discover` | Analyse the existing product, its history and usage, or answer a product question | No active workflow, user asks |
 | `pm-strategy` | Set vision, milestones, bets, and decisions; generate or re-plan the roadmap | User asks, or another PM skill recommends it |
@@ -361,24 +370,27 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   discussion uses, each with the words needed to decide it: a milestone's
   name, whether it is the focus, and the items in it; a roadmap item's
   title, owner, size, status, and section position (`Next 3`, `Later, M2`);
-  a risk's title, RAG, and status; a `V` line, bet, or inbox file's
-  one-line text. It lists every member of a range, not its ends: `M1 to
-  M4` lists M1, M2, M3, and M4, and `R-005 to R-010` lists every item
-  between them in roadmap order. A position (`before R-010`, `after M2`)
-  lists the item or milestone it names and its neighbours on each side, so
-  the user sees where the new position falls. It is printed first, before
-  the text that uses the IDs (Asking the user, Communication contract).
+  a risk's title, RAG, and status; an ADR's title and status; a `V` line,
+  bet, or inbox file's one-line text. It lists every member of a range, not
+  its ends: `M1 to M4` lists M1, M2, M3, and M4, and `R-005 to R-010` lists
+  every item between them in roadmap order. A position (`before R-010`,
+  `after M2`) lists the item or milestone it names and its neighbours on
+  each side, so the user sees where the new position falls. It is printed
+  first, before the text that uses the IDs (Asking the user, Communication
+  contract).
 - **Named reference:** an ID written with the words that identify it, so
   the user never has to look a bare ID up. In a list, board, roadmap, or
   status it is `<ID> <title>`; in a question, choice, or change line it is
-  `<ID> <title> (owner, size, status)`, or `RK-NNN <title> (<RAG>)` for a
-  risk. Every skill prints one wherever its output names an ID. A bare ID
-  appears only in a literal command the user types (`pm-item done R-009`),
-  a file line such as `LOG.md`, or a commit message.
+  `<ID> <title> (owner, size, status)`, `RK-NNN <title> (<RAG>)` for a
+  risk, or `ADR-NNN <title> (<status>)` for an ADR. Every skill prints one
+  wherever its output names an ID. A bare ID appears only in a literal
+  command the user types (`pm-item done R-009`), a file line such as
+  `LOG.md`, or a commit message.
 - **Optional files:** `STRATEGY.md`, `briefs/`, and `research/` in the PM
   root may be missing in projects initialised before version 4, and
-  `RISKS.md` in projects initialised before version 12. Skills that read
-  them treat a missing file as empty. Skills that write them create them.
+  `RISKS.md` in projects initialised before version 12. `decisions/` may be
+  missing in projects initialised before version 21. Skills that read them
+  treat a missing file as empty. Skills that write them create them.
 - **Inbox file:** one idea per file at
   `<PM root>/inbox/<YYYY-MM-DD-HHMM>-<slug>.md`, written by `pm-park` and
   `pm-discover`, in this format:
@@ -481,6 +493,49 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
 - **Risk IDs:** `RK-NNN` (at least 3 digits), separate from item IDs. A new
   ID is the highest `RK` number in `RISKS.md` (all three sections), plus 1.
   IDs are never reused.
+- **Decisions folder:** `<PM root>/decisions/`, an **Optional file** (a
+  missing folder means no ADRs). Holds `README.md` and one file per ADR.
+- **ADR IDs:** `ADR-NNN` (at least 3 digits), separate from item and risk
+  IDs. A new ID is the highest `ADR` number in the folder plus 1. Never
+  reused: a deprecated or superseded ADR keeps its file.
+- **ADR:** one technical decision (architecture, technology, library, or
+  pattern) at `<PM root>/decisions/ADR-NNN-<slug>.md`, written only by
+  `pm-adr`:
+
+  ```markdown
+  # ADR-001 <Title, max 8 words>
+
+  - Status: proposed | accepted | superseded by ADR-NNN | deprecated
+  - Date: <YYYY-MM-DD>
+  - Category: <architecture | data | security | tooling | testing | operations | another word>
+  - Supersedes: <ADR-NNN | none>
+  - Item: <R-NNN | none>
+  - Source: <imported path | none>
+
+  ## Context
+
+  ## Decision
+
+  ## Alternatives
+
+  ## Consequences
+  ```
+
+  `Category` is free text; the list is the suggested set. An accepted ADR
+  is never rewritten: a change is a new ADR that supersedes it.
+- **Decision split:** product decisions (whether and what) go in
+  `STRATEGY.md` `## Decisions` and briefs; technical decisions in ADRs; one
+  item's detail in its spec, which names the ADR IDs it writes or follows.
+- **Read before deciding:** any session, inside the lifecycle or not, reads
+  the accepted ADR titles in the decisions folder before a technical
+  decision, follows them, or supersedes one through `pm-adr`.
+- **Every design handoff** (`pm-next` step 10, and a resume, `pop`,
+  `rewind`, or `rejoin` into design) lists the accepted and proposed ADRs
+  (named references) from the decisions folder, or says there are none,
+  and tells the design stage to read the ones its decision touches before
+  proposing approaches, to record each architecture decision the spec
+  makes with `pm-adr new` or `supersede`, and to name the ADR IDs in the
+  spec.
 - **RAG:** a risk's red, amber, or green status. It is derived from
   Likelihood and Impact, scored `low` 1, `medium` 2, `high` 3, by their
   product: 6 or more is `red`, 3 or 4 is `amber`, 2 or less is `green`. An
@@ -693,24 +748,30 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
      (`pm-checkpoint`, `done` only), or
    - when the user asks to pause the session (`pm-pause`), or
    - when the agent parks its own finding (`pm-park`, capture mode), or
-   - when the user or the agent names a risk (`pm-risk`, capture mode).
+   - when the user or the agent names a risk (`pm-risk`, capture mode), or
+   - when the workflow records or accepts a technical decision (`pm-adr`
+     `new`, `supersede`, `accept`).
 3. **Mid-workflow, the only permitted PM writes are `pm-park` and
-   `pm-risk` in capture mode, and `pm-checkpoint` (`push`, `pop`) when the
-   user asks to suspend or resume an operation.** `pm-park` writes one inbox
-   file and `pm-risk` one risk in `RISKS.md`, each replies with one line,
-   then the exact step that was in progress resumes; `push` writes one
-   stack entry, `pop` restores the top entry, and both reply in one line
-   before the interrupted step resumes. No discussion, no evaluation, no
-   follow-up questions for any of them. `pm-park` and `pm-risk` run as a
-   **Quick capture** (Shared definitions), in the background when the
-   agent can. A capture the user types while the agent works is handled
-   between tool calls and never ends the step in progress. If the user wants to discuss the
+   `pm-risk` in capture mode, `pm-adr` (`new`, `supersede`, `accept`), and
+   `pm-checkpoint` (`push`, `pop`) when the user asks to suspend or resume
+   an operation.** `pm-park` writes one inbox file and `pm-risk` one risk
+   in `RISKS.md`, each replies with one line, then the exact step that was
+   in progress resumes; `pm-adr` writes one or two ADR files and replies
+   `Recorded ADR-NNN <title> (<status>).`; `push` writes one stack entry,
+   `pop` restores the top entry, and both reply in one line before the
+   interrupted step resumes. No discussion, no evaluation, no follow-up
+   questions for any of them, and `pm-adr` never commits. `pm-park` and
+   `pm-risk` run as a **Quick capture** (Shared definitions), in the
+   background when the agent can. A capture the user types while the agent
+   works is handled between tool calls and never ends the step in
+   progress. If the user wants to discuss the
    idea, set `Discuss: yes`; it is discussed later with `pm-shape`. A
    captured risk keeps `Reviewed: never` until `pm-risk` reviews it. The
    read-only exceptions: `pm-help` may answer a question about a skill in
    explain mode, without reading PM state; `pm-rejoin` may run in `locate`
    mode; `pm-export` may run in `check` or `query` mode, `pm-lint` in
-   `check`, `rules`, or `hook` mode, and `pm-docs-site` in `check` mode; and
+   `check`, `rules`, or `hook` mode, `pm-docs-site` in `check` mode, and
+   `pm-adr` in `view` or `check` mode; and
    `pm-status`, `pm-board`, `pm-roadmap`, `pm-up-next`, and `pm-risk`
    (`view`) may render their view when the user explicitly asks for it. None of them may add, move, insert, close,
    or reorder anything during a workflow. In every case the step in
@@ -1014,10 +1075,10 @@ Rules:
   (Non-interruption rule 7), commit only the paths this run changed.
 - Commit the PM root only. Source code, specs, plans, and agent instruction
   files are never included, even when the same work changed them.
-- `pm-park` never commits, and `pm-risk` never commits in capture mode:
-  they run mid-workflow and must return in one line. Their inbox files and
-  risks are linted and committed by the next skill that commits, usually
-  `pm-checkpoint`.
+- `pm-park` never commits, `pm-risk` never commits in capture mode, and
+  `pm-adr` never commits during a workflow: they run mid-workflow and must
+  return in one line. Their inbox files, risks, and ADRs are linted and
+  committed by the next skill that commits, usually `pm-checkpoint`.
 - The **Export file** and its **Export schema** are ordinary PM files
   inside the PM root, so the same commit covers them. `pm-export` is the
   only skill that writes them, including the refresh in step 6, so a PM
@@ -1212,6 +1273,11 @@ claimed item's `Note`: `pm-next` writes it to `NOW.md` after `Revisits`,
 `pm-checkpoint` `push` and `pop` carry it through `STACK.md`, and `switch`
 writes it back to `ROADMAP.md`, recovering `Serves` and `Size` from the
 claim commit when `NOW.md` lacks them. No setting is added.
+
+Version 21 also adds `pm-adr` and the decisions folder
+(`<PM root>/decisions/`, optional): technical decisions are ADRs, the
+design stage records them with `pm-adr`, and `pm-adr import <folder>`
+brings an existing ADR folder in. No setting is added.
 
 ## Asking the user (mandatory)
 

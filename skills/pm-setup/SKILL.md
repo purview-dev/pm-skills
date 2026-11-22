@@ -66,8 +66,8 @@ Collect these facts. Write nothing yet.
    in `<PM state directory>/config.md`, if that file exists. A legacy
    marker's `version=` counts only when `config.md` records none.
 4. **Installed skills:** for each of `pm-init`, `pm-resume`, `pm-rejoin`,
-   `pm-next`, `pm-up-next`, `pm-park`, `pm-bug`, `pm-risk`, `pm-shape`,
-   `pm-discover`, `pm-strategy`, `pm-purview`, `pm-checkpoint`,
+   `pm-next`, `pm-up-next`, `pm-park`, `pm-bug`, `pm-risk`, `pm-adr`,
+   `pm-shape`, `pm-discover`, `pm-strategy`, `pm-purview`, `pm-checkpoint`,
    `pm-pause`, `pm-revise`, `pm-review`, `pm-item`, `pm-board`, `pm-roadmap`,
    `pm-status`, `pm-export`, `pm-lint`, `pm-docs-site`, and `pm-help`, check that a
    `SKILL.md` exists.
@@ -143,7 +143,7 @@ Step 5, item 5, are the only other questions.
 - Mode: install | upgrade v<old> to v<new> | repair (re-wrap the section) | reinstall (section missing, recorded v<n>) | already current (nothing to do)
 - Target: <file> (<append section | replace between markers | wrap the stranded section>)
 - Extra: <@AGENTS.md import added to CLAUDE.md | none>
-- Skills: <n> of 25 installed. Missing: <names | none>
+- Skills: <n> of 26 installed. Missing: <names | none>
 - Rules version: <v<n> recorded | not recorded | legacy v<n> in the marker | PM state not initialised>
 - Workflow framework: <Superpowers | name | partial | none>
 - Workflow skills: <n> of <total> installed. Missing: <names | none>
@@ -240,6 +240,12 @@ Rules for this step:
 
    These questions do not count against the one question in Step 4. Do not
    edit anything else in the file.
+
+   Also check, read-only: when `<PM state directory>/decisions/` does not
+   exist and one of `docs/adr/`, `docs/decisions/`, `doc/adr/`, or
+   `docs/architecture/decisions/` does, add the output Note
+   `Existing ADRs in <folder>. Run pm-adr import <folder> to bring them
+   in.` No question, no write.
 5. **Active item fields (version 20).** If `<PM state directory>/NOW.md`
    is `Status: active` and lacks `Owner`, first check its `Session`
    against the current session (`git branch --show-current`). When it
@@ -281,19 +287,20 @@ Rules for this step:
 ## pm-setup done
 
 - Target: <file> (<installed | upgraded to v<n> | repaired>)
-- Skills: <25 of 25 installed | missing: names>
+- Skills: <26 of 26 installed | missing: names>
 - Workflow skills: <n of n installed | missing: names>
 - Rules version: <v<n> recorded in <PM root>/config.md | legacy v<n> migrated | PM state not initialised>
 - Diff check: only the managed section changed, plus the Rules version line, any added Commits settings, and any backfilled NOW.md item fields
 - Commits: <PM state commit <value>, Export on commit <value> | PM state not initialised>
 - PM state: <not initialized | current | missing version 4 files: names>
 - Upgrade gate: <cleared, rules at v<n> | unchanged>
+- Note: <Existing ADRs in <folder>. Run pm-adr import <folder> to bring them in. | none>
 
 ## Do this next
 
 1. <Only if skills are missing:> Install the missing skills.
    - Start with: `npx skills add https://github.com/purview-dev/pm-skills -y`
-   - Done when: all 25 pm-* skills are listed by `npx skills list`
+   - Done when: all 26 pm-* skills are listed by `npx skills list`
 2. <Only if workflow skills are missing:> Install the workflow skills.
    - Start with: `npx skills add https://github.com/obra/superpowers -y`,
      or `/plugin install superpowers@claude-plugins-official` in Claude

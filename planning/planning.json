@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-22T10:12:03+00:00",
+  "generatedAt": "2026-11-22T14:26:12+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-029-dev-browser-webserver",
-    "head": "11a51a0a52a6cdce1557340c537cd35e5ba97a19"
+    "branch": "feat/r-033-adr-directory-setting-and-design-handoff",
+    "head": "6e34c3a6656f324c63f87dfc63649c4f4b0b991e"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -35,6 +35,10 @@
       {
         "id": "V4",
         "text": "`pm-export` writes a schema-valid `planning.json`, and `pm-docs-site` builds a site from it whose `just docs-check` passes."
+      },
+      {
+        "id": "V5",
+        "text": "Technical decisions are recorded and followed: `pm-init` records an existing repository's technology and principles, the design handoff names the ADRs and principles that apply, and `pm-checkpoint` (`done`) refuses to close an item whose command checks fail."
       }
     ],
     "outOfScope": [
@@ -62,6 +66,16 @@
         "exitCriteria": "`npm view @purview-dev/pm-docs-site version` returns a version, `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore`, and `just docs-check` passes.",
         "target": null,
         "status": "active"
+      },
+      {
+        "id": "M4",
+        "name": "Recorded technical decisions",
+        "serves": [
+          "V5"
+        ],
+        "exitCriteria": "a report in `planning/research/` shows, in a scratch repository with `package.json`, `tsconfig.json`, `AGENTS.md`, and `docs/adr/`, that `pm-init` writes `ENGINEERING.md` citing all three files and `ADR directory: docs/adr/`, that the design handoff names the ADRs and principles that apply, and that `pm-checkpoint` (`done`) refuses to close on a failing command check.",
+        "target": null,
+        "status": "planned"
       },
       {
         "id": "M2",
@@ -133,6 +147,30 @@
     ],
     "decisions": [
       {
+        "date": "2026-11-22",
+        "decision": "R-033 ADR directory setting and design handoff moved to the top of Next, ahead of the M1 items.",
+        "why": "the user asked for the ADRs next.",
+        "rejected": "keeping it behind R-025 and R-013."
+      },
+      {
+        "date": "2026-11-22",
+        "decision": "Re-planned roadmap.",
+        "why": "V5 and M4 added; R-033 to R-035 join Next after the two M1 items, R-036 and R-037 lead Later under M4.",
+        "rejected": "M4 items ahead of R-013 Docs-site package: publish and migrate."
+      },
+      {
+        "date": "2026-11-22",
+        "decision": "Milestone M4 Recorded technical decisions added, ordered after M1 and before M2, serving V5.",
+        "why": "the user asked for it next; it covers the briefs `planning/briefs/2026-11-22-where-do-adrs-fit.md` and `planning/briefs/2026-11-20-technology-and-engineering-principles.md`.",
+        "rejected": "ordering it after M3."
+      },
+      {
+        "date": "2026-11-22",
+        "decision": "Vision V5 added: technical decisions are recorded and followed (`pm-init` records technology and principles, the design handoff names the ADRs and principles that apply, `pm-checkpoint` `done` refuses a failing command check).",
+        "why": "agents contradict earlier technical decisions because nothing records or points at them (both briefs).",
+        "rejected": "an ADR-only V5; keeping v1 as is. Cost: about 5 items and several rules bumps before M2 and M3."
+      },
+      {
         "date": "2026-11-18",
         "decision": "Vision V3 now reads: during an active workflow, only the Non-interruption rules' exceptions run (capture, `pm-checkpoint` stage, done, push and pop, `pm-pause`, `pm-revise`, and the read-only views and checks); every other PM skill waits, and a capture replies in one line while the step in progress resumes.",
         "why": "the old line named only `pm-park`, the read-only views, and `pm-revise`, so it no longer matched Non-interruption rules 2, 3, and 10; pointing at the rules keeps it true as they change. R-016 Rehearse the lifecycle guards and M3 still serve it.",
@@ -193,10 +231,62 @@
   "roadmap": {
     "next": [
       {
+        "id": "R-038",
+        "title": "ADR export and Decisions view",
+        "section": "next",
+        "position": 1,
+        "label": "next",
+        "serves": [
+          "V5"
+        ],
+        "milestone": "M4",
+        "owner": "agent",
+        "doneWhen": "`pm-export write` puts `adrs` (read from `planning/decisions/`) in `planning/planning.json` at `schemaVersion` 5 and `pm-export check` passes; the `packages/pm-docs-site` Decisions view lists, searches, and filters ADRs by category and status, with one indexed page per ADR and feature pages listing their ADRs, covered by unit tests; the demo has ADRs; the templates read `schemaVersion` 5; `just validate`, `just test`, and `just demo-check` pass.",
+        "size": "M",
+        "dependsOn": [
+          "R-033"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
+        "note": "Slice 2 of the ADR work (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). Decisions view is a React island: text search, category and status chips, superseded hidden by default, group by category or status, URL state.",
+        "revisits": null,
+        "claimable": true
+      },
+      {
+        "id": "R-039",
+        "title": "ADRs across the PM skills",
+        "section": "next",
+        "position": 2,
+        "label": "next",
+        "serves": [
+          "V5"
+        ],
+        "milestone": "M4",
+        "owner": "agent",
+        "doneWhen": "`pm-shape` and `pm-discover` read ADRs and challenge contradictions; `pm-revise` supersedes an ADR a correction reverses; `pm-checkpoint` (`done`) checks the spec's ADR IDs exist; `pm-review` lists ADRs `proposed` longer than the review cadence; `pm-purview` records an accepted recommendation as an ADR; `pm-status` counts ADRs by status; `pm-help` diagnoses unaccepted and broken ADRs; every re-entry into design (`pm-next` resume, `pm-resume`, `pm-checkpoint` `pop`, `pm-revise` `rewind`, `pm-rejoin`) passes the ADR instruction; `just validate` and `just test` pass.",
+        "size": "M",
+        "dependsOn": [
+          "R-033"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
+        "note": "Slice 3 of the ADR work (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). The design re-entries were added by the R-033 final review.",
+        "revisits": null,
+        "claimable": true
+      },
+      {
         "id": "R-025",
         "title": "Docs-site package: feature pages list revisions",
         "section": "next",
-        "position": 1,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -220,14 +310,14 @@
         "id": "R-013",
         "title": "Docs-site package: publish and migrate",
         "section": "next",
-        "position": 2,
+        "position": 4,
         "label": "next",
         "serves": [
           "V4"
         ],
         "milestone": "M1",
         "owner": "both",
-        "doneWhen": "`npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore` and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; and a scratch export at schemaVersion 4 fails the build until the package's range includes it.",
+        "doneWhen": "`npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore` and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; and a scratch export at schemaVersion 5 fails the build until the package's range includes it.",
         "size": "M",
         "dependsOn": [
           "R-009",
@@ -250,14 +340,118 @@
         "note": "Rewrites `pm-docs-site` and Non-interruption rule 9, so it bumps the rules major.",
         "revisits": null,
         "claimable": true
+      },
+      {
+        "id": "R-034",
+        "title": "Engineering file and pm-engineering skill",
+        "section": "next",
+        "position": 5,
+        "label": "next",
+        "serves": [
+          "V5"
+        ],
+        "milestone": "M4",
+        "owner": "agent",
+        "doneWhen": "`pm-engineering add` writes a linted entry to `planning/ENGINEERING.md` (`## Technology` and `## Principles`, each entry citing its `Source`), and the skill is listed in the README, managed-section, `pm-setup`, and `pm-help` tables with `just validate` and `just test` passing.",
+        "size": "M",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
+        "note": null,
+        "revisits": null,
+        "claimable": true
       }
     ],
     "later": [
       {
+        "id": "R-035",
+        "title": "pm-engineering infer from an existing repository",
+        "section": "later",
+        "position": 1,
+        "label": "waiting",
+        "serves": [
+          "V5"
+        ],
+        "milestone": "M4",
+        "owner": "agent",
+        "doneWhen": "in a scratch repository with `package.json`, `tsconfig.json`, and `AGENTS.md`, `pm-engineering infer` writes an `ENGINEERING.md` citing all three; `pm-init` runs it for an existing repository and `pm-setup` offers it on upgrade.",
+        "size": "M",
+        "dependsOn": [
+          "R-034"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
+        "note": null,
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-036",
+        "title": "Plan citation and done check",
+        "section": "later",
+        "position": 2,
+        "label": "waiting",
+        "serves": [
+          "V5"
+        ],
+        "milestone": "M4",
+        "owner": "agent",
+        "doneWhen": "`pm-next` and `pm-checkpoint` (`stage`) pass the principles and ADRs that apply to the plan handoff; `pm-checkpoint` (`done`) refuses to close on a failing command check and lists failed review checks as a `Note` and an inbox file, shown in a rehearsal report in `planning/research/`; `pm-purview` hands accepted packages to `pm-engineering add`.",
+        "size": "M",
+        "dependsOn": [
+          "R-033",
+          "R-034"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
+        "note": null,
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-037",
+        "title": "Engineering export and docs-site view",
+        "section": "later",
+        "position": 3,
+        "label": "waiting",
+        "serves": [
+          "V5"
+        ],
+        "milestone": "M4",
+        "owner": "agent",
+        "doneWhen": "`planning.json` carries the engineering record at `schemaVersion` 6, `pm-export check` passes, and an Engineering view passes `just docs-check`.",
+        "size": "S",
+        "dependsOn": [
+          "R-034",
+          "R-013"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
+        "note": null,
+        "revisits": null,
+        "claimable": false
+      },
+      {
         "id": "R-006",
         "title": "Check pm-setup's skill counts in validate",
         "section": "later",
-        "position": 1,
+        "position": 4,
         "label": "later",
         "serves": [
           "V1"
@@ -281,7 +475,7 @@
         "id": "R-015",
         "title": "Rehearse a fresh install in a scratch repository",
         "section": "later",
-        "position": 2,
+        "position": 5,
         "label": "later",
         "serves": [
           "V1"
@@ -305,7 +499,7 @@
         "id": "R-016",
         "title": "Rehearse the lifecycle guards",
         "section": "later",
-        "position": 3,
+        "position": 6,
         "label": "later",
         "serves": [
           "V2",
@@ -330,7 +524,7 @@
         "id": "R-024",
         "title": "Self-contained aspire module test example",
         "section": "later",
-        "position": 4,
+        "position": 7,
         "label": "later",
         "serves": [
           "V4"
@@ -354,7 +548,7 @@
         "id": "R-030",
         "title": "Pre-push runs fast checks only",
         "section": "later",
-        "position": 5,
+        "position": 8,
         "label": "later",
         "serves": [
           "V4"
@@ -378,7 +572,7 @@
         "id": "R-032",
         "title": "pm-checkpoint and pm-lint Note follow-ups",
         "section": "later",
-        "position": 6,
+        "position": 9,
         "label": "later",
         "serves": [
           "V2"
@@ -405,6 +599,20 @@
       "now": [],
       "next": [
         {
+          "id": "R-038",
+          "title": "ADR export and Decisions view",
+          "owner": "agent",
+          "size": "M",
+          "detail": "ready"
+        },
+        {
+          "id": "R-039",
+          "title": "ADRs across the PM skills",
+          "owner": "agent",
+          "size": "M",
+          "detail": "ready"
+        },
+        {
           "id": "R-025",
           "title": "Docs-site package: feature pages list revisions",
           "owner": "agent",
@@ -417,11 +625,27 @@
           "owner": "both",
           "size": "M",
           "detail": "ready"
+        },
+        {
+          "id": "R-034",
+          "title": "Engineering file and pm-engineering skill",
+          "owner": "agent",
+          "size": "M",
+          "detail": "ready"
         }
       ],
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-22",
+          "id": "R-033",
+          "title": "ADR record, pm-adr, and design handoff",
+          "milestone": "M4",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-22-adr-record.md",
+          "result": "branch feat/r-033-adr-directory-setting-and-design-handoff"
+        },
         {
           "date": "2026-11-22",
           "id": "R-029",
@@ -605,6 +829,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-22",
+        "kind": "done",
+        "id": "R-033",
+        "title": "ADR record, pm-adr, and design handoff",
+        "milestone": "M4",
+        "owner": "agent",
+        "result": "branch feat/r-033-adr-directory-setting-and-design-handoff"
+      },
       {
         "date": "2026-11-22",
         "kind": "done",
@@ -852,6 +1085,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-22",
+        "id": "R-033",
+        "title": "ADR record, pm-adr, and design handoff",
+        "milestone": "M4",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-22-adr-record.md",
+        "result": "branch feat/r-033-adr-directory-setting-and-design-handoff"
+      },
       {
         "date": "2026-11-22",
         "id": "R-029",
@@ -1115,21 +1357,6 @@
       "idea": "Minor findings from R-010's task and final reviews, triaged \"can wait\":\n\n- The 3s reveal of a pending board also fires on a slow but successful hydration (brief unfiltered view, then the filtered one); say so in `components.css` and the `useBoardUrlState.ts` header, or tune it.\n- The pending mark is also set on `/plan/roadmap/?owner=...` (inert today); scope it to the Board page when R-011 adds Roadmap filters.\n- `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`.\n- The lane header is a plain `div`; an `h3` or `role=\"heading\"` would make lanes navigable.\n- Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed.\n- The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page; watch it for R-011 and R-012.\n- A collapsed column's vertical title stretches the shared header row.\n- `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab` (suggests drag and drop); its header comment lists only some changes.\n- `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array.\n- `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id` (key fallback, `href: null`, and the Done-tag rule untested); `tagHref` never asserted.\n- `integration.test.ts` asserts the integration names two ways.\n- `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`.\n- The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP."
     },
     {
-      "file": "planning/inbox/2026-11-20-1528-technology-and-engineering-principles.md",
-      "title": "Technology and engineering principles sections",
-      "captured": "2026-11-20 15:28",
-      "source": "user",
-      "kind": "feature",
-      "severity": null,
-      "affects": "pm-init, pm-setup, pm-checkpoint, pm-purview, pm-lint",
-      "context": null,
-      "discuss": "no",
-      "related": [],
-      "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
-      "reviewed": "2026-11-20",
-      "idea": "Include a 'technology' and 'engineering principals' section. It should be part of init/ updatable later and new packages and rules and technologies are introducted.\n\nIt should be also work things out based on existing repos.\n\nAll checklist items must be checked off against the relevent technology/ patterns rules."
-    },
-    {
       "file": "planning/inbox/2026-11-20-1844-import-guard-skips-astro.md",
       "title": "Island import guard skips Astro files",
       "captured": "2026-11-20 18:44",
@@ -1220,19 +1447,37 @@
       "idea": "Deferred minors from the R-031 final review. (1) `relativeImports` in `packages/pm-docs-site/test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports inside comments, and misses template-literal dynamic imports (`` import(`./x`) ``); these give false failures only. (2) In `scripts/check-demo.ts`, the text of a `plan-empty` element is cut off at a nested `plan-empty` element; both are still reported. (3) `src/pages/plan/log.astro` labels an ID that is known but whose page is not built with the logged title, not the export's current title, and no test covers that view-off case."
     },
     {
-      "file": "planning/inbox/2026-11-22-0952-where-do-adrs-fit.md",
-      "title": "Where do ADRs fit in",
-      "captured": "2026-11-22 09:52",
+      "file": "planning/inbox/2026-11-22-1232-agent-context-tidy-skill.md",
+      "title": "Agent context analysis and planning tidy skill",
+      "captured": "2026-11-22 12:32",
       "source": "user",
-      "kind": "question",
+      "kind": "improvement",
       "severity": null,
       "affects": null,
-      "context": "R-029 execute",
-      "discuss": "yes",
+      "context": "R-033 execute",
+      "discuss": "no",
       "related": [],
       "brief": null,
       "reviewed": "never",
-      "idea": "Where do ADRs fit in to the overall project? Given we also make use of a technology/ stack."
+      "idea": "Do a performance analysis to ensure we are agentic token/ context aware. Keep things relevent for agents. This can be a skill for 'tidying up the planning state'"
+    },
+    {
+      "file": "planning/inbox/2026-11-22-1425-lint-folder-argument-hardening.md",
+      "title": "Harden the pm-lint folder argument",
+      "captured": "2026-11-22 14:25",
+      "source": "agent (R-033 finish)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "skills/pm-lint/scripts/lint.ts",
+      "context": "R-033 execute",
+      "discuss": "no",
+      "related": [
+        "R-033",
+        "R-039"
+      ],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "`expandTargets` in `skills/pm-lint/scripts/lint.ts` (added in `981977a`) expands a folder argument one level only, so `check planning/` would miss `inbox/`, `briefs/`, and `decisions/` files; and no test covers `--staged` combined with a folder argument. Also cosmetic: ADR-001's Alternatives row says ADRs are \"exported\" (quoted from the spec), and the `pm-init` template row keeps \"(new project only)\" inside the code span because `scripts/validate.ts` parses it."
     }
   ],
   "briefs": [
@@ -1262,15 +1507,32 @@
     },
     {
       "path": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
-      "id": null,
+      "id": "R-034",
       "title": "Technology and engineering principles sections",
-      "status": "parked",
+      "status": "on roadmap (R-034, R-035, R-036, R-037)",
       "origin": "planning/inbox/2026-11-20-1528-technology-and-engineering-principles.md",
-      "updated": "2026-11-20",
+      "updated": "2026-11-22",
       "decision": "2026-11-20 Keep it parked. Reason: SCOPE CHANGE to v1; no `V` line or milestone covers it and M1 Reproducible docs site is the current focus. Next: `pm-strategy` adds a `V` line and a milestone after M1, then the four slices go to Later under it.",
       "problem": "A solo developer's technology choices, adopted packages, and engineering principles are decided once and then lost: nothing in PM state records what was adopted and why (answer 2026-11-20).",
       "doneWhen": "`pm-init` in a scratch repository with a `package.json` and an `AGENTS.md` writes `planning/ENGINEERING.md` with `## Technology` and `## Principles`, each entry citing its `Source`, and `pm-lint check` passes on it.",
       "revisions": []
+    },
+    {
+      "path": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
+      "id": null,
+      "title": "Where do ADRs fit in",
+      "status": "done",
+      "origin": "planning/inbox/2026-11-22-0952-where-do-adrs-fit.md",
+      "updated": "2026-11-22",
+      "decision": "2026-11-22 Keep it parked. Reason: SCOPE CHANGE to v1; no `V` line or milestone covers it and M1 Reproducible docs site is the current focus. Answer to the question: ADRs record technical decisions only, live in a configurable `docs/adr/`, are written by the design stage, and are read by every session through the managed rules. Next: `pm-strategy` adds a `V` line and a milestone after M1 covering this and the engineering-principles brief.",
+      "problem": "Technical decisions (why this library, why this pattern) are buried in each item's design spec and are not findable later, by the user or by an agent (answer 2026-11-22).",
+      "doneWhen": "`pm-init` in a scratch repository with `docs/adr/` writes `ADR directory: docs/adr/` to `planning/config.md`, and `pm-lint check` passes.",
+      "revisions": [
+        {
+          "date": "2026-11-22",
+          "text": "ADRs were to live in a configurable `docs/adr/`, recorded by an `ADR directory` setting. Must now: live in `<PM root>/decisions/`, written only by the new `pm-adr` skill and linted by `pm-lint`; the `ADR directory` setting and the `docs/adr/` default are dropped, and `pm-adr import` brings an existing folder in (user, 2026-11-22). Mode: fix-in-place. Supersedes: the `Done when` above and R-033's old title."
+        }
+      ]
     },
     {
       "path": "planning/briefs/R-020-docs-site-demo-fixture.md",
@@ -1296,13 +1558,13 @@
     "removed": []
   },
   "counts": {
-    "next": 2,
-    "later": 6,
+    "next": 5,
+    "later": 9,
     "nextMax": 5,
-    "openInbox": 9,
-    "discuss": 2,
+    "openInbox": 10,
+    "discuss": 1,
     "shapingBriefs": 0,
-    "done": 20,
+    "done": 21,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1311,11 +1573,14 @@
     "greenRisks": 0
   },
   "checks": {
-    "reviewDue": false,
+    "reviewDue": true,
     "lastReview": "2026-11-20",
     "claimable": [
+      "R-038",
+      "R-039",
       "R-025",
-      "R-013"
+      "R-013",
+      "R-034"
     ],
     "drift": true
   }

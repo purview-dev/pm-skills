@@ -104,6 +104,12 @@ export const RULES: Rule[] = [
   rule("risks/id-unique", "error", false, "A risk ID appears once across Open, Closed, and Removed."),
   rule("risks/removed", "error", false, "A removed risk is `- YYYY-MM-DD RK-NNN <title>. Reason: <reason>.`"),
 
+  // decisions/ADR-*.md
+  rule("adr/header", "error", false, "An ADR starts `# ADR-NNN <Title>` with Status, Date, Category, Supersedes, Item, and Source, in order, with allowed values."),
+  rule("adr/sections", "error", false, "An ADR has `## Context`, `## Decision`, `## Alternatives`, and `## Consequences`, in order."),
+  rule("adr/id", "error", false, "An ADR file is `ADR-NNN-<slug>.md`, its ID matches its heading, and no two ADRs share an ID."),
+  rule("adr/links", "error", false, "Supersedes and superseded by name existing ADRs and agree, and Item names a known item ID."),
+
   // inbox/*.md
   rule("inbox/filename", "error", false, "An inbox file is named `YYYY-MM-DD-HHMM-<slug>.md`, slug in lower-case kebab case."),
   rule("inbox/fields", "error", false, "Captured is YYYY-MM-DD HH:MM; Source is user or agent (…); Kind, Discuss, and Reviewed are allowed values; a bug has a Severity."),

@@ -10,7 +10,7 @@
 // PM root are ignored, so a hook can pass every staged file.
 // Exit codes: 0 clean (warnings allowed unless --strict), 1 findings, 2 usage.
 
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
 
 import { checkFormat, fixFormat } from "./format.ts";
@@ -53,14 +53,14 @@ export function detectPmRoot(root: string): string {
 
 export const normalisePmRoot = (pmRoot: string) => pmRoot.replace(/\\/g, "/").replace(/^\.\//, "").replace(/\/*$/, "/");
 
-/** Every Markdown file the PM skills write, and the export: the top level, inbox/, briefs/, and research/. */
+/** Every Markdown file the PM skills write, and the export: the top level, inbox/, briefs/, research/, and decisions/. */
 export function pmFiles(root: string, pmRoot: string): string[] {
   const dir = join(root, pmRoot);
   if (!existsSync(dir)) return [];
   const out: string[] = [];
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     if (entry.isFile() && (entry.name.endsWith(".md") || entry.name === "planning.json")) out.push(entry.name);
-    if (entry.isDirectory() && ["inbox", "briefs", "research"].includes(entry.name)) {
+    if (entry.isDirectory() && ["inbox", "briefs", "research", "decisions"].includes(entry.name)) {
       for (const file of readdirSync(join(dir, entry.name))) if (file.endsWith(".md")) out.push(`${entry.name}/${file}`);
     }
   }
@@ -94,6 +94,20 @@ export function toPmRelative(root: string, pmRoot: string, path: string): string
   const absolute = isAbsolute(path) ? path : resolve(root, path);
   const rel = toPosix(relative(join(root, pmRoot), absolute));
   return rel.startsWith("..") || rel === "" ? null : rel;
+}
+
+/** PM-root-relative paths, with any that name a directory inside the PM root expanded to the `.md` files under it. */
+export function expandTargets(root: string, pmRoot: string, rels: string[]): string[] {
+  const out: string[] = [];
+  for (const rel of rels) {
+    const absolute = join(root, pmRoot, rel);
+    if (existsSync(absolute) && statSync(absolute).isDirectory()) {
+      for (const file of readdirSync(absolute)) if (file.endsWith(".md")) out.push(`${rel}/${file}`);
+    } else {
+      out.push(rel);
+    }
+  }
+  return out;
 }
 
 const sibling = (skill: string, file: string) => join(import.meta.dir, "..", "..", skill, "scripts", file);
@@ -265,7 +279,8 @@ export async function main(argv: string[]): Promise<number> {
   }
   if (positional.length) {
     const given = positional.map((path) => toPmRelative(root, pmRoot, path)).filter((rel): rel is string => rel !== null);
-    targets = targets ? targets.filter((rel) => given.includes(rel)) : given;
+    const expanded = expandTargets(root, pmRoot, given);
+    targets = targets ? targets.filter((rel) => expanded.includes(rel)) : expanded;
     if (!targets.length) {
       console.log("pm-lint: no PM files given");
       return 0;
