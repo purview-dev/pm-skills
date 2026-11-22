@@ -4,6 +4,7 @@
 
 ## Done
 
+- 2026-11-22 R-039 ADRs across the PM skills. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-22-adrs-across-the-pm-skills.md. Result: branch feat/r-039-adrs-across-the-pm-skills.
 - 2026-11-22 R-038 ADR export and Decisions view. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-22-adr-export-and-decisions-view.md. Result: branch feat/r-038-adr-export-and-decisions-view.
 - 2026-11-22 R-033 ADR record, pm-adr, and design handoff. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-22-adr-record.md. Result: branch feat/r-033-adr-directory-setting-and-design-handoff.
 - 2026-11-22 R-029 Docs-site package: dev browser webserver starts reliably. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-22-dev-browser-webserver.md. Result: branch feat/r-029-dev-browser-webserver.

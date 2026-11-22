@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-22T16:33:06+00:00",
+  "generatedAt": "2026-11-22T16:33:35+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-039-adrs-across-the-pm-skills",
-    "head": "d1cd7eb85f87834fa9d706f4bae0c90c225abb87"
+    "head": "ca4905efa5b7b943fb2b69e96ba542713064db6e"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -215,231 +215,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-039",
-      "title": "ADRs across the PM skills",
-      "serves": [
-        "V5"
-      ],
-      "owner": "agent",
-      "size": "M",
-      "dependsOn": [
-        "R-033"
-      ],
-      "revisits": null
-    },
-    "stage": "execute",
-    "session": "feat/r-039-adrs-across-the-pm-skills",
-    "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
-    "milestone": "M4",
-    "spec": "docs/superpowers/specs/2026-11-22-adrs-across-the-pm-skills-design.md",
-    "plan": "docs/superpowers/plans/2026-11-22-adrs-across-the-pm-skills.md",
-    "started": "2026-11-22",
-    "doneWhen": [
-      "`pm-shape` and `pm-discover` read ADRs and challenge contradictions; `pm-revise` supersedes an ADR a correction reverses; `pm-checkpoint` (`done`) checks the spec's ADR IDs exist; `pm-review` lists ADRs `proposed` longer than the review cadence; `pm-purview` records an accepted recommendation as an ADR; `pm-status` counts ADRs by status; `pm-help` diagnoses unaccepted and broken ADRs; every re-entry into design (`pm-next` resume, `pm-resume`, `pm-checkpoint` `pop`, `pm-revise` `rewind`, `pm-rejoin`) passes the ADR instruction; `just validate` and `just test` pass."
-    ],
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
+    "brief": null,
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-22-adrs-across-the-pm-skills.md",
-    "checked": 34,
-    "total": 34,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "Design re-entries pass the ADR instruction",
-        "checked": 5,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing check** in `scripts/validate.ts`:",
-            "checked": true
-          },
-          {
-            "text": "**Step 2: Run it to verify it fails**",
-            "checked": true
-          },
-          {
-            "text": "**Step 3: Add the citation to each skill**",
-            "checked": true
-          },
-          {
-            "text": "**Step 4: Run to verify it passes**",
-            "checked": true
-          },
-          {
-            "text": "**Step 5: Commit**",
-            "checked": true
-          }
-        ]
-      },
-      {
-        "number": 2,
-        "title": "`pm-shape` and `pm-discover` challenge ADR contradictions",
-        "checked": 5,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the check** — run `rg -n \"Read before deciding\" skills/pm-shape/SKILL.md skills/pm-discover/SKILL.md`; Expected now: no matches.",
-            "checked": true
-          },
-          {
-            "text": "**Step 2: Edit `pm-shape`**",
-            "checked": true
-          },
-          {
-            "text": "**Step 3: Edit `pm-discover`**",
-            "checked": true
-          },
-          {
-            "text": "**Step 4: Verify** — `rg -n \"Read before deciding\" skills/pm-shape/SKILL.md skills/pm-discover/SKILL.md` shows one match each; `bunx markdownlint-cli2 skills/pm-shape/SKILL.md skills/pm-discover/SKILL.md` 0 errors.",
-            "checked": true
-          },
-          {
-            "text": "**Step 5: Commit** — `git commit -m \"feat(pm-shape): read adrs and challenge contradictions in shape and discover\"` with both files.",
-            "checked": true
-          }
-        ]
-      },
-      {
-        "number": 3,
-        "title": "`pm-revise` supersedes a reversed ADR",
-        "checked": 4,
-        "total": 4,
-        "steps": [
-          {
-            "text": "**Step 1: Check** — `rg -n \"pm-adr supersede\" skills/pm-revise/SKILL.md`; Expected: no matches.",
-            "checked": true
-          },
-          {
-            "text": "**Step 2: Edit**",
-            "checked": true
-          },
-          {
-            "text": "**Step 3: Verify** — the `rg` above matches; markdownlint 0 errors.",
-            "checked": true
-          },
-          {
-            "text": "**Step 4: Commit** — `git commit -m \"feat(pm-revise): supersede an adr the correction reverses\"`.",
-            "checked": true
-          }
-        ]
-      },
-      {
-        "number": 4,
-        "title": "`pm-checkpoint` (`done`) checks and accepts the spec's ADRs",
-        "checked": 5,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Check** — `rg -n \"has no file\" skills/pm-checkpoint/SKILL.md`; Expected: no matches.",
-            "checked": true
-          },
-          {
-            "text": "**Step 2: Edit `pm-checkpoint` step 5**, adding after the plan-box check:",
-            "checked": true
-          },
-          {
-            "text": "**Step 3: Edit `pm-adr` Guard**: append to the main-worktree line: except `accept` applied by `pm-checkpoint` (`done`), which writes in the worktree that holds the item's branch (rules: **Completion rides the branch**).",
-            "checked": true
-          },
-          {
-            "text": "**Step 4: Verify** — the `rg` matches; `bunx markdownlint-cli2 skills/pm-checkpoint/SKILL.md skills/pm-adr/SKILL.md` 0 errors.",
-            "checked": true
-          },
-          {
-            "text": "**Step 5: Commit** — `git commit -m \"feat(pm-checkpoint): check and accept the spec's adrs at done\"`.",
-            "checked": true
-          }
-        ]
-      },
-      {
-        "number": 5,
-        "title": "`pm-review` and `pm-help` find stale and broken ADRs",
-        "checked": 5,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Check** — `rg -n \"proposed\" skills/pm-review/SKILL.md skills/pm-help/SKILL.md`; Expected: no ADR-related match.",
-            "checked": true
-          },
-          {
-            "text": "**Step 2: Edit `pm-review`**: list stale proposed ADRs (missing folder: skip). For each, print the legend and ask `ADR-NNN <title> has been proposed since <date>. What should happen to it?` with `Accept it (recommended)`, `Deprecate it`, `Keep it proposed`, `Explain ADR-NNN`; recommend `Deprecate it` instead when its `Item` is in `## Dropped` in `LOG.md`. Apply with `pm-adr accept` or `pm-adr deprecate` (write steps only; ask the deprecate reason with two drafted options). The review's single commit covers them; the output lists `ADR-NNN <title>: proposed -> <status>`.",
-            "checked": true
-          },
-          {
-            "text": "**Step 3: Edit `pm-help`**: append two checks to the ordered list, skipped when the decisions folder is missing:",
-            "checked": true
-          },
-          {
-            "text": "**Step 4: Verify** — `bun skills/pm-lint/scripts/lint.ts check planning/decisions --root . --no-export` prints `pm-lint: clean` (proves the command the skill names works); markdownlint 0 errors on both files.",
-            "checked": true
-          },
-          {
-            "text": "**Step 5: Commit** — `git commit -m \"feat(pm-review): triage stale proposed adrs; pm-help diagnoses them\"`.",
-            "checked": true
-          }
-        ]
-      },
-      {
-        "number": 6,
-        "title": "`pm-purview` records ADRs; `pm-status` counts them",
-        "checked": 5,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Check** — `rg -n \"ADR\" skills/pm-purview/SKILL.md skills/pm-status/SKILL.md`; Expected: no matches.",
-            "checked": true
-          },
-          {
-            "text": "**Step 2: Edit `pm-purview` step 6**: for each accepted recommendation, read the accepted ADR titles; when one covers the same decision apply `pm-adr supersede`, else `pm-adr new` with `Status: accepted`, `Category: tooling` unless another suggested word fits, `Item: none`, the recommendation as the decision and the report's alternatives and challenge under `## Alternatives` (write steps only, no extra question). `## Note` gains `Recorded ADR-NNN <title> (accepted).` per ADR.",
-            "checked": true
-          },
-          {
-            "text": "**Step 3: Edit `pm-status`**: summary `## Status` gains `- ADRs: <n> accepted, <n> proposed` after `Stack`, counted from the `Status:` lines of `<PM root>/decisions/ADR-*.md`; omit the line when the folder is missing or has no ADR. `mine` is unchanged.",
-            "checked": true
-          },
-          {
-            "text": "**Step 4: Verify** — the `rg` matches in both; markdownlint 0 errors.",
-            "checked": true
-          },
-          {
-            "text": "**Step 5: Commit** — `git commit -m \"feat(pm-purview): record accepted recommendations as adrs; pm-status counts adrs\"`.",
-            "checked": true
-          }
-        ]
-      },
-      {
-        "number": 7,
-        "title": "Managed section, install, and version",
-        "checked": 5,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Edit the reference**",
-            "checked": true
-          },
-          {
-            "text": "**Step 2: Install** — replace the section between the markers in `AGENTS.md` with the reference body (the start marker without `version=`).",
-            "checked": true
-          },
-          {
-            "text": "**Step 3: Bump** — `just bump prerelease`; Expected: `package.json` `\"version\": \"21.0.0-pre.5\"`.",
-            "checked": true
-          },
-          {
-            "text": "**Step 4: Verify** — `just validate`, `just test`, `just lint-check`, `just version-check`; Expected: all pass.",
-            "checked": true
-          },
-          {
-            "text": "**Step 5: Commit** — `git add skills/pm-setup/references/AGENTS-section.md AGENTS.md package.json` then `git commit -m \"feat(pm-setup): adrs across the pm skills in the rules; 21.0.0-pre.5\"`.",
-            "checked": true
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [
       {
@@ -756,15 +544,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-039",
-          "title": "ADRs across the PM skills",
-          "owner": "agent",
-          "size": "M",
-          "detail": "execute, 34/34 plan steps"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-025",
@@ -791,6 +571,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-22",
+          "id": "R-039",
+          "title": "ADRs across the PM skills",
+          "milestone": "M4",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-22-adrs-across-the-pm-skills.md",
+          "result": "branch feat/r-039-adrs-across-the-pm-skills"
+        },
         {
           "date": "2026-11-22",
           "id": "R-038",
@@ -992,6 +781,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-22",
+        "kind": "done",
+        "id": "R-039",
+        "title": "ADRs across the PM skills",
+        "milestone": "M4",
+        "owner": "agent",
+        "result": "branch feat/r-039-adrs-across-the-pm-skills"
+      },
       {
         "date": "2026-11-22",
         "kind": "done",
@@ -1257,6 +1055,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-22",
+        "id": "R-039",
+        "title": "ADRs across the PM skills",
+        "milestone": "M4",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-22-adrs-across-the-pm-skills.md",
+        "result": "branch feat/r-039-adrs-across-the-pm-skills"
+      },
       {
         "date": "2026-11-22",
         "id": "R-038",
@@ -1775,9 +1582,9 @@
     },
     {
       "path": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
-      "id": "R-039",
+      "id": null,
       "title": "Where do ADRs fit in",
-      "status": "on roadmap (R-039), active",
+      "status": "done",
       "origin": "planning/inbox/2026-11-22-0952-where-do-adrs-fit.md",
       "updated": "2026-11-22",
       "decision": "2026-11-22 Keep it parked. Reason: SCOPE CHANGE to v1; no `V` line or milestone covers it and M1 Reproducible docs site is the current focus. Answer to the question: ADRs record technical decisions only, live in a configurable `docs/adr/`, are written by the design stage, and are read by every session through the managed rules. Next: `pm-strategy` adds a `V` line and a milestone after M1 covering this and the engineering-principles brief.",
@@ -1850,7 +1657,7 @@
       "id": "ADR-003",
       "path": "planning/decisions/ADR-003-item-close-accepts-its-spec-s-adrs.md",
       "title": "Item close accepts its spec's ADRs",
-      "status": "proposed",
+      "status": "accepted",
       "supersededBy": null,
       "date": "2026-11-22",
       "category": "architecture",
@@ -1870,7 +1677,7 @@
     "openInbox": 15,
     "discuss": 1,
     "shapingBriefs": 0,
-    "done": 22,
+    "done": 23,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1886,6 +1693,6 @@
       "R-013",
       "R-034"
     ],
-    "drift": false
+    "drift": true
   }
 }
