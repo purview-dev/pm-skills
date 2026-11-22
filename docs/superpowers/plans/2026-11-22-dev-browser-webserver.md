@@ -128,7 +128,7 @@ git commit -m "docs(plan): name the R-029 dev server timeout cause"
 
 ### Task 4: Verify Done when
 
-- [ ] **Step 1:** From the repository root, run `just lint-check` 5 times in a row on Windows (background; about 5 minutes each), each to its own log in the job temp folder.
+- [x] **Step 1:** From the repository root, run `just lint-check` 5 times in a row on Windows (background; about 5 minutes each), each to its own log in the job temp folder.
 Expected: 5 exit codes of 0, each log showing `4 passed` for `test:browser:dev`.
-- [ ] **Step 2:** If any run fails, return to Task 2 with its `dev.log`; do not mark this step done.
-- [ ] **Step 3:** Run `bunx markdownlint-cli2 docs/superpowers/plans/2026-11-22-dev-browser-webserver.md docs/superpowers/specs/2026-11-21-dev-browser-webserver-design.md`; expected 0 errors.
+- [x] **Step 2:** If any run fails, return to Task 2 with its `dev.log`; do not mark this step done.
+- [x] **Step 3:** Run `bunx markdownlint-cli2 docs/superpowers/plans/2026-11-22-dev-browser-webserver.md docs/superpowers/specs/2026-11-21-dev-browser-webserver-design.md`; expected 0 errors.
