@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-22T11:59:48+00:00",
+  "generatedAt": "2026-11-22T12:02:54+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-033-adr-directory-setting-and-design-handoff",
-    "head": "d3d6e81658e8408ad0278181212d6131f74eb2a9"
+    "head": "743fabc09421dd90febd6a7f33f669bb3f9be6ac"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -227,19 +227,177 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-033-adr-directory-setting-and-design-handoff",
     "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
     "milestone": "M4",
     "spec": "docs/superpowers/specs/2026-11-22-adr-record-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-22-adr-record.md",
     "started": "2026-11-22",
     "doneWhen": [
       "`pm-init` in a scratch repository with `docs/adr/` writes `ADR directory: docs/adr/` to `planning/config.md` and `pm-lint check` passes; `pm-next` step 10's handoff names the ADR directory and tells the design skill to read it and write one ADR per architecture decision; the managed section names the directory and the product, technical, and spec split; `pm-help` reports `ADR directory: none` with `pm-setup` as the fix; `just validate` passes."
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-22-adr-record.md",
+    "checked": 0,
+    "total": 28,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "pm-lint ADR file kind and rules",
+        "checked": 0,
+        "total": 6,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** in `lint.test.ts`, using the existing `repo()` and `rulesOf()` helpers and this helper:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run to verify they fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement in `structure.ts`**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Add the four rules** to `rules.ts` with these summaries, and the same rows (fuller wording allowed) to `rules.md`, plus a Scope row `| decisions/ADR-*.md | **ADR** (Shared definitions) | format, header, sections, IDs, links |`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Run the pm-lint tests**",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "The ADR in the managed rules, and pm-next's handoff",
+        "checked": 0,
+        "total": 8,
+        "steps": [
+          {
+            "text": "**Step 1: Write the Shared definitions** exactly as the spec's Design section 1 gives them (format block verbatim), and add `ADR-NNN <title> (<status>)` to **Named reference** and an ADR's title and status to **Reference legend**. Add `decisions/` to **Optional files** (\"in projects initialised before version 21\").",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Non-interruption rules.** Rule 2: add a bullet \"when the workflow records or accepts a technical decision (`pm-adr` `new`, `supersede`, `accept`)\". Rule 3: add `pm-adr` (`new`, `supersede`, `accept`) to the permitted mid-workflow writes with the one-line reply from Global Constraints, no questions, no commit; add `pm-adr` (`view`, `check`) to the read-only exceptions. Committing PM state: \"`pm-park` never commits, `pm-risk` never commits in capture mode, and `pm-adr` never commits during a workflow\".",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Skill table row** after `pm-risk`: `| \\`pm-adr\\` | Record, supersede, accept, deprecate, view, check, or import architecture decision records in the decisions folder | Any time (new, supersede, accept, view, and check during a workflow), user asks |`",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: `Version 21` upgrade note:** append \"Version 21 also adds `pm-adr` and the decisions folder (`<PM root>/decisions/`, optional): technical decisions are ADRs, the design stage records them with `pm-adr`, and `pm-adr import <folder>` brings an existing ADR folder in. No setting is added.\"",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: `pm-next` step 10:** append the spec's section 4 instruction: list the accepted and proposed ADRs as named references (or \"no ADRs\"), tell the design skill to read the ones its decision touches before proposing approaches, record each architecture decision with `pm-adr new` (or `supersede`), and name the ADR IDs in the spec.",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Reinstall** the section into `AGENTS.md`: replace the text between `<!-- pm-skills:start -->` and the end marker with the reference's text between its markers (the reference's start marker carries `version=21`; the installed one has no version).",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Verify**",
+            "checked": false
+          },
+          {
+            "text": "**Step 8: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "The pm-adr skill and the four tables",
+        "checked": 0,
+        "total": 4,
+        "steps": [
+          {
+            "text": "**Step 1: Write `skills/pm-adr/SKILL.md`** following `skills/pm-risk/SKILL.md`'s layout (frontmatter `name: pm-adr` and a \"Use when ...\" description naming ADRs, architecture decisions, technical decisions, supersede, and import; then Guard, Modes table, Steps per mode, Output). Content from the spec's section 2:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Add the table rows**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Verify**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "pm-init and pm-setup set up the decisions folder",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write `decisions-README.md`**: `# Decisions` (level-1 heading first, PM file format), what an ADR is, the decision split, that `pm-adr` writes them, and the ID and file-name rule, in at most 15 lines.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: `pm-init`:** add the row `| decisions-README.md | <PM root>/decisions/README.md (new project only) |`; copy it only when step 3 finds no substantial code (move that finding before the copy, or copy after step 3 — state which in the step). When an outside ADR folder exists (`docs/adr/`, `docs/decisions/`, `doc/adr/`, `docs/architecture/decisions/`), add the output Note `Existing ADRs in <folder>. Run pm-adr import <folder> to bring them in.`",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: `pm-setup` step 4:** when the PM root exists, has no `decisions/` folder, and an outside ADR folder exists, add the same Note to the output. No question, no write.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Verify**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 5,
+        "title": "Version, dogfood, and full verification",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Bump**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Dogfood `pm-adr new`** in this repository, following `skills/pm-adr/SKILL.md` (`new` during a workflow: no question, no commit): ADR-001 \"ADRs live in the PM root\", `Status: accepted`, `Category: architecture`, `Item: R-033`, `Source: none`, with Context, Decision, Alternatives (the three rows of the spec's Approaches table), and Consequences from the spec. Copy `skills/pm-init/templates/decisions-README.md` to `planning/decisions/README.md`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Rehearse supersede and import in a scratch copy** (not committed): copy `planning/` to `$env:CLAUDE_JOB_DIR/tmp/adr-rehearsal/planning/`, run `pm-adr supersede ADR-001` there per the skill (expect ADR-002 with `Supersedes: ADR-001` and ADR-001 `Status: superseded by ADR-002`); create `docs/adr/` in the scratch root with one field-bullet ADR, one MADR file (YAML frontmatter), and one Nygard file (`## Status` section), then run `pm-adr import docs/adr/` per the skill (expect ADR-003 to ADR-005 with `Source` set).",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Full checks**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit the version only**",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -562,7 +720,7 @@
           "title": "ADR directory setting and design handoff",
           "owner": "agent",
           "size": "M",
-          "detail": "plan"
+          "detail": "execute, 0/28 plan steps"
         }
       ],
       "next": [
