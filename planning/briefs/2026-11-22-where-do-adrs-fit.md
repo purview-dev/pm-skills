@@ -76,3 +76,7 @@ Size M, one slice. Proposed: Serves a new `V` line (to be written by `pm-strateg
 
 - 2026-11-22 Keep it parked. Reason: SCOPE CHANGE to v1; no `V` line or milestone covers it and M1 Reproducible docs site is the current focus. Answer to the question: ADRs record technical decisions only, live in a configurable `docs/adr/`, are written by the design stage, and are read by every session through the managed rules. Next: `pm-strategy` adds a `V` line and a milestone after M1 covering this and the engineering-principles brief.
 - 2026-11-22 Added to Next as R-033 ADR directory setting and design handoff (M4 Recorded technical decisions, serves V5), through pm-strategy.
+
+## Revisions
+
+- 2026-11-22 ADRs were to live in a configurable `docs/adr/`, recorded by an `ADR directory` setting. Must now: live in `<PM root>/decisions/`, written only by the new `pm-adr` skill and linted by `pm-lint`; the `ADR directory` setting and the `docs/adr/` default are dropped, and `pm-adr import` brings an existing folder in (user, 2026-11-22). Mode: fix-in-place. Supersedes: the `Done when` above and R-033's old title.
