@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-039 ADRs across the PM skills
 - Session: feat/r-039-adrs-across-the-pm-skills
-- Stage: design
+- Stage: plan
 - Brief: planning/briefs/2026-11-22-where-do-adrs-fit.md
 - Milestone: M4
 - Serves: V5
@@ -23,7 +23,7 @@ Milestone: optional; the item's milestone while it is active
 - Depends on: R-033
 - Revisits:
 - Note: Slice 3 of the ADR work (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). The design re-entries were added by the R-033 final review. 2026-11-22: Started as is outside the Current focus (M1 Reproducible docs site) at the user's choice; it was first in Next.
-- Spec:
+- Spec: docs/superpowers/specs/2026-11-22-adrs-across-the-pm-skills-design.md
 - Plan:
 - Started: 2026-11-22
 

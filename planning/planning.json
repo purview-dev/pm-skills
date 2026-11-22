@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-22T16:06:09+00:00",
+  "generatedAt": "2026-11-22T16:13:02+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-039-adrs-across-the-pm-skills",
-    "head": "34f15f453c61108d0c9f1d5f771836027184216d"
+    "head": "562a9d909f79a7dbaef0479187ae7480b2dfd310"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -229,11 +229,11 @@
       ],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-039-adrs-across-the-pm-skills",
     "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
     "milestone": "M4",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-22-adrs-across-the-pm-skills-design.md",
     "plan": null,
     "started": "2026-11-22",
     "doneWhen": [
@@ -564,7 +564,7 @@
           "title": "ADRs across the PM skills",
           "owner": "agent",
           "size": "M",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
@@ -1632,6 +1632,22 @@
       "decision": "`planning.json` carries each ADR's Context, Decision, Alternatives, and\nConsequences as the Markdown under each heading (strings), and\n`@purview-dev/pm-docs-site` renders them to HTML at build time with the\nsite's configured Markdown processor, through a content loader's\n`renderMarkdown` (as `src/loaders/repo-docs.ts` does).",
       "alternatives": "| Approach | Trade-off | Outcome |\n| --- | --- | --- |\n| Each section as Markdown text, rendered by the site at build time | The schema checks only that a section is a string; the export grows | Chosen |\n| Structured blocks parsed in the export | Schema-checked, but needs a Markdown parser in the exporter and loses what it does not model | Rejected |\n| Header and path only, the site reads the file | Breaks the rule that the site reads the export only | Rejected |",
       "consequences": "- The schema checks only that a section is a string.\n- The export grows by the text of every ADR.\n- No new dependency: `@astrojs/markdown-remark` is not installed by Astro\n  7, so the loader's `renderMarkdown` is used instead.\n- IDs inside the rendered HTML are linked by a pass over the HTML, not by\n  `LinkedText`.\n- Spec: `docs/superpowers/specs/2026-11-22-adr-export-and-decisions-view-design.md`."
+    },
+    {
+      "id": "ADR-003",
+      "path": "planning/decisions/ADR-003-item-close-accepts-its-spec-s-adrs.md",
+      "title": "Item close accepts its spec's ADRs",
+      "status": "proposed",
+      "supersededBy": null,
+      "date": "2026-11-22",
+      "category": "architecture",
+      "supersedes": null,
+      "item": "R-039",
+      "source": null,
+      "context": "The design stage records each architecture decision with `pm-adr new` as `proposed`, and nothing moved it to `accepted`, so proposed ADRs piled up whether or not the work that carried them was built. Other skills (`pm-review`, `pm-purview`, `pm-revise`) also need to change ADRs, and the ADR record is written only by `pm-adr`.",
+      "decision": "`pm-checkpoint` (`done`) reads the ADR IDs the item's spec names, refuses to close when one has no file, and runs `pm-adr accept` on each named ADR that is still `proposed` and whose `Item` is the closing item, changing only its `Status` line on the item's branch inside the Completion record commit. `proposed` therefore means a decision not yet built. Every skill that changes an ADR applies a `pm-adr` mode's write steps, without that mode's output or commit; the calling skill's PM commit covers the ADR files.",
+      "alternatives": "- Do nothing: ADRs stay `proposed` until the user runs `pm-adr accept`; the status says nothing about whether the decision shipped.\n- List the proposed ADRs in `done`'s Note and leave them proposed: no automatic change, but they accumulate for `pm-review`.\n- Ask once at close: most control, one more question at every close.\n- Chosen: accept at close, because the spec was approved and its `Done when` checks passed. Strongest argument against: an ADR the spec names only in passing is accepted without a separate look.",
+      "consequences": "- `pm-review` and `pm-help` only see proposed ADRs that no closed item carried.\n- An unmerged completion that `pm-revise` reverses leaves its ADRs accepted; a reversed decision is superseded, never set back to `proposed`."
     }
   ],
   "counts": {
@@ -1657,6 +1673,6 @@
       "R-013",
       "R-034"
     ],
-    "drift": true
+    "drift": false
   }
 }
