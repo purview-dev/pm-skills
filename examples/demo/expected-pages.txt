@@ -5,6 +5,12 @@ docs/readme/index.html
 index.html
 plan/board/index.html
 plan/briefs/index.html
+plan/decisions/adr-001/index.html
+plan/decisions/adr-002/index.html
+plan/decisions/adr-003/index.html
+plan/decisions/adr-004/index.html
+plan/decisions/adr-005/index.html
+plan/decisions/index.html
 plan/features/index.html
 plan/features/r-001/index.html
 plan/features/r-002/index.html
