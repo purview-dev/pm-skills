@@ -77,6 +77,18 @@ root is its `PM state directory` setting (default `planning/`).
    choice question with the fix first plus `Explain <ID>`. Risks are not
    changed here: name them as `RK-NNN <title> (<RAG>)` and recommend
    `pm-risk review` in "Do this next".
+
+   **Stale proposed ADRs.** When `<PM root>/decisions/` exists, list the
+   ADRs with `Status: proposed` and a `Date` at least the review cadence
+   (`config.md` Limits) before today, imported ADRs included. For each,
+   print the `## For this question` legend and ask: `ADR-NNN <title> has
+   been proposed since <date>. What should happen to it?` with `Accept it
+   (recommended)`, `Deprecate it`, `Keep it proposed`, and `Explain
+   ADR-NNN`. Recommend `Deprecate it` instead when its `Item` is in
+   `## Dropped` in `LOG.md`. Apply `pm-adr accept` or `pm-adr deprecate`
+   (asking the reason with two drafted options): their write steps only,
+   with no `pm-adr` output or commit; step 8 commits them. `Keep it
+   proposed` writes nothing.
 5. **Order Next.** Apply the **Roadmap order and edits** rules. If Next is
    above its max, propose which items move to Later. If it has fewer
    claimable items than the max, propose promotions from Later. Order Next
@@ -104,6 +116,7 @@ root is its `PM state directory` setting (default `planning/`).
 - Next: <n>/<max>. Later: <n>.
 - Focus: <M Name> <done>/<total>
 - Risks: <n> open (<r> red, <a> amber, <g> green), <n> to review
+- ADRs: <ADR-NNN <title>: proposed -> <accepted | deprecated | kept>, ... | none stale>
 - Challenges: <n> raised, <n> applied
 - PM state: <commit result>
 
