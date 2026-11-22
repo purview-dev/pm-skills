@@ -4,6 +4,7 @@ default:
 # Verify the required tools exist, then install the git hooks.
 install: check-prerequisites
     lefthook install
+    bun skills/pm-next/scripts/sync.ts driver
 
 check-prerequisites:
     @command -v bun >/dev/null || { echo "bun is required: https://bun.sh"; exit 1; }
@@ -18,9 +19,13 @@ setup-skills *args:
 validate:
     bun scripts/validate.ts
 
-# Test the skills' scripts (pm-export's exporter and pm-lint, against their fixtures).
+# Test the skills' scripts (pm-export's exporter, pm-lint, and pm-next's PM branch sync).
 test:
-    bun test scripts/ skills/pm-export/ skills/pm-lint/
+    bun test scripts/ skills/pm-export/ skills/pm-lint/ skills/pm-next/
+
+# Bring main up to date after a pull request merges, whatever the merge method (pm-next's PM sync).
+pm-sync:
+    bun skills/pm-next/scripts/sync.ts pull
 
 # Check planning/ against the PM file format rules (pm-lint). `just pm-lint fix` repairs the layout ones.
 pm-lint command="check":

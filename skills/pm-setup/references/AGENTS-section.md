@@ -331,12 +331,36 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   the checked-out branch has an upstream and is behind it,
   `git -C "<worktree>" pull --ff-only`. A pull that is not a fast-forward
   stops: print the git output and the branch's ahead and behind counts.
-  Never merge, rebase, or stash to make it succeed.
+  Never merge, rebase, or stash to make it succeed. For the PM branch, run
+  **PM sync** (`pull`) instead when Bun is installed.
+- **PM sync:** `bun <pm-next skill>/scripts/sync.ts <release | pull |
+  driver> --root "<worktree it runs in>" --pm-root <PM root>`, the one
+  script that moves the PM branch, so it stays mergeable under every pull
+  request merge method (merge commit, squash, rebase). `release` runs from
+  the **Item branch** right after `pm-next` cuts it: the item branch now
+  carries the PM branch's unpushed commits, so the PM branch moves back to
+  `<remote>/<PM branch>` (with `reset --keep` in the worktree that has it
+  checked out, when that is another one) and the pull after the merge is a
+  fast-forward. `pull` fast-forwards the PM branch, or repairs a diverged
+  one whose local-only commits touch only the PM root: a local commit
+  whose change some remote commit already holds is delivered and dropped,
+  so a later upstream edit or delete of that state stays; the rest become
+  one `docs(pm): carry <n> PM commits onto <remote>/<PM branch>` commit,
+  built with `commit-tree` (no commit hooks run; its changes passed them
+  when first committed) with the export refreshed. A conflict, uncommitted
+  PM changes, or a local change outside the PM root stop it before
+  anything moves; it never drops an undelivered commit. `driver` registers
+  the `planning.json` merge driver and sets
+  `branch.<PM branch>.mergeOptions` to `--ff-only`, so a plain `git pull`
+  on the PM branch fast-forwards or refuses and never makes a merge; after
+  a refusal, run `pull`. Without Bun, `pull --ff-only` stops on divergence
+  as before.
 - **PM base:** the latest committed PM branch, found after
   `git fetch <remote> --prune`: `<remote>/<PM branch>`, or the local PM
   branch when it is ahead of the remote (it holds PM commits not yet
-  pushed). When the two have diverged, stop and print both ahead and behind
-  counts. New branches and Completion records start from it.
+  pushed). When the two have diverged, run **PM sync** (`pull`) first; stop
+  and print both ahead and behind counts only when it stops. New branches
+  and Completion records start from it.
 - **Pending pull request:** a branch other than the PM branch that has an
   upstream and is not merged into `<remote>/<PM branch>`. The PM branch is
   never one, even when it holds PM commits not yet pushed. Its item waits for review; the session stays
@@ -524,13 +548,16 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    worktree that holds the item's branch (rules: **Completion rides the
    branch**). `pm-setup` may also edit only the managed section in the
    selected agent instructions file, the `Rules version` line in
-   `<PM root>/config.md`, and, during an upgrade, the item fields of an
-   active `NOW.md` (`pm-setup` Step 5, item 5).
+   `<PM root>/config.md`, during an upgrade, the item fields of an
+   active `NOW.md` (`pm-setup` Step 5, item 5), and the merge driver: the
+   `<PM root>/planning.json merge=pm-export` line in `.gitattributes` and
+   the `merge.pm-export` git config (`pm-setup` Step 5, item 6).
    PM state skills never:
    - edit source code, spec, or plan files,
    - create or remove worktrees, or create branches other than the **Item
      branch** that `pm-next` creates,
-   - `stash`, `reset`, `merge`, `push`, `rebase`, or `cherry-pick`,
+   - `stash`, `reset`, `merge`, `push`, `rebase`, or `cherry-pick`, except
+     the PM branch moves of **PM sync** named below,
    - switch branches, except the moves that the Feature branches rules
      name,
    - stage or commit anything outside the PM root.
@@ -538,7 +565,10 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    The only state-changing git commands a skill runs are the `add` and
    `commit` of one PM commit (see **Committing PM state**), and the
    `fetch`, `pull --ff-only`, `switch`, and `switch -c` of a branch move
-   (rules: Feature branches). Read-only git (`status`, `log`, `branch`,
+   (rules: Feature branches). **PM sync** may also run `merge --ff-only`,
+   `branch -f`, `reset --keep`, `reset --soft`, and `commit-tree` on the PM
+   branch, and `config` for its merge driver; nothing else runs them.
+   Read-only git (`status`, `log`, `branch`,
    `worktree list`, `diff`, `show`, `rev-parse`, `rev-list`) is always
    allowed.
 7. **Other sessions' claims are read-only.** If the `Session` in `NOW.md`
@@ -600,7 +630,10 @@ step 3).
    `git switch -c <Item branch> <PM base>`, and claims the item on it. When
    the **Item branch** already exists, it switches to it and runs **Pull
    latest** instead. The claim, the checkpoints, and the Completion record
-   all ride that branch.
+   all ride that branch. After the cut, **PM sync** (`release`) moves the
+   PM branch back to its remote, so the PM branch never keeps commits the
+   item branch carries, and the pull after the merge is a fast-forward
+   whatever the merge method.
 2. **Stay when the user says so.** When the user asks to stay on the
    current branch, no skill moves the session for the rest of that
    operation. `Session` records the current branch, and the output `Note`
@@ -1019,6 +1052,18 @@ contradicts one; `pm-revise`, `pm-review`, `pm-purview`, and
 `pm-checkpoint` (`done`) change ADRs through `pm-adr`; `pm-status` counts
 them and `pm-help` reports stale proposed and broken ones; and every
 re-entry into design passes the ADR instruction. No setting is added.
+
+Version 21 also adds **PM sync** (`pm-next`'s `scripts/sync.ts`), so a
+squash or rebase merge never leaves the PM branch diverged. `pm-next`
+moves the PM branch back to its remote after it cuts an item branch, and
+**Pull latest** on the PM branch fast-forwards it or carries its PM-only
+commits onto the remote. `pm-setup` registers a merge driver that keeps
+the derived `<PM root>/planning.json` from conflicting in local merges and
+pulls, and makes a plain `git pull` on the PM branch fast-forward only;
+GitHub's server-side merge does not run custom drivers, so a pull
+request whose `planning.json` conflicts is updated locally (merge the PM
+branch into it) and the next PM commit regenerates the export. Run
+`pm-setup` once to register the driver. No setting is added.
 
 ## Asking the user (mandatory)
 
