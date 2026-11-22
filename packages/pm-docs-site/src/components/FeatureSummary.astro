@@ -2,7 +2,7 @@
 // One item's summary: state, milestone, facts, Done when, related items, brief,
 // decisions (the ADRs whose Item is this item) and risks. The feature page shows it, and so does the item popup on the
 // Board and Roadmap, so the two never drift.
-import { adrsOf, briefOf, dependents, features, loadPlanning, planProgress } from '../lib/planning';
+import { adrsOf, briefOf, dependents, features, loadPlanning, planProgress, revisers } from '../lib/planning';
 import LinkedText from './LinkedText.astro';
 import RefLink from './RefLink.astro';
 import StateBadge from './StateBadge.astro';
@@ -22,7 +22,7 @@ const feature = all.find((candidate) => candidate.id === id)!;
 const byId = new Map(all.map((candidate) => [candidate.id, candidate]));
 const brief = briefOf(planning, feature);
 const blocks = dependents(all, feature.id);
-const revisedBy = all.filter((candidate) => candidate.revisits === feature.id);
+const revisedBy = revisers(all, feature.id);
 const risks = [...planning.risks.open, ...planning.risks.closed].filter((risk) => risk.affects === feature.id);
 const plan = feature.state === 'now' ? planning.plan : null;
 const adrs = adrsOf(planning, feature.id);
