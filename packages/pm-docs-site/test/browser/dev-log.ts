@@ -33,3 +33,24 @@ const PATTERNS: [RegExp, DevEvent][] = [
 export function classifyDevLine(line: string): DevEvent | null {
 	return PATTERNS.find(([pattern]) => pattern.test(line))?.[1] ?? null;
 }
+
+/** The events that mean the server itself restarted (R-029), as opposed to one it recovers from. */
+const RESTARTS: DevEvent[] = ['restart', 'listen-twice'];
+
+/**
+ * What went wrong while the dev server started, from dev.log: the update check
+ * that triggers R-029's restart, and any restart. A re-optimisation or a lost
+ * transport stays in the log as evidence only, since the server recovers.
+ */
+export function startupProblems(log: string): string[] {
+	const problems: string[] = [];
+
+	if (!log.includes('ready in')) problems.push('no "ready in" line');
+	if (log.includes('New version of Astro available')) problems.push('Astro update check ran');
+
+	for (const event of RESTARTS) {
+		if (new RegExp(`^\\[dev-server\\] \\S+ ${event}$`, 'm').test(log)) problems.push(`dev server ${event}`);
+	}
+
+	return problems;
+}

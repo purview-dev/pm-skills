@@ -3,7 +3,7 @@
 // errors a restart mid-request leaves behind.
 import { describe, expect, it } from 'bun:test';
 
-import { classifyDevLine } from './browser/dev-log.ts';
+import { classifyDevLine, startupProblems } from './browser/dev-log.ts';
 
 describe('classifyDevLine', () => {
 	it('marks an Astro restart', () => {
@@ -26,5 +26,33 @@ describe('classifyDevLine', () => {
 
 	it('ignores a request line', () => {
 		expect(classifyDevLine('12:00:01 [200] /plan/board/ 41ms')).toBeNull();
+	});
+});
+
+describe('startupProblems', () => {
+	const ready = ' astro  v7.4.8 ready in 985 ms\n';
+
+	it('finds none in a clean start', () => {
+		expect(startupProblems(ready)).toEqual([]);
+	});
+
+	it('finds none for a re-optimisation or a lost transport the server recovered from', () => {
+		const log = `${ready}[dev-server] 2026-11-22T09:00:00.000Z reoptimise\n[dev-server] 2026-11-22T09:00:01.000Z transport-lost\n`;
+
+		expect(startupProblems(log)).toEqual([]);
+	});
+
+	it('names the update check', () => {
+		expect(startupProblems(`${ready} update  ▶ New version of Astro available: 7.4.13\n`)).toEqual(['Astro update check ran']);
+	});
+
+	it('names a restart and a second listen', () => {
+		const log = `${ready}[dev-server] 2026-11-22T09:00:00.000Z restart\n[dev-server] 2026-11-22T09:00:00.100Z listen-twice\n`;
+
+		expect(startupProblems(log)).toEqual(['dev server restart', 'dev server listen-twice']);
+	});
+
+	it('names a start that never got ready', () => {
+		expect(startupProblems('')).toEqual(['no "ready in" line']);
 	});
 });
