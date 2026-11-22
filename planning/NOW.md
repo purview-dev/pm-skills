@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-038 ADR export and Decisions view
 - Session: feat/r-038-adr-export-and-decisions-view
-- Stage: design
+- Stage: plan
 - Brief: planning/briefs/2026-11-22-where-do-adrs-fit.md
 - Milestone: M4
 - Serves: V5
@@ -23,7 +23,7 @@ Milestone: optional; the item's milestone while it is active
 - Depends on: R-033
 - Revisits:
 - Note: Slice 2 of the ADR work (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). Decisions view is a React island: text search, category and status chips, superseded hidden by default, group by category or status, URL state. 2026-11-22: Started outside the current focus M1 Reproducible docs site at the user's choice, to continue the ADR work after R-033 closed.
-- Spec:
+- Spec: docs/superpowers/specs/2026-11-22-adr-export-and-decisions-view-design.md
 - Plan:
 - Started: 2026-11-22
 

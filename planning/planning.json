@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-22T14:43:16+00:00",
+  "generatedAt": "2026-11-22T15:01:40+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-038-adr-export-and-decisions-view",
-    "head": "ba9b2bde32eb6254c73d6602e8a1338019111293"
+    "head": "9aa605a54a6c552c937ae59ff7436000a584bc21"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -229,11 +229,11 @@
       ],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-038-adr-export-and-decisions-view",
     "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
     "milestone": "M4",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-22-adr-export-and-decisions-view-design.md",
     "plan": null,
     "started": "2026-11-22",
     "doneWhen": [
@@ -590,7 +590,7 @@
           "title": "ADR export and Decisions view",
           "owner": "agent",
           "size": "M",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
@@ -1467,6 +1467,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "`expandTargets` in `skills/pm-lint/scripts/lint.ts` (added in `981977a`) expands a folder argument one level only, so `check planning/` would miss `inbox/`, `briefs/`, and `decisions/` files; and no test covers `--staged` combined with a folder argument. Also cosmetic: ADR-001's Alternatives row says ADRs are \"exported\" (quoted from the spec), and the `pm-init` template row keeps \"(new project only)\" inside the code span because `scripts/validate.ts` parses it."
+    },
+    {
+      "file": "planning/inbox/2026-11-22-1501-r-013-schema-check-moves-to-6.md",
+      "title": "R-013 schema check moves to 6",
+      "captured": "2026-11-22 15:01",
+      "source": "agent (R-038 design)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "R-013",
+      "context": "R-038 design",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "R-038 moves the export to schemaVersion 5, so the `Done when` of R-013 Docs-site package: publish and migrate (\"a scratch export at schemaVersion 5 fails the build\") must become 6. Edit with `pm-item` once R-038 merges (spec docs/superpowers/specs/2026-11-22-adr-export-and-decisions-view-design.md, Follow-ups)."
     }
   ],
   "briefs": [
@@ -1550,7 +1565,7 @@
     "next": 4,
     "later": 9,
     "nextMax": 5,
-    "openInbox": 10,
+    "openInbox": 11,
     "discuss": 1,
     "shapingBriefs": 0,
     "done": 21,
@@ -1570,6 +1585,6 @@
       "R-013",
       "R-034"
     ],
-    "drift": true
+    "drift": false
   }
 }
