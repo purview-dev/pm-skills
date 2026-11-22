@@ -1279,6 +1279,11 @@ Version 21 also adds `pm-adr` and the decisions folder
 design stage records them with `pm-adr`, and `pm-adr import <folder>`
 brings an existing ADR folder in. No setting is added.
 
+Version 21 also moves the export to `schemaVersion` 5, which adds `adrs`:
+every ADR in the decisions folder, whole. Run `pm-export`, and
+`pm-docs-site upgrade` for an installed site; `@purview-dev/pm-docs-site`
+reads `schemaVersion` 5 from `0.1.0-pre.3`, with a Decisions view.
+
 ## Asking the user (mandatory)
 
 - **Every question uses the agent's interactive question tool** (for
