@@ -127,8 +127,9 @@ and `Explain <ID>`.
      The branch is the durable locator: the finish step opens the pull
      request from it, so no PR number is written here.
    - If the item has a brief, set its `Status: done`.
-   - **Accept the item's ADRs:** for each ADR the spec names with
-     `Status: proposed` and `Item: <this ID>`, apply `pm-adr accept`: its
+   - **Accept the item's ADRs:** for each ADR with `Status: proposed` and
+     `Item: <this ID>` that the spec names, or whose `Supersedes` names an
+     ADR the spec names (a `pm-revise` replacement), apply `pm-adr accept`: its
      write steps only, changing only the `Status` line, in the worktree
      that holds the item's branch (no `pm-adr` output or commit). The
      decisions folder is not read from the **PM base**: the item's ADRs are

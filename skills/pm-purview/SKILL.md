@@ -111,13 +111,15 @@ snapshot of `https://purview.dev/llms.txt`.
    - **Record each accepted one as an ADR.** Read the accepted ADR titles
      in the decisions folder (Shared definitions: **Read before
      deciding**). When one covers the same decision, apply `pm-adr
-     supersede <ADR-NNN>`; otherwise apply `pm-adr new` with `Status:
-     accepted`, `Category: tooling` unless another suggested word fits
-     better, and `Item: none`. The decision is the recommendation; its
-     alternatives and the challenge from step 4 go under `## Alternatives`.
-     Apply only their write steps, with no `pm-adr` question, output, or
-     commit: the user's acceptance is the decision, and step 7 commits
-     the ADRs.
+     supersede <ADR-NNN>`; otherwise apply `pm-adr new`. Either way the new
+     ADR has `Status: proposed` and `Item: <the new roadmap item's ID>`,
+     because the decision is not built yet; `pm-checkpoint` (`done`)
+     accepts it when that item closes and its spec names it.
+     `Category: tooling` unless another suggested word fits better. The
+     decision is the recommendation; its alternatives and the challenge
+     from step 4 go under `## Alternatives`. Apply only their write steps,
+     with no `pm-adr` question, output, or commit: the user's acceptance
+     is the decision, and step 7 commits the ADRs.
    - For a new project, the first item is usually the repository
      foundation (Build SDK and the small scale profile). Put it first, as
      every later item builds on it.
@@ -138,7 +140,7 @@ snapshot of `https://purview.dev/llms.txt`.
 - Recommended: <n> (<names> | none)
 - Ruled out: <n>
 - Report: <path>
-- ADRs: <ADR-NNN <title> (accepted), ... | none>
+- ADRs: <ADR-NNN <title> (proposed, R-NNN), ... | none>
 - PM state: <commit result>
 
 ## Do this next

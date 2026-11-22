@@ -189,8 +189,10 @@ Recorded as ADR-003 Item close accepts its spec's ADRs.
 ### 7. `pm-purview`
 
 - Step 6 (Decide): for each accepted recommendation, run `pm-adr new` with
-  `Status: accepted`, `Category: tooling` unless another suggested word fits
-  better, `Item: none`, the decision from the recommendation, and the
+  `Status: proposed` and `Item: <the new roadmap item>` (final review
+  ruling: `proposed` means not yet built, so `done` accepts it when that
+  item closes), `Category: tooling` unless another suggested word fits
+  better, the decision from the recommendation, and the
   report's alternatives and challenge under `## Alternatives`.
 - Before writing, read the accepted ADR titles; when one covers the same
   decision, run `pm-adr supersede` instead (no extra question: the accepted

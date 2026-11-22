@@ -80,6 +80,12 @@ only in the conversation, and never resume the interrupted step silently.
    4. What else depends on it: other items, briefs, or a `STRATEGY.md`
       decision?
    5. Contain or patch forward: is anything in use that needs a stop-gap?
+   6. Only when the answers reverse an ADR from step 2 and do not state
+      the replacement decision: `ADR-NNN <title> (<status>) is reversed.
+      What is the replacement decision?` with 2 drafted decisions, and
+      `Decide it in design` only when the mode will be `rewind` to
+      `design`. `fix-in-place` and `rewind` to `plan` or `execute` never
+      reach design again, so they always record a replacement decision.
 
    Write each answer as a `## Revisions` entry in the brief, in this form:
 
@@ -120,9 +126,9 @@ only in the conversation, and never resume the interrupted step silently.
      apply `pm-adr supersede <ADR-NNN>` with that decision and `Item` the
      active item: its write steps only, no `pm-adr` output, question, or
      commit (this skill's commit covers it). Name both ADRs in the
-     `## Revisions` line. When the scope answer states no new decision,
-     name the reversed ADR in the `## Revisions` line and supersede
-     nothing; the design stage does it.
+     `## Revisions` line. When the user chose `Decide it in design`
+     (a `rewind` to design only, question 6), name the reversed ADR in the
+     `## Revisions` line and supersede nothing; the design stage does it.
    - Replace `## Checkpoint` with a pause block whose `Stopped at`
      names the last step that still holds, whose `Next action` is the first
      step of the corrected work, whose `Start with` is that stage's skill,
@@ -158,7 +164,8 @@ only in the conversation, and never resume the interrupted step silently.
     `config.md` and pass the revision. Never name a development skill that
     is not in that table. When the stage is `design` (a `rewind` to
     design), also pass the ADR instruction (Shared definitions:
-    **Every design handoff**), naming any ADR the revision reverses.
+    **Every design handoff**), naming any ADR the revision reverses and any
+    ADR that superseded it in step 5.
 
 ## Output
 
