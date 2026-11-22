@@ -28,7 +28,16 @@
 
 ## Cause
 
-<!-- Filled in by Task 2: the trigger, the dev.log lines that show it, and how often it reproduced. -->
+Confirmed 2026-11-22 on Windows, by forcing each link of the chain.
+
+1. **Trigger: Astro's update check.** `astro dev` checks npm for a newer Astro when `_variables.lastUpdateCheck` in `.astro/settings.json` is older than 12 days, and skips the check on CI (`ci-info`), which is why Ubuntu CI never fails. `dev-server.ts` builds a fresh consumer every run, so the check runs every local run (`dev.log`: `update ▶ New version of Astro available: 7.4.13`). It then writes `.astro/settings.json` with `{ reloadServer: false }`, which sets `ignoreNextPreferenceReload` to skip **one** watcher event (`astro/dist/preferences/index.js`).
+2. **Two events for one write on Windows.** One `writeFileSync` of a new `.astro/settings.json` gives `rename` then `change` (`fs.watch` probe). Astro's watcher handles add and change with the same restart handler (`astro/dist/core/dev/restart.js`, `shouldRestartContainer`): the first event uses up the ignore flag, the second restarts the server (`Configuration file updated. Restarting...`).
+3. **Timing makes it a flake.** The write lands after the npm fetch returns. Usually that is before the watcher is ready, so no event fires. When the fetch is slow, for example on a loaded machine right after `bun test`, it lands after the watcher is ready and the restart follows.
+4. **A restart during startup leaves the server broken.** A second `settings.json` write as soon as Astro's own write appears cut the content layer sync (`[content] transport was disconnected, cannot call "fetchModule"`). The `docs` collection came up empty (`The slug "docs/guide/intro" ... does not exist`), and `/` returned 500 then and 20 s later. Playwright's `webServer.url` check never accepts a 500, so it waited out the 300 s timeout: the failure seen on R-019's branch. A restart after startup also logs `transport was disconnected` and recovers.
+
+The 2026-11-20 log's `Listen method has been called more than once` comes from the same in-place restart (`restartContainerInPlace` re-listens on the kept HTTP server). It was not reproduced separately.
+
+Branch: **3B variant.** The fix stops the trigger, not the restart: no update check, so no settings write. See the Task 3 ruling in the ledger.
 
 ---
 
