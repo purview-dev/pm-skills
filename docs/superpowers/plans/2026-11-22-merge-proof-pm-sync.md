@@ -97,7 +97,7 @@ A `merge=pm-export` driver keeps `planning.json` from conflicting in local merge
        The export refresh is skipped there, with the message suffix `; run pm-export on <PM branch>.`
     8. On any failure after the move, run `git reset --keep <old>` (or `branch -f <PM branch> <old>`), exit 1, and print `sync: restored <PM branch> to <old>; <reason>`.
 
-- [ ] **Step 1: Write the failing tests** in `skills/pm-next/scripts/sync.test.ts`.
+- [x] **Step 1: Write the failing tests** in `skills/pm-next/scripts/sync.test.ts`.
 
   Use a helper that builds a scratch layout in `mkdtempSync`:
 
@@ -123,21 +123,21 @@ A `merge=pm-export` driver keeps `planning.json` from conflicting in local merge
   8. `pull and release are no-ops without a remote`: the result is `none`, with message `no remote`.
   9. `pull moves main with branch -f when another branch is checked out`: from `item`, `pull` gives `repaired`, and `main` equals `origin/main`.
 
-- [ ] **Step 2: Run the tests and confirm they fail**
+- [x] **Step 2: Run the tests and confirm they fail**
 
   Run: `bun test skills/pm-next/`
   Expected: FAIL (`Cannot find module './sync'`).
 
-- [ ] **Step 3: Implement `sync.ts`** to the Interfaces and Behaviour above.
+- [x] **Step 3: Implement `sync.ts`** to the Interfaces and Behaviour above.
 
   - Run git through `spawnSync('git', args, { cwd, encoding: 'utf8' })`, with a `git()` helper that throws on a non-zero exit.
   - Export `release` and `pull`. Make the CLI `import.meta.main`.
 
-- [ ] **Step 4: Update the spec's Design item 2** to the 3-way apply rule (see Ruling above).
+- [x] **Step 4: Update the spec's Design item 2** to the 3-way apply rule (see Ruling above).
 
-- [ ] **Step 5: Add `skills/pm-next/`** to the `justfile` `test` recipe.
+- [x] **Step 5: Add `skills/pm-next/`** to the `justfile` `test` recipe.
 
-- [ ] **Step 6: Run the tests and confirm they pass**
+- [x] **Step 6: Run the tests and confirm they pass**
 
   Run: `bun test skills/pm-next/`
   Expected: PASS, 9 tests and 3 `each` cases, 0 fail.
@@ -145,7 +145,7 @@ A `merge=pm-export` driver keeps `planning.json` from conflicting in local merge
   Run: `just test`
   Expected: exit code 0.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
   ```bash
   git add skills/pm-next/scripts/sync.ts skills/pm-next/scripts/sync.test.ts justfile docs/superpowers/specs/2026-11-22-merge-proof-pm-sync-design.md
@@ -170,24 +170,24 @@ A `merge=pm-export` driver keeps `planning.json` from conflicting in local merge
   - It prints `Merge driver registered for <PM root>/planning.json.`, or `already registered`.
 - Produces the export: `driver(opts: SyncOptions): SyncResult`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
   1. `driver registers the attribute and config once`: running it twice leaves exactly one line in `.gitattributes`, and `git config merge.pm-export.driver` prints `true`.
   2. `two branches that change planning.json merge without a conflict after driver`: branches `a` and `b` each rewrite `planning/planning.json` differently. `git merge b` on `a` exits 0, and `planning.json` equals `a`'s version. As a control, the same merge without `driver` exits non-zero.
 
-- [ ] **Step 2: Run the tests and confirm they fail**
+- [x] **Step 2: Run the tests and confirm they fail**
 
   Run: `bun test skills/pm-next/`
   Expected: the 2 new tests FAIL.
 
-- [ ] **Step 3: Implement `driver`** in `sync.ts`.
+- [x] **Step 3: Implement `driver`** in `sync.ts`.
 
-- [ ] **Step 4: Register it in this repository**
+- [x] **Step 4: Register it in this repository**
 
   - Add `planning/planning.json merge=pm-export` to `.gitattributes`.
   - Add `bun skills/pm-next/scripts/sync.ts driver` to the `just install` recipe, after `lefthook install`.
 
-- [ ] **Step 5: Run the tests and confirm they pass**
+- [x] **Step 5: Run the tests and confirm they pass**
 
   Run: `bun test skills/pm-next/`
   Expected: PASS, 0 fail.
@@ -195,7 +195,7 @@ A `merge=pm-export` driver keeps `planning.json` from conflicting in local merge
   Run: `bun skills/pm-next/scripts/sync.ts driver`
   Expected: `Merge driver registered for planning/planning.json.`, or `already registered`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
   ```bash
   git add skills/pm-next/scripts/sync.ts skills/pm-next/scripts/sync.test.ts .gitattributes justfile
@@ -217,7 +217,7 @@ A `merge=pm-export` driver keeps `planning.json` from conflicting in local merge
 
 - Consumes: the CLI commands `release`, `pull`, and `driver` from Tasks 1 and 2.
 
-- [ ] **Step 1: Managed section**
+- [x] **Step 1: Managed section**
 
   - **Pull latest (Shared definitions):** for the PM branch, run `bun <pm-next skill>/scripts/sync.ts pull` when Bun is installed.
     - It fast-forwards, or repairs a diverged PM branch by carrying its PM-root commits onto the remote; a branch it cannot carry is restored and stops.
@@ -230,25 +230,25 @@ A `merge=pm-export` driver keeps `planning.json` from conflicting in local merge
   - **Upgrade notes:** a `Version 21` paragraph. It says the driver covers local pulls and merges only; GitHub's server-side merge does not run it.
   - Copy the section into `AGENTS.md` between the markers, without `version=`.
 
-- [ ] **Step 2: `pm-next` step 6**
+- [x] **Step 2: `pm-next` step 6**
 
   - Add the `release` call and its Note line.
   - In step 1, use `sync.ts pull` for the PM base.
 
-- [ ] **Step 3: `pm-setup` Step 5 item 6, "Merge driver"**
+- [x] **Step 3: `pm-setup` Step 5 item 6, "Merge driver"**
 
   - Run `bun <pm-next skill>/scripts/sync.ts driver`. Without Bun, print the `.gitattributes` line and the two `git config` commands.
   - Step 6 verify: `.gitattributes` may change only by that line.
 
-- [ ] **Step 4: `pm-help` check 29**
+- [x] **Step 4: `pm-help` check 29**
 
   - Check: when `<PM root>/planning.json` exists, `git check-attr merge -- <PM root>/planning.json` prints `pm-export` and `git config merge.pm-export.driver` is set.
   - Finding: `planning.json merge driver not registered`.
   - Fix: `pm-setup`.
 
-- [ ] **Step 5: Bump the version.** Run `just bump prerelease`. Expected: `package.json` version `21.0.0-pre.6`.
+- [x] **Step 5: Bump the version.** Run `just bump prerelease`. Expected: `package.json` version `21.0.0-pre.6`.
 
-- [ ] **Step 6: Verify**
+- [x] **Step 6: Verify**
 
   Run: `just validate`
   Expected: exit code 0.
@@ -256,7 +256,7 @@ A `merge=pm-export` driver keeps `planning.json` from conflicting in local merge
   Run: `bunx markdownlint-cli2 "**/*.md" "#node_modules"`
   Expected: `0 issues`.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
   ```bash
   git add skills/pm-setup/references/AGENTS-section.md AGENTS.md skills/pm-next/SKILL.md skills/pm-setup/SKILL.md skills/pm-help/SKILL.md package.json
