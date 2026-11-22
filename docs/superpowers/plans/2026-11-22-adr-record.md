@@ -35,12 +35,14 @@
 ### Task 1: pm-lint ADR file kind and rules
 
 **Files:**
+
 - Modify: `skills/pm-lint/scripts/structure.ts` (`Kind` line 30, `kindOf` 45-53, `KEYS` 56-73, `FILE_KEYS` 76-87, `Context` ~195-206, `buildContext` 210-278, `checkStructure` checkers 285-297; new `checkAdr`)
 - Modify: `skills/pm-lint/scripts/rules.ts` (add after the `risks/*` rules, line 105)
 - Modify: `skills/pm-lint/references/rules.md` (Scope table near line 24; Rules table after `risks/removed`, line 178)
 - Test: `skills/pm-lint/scripts/lint.test.ts` (new `describe("ADR rules")`)
 
 **Interfaces:**
+
 - Produces: `Kind` includes `"adr"`; `kindOf("decisions/ADR-001-x.md") === "adr"`, `kindOf("decisions/README.md") === "markdown"`; `KEYS.adr = ["Status", "Date", "Category", "Supersedes", "Item", "Source"]`; `Context.adrs: { id: string; rel: string; status: string; supersedes: string; n: number }[]`; rules `adr/header`, `adr/sections`, `adr/id`, `adr/links` (all `error`, not fixable).
 
 - [ ] **Step 1: Write the failing tests** in `lint.test.ts`, using the existing `repo()` and `rulesOf()` helpers and this helper:
@@ -143,11 +145,13 @@ git commit -m "feat(pm-lint): check ADR files in the decisions folder"
 ### Task 2: The ADR in the managed rules, and pm-next's handoff
 
 **Files:**
+
 - Modify: `skills/pm-setup/references/AGENTS-section.md` (Shared definitions: after **Risk IDs** ~line 215; **Named reference** ~105; **Reference legend**; **Optional files** ~112; Non-interruption rules 2 and 3 ~419-450; Committing PM state "never commits" bullet ~751; skill table after `pm-risk` line 29; `Version 21` upgrade note)
 - Modify: `skills/pm-next/SKILL.md` step 10 (lines 130-137)
 - Modify: `AGENTS.md` (the installed managed section, between the markers)
 
 **Interfaces:**
+
 - Consumes: the format and rules from Task 1 (field order, rule names).
 - Produces: Shared definitions named **Decisions folder**, **ADR IDs**, **ADR** (with the decision split, read-before-deciding, and every-design-handoff sentences) that Tasks 3 and 4 cite by name.
 
@@ -172,12 +176,14 @@ git commit -m "feat(pm-setup): define ADRs and let pm-adr write during the desig
 ### Task 3: The pm-adr skill and the four tables
 
 **Files:**
+
 - Create: `skills/pm-adr/SKILL.md`
 - Modify: `README.md` (skills table, after `pm-risk` line 44)
 - Modify: `skills/pm-setup/SKILL.md` (inventory list ~line 69; counts `25` to `26` at lines 146, 284, 296)
 - Modify: `skills/pm-help/SKILL.md` (skill guide row after `pm-risk` line 47)
 
 **Interfaces:**
+
 - Consumes: Shared definitions **Decisions folder**, **ADR IDs**, **ADR** (Task 2); rule names `adr/*` (Task 1).
 
 - [ ] **Step 1: Write `skills/pm-adr/SKILL.md`** following `skills/pm-risk/SKILL.md`'s layout (frontmatter `name: pm-adr` and a "Use when ..." description naming ADRs, architecture decisions, technical decisions, supersede, and import; then Guard, Modes table, Steps per mode, Output). Content from the spec's section 2:
@@ -207,11 +213,13 @@ git commit -m "feat(pm-adr): record, supersede, view, check, and import ADRs"
 ### Task 4: pm-init and pm-setup set up the decisions folder
 
 **Files:**
+
 - Create: `skills/pm-init/templates/decisions-README.md`
 - Modify: `skills/pm-init/SKILL.md` (template table ~lines 36-46; step 2 or after step 3; output Note)
 - Modify: `skills/pm-setup/SKILL.md` (step 4, PM config check: the import Note)
 
 **Interfaces:**
+
 - Consumes: **Decisions folder** and **ADR** (Task 2); `pm-adr import` (Task 3).
 
 - [ ] **Step 1: Write `decisions-README.md`**: `# Decisions` (level-1 heading first, PM file format), what an ADR is, the decision split, that `pm-adr` writes them, and the ID and file-name rule, in at most 15 lines.
@@ -232,6 +240,7 @@ git commit -m "feat(pm-init): decisions folder for new projects and an import no
 ### Task 5: Version, dogfood, and full verification
 
 **Files:**
+
 - Modify: `package.json` (via `just bump prerelease`)
 - Create: `planning/decisions/README.md`, `planning/decisions/ADR-001-adrs-live-in-the-pm-root.md` (through `pm-adr new`, as the workflow would)
 
