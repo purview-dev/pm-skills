@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-22T18:21:15+00:00",
+  "generatedAt": "2026-11-22T18:50:30+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-025-docs-site-package-feature-pages-list-revisions",
-    "head": "c37812bbf8e8681237b6af2f28930f289792d11f"
+    "branch": "feat/r-044-merge-proof-pm-sync",
+    "head": "54c5db1537e708a1fb7174c3fa3bb06792e1d2cb"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -215,16 +215,32 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
+    "status": "active",
+    "item": {
+      "id": "R-044",
+      "title": "Merge-proof PM sync",
+      "serves": [
+        "V2",
+        "V3"
+      ],
+      "owner": "agent",
+      "size": "M",
+      "dependsOn": [],
+      "revisits": null
+    },
+    "stage": "plan",
+    "session": "feat/r-044-merge-proof-pm-sync",
     "brief": null,
     "milestone": null,
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-22-merge-proof-pm-sync-design.md",
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-22",
+    "doneWhen": [
+      "In a scratch repository with a bare remote, for each of a merge commit, a squash, and a rebase merge of an item branch that carries idle PM commits, `git switch main` then `git pull --ff-only` succeeds and `planning/` equals the remote.",
+      "A diverged PM branch whose commits were delivered is repaired by Pull latest to equal the remote; an undelivered PM-only commit is carried forward as one `docs(pm): carry` commit.",
+      "Two branches that each change `planning.json` merge without a conflict once the driver is registered.",
+      "`just lint-check` and `just validate` pass."
+    ],
     "checkpoint": null
   },
   "plan": null,
@@ -617,7 +633,15 @@
   },
   "board": {
     "columns": {
-      "now": [],
+      "now": [
+        {
+          "id": "R-044",
+          "title": "Merge-proof PM sync",
+          "owner": "agent",
+          "size": "M",
+          "detail": "plan"
+        }
+      ],
       "next": [
         {
           "id": "R-013",
