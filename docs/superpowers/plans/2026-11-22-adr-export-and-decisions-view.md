@@ -36,6 +36,7 @@
 ### Task 1: Export ADRs at schemaVersion 5
 
 **Files:**
+
 - Modify: `skills/pm-export/scripts/planning.ts` (`SCHEMA_VERSION` L11 and header L1; new `parseAdr`; `adrs` in the document near L691)
 - Modify: `skills/pm-export/references/planning.schema.json` (const L33; `adrs` in `required` and `properties`; `$defs/adr`)
 - Modify: `skills/pm-export/references/planning.example.json` (`schemaVersion` 5; two ADRs)
@@ -44,6 +45,7 @@
 - Test: `skills/pm-export/scripts/export.test.ts`
 
 **Interfaces:**
+
 - Produces: `export interface Adr` (keys in Global Constraints; `status: "proposed" | "accepted" | "deprecated" | "superseded"`), `export function parseAdr(file: string, text: string, pmRoot: string): Adr | null` (returns `null` when `file` does not match `/^ADR-\d{3,}-.+\.md$/`), `export function sortAdrs(adrs: Adr[]): Adr[]` (by `Number(id.slice(4))`, a new array), and `planning.adrs: Adr[]` built with both.
 
 - [ ] **Step 1: Write the fixture ADRs.** ADR-001 `Use Bun for scripts` (`Status: superseded by ADR-002`, `Category: tooling`, `Item: none`, an `## Alternatives` table) and ADR-002 `Pin the Astro major` (`Status: accepted`, `Supersedes: ADR-001`, `Item: R-001` or any item ID present in the fixture roadmap, `## Consequences` with `None recorded.`). Run `bun skills/pm-lint/scripts/lint.ts check --root scripts/__fixtures__/repo --pm-root planning/`; expected `pm-lint: clean`.
@@ -85,6 +87,7 @@ test("sortAdrs orders by ID number", () => {
 ### Task 2: Templates, docs-site, and validate read schemaVersion 5
 
 **Files:**
+
 - Modify: `skills/pm-docs-site/templates/site/src/lib/planning.ts` (`SCHEMA_VERSION` L16), `planning-types.ts` (literal 5 at L158, header L1, optional `adrs?: Adr[]` with an `Adr` type matching Task 1), `__fixtures__/planning.json` (`schemaVersion` 5, `"adrs": []`)
 - Modify: `skills/pm-docs-site/SKILL.md` (`This skill reads schemaVersion 5.`)
 - Modify: `scripts/validate.ts` L149 (const must be 5)
@@ -92,6 +95,7 @@ test("sortAdrs orders by ID number", () => {
 - Regenerate: `docs-site/` with `bun skills/pm-docs-site/scripts/site.ts write docs-site`
 
 **Interfaces:**
+
 - Consumes: Task 1's schema (`required` includes `adrs`).
 
 - [ ] **Step 1: Run** `just validate`. Expected: FAIL naming the schema const and the template version.
@@ -102,6 +106,7 @@ test("sortAdrs orders by ID number", () => {
 ### Task 3: Package reads schemaVersion 5; decisions state, search, and grouping
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/lib/schema-version.ts` L4 (`[5]`)
 - Modify: `packages/pm-docs-site/src/lib/planning-types.ts` (literal 5, `Adr`, `AdrStatus`, `adrs: Adr[]` on `Planning`)
 - Modify: `packages/pm-docs-site/test/fixtures/planning.json` (`schemaVersion` 5; four ADRs: two `architecture`, two `data`; one each of proposed, accepted, deprecated, superseded; one with an `item` that is a fixture feature, one with an `item` not in the export; one with a table in `alternatives`; one with `` `R-001` `` inside a code span in `context`)
@@ -110,6 +115,7 @@ test("sortAdrs orders by ID number", () => {
 - Test: `packages/pm-docs-site/test/decisions.test.ts`
 
 **Interfaces:**
+
 - Produces, in `src/lib/decisions.ts`:
   - `export const ADR_STATUSES: readonly AdrStatus[] = ['proposed', 'accepted', 'deprecated', 'superseded']` (also the group order)
   - `export type DecisionsGroup = 'category' | 'status' | 'none'`
@@ -137,17 +143,19 @@ test("sortAdrs orders by ID number", () => {
 ### Task 4: ADR references, `adrsOf`, and links inside rendered HTML
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/src/lib/planning.ts` (beside `dependents()` L344)
 - Modify: `packages/pm-docs-site/src/lib/references.ts`
 - Create: `packages/pm-docs-site/src/lib/link-html.ts`
 - Test: `packages/pm-docs-site/test/references.test.ts`, `test/link-html.test.ts`
 
 **Interfaces:**
+
 - Consumes: `Adr` (Task 3).
 - Produces:
   - `export function adrHref(id: string): string` → `/plan/decisions/<id lower-case>/` (in `planning.ts`)
   - `export function adrsOf(planning: Planning, itemId: string): Adr[]` (ADRs whose `item === itemId`, by ID)
-  - `TargetKind` gains `'adr'`; `IDS` gains `String.raw\`ADR-\d{3,}\`` first; `targets()` adds each ADR with `href: views.decisions ? adrHref(id) : null`, label `ADR-NNN Title`
+  - `TargetKind` gains `'adr'`; `IDS` gains `String.raw\`ADR-\d{3,}\`` first; `targets()` adds each ADR with `href: views.decisions ? adrHref(id) : null`, label`ADR-NNN Title`
   - `Relation` gains `'decision'` (label `Decisions`) and `'supersedes'` (label `Supersedes`)
   - `export function linkHtml(html: string, known: Map<string, Target>): string` in `link-html.ts`: runs `linkify` over text between tags only, wrapping each linked run in `<a href="…">…</a>` (escaped), and leaves text inside `code`, `pre`, and `a` untouched
 - `references()` sources (each page renders exactly these links):
@@ -167,6 +175,7 @@ test("sortAdrs orders by ID number", () => {
 ### Task 5: ADR pages, the Decisions view, and feature Decisions lists
 
 **Files:**
+
 - Create: `packages/pm-docs-site/src/loaders/adrs.ts` — `export function adrsLoader(): Loader` (name `adrs`): for each `loadPlanning().adrs` entry, `store.set({ id: adr.id.toLowerCase(), data: adr, rendered: … })` with one `renderMarkdown` call per non-null section, stored as `data.html: Record<'context' | 'decision' | 'alternatives' | 'consequences', string | null>`
 - Modify: `packages/pm-docs-site/src/content.config.ts` (an `adrs` collection with that loader; schema `z.any()` or a passthrough)
 - Create: `packages/pm-docs-site/src/routes/plan/decisions.astro` (StarlightPage `Decisions`, `ExportStamp kind="Decisions"`, an empty state `No ADRs yet. Record one with pm-adr new.` when `adrs` is empty, else `<Decisions client:load adrs={…} categories={…} />` inside a `data-pagefind-ignore` wrapper)
@@ -177,6 +186,7 @@ test("sortAdrs orders by ID number", () => {
 - Modify: `test/links.test.ts` (`ALL_VIEWS` gains `decisions`; `TARGET_PAGE` becomes `/(features|milestones|risks|decisions)/`), `test/sidebar.test.ts`, `test/fixtures/expected-pages.txt` (the Decisions page and one line per fixture ADR), `README.md` (view list)
 
 **Interfaces:**
+
 - Consumes: Tasks 3 and 4 (`decisions.ts` functions, `adrHref`, `adrsOf`, `linkHtml`, `siteRefs()`).
 - Island props: `{ adrs: Array<Omit<Adr, 'context' | 'decision' | 'alternatives' | 'consequences'> & { text: string; itemLabel: string | null; itemHref: string | null; successorLabel: string | null } >; categories: string[] }` where `text` is `adrSearchText(adr)`.
 - Island UI: search box (label `Search decisions`), status chips and category chips (toggle buttons with `aria-pressed`), a `Group by` select (`Category`, `Status`, `None`), a `Clear` button, rows `ADR-NNN Title` linked to `adrHref`, status badge, category, date, item named reference, `Superseded by ADR-NNN Title` when set; an empty result names the active filters.
@@ -189,6 +199,7 @@ test("sortAdrs orders by ID number", () => {
 ### Task 6: Browser test for the Decisions view
 
 **Files:**
+
 - Create: `packages/pm-docs-site/test/browser/decisions.browser.ts`
 
 - [ ] **Step 1: Write the test:** open `/plan/decisions/`; the superseded fixture ADR is not visible; type a word from one ADR's `context` into `Search decisions` and see only that row; press the `superseded` chip; reload; the search text, the chip's `aria-pressed="true"`, and the row list are the same; `Clear` restores the default and an empty query string.
@@ -198,6 +209,7 @@ test("sortAdrs orders by ID number", () => {
 ### Task 7: Demo ADRs
 
 **Files:**
+
 - Create: `examples/demo/planning/decisions/README.md` (from `skills/pm-init/templates/decisions-README.md`) and four ADRs across `architecture` and `data`, one per status, one superseding another, each `Item` a demo roadmap or done item, one with a table in `## Alternatives`, none with an empty section
 - Modify: `examples/demo/expected-pages.txt` (the Decisions page and one line per ADR)
 - Regenerate: `bun skills/pm-export/scripts/export.ts write --frozen --root examples/demo --pm-root planning/`
@@ -210,6 +222,7 @@ test("sortAdrs orders by ID number", () => {
 ### Task 8: Versions, upgrade note, and the full checks
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/package.json` (`0.1.0-pre.3`)
 - Modify: `package.json` via `just bump prerelease` (`21.0.0-pre.4`)
 - Modify: `skills/pm-setup/references/AGENTS-section.md` (append to the `Version 21` upgrade note: `Version 21 also moves the export to schemaVersion 5, which adds adrs: run pm-export, and pm-docs-site upgrade for an installed site.`) and the same text in the section installed in `AGENTS.md`
