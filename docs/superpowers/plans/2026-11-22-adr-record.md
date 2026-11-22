@@ -45,7 +45,7 @@
 
 - Produces: `Kind` includes `"adr"`; `kindOf("decisions/ADR-001-x.md") === "adr"`, `kindOf("decisions/README.md") === "markdown"`; `KEYS.adr = ["Status", "Date", "Category", "Supersedes", "Item", "Source"]`; `Context.adrs: { id: string; rel: string; status: string; supersedes: string; n: number }[]`; rules `adr/header`, `adr/sections`, `adr/id`, `adr/links` (all `error`, not fixable).
 
-- [ ] **Step 1: Write the failing tests** in `lint.test.ts`, using the existing `repo()` and `rulesOf()` helpers and this helper:
+- [x] **Step 1: Write the failing tests** in `lint.test.ts`, using the existing `repo()` and `rulesOf()` helpers and this helper:
 
 ```ts
 const adr = (id: string, title: string, fields: Partial<Record<string, string>> = {}, sections = ["Context", "Decision", "Alternatives", "Consequences"]) =>
@@ -111,12 +111,12 @@ describe("ADR rules", () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `bun test skills/pm-lint/scripts/lint.test.ts -t "ADR rules"`
 Expected: FAIL (no `adr/*` findings; `rules.md` test may also fail once rules are referenced).
 
-- [ ] **Step 3: Implement in `structure.ts`**
+- [x] **Step 3: Implement in `structure.ts`**
   - `kindOf`: `if (folder === "decisions") return "adr";` inside the existing one-level, non-README guard.
   - `KEYS.adr` as in Interfaces; `FILE_KEYS.adr = KEYS.adr`.
   - `buildContext`: collect `adrs` from docs of kind `adr`: `id` from the H1 (`/^(ADR-\d{3,})\b/`), `status` and `supersedes` from the header fields, `rel`, `n` = H1 line.
@@ -125,17 +125,17 @@ Expected: FAIL (no `adr/*` findings; `rules.md` test may also fail once rules ar
     - `adr/sections`: the `##` headings are exactly `Context`, `Decision`, `Alternatives`, `Consequences`, in order.
     - `adr/id`: the file name matches `^ADR-(\d{3,})-[a-z0-9-]+\.md$` and its ID equals the H1's; report on every file whose ID another file also has.
     - `adr/links`: `Supersedes: X` needs X in `context.adrs` with `status === "superseded by <this>"`; `superseded by X` needs X with `supersedes === <this>`; `Item` must be in roadmap items, `now`, `done`, or `dropped`.
-- [ ] **Step 4: Add the four rules** to `rules.ts` with these summaries, and the same rows (fuller wording allowed) to `rules.md`, plus a Scope row `| decisions/ADR-*.md | **ADR** (Shared definitions) | format, header, sections, IDs, links |`:
+- [x] **Step 4: Add the four rules** to `rules.ts` with these summaries, and the same rows (fuller wording allowed) to `rules.md`, plus a Scope row `| decisions/ADR-*.md | **ADR** (Shared definitions) | format, header, sections, IDs, links |`:
   - `adr/header`: "An ADR starts `# ADR-NNN <Title>` with Status, Date, Category, Supersedes, Item, and Source, in order, with allowed values."
   - `adr/sections`: "An ADR has `## Context`, `## Decision`, `## Alternatives`, and `## Consequences`, in order."
   - `adr/id`: "An ADR file is `ADR-NNN-<slug>.md`, its ID matches its heading, and no two ADRs share an ID."
   - `adr/links`: "Supersedes and superseded by name existing ADRs and agree, and Item names a known item ID."
-- [ ] **Step 5: Run the pm-lint tests**
+- [x] **Step 5: Run the pm-lint tests**
 
 Run: `bun test skills/pm-lint/scripts/lint.test.ts`
 Expected: PASS, including `rules.md documents every rule` and `clean PM state`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add skills/pm-lint
@@ -155,18 +155,18 @@ git commit -m "feat(pm-lint): check ADR files in the decisions folder"
 - Consumes: the format and rules from Task 1 (field order, rule names).
 - Produces: Shared definitions named **Decisions folder**, **ADR IDs**, **ADR** (with the decision split, read-before-deciding, and every-design-handoff sentences) that Tasks 3 and 4 cite by name.
 
-- [ ] **Step 1: Write the Shared definitions** exactly as the spec's Design section 1 gives them (format block verbatim), and add `ADR-NNN <title> (<status>)` to **Named reference** and an ADR's title and status to **Reference legend**. Add `decisions/` to **Optional files** ("in projects initialised before version 21").
-- [ ] **Step 2: Non-interruption rules.** Rule 2: add a bullet "when the workflow records or accepts a technical decision (`pm-adr` `new`, `supersede`, `accept`)". Rule 3: add `pm-adr` (`new`, `supersede`, `accept`) to the permitted mid-workflow writes with the one-line reply from Global Constraints, no questions, no commit; add `pm-adr` (`view`, `check`) to the read-only exceptions. Committing PM state: "`pm-park` never commits, `pm-risk` never commits in capture mode, and `pm-adr` never commits during a workflow".
-- [ ] **Step 3: Skill table row** after `pm-risk`: `| \`pm-adr\` | Record, supersede, accept, deprecate, view, check, or import architecture decision records in the decisions folder | Any time (new, supersede, accept, view, and check during a workflow), user asks |`
-- [ ] **Step 4: `Version 21` upgrade note:** append "Version 21 also adds `pm-adr` and the decisions folder (`<PM root>/decisions/`, optional): technical decisions are ADRs, the design stage records them with `pm-adr`, and `pm-adr import <folder>` brings an existing ADR folder in. No setting is added."
-- [ ] **Step 5: `pm-next` step 10:** append the spec's section 4 instruction: list the accepted and proposed ADRs as named references (or "no ADRs"), tell the design skill to read the ones its decision touches before proposing approaches, record each architecture decision with `pm-adr new` (or `supersede`), and name the ADR IDs in the spec.
-- [ ] **Step 6: Reinstall** the section into `AGENTS.md`: replace the text between `<!-- pm-skills:start -->` and the end marker with the reference's text between its markers (the reference's start marker carries `version=21`; the installed one has no version).
-- [ ] **Step 7: Verify**
+- [x] **Step 1: Write the Shared definitions** exactly as the spec's Design section 1 gives them (format block verbatim), and add `ADR-NNN <title> (<status>)` to **Named reference** and an ADR's title and status to **Reference legend**. Add `decisions/` to **Optional files** ("in projects initialised before version 21").
+- [x] **Step 2: Non-interruption rules.** Rule 2: add a bullet "when the workflow records or accepts a technical decision (`pm-adr` `new`, `supersede`, `accept`)". Rule 3: add `pm-adr` (`new`, `supersede`, `accept`) to the permitted mid-workflow writes with the one-line reply from Global Constraints, no questions, no commit; add `pm-adr` (`view`, `check`) to the read-only exceptions. Committing PM state: "`pm-park` never commits, `pm-risk` never commits in capture mode, and `pm-adr` never commits during a workflow".
+- [x] **Step 3: Skill table row** after `pm-risk`: `| \`pm-adr\` | Record, supersede, accept, deprecate, view, check, or import architecture decision records in the decisions folder | Any time (new, supersede, accept, view, and check during a workflow), user asks |`
+- [x] **Step 4: `Version 21` upgrade note:** append "Version 21 also adds `pm-adr` and the decisions folder (`<PM root>/decisions/`, optional): technical decisions are ADRs, the design stage records them with `pm-adr`, and `pm-adr import <folder>` brings an existing ADR folder in. No setting is added."
+- [x] **Step 5: `pm-next` step 10:** append the spec's section 4 instruction: list the accepted and proposed ADRs as named references (or "no ADRs"), tell the design skill to read the ones its decision touches before proposing approaches, record each architecture decision with `pm-adr new` (or `supersede`), and name the ADR IDs in the spec.
+- [x] **Step 6: Reinstall** the section into `AGENTS.md`: replace the text between `<!-- pm-skills:start -->` and the end marker with the reference's text between its markers (the reference's start marker carries `version=21`; the installed one has no version).
+- [x] **Step 7: Verify**
 
 Run: `just validate`
 Expected: exits 0 except for `pm-adr` missing from skill tables (fixed in Task 3) — if validate fails only on that, continue; any other failure is fixed here.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add skills/pm-setup/references/AGENTS-section.md skills/pm-next/SKILL.md AGENTS.md
@@ -186,7 +186,7 @@ git commit -m "feat(pm-setup): define ADRs and let pm-adr write during the desig
 
 - Consumes: Shared definitions **Decisions folder**, **ADR IDs**, **ADR** (Task 2); rule names `adr/*` (Task 1).
 
-- [ ] **Step 1: Write `skills/pm-adr/SKILL.md`** following `skills/pm-risk/SKILL.md`'s layout (frontmatter `name: pm-adr` and a "Use when ..." description naming ADRs, architecture decisions, technical decisions, supersede, and import; then Guard, Modes table, Steps per mode, Output). Content from the spec's section 2:
+- [x] **Step 1: Write `skills/pm-adr/SKILL.md`** following `skills/pm-risk/SKILL.md`'s layout (frontmatter `name: pm-adr` and a "Use when ..." description naming ADRs, architecture decisions, technical decisions, supersede, and import; then Guard, Modes table, Steps per mode, Output). Content from the spec's section 2:
   - Modes `new`, `supersede <ADR-NNN>`, `accept <ADR-NNN>`, `deprecate <ADR-NNN>`, `view [<ADR-NNN>]`, `check`, `import <folder>`, each with its effect and whether it runs during a workflow.
   - New ID: the highest `ADR` number in `<PM root>/decisions/` file names plus 1; create the folder on the first write.
   - In a workflow: no questions, no Challenge, no commit, the one-line reply.
@@ -194,7 +194,7 @@ git commit -m "feat(pm-setup): define ADRs and let pm-adr write during the desig
   - `check`: run `bun <pm-lint skill>/scripts/lint.ts check <PM root>/decisions --root .` when Bun is installed; otherwise check the format by reading.
   - `import <folder>`: one confirmation question listing the files; for each, new ID in source order (numeric order of the source file names), header from field bullets, MADR YAML frontmatter (`status`, `date`, `category`), or a `## Status` section's first line; missing `Category` is `uncategorised`, missing `Date` is the file's first commit date (`git log --diff-filter=A --format=%as -- <file>`), `Source` is the original path, the body verbatim under the four sections (unmatched source headings go under `## Context`); the originals are left in place.
   - Output template: `## ADR` (`- ADR: ADR-NNN <title> (<status>)`, `- Category`, `- Path`), `## Do this next` (one action), `## Note` (commit result); `view` prints a table grouped by category then status.
-- [ ] **Step 2: Add the table rows**
+- [x] **Step 2: Add the table rows**
   - README:
 
     ```markdown
@@ -208,12 +208,12 @@ git commit -m "feat(pm-setup): define ADRs and let pm-adr write during the desig
     ```
 
   - pm-setup: add `` `pm-adr` `` to the inventory list and change the three `25`s to `26`.
-- [ ] **Step 3: Verify**
+- [x] **Step 3: Verify**
 
 Run: `just validate; bunx markdownlint-cli2 skills/pm-adr/SKILL.md README.md skills/pm-setup/SKILL.md skills/pm-help/SKILL.md`
 Expected: both exit 0.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add skills/pm-adr README.md skills/pm-setup/SKILL.md skills/pm-help/SKILL.md
@@ -232,15 +232,15 @@ git commit -m "feat(pm-adr): record, supersede, view, check, and import ADRs"
 
 - Consumes: **Decisions folder** and **ADR** (Task 2); `pm-adr import` (Task 3).
 
-- [ ] **Step 1: Write `decisions-README.md`**: `# Decisions` (level-1 heading first, PM file format), what an ADR is, the decision split, that `pm-adr` writes them, and the ID and file-name rule, in at most 15 lines.
-- [ ] **Step 2: `pm-init`:** add the row `| decisions-README.md | <PM root>/decisions/README.md (new project only) |`; copy it only when step 3 finds no substantial code (move that finding before the copy, or copy after step 3 — state which in the step). When an outside ADR folder exists (`docs/adr/`, `docs/decisions/`, `doc/adr/`, `docs/architecture/decisions/`), add the output Note `Existing ADRs in <folder>. Run pm-adr import <folder> to bring them in.`
-- [ ] **Step 3: `pm-setup` step 4:** when the PM root exists, has no `decisions/` folder, and an outside ADR folder exists, add the same Note to the output. No question, no write.
-- [ ] **Step 4: Verify**
+- [x] **Step 1: Write `decisions-README.md`**: `# Decisions` (level-1 heading first, PM file format), what an ADR is, the decision split, that `pm-adr` writes them, and the ID and file-name rule, in at most 15 lines.
+- [x] **Step 2: `pm-init`:** add the row `| decisions-README.md | <PM root>/decisions/README.md (new project only) |`; copy it only when step 3 finds no substantial code (move that finding before the copy, or copy after step 3 — state which in the step). When an outside ADR folder exists (`docs/adr/`, `docs/decisions/`, `doc/adr/`, `docs/architecture/decisions/`), add the output Note `Existing ADRs in <folder>. Run pm-adr import <folder> to bring them in.`
+- [x] **Step 3: `pm-setup` step 4:** when the PM root exists, has no `decisions/` folder, and an outside ADR folder exists, add the same Note to the output. No question, no write.
+- [x] **Step 4: Verify**
 
 Run: `bun test skills/pm-lint/scripts/lint.test.ts -t "clean PM state"; just validate`
 Expected: PASS (the fresh install, now with `decisions/README.md` via `initRoot`, lints clean); validate exits 0.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add skills/pm-init skills/pm-setup/SKILL.md
@@ -254,27 +254,27 @@ git commit -m "feat(pm-init): decisions folder for new projects and an import no
 - Modify: `package.json` (via `just bump prerelease`)
 - Create: `planning/decisions/README.md`, `planning/decisions/ADR-001-adrs-live-in-the-pm-root.md` (through `pm-adr new`, as the workflow would)
 
-- [ ] **Step 1: Bump**
+- [x] **Step 1: Bump**
 
 Run: `just bump prerelease`
 Expected: `package.json` version `21.0.0-pre.3`.
 
-- [ ] **Step 2: Dogfood `pm-adr new`** in this repository, following `skills/pm-adr/SKILL.md` (`new` during a workflow: no question, no commit): ADR-001 "ADRs live in the PM root", `Status: accepted`, `Category: architecture`, `Item: R-033`, `Source: none`, with Context, Decision, Alternatives (the three rows of the spec's Approaches table), and Consequences from the spec. Copy `skills/pm-init/templates/decisions-README.md` to `planning/decisions/README.md`.
+- [x] **Step 2: Dogfood `pm-adr new`** in this repository, following `skills/pm-adr/SKILL.md` (`new` during a workflow: no question, no commit): ADR-001 "ADRs live in the PM root", `Status: accepted`, `Category: architecture`, `Item: R-033`, `Source: none`, with Context, Decision, Alternatives (the three rows of the spec's Approaches table), and Consequences from the spec. Copy `skills/pm-init/templates/decisions-README.md` to `planning/decisions/README.md`.
 
 Run: `just pm-lint`
 Expected: no errors.
 
-- [ ] **Step 3: Rehearse supersede and import in a scratch copy** (not committed): copy `planning/` to `$env:CLAUDE_JOB_DIR/tmp/adr-rehearsal/planning/`, run `pm-adr supersede ADR-001` there per the skill (expect ADR-002 with `Supersedes: ADR-001` and ADR-001 `Status: superseded by ADR-002`); create `docs/adr/` in the scratch root with one field-bullet ADR, one MADR file (YAML frontmatter), and one Nygard file (`## Status` section), then run `pm-adr import docs/adr/` per the skill (expect ADR-003 to ADR-005 with `Source` set).
+- [x] **Step 3: Rehearse supersede and import in a scratch copy** (not committed): copy `planning/` to `$env:CLAUDE_JOB_DIR/tmp/adr-rehearsal/planning/`, run `pm-adr supersede ADR-001` there per the skill (expect ADR-002 with `Supersedes: ADR-001` and ADR-001 `Status: superseded by ADR-002`); create `docs/adr/` in the scratch root with one field-bullet ADR, one MADR file (YAML frontmatter), and one Nygard file (`## Status` section), then run `pm-adr import docs/adr/` per the skill (expect ADR-003 to ADR-005 with `Source` set).
 
 Run: `bun skills/pm-lint/scripts/lint.ts check --root "$env:CLAUDE_JOB_DIR/tmp/adr-rehearsal"`
 Expected: no `adr/*` errors, five ADRs in the scratch `planning/decisions/`.
 
-- [ ] **Step 4: Full checks**
+- [x] **Step 4: Full checks**
 
 Run: `just validate; just test; just lint-check`
 Expected: all exit 0.
 
-- [ ] **Step 5: Commit the version only**
+- [x] **Step 5: Commit the version only**
 
 ```bash
 git add package.json
