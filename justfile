@@ -4,6 +4,7 @@ default:
 # Verify the required tools exist, then install the git hooks.
 install: check-prerequisites
     lefthook install
+    bun skills/pm-next/scripts/sync.ts driver
 
 check-prerequisites:
     @command -v bun >/dev/null || { echo "bun is required: https://bun.sh"; exit 1; }

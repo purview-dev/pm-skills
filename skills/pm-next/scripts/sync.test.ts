@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "nod
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { pull, release, type SyncOptions } from "./sync";
+import { driver, pull, release, type SyncOptions } from "./sync";
 
 // Scratch repositories: a bare remote, the user's clone (`work`), and a
 // second clone (`hub`) that plays GitHub merging the pull request.
@@ -20,7 +20,7 @@ afterEach(() => {
 
 function git(cwd: string, ...args: string[]): string {
   const run = spawnSync("git", args, { cwd, encoding: "utf8" });
-  if (run.status !== 0) throw new Error(`git ${args.join(" ")}: ${run.stderr}`);
+  if (run.status !== 0) throw new Error(`git ${args.join(" ")}: ${run.stdout}${run.stderr}`);
   return run.stdout.trim();
 }
 
@@ -234,5 +234,48 @@ describe("pull", () => {
     expect(result).toMatchObject({ action: "repaired", moved: 2 });
     expect(sha(work, "main")).toBe(sha(work, "origin/main"));
     expect(git(work, "branch", "--show-current")).toBe("item");
+  });
+});
+
+describe("driver", () => {
+  it("registers the attribute and the config once", () => {
+    const { work, opts } = scratch();
+
+    expect(driver(opts).action).toBe("registered");
+    expect(driver(opts).action).toBe("none");
+
+    const lines = readFileSync(join(work, ".gitattributes"), "utf8").split("\n").filter((line) => line.includes("merge=pm-export"));
+    expect(lines).toEqual(["planning/planning.json merge=pm-export"]);
+    expect(git(work, "config", "merge.pm-export.driver")).toBe("true");
+  });
+
+  /** Branches a and b each rewrite planning.json differently. */
+  function rivals(work: string): void {
+    git(work, "switch", "-q", "-c", "a");
+    write(work, "planning/planning.json", '{ "generatedAt": "a" }\n');
+    git(work, "commit", "-q", "-am", "docs(pm): a");
+    git(work, "switch", "-q", "-c", "b", "main");
+    write(work, "planning/planning.json", '{ "generatedAt": "b" }\n');
+    git(work, "commit", "-q", "-am", "docs(pm): b");
+    git(work, "switch", "-q", "a");
+  }
+
+  it("lets two branches that change planning.json merge without a conflict", () => {
+    const { work, opts } = scratch();
+    driver(opts);
+    git(work, "add", ".gitattributes");
+    git(work, "commit", "-q", "-m", "chore: merge driver");
+    rivals(work);
+
+    git(work, "merge", "-q", "--no-edit", "b");
+
+    expect(readFileSync(join(work, "planning/planning.json"), "utf8")).toBe('{ "generatedAt": "a" }\n');
+  });
+
+  it("conflicts without the driver (control)", () => {
+    const { work } = scratch();
+    rivals(work);
+
+    expect(() => git(work, "merge", "-q", "--no-edit", "b")).toThrow("CONFLICT");
   });
 });
