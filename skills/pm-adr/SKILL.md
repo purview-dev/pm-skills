@@ -43,11 +43,12 @@ likely modes as options.
   user asks for it. `deprecate` and `import` apply Non-interruption rule 4
   and stop.
 - During a workflow, `new`, `supersede`, and `accept` never ask, never
-  apply the Challenge protocol, and never commit. They work whatever the
-  state of `NOW.md`; when it belongs to another session (Non-interruption
-  rule 7), write the ADR and never the item.
+  apply the Challenge protocol, and never commit. `Item` is the active
+  item's ID when this session owns it, else `none`.
 - If an ID is not in the decisions folder, reply `<ADR-NNN> not found.`
-  and list the ADRs as `ADR-NNN <title> (<status>)`. Stop.
+  Stop. Outside a workflow, also list the ADRs as
+  `ADR-NNN <title> (<status>)`; during a workflow the reply is that one
+  line only.
 - An accepted ADR is never rewritten (Shared definitions: ADR). Its only
   changes are `Status: superseded by <ADR-NNN>` (through `supersede`) and
   `Status: deprecated` with the appended reason (through `deprecate`).
@@ -107,7 +108,7 @@ the user).
 7. **view:** read the decisions folder and write nothing. With an ID,
    print that ADR's file. Without one, show the output (view).
 8. **check:** when Bun is installed, run
-   `bun <pm-lint skill>/scripts/lint.ts check <PM root>/decisions --root .`
+   `bun <pm-lint skill>/scripts/lint.ts check <PM root>/decisions --root . --no-export`
    (rules `adr/header`, `adr/sections`, `adr/id`, `adr/links`) and report
    its findings. Without Bun, check the same rules by reading each ADR file:
    the header fields and sections in order, the file name against the
@@ -125,9 +126,12 @@ the user).
    for each file:
    - The title is its `#` heading without the source's own number
      (`# 3. Use Bun` is `Use Bun`).
-   - Map its header from field bullets (`- Status: ...`), MADR YAML
-     frontmatter (`status`, `date`, `category`), or the first line of a
-     `## Status` section. A source link to another source ADR
+   - Map its header from field bullets (`- Status: ...` or `* Status:
+     ...`, MADR 2.x), MADR YAML frontmatter (`status`, `date`,
+     `category`), a plain `Date: YYYY-MM-DD` line with no bullet
+     (adr-tools/Nygard), or the first line of a `## Status` section. Write
+     `Status` in lower case regardless of the source's own case
+     (`Accepted` becomes `accepted`). A source link to another source ADR
      (`superseded by <file or number>`, or `supersedes ...`) names that
      file's new ID, and both ADRs of the pair are written to agree
      (`Status: superseded by <new>` on the old, `Supersedes: <old>` on the
@@ -139,12 +143,20 @@ the user).
      `git log --diff-filter=A --format=%as -- <file>`, else today.
      `Item: none`. `Source: <the original path>`.
    - Copy the body verbatim under the four sections: each source section
-     goes under the section it names (`Context and Problem Statement`
-     under `## Context`, `Decision Outcome` under `## Decision`,
-     `Considered Options` under `## Alternatives`), and every unmatched
-     source heading goes under `## Context` one level lower. The header
-     and `## Status` section are not copied again. An empty section holds
-     `None recorded.`
+     goes under the section it names, as the target `##` heading
+     replacing the source's own heading rather than alongside it
+     (`Context and Problem Statement` becomes `## Context`, `Decision
+     Outcome` becomes `## Decision`, `Considered Options` becomes
+     `## Alternatives`), and every unmatched source heading goes under
+     `## Context` one level lower. The header and `## Status` section are
+     not copied again. An empty section holds `None recorded.`
+   - Write each file to the **PM file format**: the words verbatim, the
+     layout as `pm-lint fix` would make it (`-` bullets, blank lines
+     around headings, lists, and fences, no trailing spaces or tabs). When
+     Bun is installed, run
+     `bun <pm-lint skill>/scripts/lint.ts fix <each written ADR path>
+     --root "<main worktree>"` after writing, and correct any remaining
+     finding before the output.
 
    Leave the originals in place; this skill never deletes or edits a file
    outside the PM root.
@@ -177,7 +189,7 @@ line from step 6 and nothing else.
 
 ## Note
 
-- <short sha> <subject> | PM state left uncommitted: <n> files
+- <short sha> <subject> | PM state unchanged | PM state left uncommitted: <n> files
 ```
 
 Omit `Changed` for `new`, `accept`, and `deprecate`.
@@ -242,7 +254,7 @@ Omit the table when there are no findings.
 
 ## Note
 
-- <short sha> <subject> | PM state left uncommitted: <n> files
+- <short sha> <subject> | PM state unchanged | PM state left uncommitted: <n> files
 ```
 
 The table lists every imported file; it is exempt from the 5-bullet limit.
