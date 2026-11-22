@@ -1,6 +1,6 @@
 # Where do ADRs fit in
 
-- Status: parked
+- Status: on roadmap (R-033)
 - Origin: planning/inbox/2026-11-22-0952-where-do-adrs-fit.md
 - Updated: 2026-11-22
 
@@ -75,3 +75,4 @@ Size M, one slice. Proposed: Serves a new `V` line (to be written by `pm-strateg
 ## Decision
 
 - 2026-11-22 Keep it parked. Reason: SCOPE CHANGE to v1; no `V` line or milestone covers it and M1 Reproducible docs site is the current focus. Answer to the question: ADRs record technical decisions only, live in a configurable `docs/adr/`, are written by the design stage, and are read by every session through the managed rules. Next: `pm-strategy` adds a `V` line and a milestone after M1 covering this and the engineering-principles brief.
+- 2026-11-22 Added to Next as R-033 ADR directory setting and design handoff (M4 Recorded technical decisions, serves V5), through pm-strategy.

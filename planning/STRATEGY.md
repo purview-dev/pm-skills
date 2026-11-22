@@ -33,6 +33,13 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 - Target: none
 - Status: active
 
+### M4 Recorded technical decisions
+
+- Serves: V5
+- Exit criteria: a report in `planning/research/` shows, in a scratch repository with `package.json`, `tsconfig.json`, `AGENTS.md`, and `docs/adr/`, that `pm-init` writes `ENGINEERING.md` citing all three files and `ADR directory: docs/adr/`, that the design handoff names the ADRs and principles that apply, and that `pm-checkpoint` (`done`) refuses to close on a failing command check.
+- Target: none
+- Status: planned
+
 ### M2 Verified install and upgrade
 
 - Serves: V1
@@ -92,6 +99,9 @@ Newest first. Nothing in this file changes without a line here.
 - <YYYY-MM-DD> <decision>. Why: <reason>. Rejected: <alternatives>.
 -->
 
+- 2026-11-22 Re-planned roadmap. Why: V5 and M4 added; R-033 to R-035 join Next after the two M1 items, R-036 and R-037 lead Later under M4. Rejected: M4 items ahead of R-013 Docs-site package: publish and migrate.
+- 2026-11-22 Milestone M4 Recorded technical decisions added, ordered after M1 and before M2, serving V5. Why: the user asked for it next; it covers the briefs `planning/briefs/2026-11-22-where-do-adrs-fit.md` and `planning/briefs/2026-11-20-technology-and-engineering-principles.md`. Rejected: ordering it after M3.
+- 2026-11-22 Vision V5 added: technical decisions are recorded and followed (`pm-init` records technology and principles, the design handoff names the ADRs and principles that apply, `pm-checkpoint` `done` refuses a failing command check). Why: agents contradict earlier technical decisions because nothing records or points at them (both briefs). Rejected: an ADR-only V5; keeping v1 as is. Cost: about 5 items and several rules bumps before M2 and M3.
 - 2026-11-18 Vision V3 now reads: during an active workflow, only the Non-interruption rules' exceptions run (capture, `pm-checkpoint` stage, done, push and pop, `pm-pause`, `pm-revise`, and the read-only views and checks); every other PM skill waits, and a capture replies in one line while the step in progress resumes. Why: the old line named only `pm-park`, the read-only views, and `pm-revise`, so it no longer matched Non-interruption rules 2, 3, and 10; pointing at the rules keeps it true as they change. R-016 Rehearse the lifecycle guards and M3 still serve it. Rejected: listing every exception (goes stale each rules version); keeping the old line.
 - 2026-11-18 Added R-021 Docs-site package: TypeScript source with a build step at the top of Next; R-017 in-repo dev hydrates and R-019 consumer-ready for 1.0.0 depend on it, and R-019 moved to the top of Later. M1's exit criterion and R-013's Done when name `astro.config.ts` instead of `astro.config.mjs`. Why: TypeScript is strongly preferred, and JavaScript ships only where Node needs it (brief `planning/briefs/2026-11-18-pm-docs-site-typescript.md`). Rejected: Bun-only runtime shipping `.ts`; converting only the non-published files; keeping it parked.
 - 2026-11-18 Re-planned roadmap. Why: Next was empty with M1 open; Next is now R-017 in-repo dev hydrates, R-011 milestone timeline, R-012 dependency graph, R-018 export the Now card's owner and size, R-019 consumer-ready for 1.0.0, with R-013 at the top of Later M1 depending on R-019, then R-020 rich demo planning fixture (user request); R-017, R-018, and R-019 fold seven inbox files. Kept "returns a version" in R-013 and the M1 exit criterion instead of naming `1.0.0`, at the user's choice. Rejected: absorbing the consumer fixes into R-013; naming `1.0.0` in both.

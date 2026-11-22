@@ -37,9 +37,64 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 - Note: Rewrites `pm-docs-site` and Non-interruption rule 9, so it bumps the rules major.
 
+### R-033 ADR directory setting and design handoff
+
+- Serves: V5
+- Milestone: M4
+- Owner: agent
+- Done when: `pm-init` in a scratch repository with `docs/adr/` writes `ADR directory: docs/adr/` to `planning/config.md` and `pm-lint check` passes; `pm-next` step 10's handoff names the ADR directory and tells the design skill to read it and write one ADR per architecture decision; the managed section names the directory and the product, technical, and spec split; `pm-help` reports `ADR directory: none` with `pm-setup` as the fix; `just validate` passes.
+- Size: M
+- Depends on: none
+- Status: ready
+- Brief: planning/briefs/2026-11-22-where-do-adrs-fit.md
+
+### R-034 Engineering file and pm-engineering skill
+
+- Serves: V5
+- Milestone: M4
+- Owner: agent
+- Done when: `pm-engineering add` writes a linted entry to `planning/ENGINEERING.md` (`## Technology` and `## Principles`, each entry citing its `Source`), and the skill is listed in the README, managed-section, `pm-setup`, and `pm-help` tables with `just validate` and `just test` passing.
+- Size: M
+- Depends on: none
+- Status: ready
+- Brief: planning/briefs/2026-11-20-technology-and-engineering-principles.md
+
+### R-035 pm-engineering infer from an existing repository
+
+- Serves: V5
+- Milestone: M4
+- Owner: agent
+- Done when: in a scratch repository with `package.json`, `tsconfig.json`, and `AGENTS.md`, `pm-engineering infer` writes an `ENGINEERING.md` citing all three; `pm-init` runs it for an existing repository and `pm-setup` offers it on upgrade.
+- Size: M
+- Depends on: R-034
+- Status: ready
+- Brief: planning/briefs/2026-11-20-technology-and-engineering-principles.md
+
 ## Later
 
 <!-- Grouped by milestone where one is set. Same item format. -->
+
+### R-036 Plan citation and done check
+
+- Serves: V5
+- Milestone: M4
+- Owner: agent
+- Done when: `pm-next` and `pm-checkpoint` (`stage`) pass the principles and ADRs that apply to the plan handoff; `pm-checkpoint` (`done`) refuses to close on a failing command check and lists failed review checks as a `Note` and an inbox file, shown in a rehearsal report in `planning/research/`; `pm-purview` hands accepted packages to `pm-engineering add`.
+- Size: M
+- Depends on: R-033, R-034
+- Status: ready
+- Brief: planning/briefs/2026-11-20-technology-and-engineering-principles.md
+
+### R-037 Engineering export and docs-site view
+
+- Serves: V5
+- Milestone: M4
+- Owner: agent
+- Done when: `planning.json` carries the engineering record at the next `schemaVersion`, `pm-export check` passes, and an Engineering view passes `just docs-check`.
+- Size: S
+- Depends on: R-034, R-013
+- Status: ready
+- Brief: planning/briefs/2026-11-20-technology-and-engineering-principles.md
 
 ### R-006 Check pm-setup's skill counts in validate
 

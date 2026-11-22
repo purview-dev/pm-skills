@@ -1,8 +1,8 @@
 # Technology and engineering principles sections
 
-- Status: parked
+- Status: on roadmap (R-034, R-035, R-036, R-037)
 - Origin: planning/inbox/2026-11-20-1528-technology-and-engineering-principles.md
-- Updated: 2026-11-20
+- Updated: 2026-11-22
 
 ## Problem
 
@@ -99,3 +99,4 @@ Proposed for every slice: Serves a new `V` line (to be written by `pm-strategy`)
 ## Decision
 
 - 2026-11-20 Keep it parked. Reason: SCOPE CHANGE to v1; no `V` line or milestone covers it and M1 Reproducible docs site is the current focus. Next: `pm-strategy` adds a `V` line and a milestone after M1, then the four slices go to Later under it.
+- 2026-11-22 Added as R-034 and R-035 (Next) and R-036 and R-037 (Later), M4 Recorded technical decisions, serving V5, through pm-strategy.
