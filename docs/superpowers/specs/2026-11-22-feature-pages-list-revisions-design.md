@@ -32,7 +32,7 @@ A feature page should show which items revise it, and a unit test should pin tha
 
 ## Design
 
-- `src/lib/planning.ts`: add `/** The items whose \`Revisits\` names \`id\`. */ export function revisers(all: Feature[], id: string): Feature[]`, which returns `all.filter((feature) => feature.revisits === id)` in `features()` order.
+- `src/lib/planning.ts`: add `export function revisers(all: Feature[], id: string): Feature[]`, documented as ``The items whose `Revisits` names `id`.``, which returns `all.filter((feature) => feature.revisits === id)` in `features()` order.
 - `src/components/FeatureSummary.astro`: import `revisers` and replace the inline filter with `const revisedBy = revisers(all, feature.id);`. The rendering is unchanged.
 - `test/planning.test.ts`: test that, with the fixture, `revisers(features(planning), 'R-025')` returns exactly `R-020 README matches the code`; that an ID nobody revises returns `[]`; and that an active `NOW.md` item with `revisits` set is returned for its target.
 

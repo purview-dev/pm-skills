@@ -28,11 +28,13 @@
 ### Task 1: `revisers()` and the feature page
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/src/lib/planning.ts` (beside `dependents()`, around line 338)
 - Modify: `packages/pm-docs-site/src/components/FeatureSummary.astro` (the import on line 5, and line 25)
 - Test: `packages/pm-docs-site/test/planning.test.ts` (the import list, and `describe('features')`, around line 369)
 
 **Interfaces:**
+
 - Produces: `export function revisers(all: Feature[], id: string): Feature[]`. It returns the items whose `revisits === id`, in `all` order.
 
 - [x] **Step 1: Write the failing test**
@@ -41,14 +43,14 @@ Add `revisers` to the import list. Add this case inside `describe('features')`, 
 
 ```ts
 it('finds the items that revise an item, an active one included', () => {
-	expect(revisers(all, 'R-025').map((feature) => [feature.id, feature.title])).toEqual([['R-020', 'README matches the code']]);
-	expect(revisers(all, 'R-013')).toEqual([]);
+ expect(revisers(all, 'R-025').map((feature) => [feature.id, feature.title])).toEqual([['R-020', 'README matches the code']]);
+ expect(revisers(all, 'R-013')).toEqual([]);
 
-	const populated = {
-		...planning,
-		now: { ...planning.now, item: { id: 'R-012', title: 'Invoice export', serves: [], owner: 'agent', size: 'S', dependsOn: [], revisits: 'R-003' } },
-	} as unknown as Planning;
-	expect(revisers(features(populated), 'R-003').map((feature) => feature.id)).toEqual(['R-012']);
+ const populated = {
+  ...planning,
+  now: { ...planning.now, item: { id: 'R-012', title: 'Invoice export', serves: [], owner: 'agent', size: 'S', dependsOn: [], revisits: 'R-003' } },
+ } as unknown as Planning;
+ expect(revisers(features(populated), 'R-003').map((feature) => feature.id)).toEqual(['R-012']);
 });
 ```
 
@@ -59,7 +61,7 @@ Expected: FAIL, because `revisers` is not exported from `../src/lib/planning`.
 
 - [x] **Step 3: Implement `revisers(all: Feature[], id: string): Feature[]` in `src/lib/planning.ts`**
 
-Put it directly after `dependents()`, with the doc comment `/** The items whose \`Revisits\` names \`id\`. */`, and filter on `feature.revisits === id`.
+Put it directly after `dependents()`, with the doc comment ``/** The items whose `Revisits` names `id`. */``, and filter on `feature.revisits === id`.
 
 - [x] **Step 4: Use it in `FeatureSummary.astro`**
 
