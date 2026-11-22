@@ -14,17 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-033 ADR directory setting and design handoff
-
-- Serves: V5
-- Milestone: M4
-- Owner: agent
-- Done when: `pm-init` in a scratch repository with `docs/adr/` writes `ADR directory: docs/adr/` to `planning/config.md` and `pm-lint check` passes; `pm-next` step 10's handoff names the ADR directory and tells the design skill to read it and write one ADR per architecture decision; the managed section names the directory and the product, technical, and spec split; `pm-help` reports `ADR directory: none` with `pm-setup` as the fix; `just validate` passes.
-- Size: M
-- Depends on: none
-- Status: ready
-- Brief: planning/briefs/2026-11-22-where-do-adrs-fit.md
-
 ### R-025 Docs-site package: feature pages list revisions
 
 - Serves: V4

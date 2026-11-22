@@ -11,22 +11,24 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: idle
-- Item:
-- Session:
-- Stage:
-- Brief:
-- Milestone:
-- Serves:
-- Owner:
-- Size:
-- Depends on:
+- Status: active
+- Item: R-033 ADR directory setting and design handoff
+- Session: feat/r-033-adr-directory-setting-and-design-handoff
+- Stage: design
+- Brief: planning/briefs/2026-11-22-where-do-adrs-fit.md
+- Milestone: M4
+- Serves: V5
+- Owner: agent
+- Size: M
+- Depends on: none
 - Revisits:
 - Spec:
 - Plan:
-- Started:
+- Started: 2026-11-22
 
 ## Done when
+
+- `pm-init` in a scratch repository with `docs/adr/` writes `ADR directory: docs/adr/` to `planning/config.md` and `pm-lint check` passes; `pm-next` step 10's handoff names the ADR directory and tells the design skill to read it and write one ADR per architecture decision; the managed section names the directory and the product, technical, and spec split; `pm-help` reports `ADR directory: none` with `pm-setup` as the fix; `just validate` passes.
 
 ## Checkpoint
 

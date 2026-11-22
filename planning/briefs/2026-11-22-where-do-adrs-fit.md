@@ -1,6 +1,6 @@
 # Where do ADRs fit in
 
-- Status: on roadmap (R-033)
+- Status: on roadmap (R-033), active
 - Origin: planning/inbox/2026-11-22-0952-where-do-adrs-fit.md
 - Updated: 2026-11-22
 
