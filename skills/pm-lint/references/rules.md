@@ -26,6 +26,7 @@ rules restate them as checks; they never add a field or a state.
 | `PAUSE.md` | **Pause file** (Shared definitions) | format, fields, pause |
 | `inbox/*.md` | **Inbox file** (Shared definitions) | format, fields, inbox |
 | `briefs/*.md` | **Brief** (Shared definitions) | format, fields, brief |
+| `decisions/ADR-*.md` | **ADR** (Shared definitions) | format, header, sections, IDs, links |
 | `research/*.md`, every `README.md`, any other Markdown | Free text | format |
 | `planning.json` | **Export file**, against `planning.schema.json` | export |
 
@@ -176,6 +177,15 @@ header, a stack entry, the pause file, and the `config.md` sections.
 | `risks/order` | error | yes | Open is ordered red, amber, green, then by ID. |
 | `risks/id-unique` | error | no | A risk ID appears once across Open, Closed, and Removed. |
 | `risks/removed` | error | no | A removed risk is `- YYYY-MM-DD RK-NNN <title>. Reason: <reason>.` |
+
+### adr
+
+| Rule | Severity | Fix | Requirement |
+| --- | --- | --- | --- |
+| `adr/header` | error | no | An ADR starts `# ADR-NNN <Title>` with Status, Date, Category, Supersedes, Item, and Source, in order; Status is proposed, accepted, `superseded by ADR-NNN`, or deprecated; Date is YYYY-MM-DD; Supersedes is `ADR-NNN` or none; Item is `R-NNN` or none; Category and Source are not empty. |
+| `adr/sections` | error | no | An ADR has `## Context`, `## Decision`, `## Alternatives`, and `## Consequences`, in order. |
+| `adr/id` | error | no | An ADR file is named `ADR-NNN-<slug>.md`, its ID matches its heading, and no two ADRs share an ID. |
+| `adr/links` | error | no | `Supersedes` and a `superseded by` Status name an existing ADR and agree with each other; `Item` names an item in `ROADMAP.md`, `NOW.md`, or the `LOG.md` Done or Dropped lines, or is none. |
 
 ### inbox
 

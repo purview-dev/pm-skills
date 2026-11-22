@@ -53,14 +53,14 @@ export function detectPmRoot(root: string): string {
 
 export const normalisePmRoot = (pmRoot: string) => pmRoot.replace(/\\/g, "/").replace(/^\.\//, "").replace(/\/*$/, "/");
 
-/** Every Markdown file the PM skills write, and the export: the top level, inbox/, briefs/, and research/. */
+/** Every Markdown file the PM skills write, and the export: the top level, inbox/, briefs/, research/, and decisions/. */
 export function pmFiles(root: string, pmRoot: string): string[] {
   const dir = join(root, pmRoot);
   if (!existsSync(dir)) return [];
   const out: string[] = [];
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     if (entry.isFile() && (entry.name.endsWith(".md") || entry.name === "planning.json")) out.push(entry.name);
-    if (entry.isDirectory() && ["inbox", "briefs", "research"].includes(entry.name)) {
+    if (entry.isDirectory() && ["inbox", "briefs", "research", "decisions"].includes(entry.name)) {
       for (const file of readdirSync(join(dir, entry.name))) if (file.endsWith(".md")) out.push(`${entry.name}/${file}`);
     }
   }
