@@ -1,4 +1,4 @@
-// Build the pm-export document (schemaVersion 4) from the Markdown PM state.
+// Build the pm-export document (schemaVersion 5) from the Markdown PM state.
 //
 // This file is the field map in pm-export's SKILL.md, as code: the same
 // input always gives the same output, so every project gets one export
@@ -8,7 +8,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-export const SCHEMA_VERSION = 4;
+export const SCHEMA_VERSION = 5;
 
 /** The schema this exporter writes, shipped beside it. */
 export const SCHEMA_PATH = join(import.meta.dir, "..", "references", "planning.schema.json");
@@ -125,6 +125,71 @@ function firstLine(body: string | undefined): string | null {
   const line = body?.split("\n").map((text) => text.trim()).find((text) => text !== "");
   return value(line?.replace(/^[-*] /, ""));
 }
+
+// ---------------------------------------------------------------- ADRs
+
+export type AdrStatus = "proposed" | "accepted" | "deprecated" | "superseded";
+
+/** One ADR in `<PM root>/decisions/`, whole: the four sections are the Markdown under each heading (ADR-002). */
+export interface Adr {
+  id: string;
+  path: string;
+  title: string;
+  status: AdrStatus | null;
+  supersededBy: string | null;
+  date: string | null;
+  category: string | null;
+  supersedes: string | null;
+  item: string | null;
+  source: string | null;
+  context: string | null;
+  decision: string | null;
+  alternatives: string | null;
+  consequences: string | null;
+}
+
+const ADR_FILE = /^(ADR-\d{3,})-.+\.md$/;
+const ADR_STATUSES: readonly AdrStatus[] = ["proposed", "accepted", "deprecated", "superseded"];
+
+/** A section's Markdown without its surrounding blank lines; `null` when the heading is missing. */
+const sectionText = (parts: Section[], name: string): string | null => {
+  const part = parts.find((section) => section.heading.toLowerCase() === name);
+  return part ? part.body.replace(/^\s*\n/, "").replace(/\s+$/, "") : null;
+};
+
+/** One ADR file as an export object; `null` for a file that is not `ADR-NNN-<slug>.md`. */
+export function parseAdr(file: string, text: string, pmRoot: string): Adr | null {
+  const named = ADR_FILE.exec(file);
+  if (!named) return null;
+  const clean = stripComments(text);
+  const heading = /^# (.+)$/m.exec(clean)?.[1]?.trim() ?? "";
+  const headed = /^(ADR-\d{3,})\s+(.*)$/.exec(heading);
+  const parts = sections(clean, 2);
+  const f = fields(parts[0]!.body);
+  const rawStatus = (value(f.get("status")) ?? "").toLowerCase();
+  const successor = /^superseded by\s+(ADR-\d{3,})/i.exec(rawStatus);
+  const status = successor ? "superseded" : (ADR_STATUSES.find((known) => known === rawStatus) ?? null);
+  const adrId = (key: string) => /^ADR-\d{3,}$/i.exec(optional(f.get(key)) ?? "")?.[0]?.toUpperCase() ?? null;
+  return {
+    id: headed?.[1] ?? named[1]!,
+    path: `${pmRoot}decisions/${file}`,
+    title: (headed?.[2] ?? heading).trim(),
+    status,
+    supersededBy: successor ? successor[1]!.toUpperCase() : null,
+    date: value(f.get("date")),
+    category: optional(f.get("category"))?.toLowerCase() ?? null,
+    supersedes: adrId("supersedes"),
+    item: /^R-\d{3,}$/i.exec(optional(f.get("item")) ?? "")?.[0]?.toUpperCase() ?? null,
+    source: optional(f.get("source")),
+    context: sectionText(parts, "context"),
+    decision: sectionText(parts, "decision"),
+    alternatives: sectionText(parts, "alternatives"),
+    consequences: sectionText(parts, "consequences"),
+  };
+}
+
+/** ADRs by ID number (file names sort `ADR-1000` before `ADR-200`). */
+export const sortAdrs = (adrs: Adr[]): Adr[] => [...adrs].sort((a, b) => Number(a.id.slice(4)) - Number(b.id.slice(4)));
 
 /** The text inside the first pair of backticks, else the whole value. */
 const unquote = (text: string | null) => (text ? (/`([^`]+)`/.exec(text)?.[1] ?? text) : null);
@@ -600,6 +665,9 @@ export function build(options: BuildOptions): BuildResult {
     };
   });
 
+  // decisions/: every ADR-NNN-<slug>.md, whole, by ID number.
+  const adrs = sortAdrs(folder("decisions").flatMap(({ file, text }) => parseAdr(file, text, pmRoot) ?? []));
+
   // RISKS.md
   const riskSections = sections(read("RISKS.md"), 2);
   const risks = (heading: RegExp) =>
@@ -689,6 +757,7 @@ export function build(options: BuildOptions): BuildResult {
     inbox,
     briefs,
     risks: { open: openRisks, closed: closedRisks, removed },
+    adrs,
     counts,
     checks,
   };

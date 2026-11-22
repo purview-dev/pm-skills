@@ -1,4 +1,4 @@
-// The part of {{PM_ROOT}}planning.json (pm-export, schemaVersion 4) the site reads.
+// The part of {{PM_ROOT}}planning.json (pm-export, schemaVersion 5) the site reads.
 // The full shape is {{PM_ROOT}}planning.schema.json; only what the pages use is typed.
 
 export type Owner = 'agent' | 'user' | 'both';
@@ -155,7 +155,7 @@ export interface RemovedRisk {
 }
 
 export interface Planning {
-	schemaVersion: 4;
+	schemaVersion: 5;
 	generatedAt: string;
 	source: { branch: string | null; head: string | null };
 	vision: {

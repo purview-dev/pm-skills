@@ -23,9 +23,10 @@ afterEach(() => {
 });
 
 /** A copy of the fixture repository, with some PM files replaced. */
-function repo(changes: Record<string, (text: string) => string> = {}): string {
+function repo(changes: Record<string, (text: string) => string> = {}, without: string[] = []): string {
   const root = temp();
   cpSync(FIXTURE, root, { recursive: true });
+  for (const rel of without) rmSync(join(root, "planning", rel), { recursive: true, force: true });
   for (const [rel, change] of Object.entries(changes)) {
     const path = join(root, "planning", rel);
     let text = "";
@@ -36,6 +37,11 @@ function repo(changes: Record<string, (text: string) => string> = {}): string {
     writeFileSync(path, change(text));
   }
   return root;
+}
+
+/** As repo, without the fixture's own ADRs, so a test's ADR IDs never collide with them. */
+function adrRepo(changes: Record<string, (text: string) => string> = {}): string {
+  return repo(changes, ["decisions"]);
 }
 
 const rulesOf = async (root: string) => (await lint({ root, pmRoot: "planning/", noExport: true })).map((f) => f.rule);
@@ -222,27 +228,27 @@ const adr = (id: string, title: string, fields: Partial<Record<string, string>> 
 
 describe("ADR rules", () => {
   it("accepts the default ADR format", async () => {
-    const root = repo({
+    const root = adrRepo({
       "decisions/ADR-001-use-bun.md": adr("ADR-001", "Use Bun", { Item: "R-008" }),
       "decisions/ADR-1000-big-id.md": adr("ADR-1000", "Big id"),
     });
     expect((await rulesOf(root)).filter((r) => r.startsWith("adr/"))).toEqual([]);
   });
   it("ignores the decisions README", async () => {
-    const root = repo({ "decisions/README.md": () => "# Decisions\n\nFree text.\n" });
+    const root = adrRepo({ "decisions/README.md": () => "# Decisions\n\nFree text.\n" });
     expect((await rulesOf(root)).filter((r) => r.startsWith("adr/"))).toEqual([]);
   });
   it("accepts a CRLF ADR", async () => {
-    const root = repo({ "decisions/ADR-001-use-bun.md": () => adr("ADR-001", "Use Bun")().replaceAll("\n", "\r\n") });
+    const root = adrRepo({ "decisions/ADR-001-use-bun.md": () => adr("ADR-001", "Use Bun")().replaceAll("\n", "\r\n") });
     expect((await rulesOf(root)).filter((r) => r.startsWith("adr/"))).toEqual([]);
   });
   it("accepts Item IDs from LOG.md", async () => {
     // In the fixture's LOG.md, R-006 is in ## Done and R-004 in ## Dropped; neither is in ROADMAP.md.
-    const root = repo({ "decisions/ADR-001-a.md": adr("ADR-001", "A", { Item: "R-006" }), "decisions/ADR-002-b.md": adr("ADR-002", "B", { Item: "R-004" }) });
+    const root = adrRepo({ "decisions/ADR-001-a.md": adr("ADR-001", "A", { Item: "R-006" }), "decisions/ADR-002-b.md": adr("ADR-002", "B", { Item: "R-004" }) });
     expect(await rulesOf(root)).not.toContain("adr/links");
   });
   it("checks the header and sections", async () => {
-    const root = repo({
+    const root = adrRepo({
       "decisions/ADR-001-a.md": adr("ADR-001", "A", { Status: "maybe", Date: "today", Item: "R-7" }),
       "decisions/ADR-002-b.md": adr("ADR-002", "B", {}, ["Context", "Decision", "Consequences"]),
     });
@@ -251,7 +257,7 @@ describe("ADR rules", () => {
     expect(rules).toContain("adr/sections");
   });
   it("checks ADR IDs", async () => {
-    const root = repo({
+    const root = adrRepo({
       "decisions/ADR-001-a.md": adr("ADR-002", "A"),
       "decisions/ADR-003-b.md": adr("ADR-003", "B"),
       "decisions/ADR-003-c.md": adr("ADR-003", "C"),
@@ -260,7 +266,7 @@ describe("ADR rules", () => {
     expect((await rulesOf(root)).filter((r) => r === "adr/id").length).toBeGreaterThanOrEqual(3);
   });
   it("checks ADR links", async () => {
-    const root = repo({
+    const root = adrRepo({
       "decisions/ADR-001-a.md": adr("ADR-001", "A", { Status: "superseded by ADR-002" }),
       "decisions/ADR-002-b.md": adr("ADR-002", "B"), // one-sided: Supersedes none
       "decisions/ADR-003-c.md": adr("ADR-003", "C", { Supersedes: "ADR-009" }),
@@ -269,7 +275,7 @@ describe("ADR rules", () => {
     expect((await rulesOf(root)).filter((r) => r === "adr/links").length).toBeGreaterThanOrEqual(3);
   });
   it("accepts a two-sided supersede", async () => {
-    const root = repo({
+    const root = adrRepo({
       "decisions/ADR-001-a.md": adr("ADR-001", "A", { Status: "superseded by ADR-002" }),
       "decisions/ADR-002-b.md": adr("ADR-002", "B", { Supersedes: "ADR-001" }),
     });

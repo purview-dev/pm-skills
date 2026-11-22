@@ -7,13 +7,13 @@ import config from 'virtual:pm-docs-site/config';
 
 import type { ViewName } from '../../lib/types.ts';
 import { graphData } from './graph';
-import { briefAnchor, briefOf, featureHref, features, loadPlanning, milestoneHref, milestoneSummaries, roadmapGroups, type Feature } from './planning';
+import { adrHref, adrsOf, briefAnchor, briefOf, featureHref, features, loadPlanning, milestoneHref, milestoneSummaries, roadmapGroups, type Feature } from './planning';
 import type { Planning } from './planning-types';
 import { refPattern } from './ref-boundary';
 
 export type Views = Record<ViewName, boolean>;
 
-export type TargetKind = 'item' | 'milestone' | 'risk' | 'brief';
+export type TargetKind = 'item' | 'milestone' | 'risk' | 'brief' | 'adr';
 
 export interface Target {
 	kind: TargetKind;
@@ -56,6 +56,10 @@ export function targets(planning: Planning, views: Views): Map<string, Target> {
 		add({ kind: 'risk', key: risk.id, href: riskHref(risk, true), label: `${risk.id} ${risk.title}` });
 	}
 
+	for (const adr of planning.adrs) {
+		add({ kind: 'adr', key: adr.id, href: views.decisions ? adrHref(adr.id) : null, label: `${adr.id} ${adr.title}` });
+	}
+
 	for (const brief of planning.briefs) {
 		add({ kind: 'brief', key: brief.path, href: views.briefs ? `/plan/briefs/#${briefAnchor(brief.path)}` : null, label: brief.title });
 	}
@@ -80,7 +84,7 @@ export interface Run {
 	target?: Target;
 }
 
-const IDS = [String.raw`RK-\d{3,}`, String.raw`R-\d{3,}`, String.raw`M\d+`];
+const IDS = [String.raw`ADR-\d{3,}`, String.raw`RK-\d{3,}`, String.raw`R-\d{3,}`, String.raw`M\d+`];
 const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /**
@@ -119,7 +123,7 @@ export function linkify(text: string, known: Map<string, Target>): Run[] {
 	return runs;
 }
 
-export type Relation = 'depends on' | 'revisits' | 'milestone' | 'affects' | 'mitigation' | 'related' | 'brief' | 'mentions' | 'listed';
+export type Relation = 'depends on' | 'revisits' | 'milestone' | 'affects' | 'mitigation' | 'related' | 'brief' | 'decision' | 'supersedes' | 'superseded by' | 'mentions' | 'listed';
 
 /** The order and heading of each relation in a `Linked from` section. */
 export const RELATION_LABELS: Record<Relation, string> = {
@@ -130,6 +134,9 @@ export const RELATION_LABELS: Record<Relation, string> = {
 	mitigation: 'Mitigation',
 	related: 'Related',
 	brief: 'Brief',
+	decision: 'Decisions',
+	supersedes: 'Supersedes',
+	'superseded by': 'Superseded by',
 	mentions: 'Mentioned on',
 	listed: 'Listed on',
 };
@@ -184,6 +191,7 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 			const brief = briefOf(planning, feature);
 
 			page.link(brief?.path ?? feature.brief, 'brief');
+			for (const adr of adrsOf(planning, feature.id)) page.link(adr.id, 'listed');
 			for (const risk of [...planning.risks.open, ...planning.risks.closed]) {
 				if (risk.affects !== feature.id) continue;
 				page.link(risk.id, 'affects');
@@ -220,6 +228,26 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 		page.prose(risk.trigger);
 		page.prose(risk.mitigation, 'mitigation');
 		for (const text of [risk.ragOverride, risk.raised, risk.reviewed, risk.closed]) page.prose(text);
+	}
+
+	if (views.decisions) {
+		const page = source('/plan/decisions/', 'Decisions');
+
+		// Each row: the ADR, its item, and its successor.
+		for (const adr of planning.adrs) {
+			page.link(adr.id, 'listed');
+			page.link(adr.item, 'listed');
+			page.link(adr.supersededBy, 'listed');
+		}
+
+		for (const adr of planning.adrs) {
+			const own = source(adrHref(adr.id), `${adr.id} ${adr.title}`);
+
+			own.link(adr.item, 'decision');
+			own.link(adr.supersedes, 'supersedes');
+			own.link(adr.supersededBy, 'superseded by');
+			for (const text of [adr.source, adr.context, adr.decision, adr.alternatives, adr.consequences]) own.prose(text);
+		}
 	}
 
 	const byId = new Map(all.map((feature) => [feature.id, feature]));

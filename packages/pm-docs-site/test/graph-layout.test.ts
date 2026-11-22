@@ -11,7 +11,7 @@ import { targets } from '../src/lib/references';
 
 // A synthetic export, never the project's own: the tests must not change when the plan does.
 const FIXTURE = fileURLToPath(new URL('./fixtures/planning.json', import.meta.url));
-const ALL_VIEWS = { now: true, milestones: true, graph: true, features: true, inbox: true, briefs: true, strategy: true };
+const ALL_VIEWS = { now: true, milestones: true, graph: true, features: true, inbox: true, briefs: true, strategy: true, decisions: true };
 const KEYS: LayoutKey[] = ['lanes-done', 'lanes-open', 'flow-done', 'flow-open'];
 
 const planning = loadPlanning(FIXTURE);

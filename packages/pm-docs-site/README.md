@@ -32,7 +32,7 @@ so a package linked from another drive fails the build.
     "build": "pm-docs-site build",
     "check": "pm-docs-site check"
   },
-  "dependencies": { "@purview-dev/pm-docs-site": "0.1.0-pre.2" }
+  "dependencies": { "@purview-dev/pm-docs-site": "0.1.0-pre.3" }
 }
 ```
 
@@ -62,7 +62,7 @@ export default {
 | `description` | string | none |
 | `planning` | path from the site root | `../planning/planning.json` |
 | `docs` | `{ root, sources }`; `root` from the site root, each source a folder and globs | none: no repository pages |
-| `views` | any of `now`, `milestones`, `graph`, `features`, `inbox`, `briefs`, `strategy` | all seven |
+| `views` | any of `now`, `milestones`, `graph`, `features`, `inbox`, `briefs`, `strategy`, `decisions` | all eight |
 
 Home, Board, Roadmap, Log and Risks are always rendered. A docs source has
 `label`, `base`, `include`, and optionally `prefix`, `indexFile`, `order`,
@@ -158,6 +158,18 @@ The page adds `@xyflow/react` and `@dagrejs/dagre` as dependencies; dagre
 runs at build time only; it never reaches the browser. The island's
 JavaScript and `graph.css` load only on `/plan/graph/`, never on another page.
 
+## Decisions
+
+The Decisions page lists the architecture decision records in the export's
+`adrs` (written by `pm-export` from `<PM root>/decisions/`) as a React
+island: a search box over each ADR's ID, title, category, and text, status
+chips (superseded is off by default), category chips, and `Group by`
+category, status, or none. The state is kept in the URL, so a filtered
+view can be shared; `Clear` returns to the default. Every ADR has its own
+page with its header fields and its Context, Decision, Alternatives, and
+Consequences rendered from Markdown, and search indexes it. A feature page
+lists the ADRs whose `Item` is that item.
+
 ## CLI
 
 The CLI runs under Node 24 or later.
@@ -176,7 +188,7 @@ The CLI runs under Node 24 or later.
 ## Supported exports
 
 `SUPPORTED_SCHEMA_VERSIONS` in `lib/schema-version.ts`: pm-export
-`schemaVersion` 4. Any other version fails the build and `check`, and the
+`schemaVersion` 5. Any other version fails the build and `check`, and the
 message says to run the `pm-export` skill.
 
 ## Development

@@ -512,3 +512,94 @@ button.plan-column__toggle:focus-visible {
 .plan-card p {
 	margin: 0.35rem 0 0;
 }
+
+/* An ADR's status (Decisions view and ADR pages): the word is always printed. */
+.adr-status {
+	display: inline-block;
+	padding: 0.1rem 0.45rem;
+	border-radius: 4px;
+	border: 1px solid var(--sl-color-hairline);
+	font-size: var(--sl-text-xs);
+	font-weight: 600;
+}
+
+.adr-status--accepted {
+	color: #15803d;
+	background: #22c55e1a;
+	border-color: #22c55e66;
+}
+
+.adr-status--proposed {
+	color: #1d4ed8;
+	background: #3b82f61a;
+	border-color: #3b82f666;
+}
+
+.adr-status--superseded,
+.adr-status--deprecated,
+.adr-status--unknown {
+	color: var(--sl-color-gray-3);
+}
+
+/* The Decisions view: search, chips, grouping, and the rows. */
+.decisions-controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	align-items: end;
+}
+
+.decisions-search,
+.decisions-group {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	font-size: var(--sl-text-sm);
+}
+
+.decisions-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+}
+
+.decisions-chip,
+.decisions-clear {
+	padding: 0.2rem 0.6rem;
+	border: 1px solid var(--sl-color-hairline-shade);
+	border-radius: 999px;
+	background: transparent;
+	color: inherit;
+	font-size: var(--sl-text-sm);
+	cursor: pointer;
+}
+
+.decisions-chip[aria-pressed='true'] {
+	background: var(--sl-color-accent-low);
+	border-color: var(--sl-color-accent);
+}
+
+.decisions-clear:disabled {
+	opacity: 0.5;
+	cursor: default;
+}
+
+.decisions-count,
+.decisions-meta,
+.decisions-empty {
+	color: var(--sl-color-gray-3);
+	font-size: var(--sl-text-sm);
+}
+
+.decisions-list {
+	list-style: none;
+	padding-inline-start: 0;
+}
+
+.decisions-meta {
+	display: block;
+}
+
+.decisions [hidden] {
+	display: none;
+}

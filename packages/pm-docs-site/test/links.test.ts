@@ -14,7 +14,7 @@ import { scanPage, type PageScan } from './scan';
 const BUILD = 180_000;
 // The fixture site's own options (test/fixtures/site/astro.config.ts), every view on.
 export const FIXTURE_OPTIONS = `{ title: 'Fixture plan', planning: '../planning.json', docs: { root: '../docs', sources: [{ label: 'Guide', base: '.', include: ['README.md', 'guide/*.md'], prefix: 'docs/' }] } }`;
-const ALL_VIEWS = { now: true, milestones: true, graph: true, features: true, inbox: true, briefs: true, strategy: true };
+const ALL_VIEWS = { now: true, milestones: true, graph: true, features: true, inbox: true, briefs: true, strategy: true, decisions: true };
 const planning = loadPlanning(join(FIXTURES, 'planning.json'));
 
 interface Build {
@@ -50,7 +50,7 @@ const keysWithPages = (views: typeof ALL_VIEWS) => new Set([...targets(planning,
 const urlOf = (page: string) => `/${page.replace(/index\.html$/, '')}`;
 /** `/plan/x/` → `plan/x/index.html`. */
 const fileOf = (path: string) => `${path.replace(/^\//, '')}${path.endsWith('/') || path === '' ? 'index.html' : ''}`.replace(/^$/, 'index.html');
-const TARGET_PAGE = /^\/plan\/(features|milestones|risks)\/[^/]+\/$/;
+const TARGET_PAGE = /^\/plan\/(features|milestones|risks|decisions)\/[^/]+\/$/;
 
 let site: Build;
 let dist = '';
@@ -153,7 +153,7 @@ describe('the fixture build', () => {
 });
 
 describe('a build with views off', () => {
-	const views = { ...ALL_VIEWS, milestones: false, features: false, inbox: false, briefs: false, strategy: false };
+	const views = { ...ALL_VIEWS, milestones: false, features: false, inbox: false, briefs: false, strategy: false, decisions: false };
 	let off: Build;
 
 	beforeAll(async () => {
@@ -162,5 +162,21 @@ describe('a build with views off', () => {
 
 	it('links only to pages that were built, and links what still has a page', () => {
 		expect(problems(off)).toEqual({ unlinked: [], dead: [] });
+	});
+});
+describe('ADR pages', () => {
+	it('render a section table as HTML and link IDs, inside code too', () => {
+		const page = html('plan/decisions/adr-002/index.html');
+
+		expect(page).toContain('<table>');
+		expect(page).toContain('href="/plan/features/r-012/"');
+		expect(html('plan/decisions/adr-003/index.html')).toMatch(/<code><a href="\/plan\/features\/r-013\/"[^>]*>R-013<\/a><\/code>/);
+	});
+
+	it('leave out a missing section and say so for an empty one', () => {
+		const page = html('plan/decisions/adr-004/index.html');
+
+		expect(page).not.toMatch(/<h2[^>]*>Consequences<\/h2>/);
+		expect(page).toMatch(/<h2[^>]*>Context<\/h2>\s*<p>None recorded\.<\/p>/);
 	});
 });

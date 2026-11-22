@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
-  "schemaVersion": 4,
-  "generatedAt": "2026-11-22T14:26:12+00:00",
+  "schemaVersion": 5,
+  "generatedAt": "2026-11-22T15:54:51+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-033-adr-directory-setting-and-design-handoff",
-    "head": "6e34c3a6656f324c63f87dfc63649c4f4b0b991e"
+    "branch": "feat/r-038-adr-export-and-decisions-view",
+    "head": "c5b33d3cc9a4b55c51564f0ea646ea0337de631d"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -231,36 +231,10 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-038",
-        "title": "ADR export and Decisions view",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V5"
-        ],
-        "milestone": "M4",
-        "owner": "agent",
-        "doneWhen": "`pm-export write` puts `adrs` (read from `planning/decisions/`) in `planning/planning.json` at `schemaVersion` 5 and `pm-export check` passes; the `packages/pm-docs-site` Decisions view lists, searches, and filters ADRs by category and status, with one indexed page per ADR and feature pages listing their ADRs, covered by unit tests; the demo has ADRs; the templates read `schemaVersion` 5; `just validate`, `just test`, and `just demo-check` pass.",
-        "size": "M",
-        "dependsOn": [
-          "R-033"
-        ],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
-        "note": "Slice 2 of the ADR work (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). Decisions view is a React island: text search, category and status chips, superseded hidden by default, group by category or status, URL state.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-039",
         "title": "ADRs across the PM skills",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V5"
@@ -286,7 +260,7 @@
         "id": "R-025",
         "title": "Docs-site package: feature pages list revisions",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -310,7 +284,7 @@
         "id": "R-013",
         "title": "Docs-site package: publish and migrate",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -345,7 +319,7 @@
         "id": "R-034",
         "title": "Engineering file and pm-engineering skill",
         "section": "next",
-        "position": 5,
+        "position": 4,
         "label": "next",
         "serves": [
           "V5"
@@ -599,13 +573,6 @@
       "now": [],
       "next": [
         {
-          "id": "R-038",
-          "title": "ADR export and Decisions view",
-          "owner": "agent",
-          "size": "M",
-          "detail": "ready"
-        },
-        {
           "id": "R-039",
           "title": "ADRs across the PM skills",
           "owner": "agent",
@@ -637,6 +604,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-22",
+          "id": "R-038",
+          "title": "ADR export and Decisions view",
+          "milestone": "M4",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-22-adr-export-and-decisions-view.md",
+          "result": "branch feat/r-038-adr-export-and-decisions-view"
+        },
         {
           "date": "2026-11-22",
           "id": "R-033",
@@ -829,6 +805,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-22",
+        "kind": "done",
+        "id": "R-038",
+        "title": "ADR export and Decisions view",
+        "milestone": "M4",
+        "owner": "agent",
+        "result": "branch feat/r-038-adr-export-and-decisions-view"
+      },
       {
         "date": "2026-11-22",
         "kind": "done",
@@ -1085,6 +1070,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-22",
+        "id": "R-038",
+        "title": "ADR export and Decisions view",
+        "milestone": "M4",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-22-adr-export-and-decisions-view.md",
+        "result": "branch feat/r-038-adr-export-and-decisions-view"
+      },
       {
         "date": "2026-11-22",
         "id": "R-033",
@@ -1478,6 +1472,66 @@
       "brief": null,
       "reviewed": "never",
       "idea": "`expandTargets` in `skills/pm-lint/scripts/lint.ts` (added in `981977a`) expands a folder argument one level only, so `check planning/` would miss `inbox/`, `briefs/`, and `decisions/` files; and no test covers `--staged` combined with a folder argument. Also cosmetic: ADR-001's Alternatives row says ADRs are \"exported\" (quoted from the spec), and the `pm-init` template row keeps \"(new project only)\" inside the code span because `scripts/validate.ts` parses it."
+    },
+    {
+      "file": "planning/inbox/2026-11-22-1501-r-013-schema-check-moves-to-6.md",
+      "title": "R-013 schema check moves to 6",
+      "captured": "2026-11-22 15:01",
+      "source": "agent (R-038 design)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "R-013",
+      "context": "R-038 design",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "R-038 moves the export to schemaVersion 5, so the `Done when` of R-013 Docs-site package: publish and migrate (\"a scratch export at schemaVersion 5 fails the build\") must become 6. Edit with `pm-item` once R-038 merges (spec docs/superpowers/specs/2026-11-22-adr-export-and-decisions-view-design.md, Follow-ups)."
+    },
+    {
+      "file": "planning/inbox/2026-11-22-1554-adr-page-link-edge-cases.md",
+      "title": "ADR page link edge cases",
+      "captured": "2026-11-22 15:54",
+      "source": "agent (R-038 final review)",
+      "kind": "bug",
+      "severity": "minor",
+      "affects": "packages/pm-docs-site/src/lib/link-html.ts, src/lib/references.ts",
+      "context": "R-038 finish",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "references() linkifies an ADR's raw Markdown while the ADR page links the rendered HTML, so `_R-012_` gives a link with no Linked from entry, and `[R-012](url)` or image alt text gives a Linked from entry with no link. linkHtml also splits tags on a `>` inside an attribute value (image alt text), which breaks the markup, and links IDs inside raw script and style blocks. Fix: build the ADR page's references from the rendered HTML (or have linkHtml return the keys it linked), and use the tag pattern `<(?:\"[^\"]*\"|'[^']*'|[^'\">])*>`."
+    },
+    {
+      "file": "planning/inbox/2026-11-22-1555-adr-export-edge-cases.md",
+      "title": "ADR export edge cases",
+      "captured": "2026-11-22 15:55",
+      "source": "agent (R-038 final review)",
+      "kind": "bug",
+      "severity": "minor",
+      "affects": "skills/pm-export/scripts/planning.ts",
+      "context": "R-038 finish",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "The exporter strips HTML comments everywhere, so an ADR section that shows `` in a code span or fence loses it, although ADR-002 promises sections verbatim. parseAdr takes the ID from the heading before the file name, so an unlinted `ADR-004-x.md` headed `# ADR-003` duplicates ADR-003 and the site silently overwrites one page. Fix: keep comments inside code in ADR sections, and prefer the file-name ID or fail the export on a duplicate ID."
+    },
+    {
+      "file": "planning/inbox/2026-11-22-1556-decisions-view-filter-edge-states.md",
+      "title": "Decisions view filter edge states",
+      "captured": "2026-11-22 15:56",
+      "source": "agent (R-038 final review)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "packages/pm-docs-site/src/lib/decisions.ts, src/components/decisions/Decisions.tsx",
+      "context": "R-038 finish",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "In the Decisions view, turning every status chip off writes `?status=`, which reloads as the default; ADRs with no status ignore the status chips; with one category there is no category chip, so a shared `?category=x` filters invisibly until Clear; and without JavaScript the superseded rows cannot be shown. Decide the intended behaviour and pin it with tests."
     }
   ],
   "briefs": [
@@ -1557,14 +1611,48 @@
     "closed": [],
     "removed": []
   },
+  "adrs": [
+    {
+      "id": "ADR-001",
+      "path": "planning/decisions/ADR-001-adrs-live-in-the-pm-root.md",
+      "title": "ADRs live in the PM root",
+      "status": "accepted",
+      "supersededBy": null,
+      "date": "2026-11-22",
+      "category": "architecture",
+      "supersedes": null,
+      "item": "R-033",
+      "source": null,
+      "context": "Technical decisions (why this library, why this pattern) were buried in\neach item's design spec, so they were not findable later, and agents built\nitems that contradicted them. ADRs needed a home and an owner so they\nbecome checkable, linted, and read before a new technical decision is\nmade.",
+      "decision": "Architecture decision records live at `<PM root>/decisions/`, one file per\ndecision, owned by a new skill, `pm-adr`. ADRs are PM state: the same write\nboundary as every other PM file (main worktree only, linted by `pm-lint`\nand committed by PM commits; exported in a later slice). An existing\noutside ADR folder (for example `docs/adr/`) is imported into the\ndecisions folder with `pm-adr import`, never managed in place.",
+      "alternatives": "| Approach | Trade-off | Outcome |\n| --- | --- | --- |\n| `docs/adr/` written by the design stage, a config setting points at it | No PM ownership; a managing skill would break the PM-root-only write rule | Superseded by the user's choice |\n| `docs/adr/` with a rule-6 exception for `pm-adr` | Keeps ADRs beside the code; a second write boundary to explain and guard | Rejected |\n| `<PM root>/decisions/`, owned by `pm-adr` | Same boundary as every PM file; linted, exported, committed by PM commits; an existing outside folder is imported, not managed in place | Chosen |",
+      "consequences": "- ADRs are PM state: linted (`adr/*` rules), exported in a later slice, and\n  committed only by PM commits, never by `pm-adr` itself during a workflow.\n- A skill (`pm-adr`) is the only writer; an accepted ADR is never rewritten,\n  only superseded or deprecated.\n- An existing outside ADR folder is never managed in place; `pm-adr import`\n  copies it into the decisions folder once, and the originals stay.\n- This reverses the earlier `docs/adr/` and `ADR directory` setting\n  decisions recorded in the brief."
+    },
+    {
+      "id": "ADR-002",
+      "path": "planning/decisions/ADR-002-adr-sections-export-as-markdown-text.md",
+      "title": "ADR sections export as Markdown text",
+      "status": "accepted",
+      "supersededBy": null,
+      "date": "2026-11-22",
+      "category": "data",
+      "supersedes": null,
+      "item": "R-038",
+      "source": null,
+      "context": "The docs site must show and search whole ADRs, and it reads only\n`planning.json`. `pm-export` is dependency-free.",
+      "decision": "`planning.json` carries each ADR's Context, Decision, Alternatives, and\nConsequences as the Markdown under each heading (strings), and\n`@purview-dev/pm-docs-site` renders them to HTML at build time with the\nsite's configured Markdown processor, through a content loader's\n`renderMarkdown` (as `src/loaders/repo-docs.ts` does).",
+      "alternatives": "| Approach | Trade-off | Outcome |\n| --- | --- | --- |\n| Each section as Markdown text, rendered by the site at build time | The schema checks only that a section is a string; the export grows | Chosen |\n| Structured blocks parsed in the export | Schema-checked, but needs a Markdown parser in the exporter and loses what it does not model | Rejected |\n| Header and path only, the site reads the file | Breaks the rule that the site reads the export only | Rejected |",
+      "consequences": "- The schema checks only that a section is a string.\n- The export grows by the text of every ADR.\n- No new dependency: `@astrojs/markdown-remark` is not installed by Astro\n  7, so the loader's `renderMarkdown` is used instead.\n- IDs inside the rendered HTML are linked by a pass over the HTML, not by\n  `LinkedText`.\n- Spec: `docs/superpowers/specs/2026-11-22-adr-export-and-decisions-view-design.md`."
+    }
+  ],
   "counts": {
-    "next": 5,
+    "next": 4,
     "later": 9,
     "nextMax": 5,
-    "openInbox": 10,
+    "openInbox": 14,
     "discuss": 1,
     "shapingBriefs": 0,
-    "done": 21,
+    "done": 22,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1576,7 +1664,6 @@
     "reviewDue": true,
     "lastReview": "2026-11-20",
     "claimable": [
-      "R-038",
       "R-039",
       "R-025",
       "R-013",

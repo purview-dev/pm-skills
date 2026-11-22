@@ -6,6 +6,8 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'bun:test';
 
 import {
+	adrHref,
+	adrsOf,
 	briefAnchor,
 	briefOf,
 	dependents,
@@ -484,5 +486,18 @@ describe('docsHref', () => {
 
 		expect(docsHref('guide/intro.md', prefixed)).toBe('/docs/guide/intro/');
 		expect(docsHref('docs/superpowers/plans/2026-10-27-tenant-model.md', prefixed)).toBeNull();
+	});
+});
+
+describe('adrsOf', () => {
+	const fixture = loadPlanning(fileURLToPath(new URL('./fixtures/planning.json', import.meta.url)));
+
+	it('lists the ADRs whose Item is the item, by ID', () => {
+		expect(adrsOf(fixture, 'R-012').map((adr) => adr.id)).toEqual(['ADR-001', 'ADR-002']);
+		expect(adrsOf(fixture, 'R-014')).toEqual([]);
+	});
+
+	it('links an ADR page by its lower-case ID', () => {
+		expect(adrHref('ADR-002')).toBe('/plan/decisions/adr-002/');
 	});
 });

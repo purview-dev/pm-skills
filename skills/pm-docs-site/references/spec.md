@@ -134,7 +134,7 @@ unnoticed: `site.ts check` lists any file that differs.
 a schema change ships with a template change and `pm-docs-site upgrade`
 carries it to an installed site.
 
-### 4.2 Fields the site reads (schemaVersion 4)
+### 4.2 Fields the site reads (schemaVersion 5)
 
 Type only what the pages use (`planning-types.ts`); the full shape is
 `<PM root>/planning.schema.json`.

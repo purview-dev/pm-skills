@@ -92,7 +92,7 @@ pm-skills repository).
 2. Every key is present. Empty is `null`; an empty collection is `[]`.
 3. Arrays are ordered: `roadmap.next` by position, `roadmap.later` by
    milestone order from `STRATEGY.md` with `Unassigned` last and then by
-   position, `inbox` by file name, `briefs` by path, `risks.open` in
+   position, `inbox` by file name, `briefs` by path, `adrs` by ID number, `risks.open` in
    register order (red, amber, green, then ID), and `log.done`,
    `log.dropped`, `log.reviews`, `board.activity`, `risks.closed`, and
    `risks.removed` newest first.
@@ -122,7 +122,7 @@ Top-level keys, in order:
 | Key | Read from | Contents |
 | --- | --- | --- |
 | `$schema` | constant | `"./planning.schema.json"` |
-| `schemaVersion` | constant | `4`; bump it with the schema when the shape changes, together with `pm-docs-site`'s templates |
+| `schemaVersion` | constant | `5`; bump it with the schema when the shape changes, together with `pm-docs-site`'s templates |
 | `generatedAt` | clock | local ISO 8601 with offset: bash `date +%Y-%m-%dT%H:%M:%S%:z`, PowerShell `Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"` |
 | `generator` | this skill | `skill: "pm-export"`, `skillsVersion` from the marker in `pm-setup`'s reference, `rulesVersion` from `config.md` |
 | `project` | `config.md` | `pmRoot`, `defaultBranch`, `branchPattern` |
@@ -137,6 +137,7 @@ Top-level keys, in order:
 | `inbox` | `inbox/*.md` | One entry per file, `README.md` excluded |
 | `briefs` | `briefs/*.md` | One entry per file, `README.md` excluded |
 | `risks` | `RISKS.md` | `open[]` and `closed[]`, each a risk object, and `removed[]` |
+| `adrs` | `decisions/ADR-NNN-*.md` | One ADR object per file, `README.md` and other names excluded |
 | `counts` | derived | `next`, `later`, `nextMax`, `openInbox`, `discuss`, `shapingBriefs`, `done`, `dropped`, `blockers`, `openRisks`, `redRisks`, `amberRisks`, `greenRisks` |
 | `checks` | derived | `reviewDue`, `lastReview`, `claimable[]`, `drift` |
 
@@ -214,6 +215,15 @@ Remaining objects:
   `none`; `closed` is the `Closed` text, `null` while the risk is open.
   `risks.removed[]` is `{date, id, title, reason}`. `counts.openRisks` is
   `risks.open` and the RAG counts split it by `rag`.
+- An **ADR object** is `{id, path, title, status, supersededBy, date,
+  category, supersedes, item, source, context, decision, alternatives,
+  consequences}`, read from one ADR file (Shared definitions: ADR).
+  `status` is `proposed`, `accepted`, `deprecated`, or `superseded` (with
+  the successor in `supersededBy`), `null` when unreadable; `category` is
+  lower-cased; `supersedes`, `item`, and `source` are `null` for `none`.
+  The four sections are the Markdown under each heading, verbatim without
+  its surrounding blank lines: `""` when empty, `null` when the heading is
+  missing.
 - `counts.blockers` is the items in Next and Later whose `Status` is
   `blocked`; `counts.openInbox` follows **Open inbox count**;
   `counts.shapingBriefs` is the briefs whose `Status` starts `shaping`.
@@ -229,7 +239,7 @@ Remaining objects:
    one that holds a Completion record):
    `bun <skill>/scripts/export.ts write --root "<worktree>"`. It reads
    `config.md`, `VISION.md`, `STRATEGY.md`, `NOW.md`, `ROADMAP.md`,
-   `LOG.md`, `RISKS.md`, `inbox/`, `briefs/`, and the plan that `NOW.md`
+   `LOG.md`, `RISKS.md`, `inbox/`, `briefs/`, `decisions/`, and the plan that `NOW.md`
    names (never `STACK.md` or `PAUSE.md`), treats a missing optional file
    as empty (Shared definitions: Optional files), and builds the document
    in the field-map order with the format rules.

@@ -1266,8 +1266,8 @@ reading a `schemaVersion` 3 export until it upgrades.
 
 Version 21 removes the unused `itemRef` definition from the export schema,
 so a consumer's `<PM root>/planning.schema.json` differs from `pm-export`'s
-until it re-exports: run `pm-export` once. The export stays at
-`schemaVersion` 4. `pm-board`'s Now card names `NOW.md`'s `Owner` and
+until it re-exports: run `pm-export` once (the export moves to
+`schemaVersion` 5 below). `pm-board`'s Now card names `NOW.md`'s `Owner` and
 `Size` as the source of its owner and size. Version 21 also carries the
 claimed item's `Note`: `pm-next` writes it to `NOW.md` after `Revisits`,
 `pm-checkpoint` `push` and `pop` carry it through `STACK.md`, and `switch`
@@ -1278,6 +1278,11 @@ Version 21 also adds `pm-adr` and the decisions folder
 (`<PM root>/decisions/`, optional): technical decisions are ADRs, the
 design stage records them with `pm-adr`, and `pm-adr import <folder>`
 brings an existing ADR folder in. No setting is added.
+
+Version 21 also moves the export to `schemaVersion` 5, which adds `adrs`:
+every ADR in the decisions folder, whole. Run `pm-export`, and
+`pm-docs-site upgrade` for an installed site; `@purview-dev/pm-docs-site`
+reads `schemaVersion` 5 from `0.1.0-pre.3`, with a Decisions view.
 
 ## Asking the user (mandatory)
 

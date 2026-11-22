@@ -1,6 +1,6 @@
 {
   "$schema": "./planning.schema.json",
-  "schemaVersion": 4,
+  "schemaVersion": 5,
   "generatedAt": "2026-11-20T09:59:10+00:00",
   "generator": {
     "skill": "pm-export",
@@ -977,6 +977,88 @@
       }
     ]
   },
+  "adrs": [
+    {
+      "id": "ADR-001",
+      "path": "planning/decisions/ADR-001-take-payments-with-hosted-checkout.md",
+      "title": "Take payments with hosted checkout",
+      "status": "accepted",
+      "supersededBy": null,
+      "date": "2026-10-28",
+      "category": "architecture",
+      "supersedes": null,
+      "item": "R-007",
+      "source": null,
+      "context": "R-007 takes a card payment when a class is booked. Studios are small and\ncannot carry the card-data compliance work of a payment form on our pages.",
+      "decision": "Send the client to the payment provider's hosted checkout page and record the\nbooking when its webhook confirms the payment.",
+      "alternatives": "| Approach | Trade-off | Outcome |\n| --- | --- | --- |\n| Hosted checkout | Least compliance scope; one redirect | Chosen |\n| Embedded card form | Stays on our page; full compliance scope | Rejected |\n| Pay at the studio | No build; no-shows are not charged | Rejected |",
+      "consequences": "- A booking is pending until the webhook arrives.\n- R-016 retries a failed card payment through the same webhook."
+    },
+    {
+      "id": "ADR-002",
+      "path": "planning/decisions/ADR-002-store-class-times-in-studio-local-time.md",
+      "title": "Store class times in studio local time",
+      "status": "superseded",
+      "supersededBy": "ADR-003",
+      "date": "2026-10-12",
+      "category": "data",
+      "supersedes": null,
+      "item": null,
+      "source": null,
+      "context": "Every pilot studio was in one timezone, and the timetable is entered in\nlocal time.",
+      "decision": "Store each class's start as the studio's local date and time.",
+      "alternatives": "Store UTC and convert on display: more work for one timezone.",
+      "consequences": "- Confirmation emails print the stored time as it is."
+    },
+    {
+      "id": "ADR-003",
+      "path": "planning/decisions/ADR-003-store-class-times-in-utc.md",
+      "title": "Store class times in UTC",
+      "status": "accepted",
+      "supersededBy": null,
+      "date": "2026-11-16",
+      "category": "data",
+      "supersedes": "ADR-002",
+      "item": "R-011",
+      "source": null,
+      "context": "R-011 shows each confirmation in the studio's timezone, and R-013 adds\nstudios with locations in more than one timezone. Local times stored by\nADR-002 are ambiguous across daylight-saving changes.",
+      "decision": "Store each class's start in UTC with the studio's IANA timezone name, and\nconvert to the studio's local time when it is shown.",
+      "alternatives": "| Approach | Trade-off | Outcome |\n| --- | --- | --- |\n| UTC and the timezone name | One conversion on display | Chosen |\n| Local time with an offset | Breaks for repeating classes across a daylight-saving change | Rejected |",
+      "consequences": "- A one-off migration converts the stored times with each studio's timezone.\n- Every display path calls the same `formatClassTime` helper."
+    },
+    {
+      "id": "ADR-004",
+      "path": "planning/decisions/ADR-004-sync-calendars-through-webhooks.md",
+      "title": "Sync calendars through webhooks",
+      "status": "proposed",
+      "supersededBy": null,
+      "date": "2026-11-20",
+      "category": "architecture",
+      "supersedes": null,
+      "item": "R-012",
+      "source": null,
+      "context": "R-012 keeps a studio's external calendar and its timetable in step both ways.\nPolling every calendar every few minutes would exceed the providers' rate\nlimits once more than a few dozen studios connect.",
+      "decision": "Subscribe to each provider's change notifications and fetch only the changed\nevents; poll once a day to repair missed notifications.",
+      "alternatives": "Poll every calendar every five minutes: simpler, but hits rate limits.",
+      "consequences": "- Each provider needs a public webhook endpoint."
+    },
+    {
+      "id": "ADR-005",
+      "path": "planning/decisions/ADR-005-send-emails-through-our-own-smtp-server.md",
+      "title": "Send emails through our own SMTP server",
+      "status": "deprecated",
+      "supersededBy": null,
+      "date": "2026-10-30",
+      "category": "operations",
+      "supersedes": null,
+      "item": "R-003",
+      "source": null,
+      "context": "R-003 sends booking confirmations. A small SMTP server was quick to set up\nfor the pilot.",
+      "decision": "Send every confirmation through one SMTP server we run.",
+      "alternatives": "An email delivery service: a monthly cost before the pilot proved demand.",
+      "consequences": "- We watch the server's sending reputation ourselves.\n- 2026-11-12 Deprecated: confirmations moved to the email provider's API after messages from the server landed in spam."
+    }
+  ],
   "counts": {
     "next": 5,
     "later": 4,

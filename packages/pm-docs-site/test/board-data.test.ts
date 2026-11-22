@@ -8,7 +8,7 @@ import { targets } from '../src/lib/references';
 
 const FIXTURE = fileURLToPath(new URL('./fixtures/planning.json', import.meta.url));
 const planning = loadPlanning(FIXTURE);
-const views = { now: true, milestones: true, graph: true, features: true, inbox: true, briefs: true, strategy: true };
+const views = { now: true, milestones: true, graph: true, features: true, inbox: true, briefs: true, strategy: true, decisions: true };
 const known = targets(planning, views);
 const cards = boardCards(planning, known);
 

@@ -22,6 +22,7 @@
     "inbox",
     "briefs",
     "risks",
+    "adrs",
     "counts",
     "checks"
   ],
@@ -30,7 +31,7 @@
       "const": "./planning.schema.json"
     },
     "schemaVersion": {
-      "const": 4
+      "const": 5
     },
     "generatedAt": {
       "type": "string",
@@ -87,6 +88,12 @@
     },
     "risks": {
       "$ref": "#/$defs/risks"
+    },
+    "adrs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/adr"
+      }
     },
     "counts": {
       "$ref": "#/$defs/counts"
@@ -449,6 +456,119 @@
           "$ref": "#/$defs/text"
         }
       }
+    },
+    "adr": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "path",
+        "title",
+        "status",
+        "supersededBy",
+        "date",
+        "category",
+        "supersedes",
+        "item",
+        "source",
+        "context",
+        "decision",
+        "alternatives",
+        "consequences"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/adrId"
+        },
+        "path": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "status": {
+          "oneOf": [
+            {
+              "enum": [
+                "proposed",
+                "accepted",
+                "deprecated",
+                "superseded"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "supersededBy": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/adrId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "date": {
+          "$ref": "#/$defs/text"
+        },
+        "category": {
+          "$ref": "#/$defs/text"
+        },
+        "supersedes": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/adrId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "item": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/text"
+        },
+        "context": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "decision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "alternatives": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "consequences": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "adrId": {
+      "type": "string",
+      "pattern": "^ADR-[0-9]{3,}$"
     },
     "level": {
       "enum": [

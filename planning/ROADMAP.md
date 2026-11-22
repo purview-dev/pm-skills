@@ -14,18 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-038 ADR export and Decisions view
-
-- Serves: V5
-- Milestone: M4
-- Owner: agent
-- Done when: `pm-export write` puts `adrs` (read from `planning/decisions/`) in `planning/planning.json` at `schemaVersion` 5 and `pm-export check` passes; the `packages/pm-docs-site` Decisions view lists, searches, and filters ADRs by category and status, with one indexed page per ADR and feature pages listing their ADRs, covered by unit tests; the demo has ADRs; the templates read `schemaVersion` 5; `just validate`, `just test`, and `just demo-check` pass.
-- Size: M
-- Depends on: R-033
-- Status: ready
-- Brief: planning/briefs/2026-11-22-where-do-adrs-fit.md
-- Note: Slice 2 of the ADR work (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). Decisions view is a React island: text search, category and status chips, superseded hidden by default, group by category or status, URL state.
-
 ### R-039 ADRs across the PM skills
 
 - Serves: V5

@@ -190,19 +190,19 @@ describe('pm-docs-site check', () => {
 		const result = runCli(['check', FIXTURE_SITE]);
 
 		expect(result.code, result.stderr).toBe(0);
-		expect(result.stdout).toContain('schemaVersion 4');
+		expect(result.stdout).toContain('schemaVersion 5');
 	}, CHECK);
 
 	it('fails on a schemaVersion it does not read', () => {
-		const dir = scratchFixture('v5-');
+		const dir = scratchFixture('v6-');
 		const planning = JSON.parse(readFileSync(join(dir, 'planning.json'), 'utf8'));
-		writeFileSync(join(dir, 'planning.json'), JSON.stringify({ ...planning, schemaVersion: 5 }));
-		writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'V5', planning: '../planning.json' }`));
+		writeFileSync(join(dir, 'planning.json'), JSON.stringify({ ...planning, schemaVersion: 6 }));
+		writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'V6', planning: '../planning.json' }`));
 
 		const result = runCli(['check', join(dir, 'site')]);
 
 		expect(result.code).toBe(1);
-		expect(result.stdout + result.stderr).toContain('has schemaVersion 5; this site reads schemaVersion 4');
+		expect(result.stdout + result.stderr).toContain('has schemaVersion 6; this site reads schemaVersion 5');
 		expect(existsSync(join(dir, 'site', 'dist'))).toBe(false);
 	}, CHECK);
 
@@ -231,7 +231,7 @@ describe('pm-docs-site check', () => {
 
 	it('names the file and the pm-export hint when planning.json is not valid JSON', () => {
 		const dir = scratchFixture('badjson-');
-		writeFileSync(join(dir, 'planning.json'), '{ "schemaVersion": 4,');
+		writeFileSync(join(dir, 'planning.json'), '{ "schemaVersion": 5,');
 		writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'Bad', planning: '../planning.json' }`));
 
 		const result = runCli(['check', join(dir, 'site')]);
