@@ -1,0 +1,52 @@
+---
+// The architecture decision records from planning.json's `adrs`, as a
+// server-rendered React island (src/components/decisions/Decisions.tsx) that
+// searches, filters by status and category, and groups them. Every ADR is in
+// the HTML; the filters only hide rows, so the default view (superseded hidden)
+// still links every ADR page.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+
+import Decisions, { type DecisionRow } from '../../components/decisions/Decisions';
+import ExportStamp from '../../components/ExportStamp.astro';
+import { adrSearchText } from '../../lib/decisions';
+import { adrHref, loadPlanning } from '../../lib/planning';
+import { siteRefs } from '../../lib/references';
+import '../../styles/components.css';
+
+const planning = loadPlanning();
+const { known } = siteRefs();
+const named = (ref: string | null) => {
+	if (!ref) return null;
+	const target = known.get(ref);
+
+	return { label: target?.label ?? ref, href: target?.href ?? null };
+};
+const rows: DecisionRow[] = planning.adrs.map((adr) => ({
+	id: adr.id,
+	title: adr.title,
+	status: adr.status,
+	category: adr.category,
+	date: adr.date,
+	href: adrHref(adr.id),
+	text: adrSearchText(adr),
+	item: named(adr.item),
+	successor: named(adr.supersededBy),
+}));
+const categories = [...new Set(planning.adrs.map((adr) => adr.category).filter((category): category is string => !!category))].sort();
+---
+
+<StarlightPage
+	frontmatter={{ title: 'Decisions', description: 'The architecture decision records: search, filter, and group them.', tableOfContents: false }}
+>
+	<ExportStamp />
+
+	{
+		rows.length === 0 ? (
+			<p class="plan-empty">No ADRs yet. Record one with pm-adr new.</p>
+		) : (
+			<div data-pagefind-ignore>
+				<Decisions client:load rows={rows} categories={categories} />
+			</div>
+		)
+	}
+</StarlightPage>

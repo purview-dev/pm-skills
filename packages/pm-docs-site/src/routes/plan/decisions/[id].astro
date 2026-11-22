@@ -1,0 +1,93 @@
+---
+// One ADR from planning.json's `adrs`: its status, header fields, and its four
+// sections rendered from Markdown (src/loaders/adrs.ts), with the IDs in them
+// linked, and what links to it.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { getCollection } from 'astro:content';
+
+import ExportStamp from '../../../components/ExportStamp.astro';
+import LinkedFrom from '../../../components/LinkedFrom.astro';
+import LinkedText from '../../../components/LinkedText.astro';
+import RefLink from '../../../components/RefLink.astro';
+import { linkHtml } from '../../../lib/link-html';
+import { loadPlanning } from '../../../lib/planning';
+import { siteRefs } from '../../../lib/references';
+import { ADR_SECTIONS, type RenderedAdr } from '../../../loaders/adrs';
+import '../../../styles/components.css';
+
+export async function getStaticPaths() {
+	// An empty collection is never looked up: Astro warns that it does not exist.
+	if (loadPlanning().adrs.length === 0) return [];
+
+	const entries = await getCollection('adrs');
+
+	return entries.map((entry: { id: string; data: unknown }) => ({ params: { id: entry.id }, props: { adr: entry.data as RenderedAdr } }));
+}
+
+const { adr } = Astro.props as { adr: RenderedAdr };
+const { known } = siteRefs();
+const status = adr.status ?? 'unknown';
+const refs: { label: string; ref: string | null }[] = [
+	{ label: 'Item', ref: adr.item },
+	{ label: 'Supersedes', ref: adr.supersedes },
+	{ label: 'Superseded by', ref: adr.supersededBy },
+];
+---
+
+<StarlightPage
+	frontmatter={{ title: `${adr.id} ${adr.title}`, description: `${status} decision${adr.category ? `, ${adr.category}` : ''}.`, tableOfContents: false }}
+>
+	<ExportStamp kind="ADR" state={status} />
+
+	<p>
+		<span class={`adr-status adr-status--${status}`}>{status}</span>
+		{' '}
+		<a href="/plan/decisions/">All decisions</a>
+	</p>
+
+	<dl class="plan-facts">
+		{adr.date && (
+			<div>
+				<dt>Date</dt>
+				<dd>{adr.date}</dd>
+			</div>
+		)}
+		{adr.category && (
+			<div>
+				<dt>Category</dt>
+				<dd>{adr.category}</dd>
+			</div>
+		)}
+		{
+			refs
+				.filter((entry) => entry.ref)
+				.map((entry) => (
+					<div>
+						<dt>{entry.label}</dt>
+						<dd>
+							<RefLink ref={entry.ref} />
+						</dd>
+					</div>
+				))
+		}
+		{adr.source && (
+			<div>
+				<dt>Source</dt>
+				<dd>
+					<LinkedText text={adr.source} />
+				</dd>
+			</div>
+		)}
+	</dl>
+
+	{
+		ADR_SECTIONS.filter(({ key }) => adr.html[key] !== null).map(({ key, label }) => (
+			<section>
+				<h2>{label}</h2>
+				{adr.html[key] === '' ? <p>None recorded.</p> : <Fragment set:html={linkHtml(adr.html[key]!, known)} />}
+			</section>
+		))
+	}
+
+	<LinkedFrom ref={adr.id} />
+</StarlightPage>

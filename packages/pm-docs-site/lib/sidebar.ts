@@ -18,6 +18,7 @@ export function buildSidebar(options: ResolvedOptions): SidebarItem[] {
 		views.features && { label: 'Features', link: '/plan/features/' },
 		{ label: 'Log', link: '/plan/log/' },
 		{ label: 'Risks', link: '/plan/risks/' },
+		views.decisions && { label: 'Decisions', link: '/plan/decisions/' },
 		views.inbox && { label: 'Inbox', link: '/plan/inbox/' },
 		views.briefs && { label: 'Briefs', link: '/plan/briefs/' },
 		views.strategy && { label: 'Strategy', link: '/plan/strategy/' },

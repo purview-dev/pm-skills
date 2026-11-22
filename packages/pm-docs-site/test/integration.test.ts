@@ -109,6 +109,8 @@ describe('pmDocsSite', () => {
 
 		expect(routes.map((route) => route.pattern).sort()).toEqual([
 			'/plan/briefs',
+			'/plan/decisions',
+			'/plan/decisions/[id]',
 			'/plan/features',
 			'/plan/features/[id]',
 			'/plan/graph',

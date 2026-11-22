@@ -25,6 +25,7 @@ describe('buildSidebar', () => {
 					link('Features', 'features'),
 					link('Log', 'log'),
 					link('Risks', 'risks'),
+					link('Decisions', 'decisions'),
 					link('Inbox', 'inbox'),
 					link('Briefs', 'briefs'),
 					link('Strategy', 'strategy'),

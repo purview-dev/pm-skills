@@ -1,11 +1,12 @@
 // Links the known IDs and brief paths inside rendered HTML (an ADR's sections),
 // the way LinkedText does for plain text: the same linkify runs, so a link here
-// is one `references()` already lists. Text inside `code`, `pre`, and `a` stays
-// as written.
+// is one `references()` already lists. Text inside an existing link stays as
+// written; IDs inside code are linked, as LinkedText links them in plain text,
+// because the link test requires every known ID on a page to be a link.
 
 import { linkify, type Target } from './references';
 
-const SKIP = new Set(['code', 'pre', 'a']);
+const SKIP = new Set(['a']);
 const escapeAttribute = (text: string) => text.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
 
 /** The HTML with each known reference in its text wrapped in a link to its page. */

@@ -63,8 +63,8 @@ export function adrSearchText(adr: Adr): string {
 		.toLowerCase();
 }
 
-/** Its status and category are selected, and every word of the search appears in its text. */
-export function matchesDecision(adr: Adr, state: DecisionsState, text: string = adrSearchText(adr)): boolean {
+/** Its status and category are selected, and every word of the search appears in its text (adrSearchText, unless given). */
+export function matchesDecision(adr: Pick<Adr, 'status' | 'category'>, state: DecisionsState, text: string = adrSearchText(adr as Adr)): boolean {
 	if (adr.status && !state.status.includes(adr.status)) return false;
 	if (state.category.length && !state.category.includes(adr.category ?? '')) return false;
 

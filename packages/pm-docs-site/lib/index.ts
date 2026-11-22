@@ -38,6 +38,10 @@ const VIEW_ROUTES: Record<ViewName, [pattern: string, file: string][]> = {
 	inbox: [['/plan/inbox', 'plan/inbox.astro']],
 	briefs: [['/plan/briefs', 'plan/briefs.astro']],
 	strategy: [['/plan/strategy', 'plan/strategy.astro']],
+	decisions: [
+		['/plan/decisions', 'plan/decisions.astro'],
+		['/plan/decisions/[id]', 'plan/decisions/[id].astro'],
+	],
 };
 
 const PACKAGE_NAME = '@purview-dev/pm-docs-site';

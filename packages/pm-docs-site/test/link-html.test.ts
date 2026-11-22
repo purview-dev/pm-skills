@@ -17,14 +17,17 @@ describe('linkHtml', () => {
 		);
 	});
 
-	it('leaves code, pre, and existing links alone', () => {
-		for (const html of ['<p><code>R-012</code></p>', '<pre><code>ADR-002\n</code></pre>', '<p><a href="/x">R-012</a></p>']) {
-			expect(linkHtml(html, known)).toBe(html);
-		}
+	it('leaves existing links alone', () => {
+		expect(linkHtml('<p><a href="/x">R-012</a> and <a href="/y">ADR-002</a></p>', known)).toBe('<p><a href="/x">R-012</a> and <a href="/y">ADR-002</a></p>');
 	});
 
-	it('links again after a closed code span', () => {
-		expect(linkHtml('<p><code>x</code> R-012</p>', known)).toBe('<p><code>x</code> <a href="/plan/features/r-012/">R-012</a></p>');
+	it('links IDs inside code too, as LinkedText does (the link test requires every known ID to be a link)', () => {
+		expect(linkHtml('<p><code>R-012</code></p>', known)).toBe('<p><code><a href="/plan/features/r-012/">R-012</a></code></p>');
+		expect(linkHtml('<pre><code>ADR-002\n</code></pre>', known)).toBe('<pre><code><a href="/plan/decisions/adr-002/">ADR-002</a>\n</code></pre>');
+	});
+
+	it('links again after a closed link', () => {
+		expect(linkHtml('<p><a href="/x">x</a> R-012</p>', known)).toBe('<p><a href="/x">x</a> <a href="/plan/features/r-012/">R-012</a></p>');
 	});
 
 	it('keeps entities and attributes untouched', () => {
