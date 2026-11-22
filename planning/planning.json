@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-22T14:21:05+00:00",
+  "generatedAt": "2026-11-22T14:21:58+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-033-adr-directory-setting-and-design-handoff",
-    "head": "aa267408a385eaee8576c531f68ab2dc43df677d"
+    "head": "5113c48d853af6096e19d535e3cf6a88429dcabe"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -414,10 +414,62 @@
   "roadmap": {
     "next": [
       {
+        "id": "R-038",
+        "title": "ADR export and Decisions view",
+        "section": "next",
+        "position": 1,
+        "label": "waiting",
+        "serves": [
+          "V5"
+        ],
+        "milestone": "M4",
+        "owner": "agent",
+        "doneWhen": "`pm-export write` puts `adrs` (read from `planning/decisions/`) in `planning/planning.json` at `schemaVersion` 5 and `pm-export check` passes; the `packages/pm-docs-site` Decisions view lists, searches, and filters ADRs by category and status, with one indexed page per ADR and feature pages listing their ADRs, covered by unit tests; the demo has ADRs; the templates read `schemaVersion` 5; `just validate`, `just test`, and `just demo-check` pass.",
+        "size": "M",
+        "dependsOn": [
+          "R-033"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
+        "note": "Slice 2 of the ADR work (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). Decisions view is a React island: text search, category and status chips, superseded hidden by default, group by category or status, URL state.",
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-039",
+        "title": "ADRs across the PM skills",
+        "section": "next",
+        "position": 2,
+        "label": "waiting",
+        "serves": [
+          "V5"
+        ],
+        "milestone": "M4",
+        "owner": "agent",
+        "doneWhen": "`pm-shape` and `pm-discover` read ADRs and challenge contradictions; `pm-revise` supersedes an ADR a correction reverses; `pm-checkpoint` (`done`) checks the spec's ADR IDs exist; `pm-review` lists ADRs `proposed` longer than the review cadence; `pm-purview` records an accepted recommendation as an ADR; `pm-status` counts ADRs by status; `pm-help` diagnoses unaccepted and broken ADRs; every re-entry into design (`pm-next` resume, `pm-resume`, `pm-checkpoint` `pop`, `pm-revise` `rewind`, `pm-rejoin`) passes the ADR instruction; `just validate` and `just test` pass.",
+        "size": "M",
+        "dependsOn": [
+          "R-033"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
+        "note": "Slice 3 of the ADR work (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). The design re-entries were added by the R-033 final review.",
+        "revisits": null,
+        "claimable": false
+      },
+      {
         "id": "R-025",
         "title": "Docs-site package: feature pages list revisions",
         "section": "next",
-        "position": 1,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -441,14 +493,14 @@
         "id": "R-013",
         "title": "Docs-site package: publish and migrate",
         "section": "next",
-        "position": 2,
+        "position": 4,
         "label": "next",
         "serves": [
           "V4"
         ],
         "milestone": "M1",
         "owner": "both",
-        "doneWhen": "`npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore` and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; and a scratch export at schemaVersion 4 fails the build until the package's range includes it.",
+        "doneWhen": "`npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore` and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; and a scratch export at schemaVersion 5 fails the build until the package's range includes it.",
         "size": "M",
         "dependsOn": [
           "R-009",
@@ -476,7 +528,7 @@
         "id": "R-034",
         "title": "Engineering file and pm-engineering skill",
         "section": "next",
-        "position": 3,
+        "position": 5,
         "label": "next",
         "serves": [
           "V5"
@@ -495,12 +547,14 @@
         "note": null,
         "revisits": null,
         "claimable": true
-      },
+      }
+    ],
+    "later": [
       {
         "id": "R-035",
         "title": "pm-engineering infer from an existing repository",
-        "section": "next",
-        "position": 4,
+        "section": "later",
+        "position": 1,
         "label": "waiting",
         "serves": [
           "V5"
@@ -521,14 +575,12 @@
         "note": null,
         "revisits": null,
         "claimable": false
-      }
-    ],
-    "later": [
+      },
       {
         "id": "R-036",
         "title": "Plan citation and done check",
         "section": "later",
-        "position": 1,
+        "position": 2,
         "label": "waiting",
         "serves": [
           "V5"
@@ -555,14 +607,14 @@
         "id": "R-037",
         "title": "Engineering export and docs-site view",
         "section": "later",
-        "position": 2,
+        "position": 3,
         "label": "waiting",
         "serves": [
           "V5"
         ],
         "milestone": "M4",
         "owner": "agent",
-        "doneWhen": "`planning.json` carries the engineering record at the next `schemaVersion`, `pm-export check` passes, and an Engineering view passes `just docs-check`.",
+        "doneWhen": "`planning.json` carries the engineering record at `schemaVersion` 6, `pm-export check` passes, and an Engineering view passes `just docs-check`.",
         "size": "S",
         "dependsOn": [
           "R-034",
@@ -582,7 +634,7 @@
         "id": "R-006",
         "title": "Check pm-setup's skill counts in validate",
         "section": "later",
-        "position": 3,
+        "position": 4,
         "label": "later",
         "serves": [
           "V1"
@@ -606,7 +658,7 @@
         "id": "R-015",
         "title": "Rehearse a fresh install in a scratch repository",
         "section": "later",
-        "position": 4,
+        "position": 5,
         "label": "later",
         "serves": [
           "V1"
@@ -630,7 +682,7 @@
         "id": "R-016",
         "title": "Rehearse the lifecycle guards",
         "section": "later",
-        "position": 5,
+        "position": 6,
         "label": "later",
         "serves": [
           "V2",
@@ -655,7 +707,7 @@
         "id": "R-024",
         "title": "Self-contained aspire module test example",
         "section": "later",
-        "position": 6,
+        "position": 7,
         "label": "later",
         "serves": [
           "V4"
@@ -679,7 +731,7 @@
         "id": "R-030",
         "title": "Pre-push runs fast checks only",
         "section": "later",
-        "position": 7,
+        "position": 8,
         "label": "later",
         "serves": [
           "V4"
@@ -703,7 +755,7 @@
         "id": "R-032",
         "title": "pm-checkpoint and pm-lint Note follow-ups",
         "section": "later",
-        "position": 8,
+        "position": 9,
         "label": "later",
         "serves": [
           "V2"
@@ -762,11 +814,18 @@
       "foryou": [],
       "waiting": [
         {
-          "id": "R-035",
-          "title": "pm-engineering infer from an existing repository",
+          "id": "R-038",
+          "title": "ADR export and Decisions view",
           "owner": "agent",
           "size": "M",
-          "detail": "needs R-034 Engineering file and pm-engineering skill"
+          "detail": "needs R-033 ADR record, pm-adr, and design handoff"
+        },
+        {
+          "id": "R-039",
+          "title": "ADRs across the PM skills",
+          "owner": "agent",
+          "size": "M",
+          "detail": "needs R-033 ADR record, pm-adr, and design handoff"
         }
       ],
       "done": [
@@ -1553,60 +1612,6 @@
       "idea": "Deferred minors from the R-031 final review. (1) `relativeImports` in `packages/pm-docs-site/test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports inside comments, and misses template-literal dynamic imports (`` import(`./x`) ``); these give false failures only. (2) In `scripts/check-demo.ts`, the text of a `plan-empty` element is cut off at a nested `plan-empty` element; both are still reported. (3) `src/pages/plan/log.astro` labels an ID that is known but whose page is not built with the logged title, not the export's current title, and no test covers that view-off case."
     },
     {
-      "file": "planning/inbox/2026-11-22-1159-adr-export-and-decisions-view.md",
-      "title": "ADR export and Decisions view",
-      "captured": "2026-11-22 11:59",
-      "source": "agent (R-033 design)",
-      "kind": "feature",
-      "severity": null,
-      "affects": "skills/pm-export, packages/pm-docs-site, skills/pm-docs-site/templates",
-      "context": "R-033 design",
-      "discuss": "no",
-      "related": [
-        "R-033",
-        "R-013",
-        "R-037"
-      ],
-      "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
-      "reviewed": "never",
-      "idea": "Slice 2 of the ADR work, approved by the user on 2026-11-22 (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). Add as an M item at the top of Next after R-033, M4, serves V5, depends on R-033: `adrs` in `planning.json` at `schemaVersion` 5, read from `<PM root>/decisions/`; the package's Decisions view (React island with text search, category and status chips, superseded hidden by default, group by category or status, URL state; one search-indexed page per ADR; feature pages list their ADRs); demo ADRs; templates move to `schemaVersion` 5 without a view. Then edit R-013 (its `schemaVersion` 4 check becomes 5) and R-037 (`schemaVersion` 6)."
-    },
-    {
-      "file": "planning/inbox/2026-11-22-1159-adrs-across-the-pm-skills.md",
-      "title": "ADRs across the PM skills",
-      "captured": "2026-11-22 11:59",
-      "source": "agent (R-033 design)",
-      "kind": "feature",
-      "severity": null,
-      "affects": "pm-shape, pm-discover, pm-revise, pm-checkpoint, pm-review, pm-purview, pm-status, pm-help",
-      "context": "R-033 design",
-      "discuss": "no",
-      "related": [
-        "R-033",
-        "R-036"
-      ],
-      "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
-      "reviewed": "never",
-      "idea": "Slice 3 of the ADR work, approved by the user on 2026-11-22 (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). Add as an M item in Next after the ADR export item, M4, serves V5, depends on R-033: `pm-shape` and `pm-discover` read ADRs as evidence and challenge contradictions; `pm-revise` supersedes an ADR when a correction reverses it; `pm-checkpoint` (`done`) checks the spec's ADR IDs exist; `pm-review` lists ADRs `proposed` longer than the review cadence; `pm-purview` records an accepted recommendation as an ADR; `pm-status` counts ADRs by status; `pm-help` diagnoses unaccepted and broken ADRs."
-    },
-    {
-      "file": "planning/inbox/2026-11-22-1159-r-033-rescope-and-brief-revision.md",
-      "title": "R-033 rescope and ADR brief revision",
-      "captured": "2026-11-22 11:59",
-      "source": "agent (R-033 design)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "planning/ROADMAP.md, planning/briefs/2026-11-22-where-do-adrs-fit.md",
-      "context": "R-033 design",
-      "discuss": "no",
-      "related": [
-        "R-033"
-      ],
-      "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
-      "reviewed": "never",
-      "idea": "After the R-033 workflow (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups): R-033's title becomes \"ADR record, pm-adr, and design handoff\", size M, with the spec's Done when (it is in NOW.md now with the old checks; the spec's Done when governs). Add a `## Revisions` line to the ADR brief: ADRs moved into the PM root under `pm-adr`; the `ADR directory` setting and `docs/adr/` default are dropped (user, 2026-11-22)."
-    },
-    {
       "file": "planning/inbox/2026-11-22-1232-agent-context-tidy-skill.md",
       "title": "Agent context analysis and planning tidy skill",
       "captured": "2026-11-22 12:32",
@@ -1700,10 +1705,10 @@
     "removed": []
   },
   "counts": {
-    "next": 4,
-    "later": 8,
+    "next": 5,
+    "later": 9,
     "nextMax": 5,
-    "openInbox": 12,
+    "openInbox": 9,
     "discuss": 1,
     "shapingBriefs": 0,
     "done": 20,
@@ -1715,7 +1720,7 @@
     "greenRisks": 0
   },
   "checks": {
-    "reviewDue": true,
+    "reviewDue": false,
     "lastReview": "2026-11-20",
     "claimable": [
       "R-025",

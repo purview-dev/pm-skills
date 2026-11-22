@@ -14,6 +14,30 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
+### R-038 ADR export and Decisions view
+
+- Serves: V5
+- Milestone: M4
+- Owner: agent
+- Done when: `pm-export write` puts `adrs` (read from `planning/decisions/`) in `planning/planning.json` at `schemaVersion` 5 and `pm-export check` passes; the `packages/pm-docs-site` Decisions view lists, searches, and filters ADRs by category and status, with one indexed page per ADR and feature pages listing their ADRs, covered by unit tests; the demo has ADRs; the templates read `schemaVersion` 5; `just validate`, `just test`, and `just demo-check` pass.
+- Size: M
+- Depends on: R-033
+- Status: ready
+- Brief: planning/briefs/2026-11-22-where-do-adrs-fit.md
+- Note: Slice 2 of the ADR work (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). Decisions view is a React island: text search, category and status chips, superseded hidden by default, group by category or status, URL state.
+
+### R-039 ADRs across the PM skills
+
+- Serves: V5
+- Milestone: M4
+- Owner: agent
+- Done when: `pm-shape` and `pm-discover` read ADRs and challenge contradictions; `pm-revise` supersedes an ADR a correction reverses; `pm-checkpoint` (`done`) checks the spec's ADR IDs exist; `pm-review` lists ADRs `proposed` longer than the review cadence; `pm-purview` records an accepted recommendation as an ADR; `pm-status` counts ADRs by status; `pm-help` diagnoses unaccepted and broken ADRs; every re-entry into design (`pm-next` resume, `pm-resume`, `pm-checkpoint` `pop`, `pm-revise` `rewind`, `pm-rejoin`) passes the ADR instruction; `just validate` and `just test` pass.
+- Size: M
+- Depends on: R-033
+- Status: ready
+- Brief: planning/briefs/2026-11-22-where-do-adrs-fit.md
+- Note: Slice 3 of the ADR work (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). The design re-entries were added by the R-033 final review.
+
 ### R-025 Docs-site package: feature pages list revisions
 
 - Serves: V4
@@ -30,7 +54,7 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Serves: V4
 - Milestone: M1
 - Owner: both
-- Done when: `npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore` and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; and a scratch export at schemaVersion 4 fails the build until the package's range includes it.
+- Done when: `npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore` and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; and a scratch export at schemaVersion 5 fails the build until the package's range includes it.
 - Size: M
 - Depends on: R-009, R-010, R-011, R-012, R-014, R-019, R-027, R-028, R-029, R-031
 - Status: ready
@@ -48,6 +72,10 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Status: ready
 - Brief: planning/briefs/2026-11-20-technology-and-engineering-principles.md
 
+## Later
+
+<!-- Grouped by milestone where one is set. Same item format. -->
+
 ### R-035 pm-engineering infer from an existing repository
 
 - Serves: V5
@@ -58,10 +86,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Depends on: R-034
 - Status: ready
 - Brief: planning/briefs/2026-11-20-technology-and-engineering-principles.md
-
-## Later
-
-<!-- Grouped by milestone where one is set. Same item format. -->
 
 ### R-036 Plan citation and done check
 
@@ -79,7 +103,7 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Serves: V5
 - Milestone: M4
 - Owner: agent
-- Done when: `planning.json` carries the engineering record at the next `schemaVersion`, `pm-export check` passes, and an Engineering view passes `just docs-check`.
+- Done when: `planning.json` carries the engineering record at `schemaVersion` 6, `pm-export check` passes, and an Engineering view passes `just docs-check`.
 - Size: S
 - Depends on: R-034, R-013
 - Status: ready
