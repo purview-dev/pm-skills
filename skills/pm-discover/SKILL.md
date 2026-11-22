@@ -67,6 +67,9 @@ into?` with the options `Analyse the product for opportunities
      rates, the most frequent complaints or requests, the oldest open
      issues, and anything used far more or far less than its roadmap
      weight suggests.
+   - **Decisions:** always, whatever the scope: the accepted ADR titles in
+     the decisions folder (Shared definitions: **Read before deciding**); a
+     missing folder means none.
    - **question mode:** only the sources needed to answer, then go to
      step 6.
 4. **Challenge the findings.** For each opportunity, state the strongest
@@ -80,6 +83,11 @@ into?` with the options `Analyse the product for opportunities
    handling, event history, Aspire, architecture rules, build
    conventions, integration tests), run `pm-purview` (check mode) for
    that finding and add its result to the opportunity.
+   When a finding or opportunity contradicts an accepted ADR, state it as a
+   challenge with evidence (`ADR-NNN <title> (accepted) says <X>; this
+   needs <Y>`) under the opportunity, and an opportunity parked in step 7
+   carries `Supersedes ADR-NNN <title> in design.` under `## Notes` in its
+   inbox file. This skill never runs `pm-adr`.
 5. **Challenge the roadmap.** Compare the findings with `## Next`,
    `STRATEGY.md`, and the active item. List items in Next that no evidence
    supports, opportunities the evidence ranks above them, and `V` lines
