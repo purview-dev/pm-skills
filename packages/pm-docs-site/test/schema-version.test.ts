@@ -10,24 +10,24 @@ describe('checkExport', () => {
 	});
 
 	it('checks the schemaVersion of an object', () => {
-		expect(() => checkExport({ schemaVersion: 4 }, 'p.json')).not.toThrow();
-		expect(() => checkExport({ schemaVersion: 5 }, 'p.json')).toThrow('has schemaVersion 5');
+		expect(() => checkExport({ schemaVersion: 5 }, 'p.json')).not.toThrow();
+		expect(() => checkExport({ schemaVersion: 6 }, 'p.json')).toThrow('has schemaVersion 6');
 	});
 });
 
 describe('checkSchemaVersion', () => {
-	it('supports schemaVersion 4 only', () => {
-		expect(SUPPORTED_SCHEMA_VERSIONS).toEqual([4]);
+	it('supports schemaVersion 5 only', () => {
+		expect(SUPPORTED_SCHEMA_VERSIONS).toEqual([5]);
 	});
 
-	it('accepts 4', () => {
-		expect(() => checkSchemaVersion(4, 'p.json')).not.toThrow();
+	it('accepts 5', () => {
+		expect(() => checkSchemaVersion(5, 'p.json')).not.toThrow();
 	});
 
-	it.each([2, 3, '4', undefined])('rejects %p', (version) => {
+	it.each([2, 3, 4, 6, '5', undefined])('rejects %p', (version) => {
 		expect(() => checkSchemaVersion(version, 'p.json')).toThrow(PlanningExportError);
 		expect(() => checkSchemaVersion(version, 'p.json')).toThrow(
-			`p.json has schemaVersion ${String(version)}; this site reads schemaVersion 4. Run the pm-export skill to write planning.json.`,
+			`p.json has schemaVersion ${String(version)}; this site reads schemaVersion 5. Run the pm-export skill to write planning.json.`,
 		);
 	});
 });

@@ -1,4 +1,4 @@
-// The part of planning.json (pm-export, schemaVersion 4) the site reads.
+// The part of planning.json (pm-export, schemaVersion 5) the site reads.
 // The full shape is planning.schema.json; only what the pages use is typed.
 
 export type Owner = 'agent' | 'user' | 'both';
@@ -154,8 +154,28 @@ export interface RemovedRisk {
 	reason: string | null;
 }
 
+export type AdrStatus = 'proposed' | 'accepted' | 'deprecated' | 'superseded';
+
+/** One ADR, whole: the four sections are the Markdown under each heading; `""` when empty, `null` when missing. */
+export interface Adr {
+	id: string;
+	path: string;
+	title: string;
+	status: AdrStatus | null;
+	supersededBy: string | null;
+	date: string | null;
+	category: string | null;
+	supersedes: string | null;
+	item: string | null;
+	source: string | null;
+	context: string | null;
+	decision: string | null;
+	alternatives: string | null;
+	consequences: string | null;
+}
+
 export interface Planning {
-	schemaVersion: 4;
+	schemaVersion: 5;
 	generatedAt: string;
 	source: { branch: string | null; head: string | null };
 	vision: {
@@ -196,6 +216,7 @@ export interface Planning {
 	inbox: InboxEntry[];
 	briefs: Brief[];
 	risks: { open: Risk[]; closed: Risk[]; removed: RemovedRisk[] };
+	adrs: Adr[];
 	counts: {
 		next: number;
 		later: number;

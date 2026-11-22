@@ -1,7 +1,7 @@
 // The pm-export schemaVersions this package reads, declared once. A new export
 // format is supported by adding its version here, with the page changes it needs.
 
-export const SUPPORTED_SCHEMA_VERSIONS: readonly number[] = Object.freeze([4]);
+export const SUPPORTED_SCHEMA_VERSIONS: readonly number[] = Object.freeze([5]);
 
 /** The plan export is missing, unreadable, or in a format this package does not read. */
 export class PlanningExportError extends Error {
