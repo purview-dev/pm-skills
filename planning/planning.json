@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-22T18:12:57+00:00",
+  "generatedAt": "2026-11-22T18:13:45+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-025-docs-site-package-feature-pages-list-revisions",
-    "head": "fc25b86cbc73f73208a5ecba2439b873c6f3f85e"
+    "head": "1d286ce1c2f0efe20700a129c993ee63dccd2004"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -227,19 +227,57 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-025-docs-site-package-feature-pages-list-revisions",
     "brief": null,
     "milestone": "M1",
     "spec": "docs/superpowers/specs/2026-11-22-feature-pages-list-revisions-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-22-feature-pages-list-revisions.md",
     "started": "2026-11-22",
     "doneWhen": [
       "a feature page for an item that another item's `Revisits` names lists that item under \"Revised by\", and a unit test in `packages/pm-docs-site` covers it."
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-22-feature-pages-list-revisions.md",
+    "checked": 0,
+    "total": 6,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "`revisers()` and the feature page",
+        "checked": 0,
+        "total": 6,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing test**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run the test and confirm it fails**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement `revisers(all: Feature[], id: string): Feature[]` in `src/lib/planning.ts`**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Use it in `FeatureSummary.astro`**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Run the package checks and confirm they pass**",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Commit**",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -635,7 +673,7 @@
           "title": "Docs-site package: feature pages list revisions",
           "owner": "agent",
           "size": "S",
-          "detail": "plan"
+          "detail": "execute, 0/6 plan steps"
         }
       ],
       "next": [
