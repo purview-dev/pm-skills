@@ -122,6 +122,7 @@ push/pop to suspend).
    | 26 | If Bun is installed: `bun <pm-lint skill>/scripts/lint.ts check --format json` reports no error (read-only) | `<n> PM format errors: <first file:line rule>` | `pm-lint fix`, then the skill that owns the file |
    | 27 | If `<PM root>/decisions/` exists: no ADR has `Status: proposed` with a `Date` at least the review cadence before today (imported ADRs included), except one whose `Item` is still open (in `NOW.md` or `ROADMAP.md`) | `<n> ADRs proposed since <oldest date>` | `pm-review` |
    | 28 | If `<PM root>/decisions/` exists: the `adr/*` rules (`adr/header`, `adr/sections`, `adr/id`, `adr/links`) report nothing, with `bun <pm-lint skill>/scripts/lint.ts check <PM root>/decisions --root . --no-export` when Bun is installed, else by reading each ADR | `<n> ADR findings: <first file:line rule>` | `pm-adr check` |
+   | 29 | If `<PM root>/planning.json` exists: `git check-attr merge -- <PM root>/planning.json` prints `pm-export`, `git config merge.pm-export.driver` is set, and the PM branch has not diverged from `<remote>/<PM branch>` (against the remote refs already fetched) | `planning.json merge driver not registered`, or `<PM branch> diverged from <remote>/<PM branch> (<a> ahead, <b> behind)` | `pm-setup`, or `bun <pm-next skill>/scripts/sync.ts pull` |
 
    Stop at the first failing check among 1 to 4; later checks depend on
    them.

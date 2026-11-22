@@ -264,6 +264,18 @@ Rules for this step:
    `V` lines in `VISION.md`), and set `Depends on: none` and `Revisits:`
    empty. Show the five values written. `pm-setup` does not commit this:
    the next PM commit carries `NOW.md`, like the `Rules version` line.
+6. **Merge driver (version 21).** If `<PM state directory>/planning.json`
+   exists, or `Export on commit` is `always`, register the merge driver
+   that keeps the derived export from conflicting in local merges (rules:
+   **PM sync**): run `bun <pm-next skill>/scripts/sync.ts driver --root .
+   --pm-root <PM state directory>`, which appends
+   `<PM state directory>/planning.json merge=pm-export` to `.gitattributes`
+   (creating it when missing) and sets `merge.pm-export.name` and
+   `merge.pm-export.driver` (`true`) in the repository's git config. Show
+   its line. Without Bun, print the `.gitattributes` line and the two
+   `git config` commands for the user to run. `pm-setup` does not commit
+   `.gitattributes`: it is outside the PM root, so the output Note gives
+   `git add .gitattributes` and a commit command for the user.
 
 ## Step 6: Verify
 
@@ -276,7 +288,8 @@ Rules for this step:
    `version=`. Check that `config.md`, if changed, differs only in its
    `Rules version` line and the `Commits` settings added in Step 5, item 4.
    Check that `NOW.md`, if changed, differs only in the five item fields
-   backfilled in Step 5, item 5.
+   backfilled in Step 5, item 5, and that `.gitattributes`, if changed,
+   differs only by the merge driver line from Step 5, item 6.
 3. If the repository has a markdownlint config, run
    `npx markdownlint-cli2 <files>` (or `bunx markdownlint-cli2 <files>`) on
    the changed files and report the result.

@@ -57,7 +57,9 @@ brief answers) are applied in step 8, on the **Item branch**, so nothing is
 written to the branch the session is leaving.
 
 1. **Pull latest.** Fetch and find the **PM base** (Shared definitions).
-   Read `ROADMAP.md`, `LOG.md`, and `STRATEGY.md` from it
+   When the PM branch has diverged from its remote, run **PM sync**
+   (`bun <this skill>/scripts/sync.ts pull`) first and show its line; when
+   it stops, stop with its message and nothing written. Read `ROADMAP.md`, `LOG.md`, and `STRATEGY.md` from it
    (`git show <PM base>:<PM root>/<file>`), not from the current checkout,
    which may be a **Pending pull request**. Skip every item **Claimed on a
    branch** and name it in a Note: `<ID> <title> is on <branch>.`
@@ -102,7 +104,15 @@ written to the branch the session is leaving.
      latest** on it.
    - When the **Item branch** exists, locally or on the remote, run
      `git switch <Item branch>`, then **Pull latest**.
-   - Otherwise run `git switch -c <Item branch> <PM base>`.
+   - Otherwise run `git switch -c <Item branch> <PM base>`. When the PM
+     base was the local PM branch ahead of its remote, then run **PM sync**
+     (`bun <this skill>/scripts/sync.ts release`) from the item branch: the
+     item branch carries those commits now, so the PM branch moves back to
+     `<remote>/<PM branch>` and the pull after this item merges is a
+     fast-forward under any merge method. Add its line as a Note (`Moved
+     <n> PM commits from <PM branch> to the item branch.`). Without Bun,
+     add the Note `PM sync skipped: Bun is not installed; <PM branch> keeps
+     <n> commits this branch carries.`
 
    A path outside the PM root with uncommitted changes blocks the move:
    ask the Feature branches rule 4 question, and on `Stop so I can commit
