@@ -11,25 +11,22 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: active
-- Item: R-025 Docs-site package: feature pages list revisions
-- Session: feat/r-025-docs-site-package-feature-pages-list-revisions
-- Stage: execute
+- Status: idle
+- Item:
+- Session:
+- Stage:
 - Brief:
-- Milestone: M1
-- Serves: V4
-- Owner: agent
-- Size: S
-- Depends on: none
+- Milestone:
+- Serves:
+- Owner:
+- Size:
+- Depends on:
 - Revisits:
-- Note: From R-012 design (2026-11-19): `dependents()` in `packages/pm-docs-site/src/lib/planning.ts` looks only at `dependsOn`, so a feature page lists its dependants but not the items whose `Revisits` names it; the R-012 graph already draws Revisits edges.
-- Spec: docs/superpowers/specs/2026-11-22-feature-pages-list-revisions-design.md
-- Plan: docs/superpowers/plans/2026-11-22-feature-pages-list-revisions.md
-- Started: 2026-11-22
+- Spec:
+- Plan:
+- Started:
 
 ## Done when
-
-- a feature page for an item that another item's `Revisits` names lists that item under "Revised by", and a unit test in `packages/pm-docs-site` covers it.
 
 ## Checkpoint
 

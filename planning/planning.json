@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-22T18:13:45+00:00",
+  "generatedAt": "2026-11-22T18:21:15+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-025-docs-site-package-feature-pages-list-revisions",
-    "head": "1d286ce1c2f0efe20700a129c993ee63dccd2004"
+    "head": "c37812bbf8e8681237b6af2f28930f289792d11f"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -215,69 +215,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-025",
-      "title": "Docs-site package: feature pages list revisions",
-      "serves": [
-        "V4"
-      ],
-      "owner": "agent",
-      "size": "S",
-      "dependsOn": [],
-      "revisits": null
-    },
-    "stage": "execute",
-    "session": "feat/r-025-docs-site-package-feature-pages-list-revisions",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
     "brief": null,
-    "milestone": "M1",
-    "spec": "docs/superpowers/specs/2026-11-22-feature-pages-list-revisions-design.md",
-    "plan": "docs/superpowers/plans/2026-11-22-feature-pages-list-revisions.md",
-    "started": "2026-11-22",
-    "doneWhen": [
-      "a feature page for an item that another item's `Revisits` names lists that item under \"Revised by\", and a unit test in `packages/pm-docs-site` covers it."
-    ],
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-22-feature-pages-list-revisions.md",
-    "checked": 0,
-    "total": 6,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "`revisers()` and the feature page",
-        "checked": 0,
-        "total": 6,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing test**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run the test and confirm it fails**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement `revisers(all: Feature[], id: string): Feature[]` in `src/lib/planning.ts`**",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Use it in `FeatureSummary.astro`**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Run the package checks and confirm they pass**",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Commit**",
-            "checked": false
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [
       {
@@ -667,15 +617,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-025",
-          "title": "Docs-site package: feature pages list revisions",
-          "owner": "agent",
-          "size": "S",
-          "detail": "execute, 0/6 plan steps"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-013",
@@ -709,6 +651,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-22",
+          "id": "R-025",
+          "title": "Docs-site package: feature pages list revisions",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-22-feature-pages-list-revisions.md",
+          "result": "branch feat/r-025-docs-site-package-feature-pages-list-revisions"
+        },
         {
           "date": "2026-11-22",
           "id": "R-039",
@@ -919,6 +870,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-22",
+        "kind": "done",
+        "id": "R-025",
+        "title": "Docs-site package: feature pages list revisions",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-025-docs-site-package-feature-pages-list-revisions"
+      },
       {
         "date": "2026-11-22",
         "kind": "done",
@@ -1204,6 +1164,15 @@
     "done": [
       {
         "date": "2026-11-22",
+        "id": "R-025",
+        "title": "Docs-site package: feature pages list revisions",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-22-feature-pages-list-revisions.md",
+        "result": "branch feat/r-025-docs-site-package-feature-pages-list-revisions"
+      },
+      {
+        "date": "2026-11-22",
         "id": "R-039",
         "title": "ADRs across the PM skills",
         "milestone": "M4",
@@ -1487,6 +1456,23 @@
       "brief": null,
       "reviewed": "never",
       "idea": "A feature page lists \"Revised by\" only while the revising item is open. `LOG.md` Done lines and the export's `log.done` entries carry no `Revisits`, so `features()` in `packages/pm-docs-site/src/lib/planning.ts` (line 284) gives done items `revisits: null`, and the link disappears once the revision closes. A fix adds `Revisits` to the Done line, the exporter, the schema (schemaVersion 6, which pairs with R-037 Engineering export and docs-site view), the pm-lint rule, and the site."
+    },
+    {
+      "file": "planning/inbox/2026-11-22-1821-r-025-review-minors.md",
+      "title": "R-025 final review minors",
+      "captured": "2026-11-22 18:21",
+      "source": "agent (R-025 execute)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site",
+      "context": "R-025 execute",
+      "discuss": "no",
+      "related": [
+        "R-042"
+      ],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Deferred minors from the R-025 final review. (1) `revisers()` order is not pinned by a test: every assertion in `test/planning.test.ts` (the revisers case) returns one item; give a second item `revisits: 'R-003'` in the populated case and assert both IDs in `features()` order. (2) `src/lib/references.ts` line 188 still checks `other.dependsOn.includes(feature.id) || other.revisits === feature.id` inline; it could reuse `dependents()` and `revisers()`."
     }
   ],
   "briefs": [
@@ -1644,10 +1630,10 @@
     "next": 4,
     "later": 11,
     "nextMax": 5,
-    "openInbox": 1,
+    "openInbox": 2,
     "discuss": 0,
     "shapingBriefs": 0,
-    "done": 23,
+    "done": 24,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1664,6 +1650,6 @@
       "R-041",
       "R-040"
     ],
-    "drift": false
+    "drift": true
   }
 }
