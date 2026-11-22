@@ -25,12 +25,21 @@ root).
   session (inside or outside the lifecycle) at the directory.
 - `pm-init` and `pm-setup` set the value; `pm-help` diagnoses it; `pm-lint`
   checks it.
+- `pm-export` reads the ADR directory (read-only) into an `adrs` list in
+  `planning.json` (`schemaVersion` 5), so agents can query ADRs and the docs
+  site can show them.
+- The docs-site package gains a **Decisions** view: every ADR listed, grouped
+  by category or status, filtered by category and status, searched by text,
+  and one page per ADR. A must (user, 2026-11-22).
 
 ## Non-goals
 
 - No PM skill writes, numbers, or edits an ADR or creates the ADR folder.
-- No export change: `planning.json` and `schemaVersion` stay as they are
-  (R-037 Engineering export and docs-site view covers export).
+- No new view in `skills/pm-docs-site/templates/` (STRATEGY.md Not doing):
+  the templates only move to `schemaVersion` 5 and accept `adrs`. This
+  repository's own `docs-site/` shows the view once R-013 Docs-site package:
+  publish and migrate moves it onto the package.
+- No `pm-lint` checks on ADR files: they are not PM files.
 - No plan-stage citation or done-stage check against ADRs (R-036 Plan citation
   and done check).
 - No `ENGINEERING.md` link (R-034, R-035).
@@ -53,14 +62,30 @@ root).
   (2026-11-22).
 - Approach A: a new `config.md` section plus a Shared definition
   (2026-11-22).
+- Docs-site integration is a must: list, group, search, categories
+  (2026-11-22).
+- The site gets ADRs through the export, not by reading `docs/adr/`
+  (2026-11-22).
+- One item, size L, not sliced (2026-11-22). SCOPE CHANGE from the claimed
+  size M; `R-033`'s roadmap `Size` and `Done when` are updated with `pm-item`
+  after the workflow (Non-interruption rule 3 forbids it now).
 
 ## Approaches
+
+Where the setting lives:
 
 | Approach | Trade-off | Outcome |
 | --- | --- | --- |
 | A. `## Architecture decisions` section in `config.md` and an **ADR** Shared definition | One clear owner, linted like `Commits`; one more config section | Chosen |
 | B. A row in the Handoffs table | Reuses the framework-swap table, but ADRs are not a stage or a skill, so every reader of the table needs a special case | Rejected |
 | C. A line under `## Location` | Smallest, but Location describes PM state and ADRs are not PM state | Rejected |
+
+How the docs site gets ADRs:
+
+| Approach | Trade-off | Outcome |
+| --- | --- | --- |
+| A. Export: `pm-export` adds `adrs` to `planning.json` (`schemaVersion` 5) | Site keeps reading the export only; agents can `find` ADRs; schema bump touches schema, example, fixtures, `planning.ts`, package and template types | Chosen |
+| B. A site content loader reads `docs/adr/` directly | No schema bump; breaks the export-only rule for the site, and agents get nothing to query | Rejected |
 
 ## Design
 
@@ -96,9 +121,28 @@ add **ADR directory** and **ADR**:
   `## Decisions` and briefs; technical decisions in ADRs; one item's detail in
   its spec, which links the ADRs it writes or follows. Format: follow the
   directory's existing files (numbering, headings); in an empty or new
-  directory, `NNNN-<slug>.md` numbered from `0001`, with the headings
-  `Status` (`proposed | accepted | superseded by NNNN`), `Context`,
-  `Decision`, `Alternatives`, `Consequences`. A decision is changed by a new
+  directory, `NNNN-<slug>.md` numbered from `0001`, in this format:
+
+  ```markdown
+  # <Title>
+
+  - Status: proposed | accepted | superseded by NNNN | deprecated
+  - Date: <YYYY-MM-DD>
+  - Category: <architecture | data | security | tooling | testing | operations | another word>
+  - Supersedes: <NNNN | none>
+  - Item: <R-NNN | none>
+
+  ## Context
+
+  ## Decision
+
+  ## Alternatives
+
+  ## Consequences
+  ```
+
+  `Category` is free text; the list is the suggested set, and the docs site
+  groups by whatever values exist. A decision is changed by a new
   ADR that supersedes the old one, never by rewriting an accepted one.
 - **Every design handoff:** the ADR entry says that every invocation of the
   `design` handoff skill passes the ADR instruction (section 3), whichever
@@ -173,13 +217,76 @@ a line exists.
 - A fresh `pm-init` install and the `pm-export` fixture still lint clean
   (`lint.test.ts` already requires it).
 
-### 8. Version
+### 8. Export: `adrs` at `schemaVersion` 5
+
+- `skills/pm-export/references/planning.schema.json`: `schemaVersion` const
+  5; a required top-level `adrs` array (empty when the ADR directory is
+  `none`, missing, or empty) and an `adrDirectory` string or `null`. Each
+  ADR: `id` (the number as written, `"0001"`), `title`, `status`
+  (`proposed | accepted | superseded | deprecated | <other text>`),
+  `supersededBy` (id or `null`), `supersedes` (id or `null`), `date`
+  (`YYYY-MM-DD` or `null`), `category` (text, `"uncategorised"` when
+  missing), `item` (`R-NNN` or `null`), `path` (repository-relative), and
+  `body` (the Markdown after the header, verbatim).
+- `skills/pm-export/scripts/planning.ts`: read `ADR directory` from
+  `config.md`; read every `*.md` file in it except `README.md` and
+  `template.md`, sorted by id. Parse three header styles, first match wins,
+  so an existing folder's format works: the default `- Key: value` bullets
+  under the H1; YAML frontmatter (`status`, `date`, `category`, as MADR
+  writes); a `## Status` section whose first line is the status (Nygard).
+  The id is the file name's leading digits; the title is the H1 without a
+  leading id. A file with no H1 or no leading digits is skipped with a
+  warning, never a failure.
+- `export.ts`: `check` covers ADRs (staleness against the files), `find`
+  and `get` answer ADR ids and titles, `summary` counts ADRs by status.
+- The schema, `planning.example.json`, the SKILL.md field map, and
+  `planning.ts` change together (AGENTS.md); `export.test.ts` and the
+  fixture repo `scripts/__fixtures__/repo/` gain a `docs/adr/` with one ADR
+  per header style.
+- The **Export file** definition in the managed section names the ADR
+  directory as the one input read outside the PM root.
+
+### 9. Docs-site package: the Decisions view
+
+In `packages/pm-docs-site`:
+
+- `planning-types.ts` and `planning.ts`: `SCHEMA_VERSION` 5 and the `Adr`
+  type; the schema-version tests move to 5.
+- Add `decisions` to `VIEWS`, on by default; its sidebar entry is hidden
+  when `adrs` is empty.
+- `/plan/decisions/`: a React island (the site's rule: rich, interactive,
+  never static-first), with URL state like the board's
+  (`useBoardUrlState` pattern), containing:
+  - a text search over id, title, category, and body;
+  - category chips (multi-select) and status chips, with `superseded` and
+    `deprecated` hidden until their chip is on;
+  - group by `category` (default), `status`, or `none`;
+  - one row per ADR: id, title, status badge, category, date, and its item
+    as a `RefLink` to the feature page.
+- `/plan/decisions/<id>/`: one page per ADR with header badges, the body
+  rendered as Markdown, links for `supersedes` and `supersededBy`, and the
+  item link. These pages are in the Pagefind index, so the site's search
+  finds ADRs.
+- A feature page whose item an ADR names lists that ADR under "Decisions".
+- The demo (`examples/demo/`) gains a `docs/adr/` with at least five ADRs
+  over three categories, including one superseded, and its config sets
+  `ADR directory: docs/adr/`; `just demo-check` covers the view.
+- The package's own version moves forward (minor while pre-1.0), and the
+  `pm-docs-site` SKILL.md and `references/spec.md` list the view.
+
+In `skills/pm-docs-site/templates/site/`: `SCHEMA_VERSION` 5 and the
+`adrs` type only, no view (Not doing). Re-render `docs-site/` with
+`bun skills/pm-docs-site/scripts/site.ts write docs-site` and refresh its
+fixture.
+
+### 10. Version
 
 `main` is `21.0.0-pre.2` and `v21.0.0` is not tagged, so this skills change
 stays on rules 21 (AGENTS.md: unreleased prerelease line):
 `just bump prerelease` to `21.0.0-pre.3`. Extend the `Version 21` upgrade note
-in the managed section with one or two sentences: ADR directory added,
-`pm-setup` detects it, no question. Then reinstall the managed section into
+in the managed section: ADR directory added and detected by `pm-setup` with
+no question; the export moves to `schemaVersion` 5 with `adrs`, so run
+`pm-export`, and `pm-docs-site upgrade` for an installed site. Then reinstall the managed section into
 this repository's `AGENTS.md` (copy between markers, minus `version=`) and add
 the setting to this repository's `planning/config.md` as `pm-setup` would
 (`none`: no ADR folder exists here). `just validate` keeps them equal.
@@ -194,7 +301,24 @@ the setting to this repository's `planning/config.md` as `pm-setup` would
 - The managed section defines **ADR directory** and **ADR** with the product,
   technical, and spec split.
 - `pm-help` reports a missing `ADR directory` with `pm-setup` as the fix.
-- `just validate`, `just test`, and `just lint-check` pass.
+- `bun skills/pm-export/scripts/export.ts write` on the demo writes
+  `schemaVersion` 5 with every demo ADR in `adrs`, `export.ts validate`
+  passes, and `export.ts find 0001` returns the first ADR.
+- On the demo site, `/plan/decisions/` lists every ADR grouped by category,
+  a category chip and the text search each narrow the list, superseded ADRs
+  appear only with their chip on, `/plan/decisions/0001/` renders the body,
+  and the site search finds an ADR by a word from its body; covered by
+  package tests and `just demo-check`.
+- `just validate`, `just test`, `just lint-check`, `just docs-check`, and
+  `just package-test` pass.
+
+## Follow-ups after the workflow
+
+- `pm-item` edit R-033: `Size: L` and this Done when.
+- `pm-item` edit R-013 Docs-site package: publish and migrate: its Done when
+  names a scratch export at `schemaVersion` 4; it becomes 5.
+- `pm-item` edit R-037 Engineering export and docs-site view: "the next
+  `schemaVersion`" is 6.
 
 ## Left to the builder
 
@@ -202,6 +326,10 @@ the setting to this repository's `planning/config.md` as `pm-setup` would
 - Whether `pm-init` moves the "substantial code" finding into step 2 or sets
   the ADR value after step 3.
 - Test fixture shape for the `config/adr` rule.
+- The Decisions island's layout and styling, within the site's existing
+  board and feature-table look; the five demo ADRs' content.
+- How the body is rendered on the ADR page (the package's existing Markdown
+  rendering for briefs or inbox ideas, if one exists).
 - The scratch-repository rehearsal: a manual walk of `pm-init` step 2 on a
   temp repo, recorded in the plan's verification task; no report file is
   required for R-033.
