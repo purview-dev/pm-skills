@@ -44,7 +44,7 @@ const rulesOf = async (root: string) => (await lint({ root, pmRoot: "planning/",
 function initRoot(): string {
   const root = temp();
   const templates = join(SKILLS, "pm-init", "templates");
-  for (const dir of ["inbox", "briefs", "research"]) mkdirSync(join(root, "planning", dir), { recursive: true });
+  for (const dir of ["inbox", "briefs", "research", "decisions"]) mkdirSync(join(root, "planning", dir), { recursive: true });
   for (const file of readdirSync(templates)) {
     const text = readFileSync(join(templates, file), "utf8").replaceAll("{{PM_ROOT}}", "planning/");
     const target = file.endsWith("-README.md") ? join("planning", file.replace("-README.md", ""), "README.md") : join("planning", file);

@@ -240,6 +240,12 @@ Rules for this step:
 
    These questions do not count against the one question in Step 4. Do not
    edit anything else in the file.
+
+   Also check, read-only: when `<PM state directory>/decisions/` does not
+   exist and one of `docs/adr/`, `docs/decisions/`, `doc/adr/`, or
+   `docs/architecture/decisions/` does, add the output Note
+   `Existing ADRs in <folder>. Run pm-adr import <folder> to bring them
+   in.` No question, no write.
 5. **Active item fields (version 20).** If `<PM state directory>/NOW.md`
    is `Status: active` and lacks `Owner`, first check its `Session`
    against the current session (`git branch --show-current`). When it
@@ -288,6 +294,7 @@ Rules for this step:
 - Commits: <PM state commit <value>, Export on commit <value> | PM state not initialised>
 - PM state: <not initialized | current | missing version 4 files: names>
 - Upgrade gate: <cleared, rules at v<n> | unchanged>
+- Note: <Existing ADRs in <folder>. Run pm-adr import <folder> to bring them in. | none>
 
 ## Do this next
 
