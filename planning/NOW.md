@@ -11,22 +11,25 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: idle
-- Item:
-- Session:
-- Stage:
-- Brief:
-- Milestone:
-- Serves:
-- Owner:
-- Size:
-- Depends on:
+- Status: active
+- Item: R-039 ADRs across the PM skills
+- Session: feat/r-039-adrs-across-the-pm-skills
+- Stage: design
+- Brief: planning/briefs/2026-11-22-where-do-adrs-fit.md
+- Milestone: M4
+- Serves: V5
+- Owner: agent
+- Size: M
+- Depends on: R-033
 - Revisits:
+- Note: Slice 3 of the ADR work (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). The design re-entries were added by the R-033 final review. 2026-11-22: Started as is outside the Current focus (M1 Reproducible docs site) at the user's choice; it was first in Next.
 - Spec:
 - Plan:
-- Started:
+- Started: 2026-11-22
 
 ## Done when
+
+- `pm-shape` and `pm-discover` read ADRs and challenge contradictions; `pm-revise` supersedes an ADR a correction reverses; `pm-checkpoint` (`done`) checks the spec's ADR IDs exist; `pm-review` lists ADRs `proposed` longer than the review cadence; `pm-purview` records an accepted recommendation as an ADR; `pm-status` counts ADRs by status; `pm-help` diagnoses unaccepted and broken ADRs; every re-entry into design (`pm-next` resume, `pm-resume`, `pm-checkpoint` `pop`, `pm-revise` `rewind`, `pm-rejoin`) passes the ADR instruction; `just validate` and `just test` pass.
 
 ## Checkpoint
 

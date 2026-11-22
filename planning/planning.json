@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-22T15:54:51+00:00",
+  "generatedAt": "2026-11-22T16:06:09+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-038-adr-export-and-decisions-view",
-    "head": "c5b33d3cc9a4b55c51564f0ea646ea0337de631d"
+    "branch": "feat/r-039-adrs-across-the-pm-skills",
+    "head": "34f15f453c61108d0c9f1d5f771836027184216d"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -215,52 +215,40 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
-    "brief": null,
-    "milestone": null,
+    "status": "active",
+    "item": {
+      "id": "R-039",
+      "title": "ADRs across the PM skills",
+      "serves": [
+        "V5"
+      ],
+      "owner": "agent",
+      "size": "M",
+      "dependsOn": [
+        "R-033"
+      ],
+      "revisits": null
+    },
+    "stage": "design",
+    "session": "feat/r-039-adrs-across-the-pm-skills",
+    "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
+    "milestone": "M4",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-22",
+    "doneWhen": [
+      "`pm-shape` and `pm-discover` read ADRs and challenge contradictions; `pm-revise` supersedes an ADR a correction reverses; `pm-checkpoint` (`done`) checks the spec's ADR IDs exist; `pm-review` lists ADRs `proposed` longer than the review cadence; `pm-purview` records an accepted recommendation as an ADR; `pm-status` counts ADRs by status; `pm-help` diagnoses unaccepted and broken ADRs; every re-entry into design (`pm-next` resume, `pm-resume`, `pm-checkpoint` `pop`, `pm-revise` `rewind`, `pm-rejoin`) passes the ADR instruction; `just validate` and `just test` pass."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-039",
-        "title": "ADRs across the PM skills",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V5"
-        ],
-        "milestone": "M4",
-        "owner": "agent",
-        "doneWhen": "`pm-shape` and `pm-discover` read ADRs and challenge contradictions; `pm-revise` supersedes an ADR a correction reverses; `pm-checkpoint` (`done`) checks the spec's ADR IDs exist; `pm-review` lists ADRs `proposed` longer than the review cadence; `pm-purview` records an accepted recommendation as an ADR; `pm-status` counts ADRs by status; `pm-help` diagnoses unaccepted and broken ADRs; every re-entry into design (`pm-next` resume, `pm-resume`, `pm-checkpoint` `pop`, `pm-revise` `rewind`, `pm-rejoin`) passes the ADR instruction; `just validate` and `just test` pass.",
-        "size": "M",
-        "dependsOn": [
-          "R-033"
-        ],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
-        "note": "Slice 3 of the ADR work (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). The design re-entries were added by the R-033 final review.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-025",
         "title": "Docs-site package: feature pages list revisions",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4"
@@ -284,7 +272,7 @@
         "id": "R-013",
         "title": "Docs-site package: publish and migrate",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -319,7 +307,7 @@
         "id": "R-034",
         "title": "Engineering file and pm-engineering skill",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V5"
@@ -570,15 +558,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-039",
           "title": "ADRs across the PM skills",
           "owner": "agent",
           "size": "M",
-          "detail": "ready"
-        },
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-025",
           "title": "Docs-site package: feature pages list revisions",
@@ -1573,9 +1562,9 @@
     },
     {
       "path": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
-      "id": null,
+      "id": "R-039",
       "title": "Where do ADRs fit in",
-      "status": "done",
+      "status": "on roadmap (R-039), active",
       "origin": "planning/inbox/2026-11-22-0952-where-do-adrs-fit.md",
       "updated": "2026-11-22",
       "decision": "2026-11-22 Keep it parked. Reason: SCOPE CHANGE to v1; no `V` line or milestone covers it and M1 Reproducible docs site is the current focus. Answer to the question: ADRs record technical decisions only, live in a configurable `docs/adr/`, are written by the design stage, and are read by every session through the managed rules. Next: `pm-strategy` adds a `V` line and a milestone after M1 covering this and the engineering-principles brief.",
@@ -1646,7 +1635,7 @@
     }
   ],
   "counts": {
-    "next": 4,
+    "next": 3,
     "later": 9,
     "nextMax": 5,
     "openInbox": 14,
@@ -1664,7 +1653,6 @@
     "reviewDue": true,
     "lastReview": "2026-11-20",
     "claimable": [
-      "R-039",
       "R-025",
       "R-013",
       "R-034"

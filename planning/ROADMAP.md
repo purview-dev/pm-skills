@@ -14,18 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-039 ADRs across the PM skills
-
-- Serves: V5
-- Milestone: M4
-- Owner: agent
-- Done when: `pm-shape` and `pm-discover` read ADRs and challenge contradictions; `pm-revise` supersedes an ADR a correction reverses; `pm-checkpoint` (`done`) checks the spec's ADR IDs exist; `pm-review` lists ADRs `proposed` longer than the review cadence; `pm-purview` records an accepted recommendation as an ADR; `pm-status` counts ADRs by status; `pm-help` diagnoses unaccepted and broken ADRs; every re-entry into design (`pm-next` resume, `pm-resume`, `pm-checkpoint` `pop`, `pm-revise` `rewind`, `pm-rejoin`) passes the ADR instruction; `just validate` and `just test` pass.
-- Size: M
-- Depends on: R-033
-- Status: ready
-- Brief: planning/briefs/2026-11-22-where-do-adrs-fit.md
-- Note: Slice 3 of the ADR work (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). The design re-entries were added by the R-033 final review.
-
 ### R-025 Docs-site package: feature pages list revisions
 
 - Serves: V4
