@@ -99,6 +99,7 @@ Newest first. Nothing in this file changes without a line here.
 - <YYYY-MM-DD> <decision>. Why: <reason>. Rejected: <alternatives>.
 -->
 
+- 2026-11-22 R-033 ADR directory setting and design handoff moved to the top of Next, ahead of the M1 items. Why: the user asked for the ADRs next. Rejected: keeping it behind R-025 and R-013.
 - 2026-11-22 Re-planned roadmap. Why: V5 and M4 added; R-033 to R-035 join Next after the two M1 items, R-036 and R-037 lead Later under M4. Rejected: M4 items ahead of R-013 Docs-site package: publish and migrate.
 - 2026-11-22 Milestone M4 Recorded technical decisions added, ordered after M1 and before M2, serving V5. Why: the user asked for it next; it covers the briefs `planning/briefs/2026-11-22-where-do-adrs-fit.md` and `planning/briefs/2026-11-20-technology-and-engineering-principles.md`. Rejected: ordering it after M3.
 - 2026-11-22 Vision V5 added: technical decisions are recorded and followed (`pm-init` records technology and principles, the design handoff names the ADRs and principles that apply, `pm-checkpoint` `done` refuses a failing command check). Why: agents contradict earlier technical decisions because nothing records or points at them (both briefs). Rejected: an ADR-only V5; keeping v1 as is. Cost: about 5 items and several rules bumps before M2 and M3.

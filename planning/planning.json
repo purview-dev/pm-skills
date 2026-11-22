@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-22T11:39:21+00:00",
+  "generatedAt": "2026-11-22T11:40:06+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "main",
-    "head": "26d7259a70112342780ca9ecfd0aaad8ade961b2"
+    "head": "126abd6f20a97ed712691631e5c6c9b2022210f2"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -148,6 +148,12 @@
     "decisions": [
       {
         "date": "2026-11-22",
+        "decision": "R-033 ADR directory setting and design handoff moved to the top of Next, ahead of the M1 items.",
+        "why": "the user asked for the ADRs next.",
+        "rejected": "keeping it behind R-025 and R-013."
+      },
+      {
+        "date": "2026-11-22",
         "decision": "Re-planned roadmap.",
         "why": "V5 and M4 added; R-033 to R-035 join Next after the two M1 items, R-036 and R-037 lead Later under M4.",
         "rejected": "M4 items ahead of R-013 Docs-site package: publish and migrate."
@@ -225,10 +231,34 @@
   "roadmap": {
     "next": [
       {
+        "id": "R-033",
+        "title": "ADR directory setting and design handoff",
+        "section": "next",
+        "position": 1,
+        "label": "next",
+        "serves": [
+          "V5"
+        ],
+        "milestone": "M4",
+        "owner": "agent",
+        "doneWhen": "`pm-init` in a scratch repository with `docs/adr/` writes `ADR directory: docs/adr/` to `planning/config.md` and `pm-lint check` passes; `pm-next` step 10's handoff names the ADR directory and tells the design skill to read it and write one ADR per architecture decision; the managed section names the directory and the product, technical, and spec split; `pm-help` reports `ADR directory: none` with `pm-setup` as the fix; `just validate` passes.",
+        "size": "M",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
+        "note": null,
+        "revisits": null,
+        "claimable": true
+      },
+      {
         "id": "R-025",
         "title": "Docs-site package: feature pages list revisions",
         "section": "next",
-        "position": 1,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -252,7 +282,7 @@
         "id": "R-013",
         "title": "Docs-site package: publish and migrate",
         "section": "next",
-        "position": 2,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -280,30 +310,6 @@
         },
         "brief": "planning/briefs/2026-11-17-docs-site-package.md",
         "note": "Rewrites `pm-docs-site` and Non-interruption rule 9, so it bumps the rules major.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
-        "id": "R-033",
-        "title": "ADR directory setting and design handoff",
-        "section": "next",
-        "position": 3,
-        "label": "next",
-        "serves": [
-          "V5"
-        ],
-        "milestone": "M4",
-        "owner": "agent",
-        "doneWhen": "`pm-init` in a scratch repository with `docs/adr/` writes `ADR directory: docs/adr/` to `planning/config.md` and `pm-lint check` passes; `pm-next` step 10's handoff names the ADR directory and tells the design skill to read it and write one ADR per architecture decision; the managed section names the directory and the product, technical, and spec split; `pm-help` reports `ADR directory: none` with `pm-setup` as the fix; `just validate` passes.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
-        "note": null,
         "revisits": null,
         "claimable": true
       },
@@ -565,6 +571,13 @@
       "now": [],
       "next": [
         {
+          "id": "R-033",
+          "title": "ADR directory setting and design handoff",
+          "owner": "agent",
+          "size": "M",
+          "detail": "ready"
+        },
+        {
           "id": "R-025",
           "title": "Docs-site package: feature pages list revisions",
           "owner": "agent",
@@ -575,13 +588,6 @@
           "id": "R-013",
           "title": "Docs-site package: publish and migrate",
           "owner": "both",
-          "size": "M",
-          "detail": "ready"
-        },
-        {
-          "id": "R-033",
-          "title": "ADR directory setting and design handoff",
-          "owner": "agent",
           "size": "M",
           "detail": "ready"
         },
@@ -1478,9 +1484,9 @@
     "reviewDue": false,
     "lastReview": "2026-11-20",
     "claimable": [
+      "R-033",
       "R-025",
       "R-013",
-      "R-033",
       "R-034"
     ],
     "drift": false
