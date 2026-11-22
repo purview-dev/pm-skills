@@ -64,6 +64,8 @@ only in the conversation, and never resume the interrupted step silently.
    - When the item is active: `git status --porcelain` and
      `git log --oneline -5`.
    - Items whose `Depends on` names this ID.
+   - The ADRs the spec names (`ADR-NNN` IDs in the spec file) and those
+     whose `Item` is this ID, with their status, from the decisions folder.
 
    Show the `## Revision` output block with `Mode:` empty. Write nothing yet.
 3. **Ask the revision questions**, one at a time, writing each answer before
@@ -78,6 +80,12 @@ only in the conversation, and never resume the interrupted step silently.
    4. What else depends on it: other items, briefs, or a `STRATEGY.md`
       decision?
    5. Contain or patch forward: is anything in use that needs a stop-gap?
+   6. Only when the answers reverse an ADR from step 2 and do not state
+      the replacement decision: `ADR-NNN <title> (<status>) is reversed.
+      What is the replacement decision?` with 2 drafted decisions, and
+      `Decide it in design` only when the mode will be `rewind` to
+      `design`. `fix-in-place` and `rewind` to `plan` or `execute` never
+      reach design again, so they always record a replacement decision.
 
    Write each answer as a `## Revisions` entry in the brief, in this form:
 
@@ -113,6 +121,14 @@ only in the conversation, and never resume the interrupted step silently.
      `Milestone`, `Serves`, `Owner`, `Size`, `Depends on`, `Revisits`,
      `Note`, `Spec`, `Plan`, and `Started`.
    - `fix-in-place`: keep `Stage`.
+   - **Reversed ADR:** when the scope answer reverses the decision of an
+     ADR from step 2 (accepted or proposed) and states the new decision,
+     apply `pm-adr supersede <ADR-NNN>` with that decision and `Item` the
+     active item: its write steps only, no `pm-adr` output, question, or
+     commit (this skill's commit covers it). Name both ADRs in the
+     `## Revisions` line. When the user chose `Decide it in design`
+     (a `rewind` to design only, question 6), name the reversed ADR in the
+     `## Revisions` line and supersede nothing; the design stage does it.
    - Replace `## Checkpoint` with a pause block whose `Stopped at`
      names the last step that still holds, whose `Next action` is the first
      step of the corrected work, whose `Start with` is that stage's skill,
@@ -127,7 +143,9 @@ only in the conversation, and never resume the interrupted step silently.
    an observable `Done when` in the user's terms, `Size`, `Depends on: none`
    unless the user names one, `Status: ready`, `Revisits: <old ID>`, the
    original's `Brief` when it has one, and a `Note:` holding the `## Revisions`
-   entries plus `Revision of <old ID> (<done date or last state>).` Place it
+   entries plus `Revision of <old ID> (<done date or last state>).`, and
+   `Supersedes ADR-NNN <title> in design.` for each ADR from step 2 the
+   revision reverses (supersede nothing here). Place it
    at the top of `## Next` under the **Full Next** rule and name the item
    that moved to Later. Commit it (step 9) before asking `Start <new ID>
    now?` with `Start it now (recommended)` (run `pm-next <new ID>`) and
@@ -136,12 +154,18 @@ only in the conversation, and never resume the interrupted step silently.
    Roadmap order and edits rules, set `Status: ready`, append the revision
    to its `Note:`, and name the item that moved to Later.
 8. **`park`.** Run `pm-park` with `Discuss: yes`, `Kind: improvement` (or
-   `bug` when the user is reporting a defect), and `Related: <ID>`.
+   `bug` when the user is reporting a defect), and `Related: <ID>`. For
+   each ADR from step 2 the revision reverses, add
+   `Supersedes ADR-NNN <title> in design.` under the inbox file's
+   `## Notes`.
 9. **Commit** once, after the last PM file is written, unless step 5
    already committed: `docs(pm): revise <ID> <short reason>`.
 10. **Hand back.** Invoke the stage skill from the Handoffs table in
     `config.md` and pass the revision. Never name a development skill that
-    is not in that table.
+    is not in that table. When the stage is `design` (a `rewind` to
+    design), also pass the ADR instruction (Shared definitions:
+    **Every design handoff**), naming any ADR the revision reverses and any
+    ADR that superseded it in step 5.
 
 ## Output
 
@@ -152,6 +176,7 @@ only in the conversation, and never resume the interrupted step silently.
 - Wrong: <one line, in the user's words>
 - Mode: <rewind to <stage> | fix-in-place at <stage> | new item R-NNN | queued at the top of Next | parked>
 - Recorded: <brief path ## Revisions | item Note | inbox file>
+- ADR: <ADR-NNN <title> superseded by ADR-NNN <title> (<status>)>
 - PM state: <commit result>
 
 ## Do this next
@@ -164,3 +189,5 @@ only in the conversation, and never resume the interrupted step silently.
 
 - <superseded files, the interrupted step, what moved to Later, assumptions>
 ```
+
+Omit `ADR` when no ADR was superseded.

@@ -249,6 +249,9 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
 
   `Category` is free text; the list is the suggested set. An accepted ADR
   is never rewritten: a change is a new ADR that supersedes it.
+  `pm-checkpoint` (`done`) accepts the proposed ADRs that the item's spec
+  names and whose `Item` is that item, so `proposed` means a decision not
+  yet built.
 - **Decision split:** product decisions (whether and what) go in
   `STRATEGY.md` `## Decisions` and briefs; technical decisions in ADRs; one
   item's detail in its spec, which names the ADR IDs it writes or follows.
@@ -1009,6 +1012,13 @@ Version 21 also moves the export to `schemaVersion` 5, which adds `adrs`:
 every ADR in the decisions folder, whole. Run `pm-export`, and
 `pm-docs-site upgrade` for an installed site; `@purview-dev/pm-docs-site`
 reads `schemaVersion` 5 from `0.1.0-pre.3`, with a Decisions view.
+
+Version 21 also puts ADRs across the PM skills. `pm-shape` and
+`pm-discover` read the accepted ADRs and challenge an idea that
+contradicts one; `pm-revise`, `pm-review`, `pm-purview`, and
+`pm-checkpoint` (`done`) change ADRs through `pm-adr`; `pm-status` counts
+them and `pm-help` reports stale proposed and broken ones; and every
+re-entry into design passes the ADR instruction. No setting is added.
 
 ## Asking the user (mandatory)
 

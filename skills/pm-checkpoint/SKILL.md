@@ -104,7 +104,12 @@ and `Explain <ID>`.
 5. **done:** check every line under `## Done when` against evidence (test
    output, file existence, command output). If any is unproven, stay in
    `pause` and list them. If the plan file has any `- [ ]` box, stay in
-   `pause` and name the open steps. Otherwise:
+   `pause` and name the open steps.
+   **The spec's ADRs** (Shared definitions: ADR): read every `ADR-NNN` ID
+   in the file named by `Spec` in `NOW.md`. With no `Spec`, or no IDs in
+   it, skip this check and write no ADR line. When an ID has no
+   `ADR-NNN-*.md` file in the decisions folder of the item's branch, stay
+   in `pause` and list `ADR-NNN named in <spec> has no file.` Otherwise:
    - **Choose the commit worktree** (rules: **Completion rides the branch**).
      Fetch first: the record starts from the **PM base**. When the item's
      branch is the PM branch, run **Pull latest** and write it in place.
@@ -122,6 +127,15 @@ and `Explain <ID>`.
      The branch is the durable locator: the finish step opens the pull
      request from it, so no PR number is written here.
    - If the item has a brief, set its `Status: done`.
+   - **Accept the item's ADRs:** for each ADR with `Status: proposed` and
+     `Item: <this ID>` that the spec names, or whose `Supersedes` names an
+     ADR the spec names (a `pm-revise` replacement), apply `pm-adr accept`: its
+     write steps only, changing only the `Status` line, in the worktree
+     that holds the item's branch (no `pm-adr` output or commit). The
+     decisions folder is not read from the **PM base**: the item's ADRs are
+     committed on its branch. Leave every other ADR as it is, including a
+     proposed ADR of another item that the spec only cites. Add the Note
+     `Accepted ADR-NNN <title>.` for each.
    - If this item is the last open item of its milestone (no other item
      with that `Milestone` in `NOW.md`, `## Next`, or `## Later`), ask one
      choice question: `All <M> <Name> items are done.
@@ -228,7 +242,8 @@ and `Explain <ID>`.
    then invoke the skill for `Stage` from
    the Handoffs table in `config.md`, passing the checkpoint's
    `Next action`; when the stack still has entries, name the next one as a
-   Note.
+   Note. When the restored `Stage` is `design`, the handoff also passes the
+   ADR instruction (Shared definitions: **Every design handoff**).
 9. **Commit** the PM state (rules: Committing PM state) in every mode,
    after the last PM file is written. In `done`, the commit worktree is the
    worktree that holds the item's branch and the message is

@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-22T15:54:51+00:00",
+  "generatedAt": "2026-11-22T16:33:35+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-038-adr-export-and-decisions-view",
-    "head": "c5b33d3cc9a4b55c51564f0ea646ea0337de631d"
+    "branch": "feat/r-039-adrs-across-the-pm-skills",
+    "head": "ca4905efa5b7b943fb2b69e96ba542713064db6e"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -231,36 +231,10 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-039",
-        "title": "ADRs across the PM skills",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V5"
-        ],
-        "milestone": "M4",
-        "owner": "agent",
-        "doneWhen": "`pm-shape` and `pm-discover` read ADRs and challenge contradictions; `pm-revise` supersedes an ADR a correction reverses; `pm-checkpoint` (`done`) checks the spec's ADR IDs exist; `pm-review` lists ADRs `proposed` longer than the review cadence; `pm-purview` records an accepted recommendation as an ADR; `pm-status` counts ADRs by status; `pm-help` diagnoses unaccepted and broken ADRs; every re-entry into design (`pm-next` resume, `pm-resume`, `pm-checkpoint` `pop`, `pm-revise` `rewind`, `pm-rejoin`) passes the ADR instruction; `just validate` and `just test` pass.",
-        "size": "M",
-        "dependsOn": [
-          "R-033"
-        ],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-22-where-do-adrs-fit.md",
-        "note": "Slice 3 of the ADR work (spec docs/superpowers/specs/2026-11-22-adr-record-design.md, Follow-ups). The design re-entries were added by the R-033 final review.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-025",
         "title": "Docs-site package: feature pages list revisions",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4"
@@ -284,7 +258,7 @@
         "id": "R-013",
         "title": "Docs-site package: publish and migrate",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -319,7 +293,7 @@
         "id": "R-034",
         "title": "Engineering file and pm-engineering skill",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V5"
@@ -573,13 +547,6 @@
       "now": [],
       "next": [
         {
-          "id": "R-039",
-          "title": "ADRs across the PM skills",
-          "owner": "agent",
-          "size": "M",
-          "detail": "ready"
-        },
-        {
           "id": "R-025",
           "title": "Docs-site package: feature pages list revisions",
           "owner": "agent",
@@ -604,6 +571,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-22",
+          "id": "R-039",
+          "title": "ADRs across the PM skills",
+          "milestone": "M4",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-22-adrs-across-the-pm-skills.md",
+          "result": "branch feat/r-039-adrs-across-the-pm-skills"
+        },
         {
           "date": "2026-11-22",
           "id": "R-038",
@@ -805,6 +781,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-22",
+        "kind": "done",
+        "id": "R-039",
+        "title": "ADRs across the PM skills",
+        "milestone": "M4",
+        "owner": "agent",
+        "result": "branch feat/r-039-adrs-across-the-pm-skills"
+      },
       {
         "date": "2026-11-22",
         "kind": "done",
@@ -1070,6 +1055,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-22",
+        "id": "R-039",
+        "title": "ADRs across the PM skills",
+        "milestone": "M4",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-22-adrs-across-the-pm-skills.md",
+        "result": "branch feat/r-039-adrs-across-the-pm-skills"
+      },
       {
         "date": "2026-11-22",
         "id": "R-038",
@@ -1532,6 +1526,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "In the Decisions view, turning every status chip off writes `?status=`, which reloads as the default; ADRs with no status ignore the status chips; with one category there is no category chip, so a shared `?category=x` filters invisibly until Clear; and without JavaScript the superseded rows cannot be shown. Decide the intended behaviour and pin it with tests."
+    },
+    {
+      "file": "planning/inbox/2026-11-22-1632-r-039-review-minors.md",
+      "title": "R-039 final review minors",
+      "captured": "2026-11-22 16:32",
+      "source": "agent (R-039 execute)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "skills/pm-discover/SKILL.md, skills/pm-revise/SKILL.md, skills/pm-purview/SKILL.md, skills/pm-checkpoint/SKILL.md, skills/pm-shape/SKILL.md, skills/pm-review/SKILL.md",
+      "context": "R-039 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Minor findings from the R-039 final review, deferred:\n\n- `pm-discover` and `pm-revise` write `Supersedes ADR-NNN <title> in design.` under an inbox file's `## Notes` without the `<YYYY-MM-DD>` prefix the Inbox file format uses.\n- `pm-purview` in `check` mode, run inside `pm-shape` or `pm-discover`, is not explicitly stopped before step 6, whose ADR write contradicts \"This skill never runs `pm-adr`\" in those skills; exclude `check` mode from step 6.\n- `pm-checkpoint` (`done`) looks for the item's ADRs on its branch; a design stage run in a separate worktree writes them in the main worktree (`pm-adr` Guard), so `done` would stop with \"has no file\".\n- `pm-shape` and `pm-review` print `## For this question` for an ADR even when a `## For this discussion` legend already lists it; the Communication contract says to reuse it.\n- An ADR or inbox file written mid-workflow is uncommitted at `done`, whose guard stops on uncommitted PM state in the item's worktree (predates R-039; applies to `pm-park` too)."
     }
   ],
   "briefs": [
@@ -1643,16 +1652,32 @@
       "decision": "`planning.json` carries each ADR's Context, Decision, Alternatives, and\nConsequences as the Markdown under each heading (strings), and\n`@purview-dev/pm-docs-site` renders them to HTML at build time with the\nsite's configured Markdown processor, through a content loader's\n`renderMarkdown` (as `src/loaders/repo-docs.ts` does).",
       "alternatives": "| Approach | Trade-off | Outcome |\n| --- | --- | --- |\n| Each section as Markdown text, rendered by the site at build time | The schema checks only that a section is a string; the export grows | Chosen |\n| Structured blocks parsed in the export | Schema-checked, but needs a Markdown parser in the exporter and loses what it does not model | Rejected |\n| Header and path only, the site reads the file | Breaks the rule that the site reads the export only | Rejected |",
       "consequences": "- The schema checks only that a section is a string.\n- The export grows by the text of every ADR.\n- No new dependency: `@astrojs/markdown-remark` is not installed by Astro\n  7, so the loader's `renderMarkdown` is used instead.\n- IDs inside the rendered HTML are linked by a pass over the HTML, not by\n  `LinkedText`.\n- Spec: `docs/superpowers/specs/2026-11-22-adr-export-and-decisions-view-design.md`."
+    },
+    {
+      "id": "ADR-003",
+      "path": "planning/decisions/ADR-003-item-close-accepts-its-spec-s-adrs.md",
+      "title": "Item close accepts its spec's ADRs",
+      "status": "accepted",
+      "supersededBy": null,
+      "date": "2026-11-22",
+      "category": "architecture",
+      "supersedes": null,
+      "item": "R-039",
+      "source": null,
+      "context": "The design stage records each architecture decision with `pm-adr new` as `proposed`, and nothing moved it to `accepted`, so proposed ADRs piled up whether or not the work that carried them was built. Other skills (`pm-review`, `pm-purview`, `pm-revise`) also need to change ADRs, and the ADR record is written only by `pm-adr`.",
+      "decision": "`pm-checkpoint` (`done`) reads the ADR IDs the item's spec names, refuses to close when one has no file, and runs `pm-adr accept` on each named ADR that is still `proposed` and whose `Item` is the closing item (or that supersedes, through `pm-revise`, an ADR the spec names), changing only its `Status` line on the item's branch inside the Completion record commit. `proposed` therefore means a decision not yet built. Every skill that changes an ADR applies a `pm-adr` mode's write steps, without that mode's output or commit; the calling skill's PM commit covers the ADR files.",
+      "alternatives": "- Do nothing: ADRs stay `proposed` until the user runs `pm-adr accept`; the status says nothing about whether the decision shipped.\n- List the proposed ADRs in `done`'s Note and leave them proposed: no automatic change, but they accumulate for `pm-review`.\n- Ask once at close: most control, one more question at every close.\n- Chosen: accept at close, because the spec was approved and its `Done when` checks passed. Strongest argument against: an ADR the spec names only in passing is accepted without a separate look.",
+      "consequences": "- `pm-review` and `pm-help` only see proposed ADRs that no closed item carried.\n- An unmerged completion that `pm-revise` reverses leaves its ADRs accepted; a reversed decision is superseded, never set back to `proposed`."
     }
   ],
   "counts": {
-    "next": 4,
+    "next": 3,
     "later": 9,
     "nextMax": 5,
-    "openInbox": 14,
+    "openInbox": 15,
     "discuss": 1,
     "shapingBriefs": 0,
-    "done": 22,
+    "done": 23,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1664,7 +1689,6 @@
     "reviewDue": true,
     "lastReview": "2026-11-20",
     "claimable": [
-      "R-039",
       "R-025",
       "R-013",
       "R-034"

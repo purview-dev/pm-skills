@@ -120,6 +120,8 @@ push/pop to suspend).
    | 24 | If an item is active, its `Session` is not the PM branch, and `git rev-list --count HEAD..@{upstream}` is 0 (against the remote refs already fetched) | `<ID> <title> is on the PM branch` (expected only when the user asked to stay there), or `<branch> is <n> commits behind <upstream>` | `pm-rejoin`, or `git pull --ff-only` |
    | 25 | `PAUSE.md` is missing | `Paused on <Session> at <Paused>: <Running>` | `pm-resume` on `<Session>` |
    | 26 | If Bun is installed: `bun <pm-lint skill>/scripts/lint.ts check --format json` reports no error (read-only) | `<n> PM format errors: <first file:line rule>` | `pm-lint fix`, then the skill that owns the file |
+   | 27 | If `<PM root>/decisions/` exists: no ADR has `Status: proposed` with a `Date` at least the review cadence before today (imported ADRs included), except one whose `Item` is still open (in `NOW.md` or `ROADMAP.md`) | `<n> ADRs proposed since <oldest date>` | `pm-review` |
+   | 28 | If `<PM root>/decisions/` exists: the `adr/*` rules (`adr/header`, `adr/sections`, `adr/id`, `adr/links`) report nothing, with `bun <pm-lint skill>/scripts/lint.ts check <PM root>/decisions --root . --no-export` when Bun is installed, else by reading each ADR | `<n> ADR findings: <first file:line rule>` | `pm-adr check` |
 
    Stop at the first failing check among 1 to 4; later checks depend on
    them.

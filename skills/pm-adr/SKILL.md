@@ -35,7 +35,10 @@ likely modes as options.
 
 - If `<PM root>/` does not exist, reply: `No <PM root> folder. Run pm-init.
   ADR (not saved): <the decision, verbatim>`. Stop.
-- Write in the main worktree, not the current feature worktree.
+- Write in the main worktree, not the current feature worktree, except
+  `accept` applied by `pm-checkpoint` (`done`), which writes in the
+  worktree that holds the item's branch (rules: **Completion rides the
+  branch**).
 - If `<PM root>/decisions/` is missing, create it before the first write.
   `view` and `check` write nothing and report that there are no ADRs.
 - **During an active workflow** (Non-interruption rule 1), only `new`,

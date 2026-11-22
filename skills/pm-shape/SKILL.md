@@ -53,7 +53,10 @@ label).
      line and its reason),
    - it overlaps a roadmap item or another brief,
    - it matches `Out of scope` or `Not doing`,
-   - the code already does it, fully or partly.
+   - the code already does it, fully or partly,
+   - it contradicts an accepted ADR. Read the accepted ADR titles in the
+     decisions folder (Shared definitions: **Read before deciding**); a
+     missing folder means none.
 3. **Explore.** Ask the questions the brief still needs, using the question
    tool, one decision at a time (up to 4 independent ones in one prompt).
    Draft answer options from step 2. Write each answer to its heading
@@ -80,6 +83,12 @@ label).
    Ship single-tenant billing first?` with the options `Ship the smaller
    version (recommended)` and `Keep the full scope`. Write the answer and
    its reason before the next challenge.
+   When the idea or the recommended option contradicts an accepted ADR,
+   print the `## For this question` legend and ask: `ADR-NNN <title>
+   (accepted) says <X>; this idea needs <Y>. How should we continue?` with
+   `Change the idea (recommended)`, `Keep it; design supersedes ADR-NNN`,
+   and `Explain ADR-NNN`. This skill never runs `pm-adr`: shaping decides
+   whether and what, and the design stage supersedes the ADR.
 6. **Ramifications.** Complete `## Ramifications` as a table with the
    columns `Area | Effect | Mitigation`, one row per Challenge protocol
    area (data and migrations, security and privacy, performance, user
@@ -120,7 +129,8 @@ label).
      `- <date> <title>. Reason: <one line>. Brief: <path>.` Delete the
      inbox file. Set the brief `Status: dropped`.
 10. Write the decision, date, and reason under `## Decision`, and set
-    `Updated`. If the decision rejected an earlier strategy line, append
+    `Updated`. When the user chose `Keep it; design supersedes ADR-NNN`,
+    the line ends `Supersedes ADR-NNN <title> in design.` If the decision rejected an earlier strategy line, append
     to `## Decisions` in `STRATEGY.md`.
 11. **Commit** the PM state (rules: Committing PM state), with the message
     `docs(pm): shape <slug>`.

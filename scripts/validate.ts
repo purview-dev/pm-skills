@@ -57,6 +57,13 @@ for (const name of shipped) {
   if (!help.includes(`| \`${name}\` |`)) fail(`pm-help/SKILL.md: ${name} not in skill guide`);
 }
 
+// Every way back into design passes the ADR instruction (R-039).
+for (const name of ["pm-next", "pm-checkpoint", "pm-revise", "pm-rejoin", "pm-resume"]) {
+  if (!read("skills", name, "SKILL.md").includes("**Every design handoff**")) {
+    fail(`skills/${name}/SKILL.md: a design re-entry does not cite **Every design handoff**`);
+  }
+}
+
 for (const name of repo) {
   const fm = checkFrontmatter("skills", name);
   if (fm === null) continue;
