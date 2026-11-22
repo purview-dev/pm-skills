@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 4,
-  "generatedAt": "2026-11-21T12:05:39+00:00",
+  "generatedAt": "2026-11-22T10:12:03+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-031-docs-site-package-review-follow-ups",
-    "head": "8ade0b14b15b460a533ba2659727538ecedc20da"
+    "branch": "feat/r-029-dev-browser-webserver",
+    "head": "11a51a0a52a6cdce1557340c537cd35e5ba97a19"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -193,34 +193,10 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-029",
-        "title": "Docs-site package: dev browser webserver starts reliably",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "the cause of the `test:browser:dev` webserver timeout is named in the plan, and 5 consecutive `just lint-check` runs on Windows pass `test:browser:dev`.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "From the 2026-11-20 review (bug, minor). Dev browser test webserver start timed out: `just lint-check` (via `package-test`) failed once on R-019's branch: `test:browser:dev` timed out after 300000ms waiting for `config.webServer`. The dev server logged `transport was disconnected, cannot call \"fetchModule\"`, `Listen method has been called more than once without closing`, and `transport invoke timed out after 60000ms`. An immediate re-run of `bun run test:browser:dev` passed 3/3, and R-019 changed nothing on the dev path. Reproduction: run `just lint-check` right after the full `bun test` package suite on Windows; seen once in two runs. Files: `packages/pm-docs-site/playwright.dev.config.ts`, `packages/pm-docs-site/test/browser/dev-server.ts`.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-025",
         "title": "Docs-site package: feature pages list revisions",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4"
@@ -244,8 +220,8 @@
         "id": "R-013",
         "title": "Docs-site package: publish and migrate",
         "section": "next",
-        "position": 3,
-        "label": "waiting",
+        "position": 2,
+        "label": "next",
         "serves": [
           "V4"
         ],
@@ -273,7 +249,7 @@
         "brief": "planning/briefs/2026-11-17-docs-site-package.md",
         "note": "Rewrites `pm-docs-site` and Non-interruption rule 9, so it bumps the rules major.",
         "revisits": null,
-        "claimable": false
+        "claimable": true
       }
     ],
     "later": [
@@ -429,31 +405,32 @@
       "now": [],
       "next": [
         {
-          "id": "R-029",
-          "title": "Docs-site package: dev browser webserver starts reliably",
-          "owner": "agent",
-          "size": "S",
-          "detail": "ready"
-        },
-        {
           "id": "R-025",
           "title": "Docs-site package: feature pages list revisions",
           "owner": "agent",
           "size": "S",
           "detail": "ready"
-        }
-      ],
-      "foryou": [],
-      "waiting": [
+        },
         {
           "id": "R-013",
           "title": "Docs-site package: publish and migrate",
           "owner": "both",
           "size": "M",
-          "detail": "needs R-029 Docs-site package: dev browser webserver starts reliably"
+          "detail": "ready"
         }
       ],
+      "foryou": [],
+      "waiting": [],
       "done": [
+        {
+          "date": "2026-11-22",
+          "id": "R-029",
+          "title": "Docs-site package: dev browser webserver starts reliably",
+          "milestone": "M1",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-22-dev-browser-webserver.md",
+          "result": "branch feat/r-029-dev-browser-webserver"
+        },
         {
           "date": "2026-11-21",
           "id": "R-031",
@@ -628,6 +605,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-22",
+        "kind": "done",
+        "id": "R-029",
+        "title": "Docs-site package: dev browser webserver starts reliably",
+        "milestone": "M1",
+        "owner": "agent",
+        "result": "branch feat/r-029-dev-browser-webserver"
+      },
       {
         "date": "2026-11-21",
         "kind": "done",
@@ -866,6 +852,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-22",
+        "id": "R-029",
+        "title": "Docs-site package: dev browser webserver starts reliably",
+        "milestone": "M1",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-22-dev-browser-webserver.md",
+        "result": "branch feat/r-029-dev-browser-webserver"
+      },
       {
         "date": "2026-11-21",
         "id": "R-031",
@@ -1223,6 +1218,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Deferred minors from the R-031 final review. (1) `relativeImports` in `packages/pm-docs-site/test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports inside comments, and misses template-literal dynamic imports (`` import(`./x`) ``); these give false failures only. (2) In `scripts/check-demo.ts`, the text of a `plan-empty` element is cut off at a nested `plan-empty` element; both are still reported. (3) `src/pages/plan/log.astro` labels an ID that is known but whose page is not built with the logged title, not the export's current title, and no test covers that view-off case."
+    },
+    {
+      "file": "planning/inbox/2026-11-22-0952-where-do-adrs-fit.md",
+      "title": "Where do ADRs fit in",
+      "captured": "2026-11-22 09:52",
+      "source": "user",
+      "kind": "question",
+      "severity": null,
+      "affects": null,
+      "context": "R-029 execute",
+      "discuss": "yes",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Where do ADRs fit in to the overall project? Given we also make use of a technology/ stack."
     }
   ],
   "briefs": [
@@ -1286,13 +1296,13 @@
     "removed": []
   },
   "counts": {
-    "next": 3,
+    "next": 2,
     "later": 6,
     "nextMax": 5,
-    "openInbox": 8,
-    "discuss": 1,
+    "openInbox": 9,
+    "discuss": 2,
     "shapingBriefs": 0,
-    "done": 19,
+    "done": 20,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1304,8 +1314,8 @@
     "reviewDue": false,
     "lastReview": "2026-11-20",
     "claimable": [
-      "R-029",
-      "R-025"
+      "R-025",
+      "R-013"
     ],
     "drift": true
   }

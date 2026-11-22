@@ -166,6 +166,9 @@ The CLI runs under Node 24 or later.
   on the site. A site with no `astro.config.*` builds from
   `--title <title>` and `--planning <path>`. A site with an `astro.config.*`
   takes its options from that file: the flags are ignored, with a warning.
+  `dev` turns off Astro's update check (`ASTRO_DISABLE_UPDATE_CHECK=true`):
+  this package pins Astro, and the check's settings write can restart the
+  dev server while it starts. Set the variable yourself to keep the check.
 - `pm-docs-site check [site-dir]` builds nothing. It reads the export, checks
   its `schemaVersion`, and checks every docs source folder exists, then exits
   0, or 1 with one line per problem.
