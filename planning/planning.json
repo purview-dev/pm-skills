@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-22T16:14:49+00:00",
+  "generatedAt": "2026-11-22T16:33:06+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-039-adrs-across-the-pm-skills",
-    "head": "0191fc31e93cfb54e91666054b2a774649afe795"
+    "head": "d1cd7eb85f87834fa9d706f4bae0c90c225abb87"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -243,198 +243,198 @@
   },
   "plan": {
     "path": "docs/superpowers/plans/2026-11-22-adrs-across-the-pm-skills.md",
-    "checked": 0,
+    "checked": 34,
     "total": 34,
     "tasks": [
       {
         "number": 1,
         "title": "Design re-entries pass the ADR instruction",
-        "checked": 0,
+        "checked": 5,
         "total": 5,
         "steps": [
           {
             "text": "**Step 1: Write the failing check** in `scripts/validate.ts`:",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Run it to verify it fails**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Add the citation to each skill**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Run to verify it passes**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Commit**",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 2,
         "title": "`pm-shape` and `pm-discover` challenge ADR contradictions",
-        "checked": 0,
+        "checked": 5,
         "total": 5,
         "steps": [
           {
             "text": "**Step 1: Write the check** — run `rg -n \"Read before deciding\" skills/pm-shape/SKILL.md skills/pm-discover/SKILL.md`; Expected now: no matches.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Edit `pm-shape`**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Edit `pm-discover`**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Verify** — `rg -n \"Read before deciding\" skills/pm-shape/SKILL.md skills/pm-discover/SKILL.md` shows one match each; `bunx markdownlint-cli2 skills/pm-shape/SKILL.md skills/pm-discover/SKILL.md` 0 errors.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Commit** — `git commit -m \"feat(pm-shape): read adrs and challenge contradictions in shape and discover\"` with both files.",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 3,
         "title": "`pm-revise` supersedes a reversed ADR",
-        "checked": 0,
+        "checked": 4,
         "total": 4,
         "steps": [
           {
             "text": "**Step 1: Check** — `rg -n \"pm-adr supersede\" skills/pm-revise/SKILL.md`; Expected: no matches.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Edit**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Verify** — the `rg` above matches; markdownlint 0 errors.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Commit** — `git commit -m \"feat(pm-revise): supersede an adr the correction reverses\"`.",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 4,
         "title": "`pm-checkpoint` (`done`) checks and accepts the spec's ADRs",
-        "checked": 0,
+        "checked": 5,
         "total": 5,
         "steps": [
           {
             "text": "**Step 1: Check** — `rg -n \"has no file\" skills/pm-checkpoint/SKILL.md`; Expected: no matches.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Edit `pm-checkpoint` step 5**, adding after the plan-box check:",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Edit `pm-adr` Guard**: append to the main-worktree line: except `accept` applied by `pm-checkpoint` (`done`), which writes in the worktree that holds the item's branch (rules: **Completion rides the branch**).",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Verify** — the `rg` matches; `bunx markdownlint-cli2 skills/pm-checkpoint/SKILL.md skills/pm-adr/SKILL.md` 0 errors.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Commit** — `git commit -m \"feat(pm-checkpoint): check and accept the spec's adrs at done\"`.",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 5,
         "title": "`pm-review` and `pm-help` find stale and broken ADRs",
-        "checked": 0,
+        "checked": 5,
         "total": 5,
         "steps": [
           {
             "text": "**Step 1: Check** — `rg -n \"proposed\" skills/pm-review/SKILL.md skills/pm-help/SKILL.md`; Expected: no ADR-related match.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Edit `pm-review`**: list stale proposed ADRs (missing folder: skip). For each, print the legend and ask `ADR-NNN <title> has been proposed since <date>. What should happen to it?` with `Accept it (recommended)`, `Deprecate it`, `Keep it proposed`, `Explain ADR-NNN`; recommend `Deprecate it` instead when its `Item` is in `## Dropped` in `LOG.md`. Apply with `pm-adr accept` or `pm-adr deprecate` (write steps only; ask the deprecate reason with two drafted options). The review's single commit covers them; the output lists `ADR-NNN <title>: proposed -> <status>`.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Edit `pm-help`**: append two checks to the ordered list, skipped when the decisions folder is missing:",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Verify** — `bun skills/pm-lint/scripts/lint.ts check planning/decisions --root . --no-export` prints `pm-lint: clean` (proves the command the skill names works); markdownlint 0 errors on both files.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Commit** — `git commit -m \"feat(pm-review): triage stale proposed adrs; pm-help diagnoses them\"`.",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 6,
         "title": "`pm-purview` records ADRs; `pm-status` counts them",
-        "checked": 0,
+        "checked": 5,
         "total": 5,
         "steps": [
           {
             "text": "**Step 1: Check** — `rg -n \"ADR\" skills/pm-purview/SKILL.md skills/pm-status/SKILL.md`; Expected: no matches.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Edit `pm-purview` step 6**: for each accepted recommendation, read the accepted ADR titles; when one covers the same decision apply `pm-adr supersede`, else `pm-adr new` with `Status: accepted`, `Category: tooling` unless another suggested word fits, `Item: none`, the recommendation as the decision and the report's alternatives and challenge under `## Alternatives` (write steps only, no extra question). `## Note` gains `Recorded ADR-NNN <title> (accepted).` per ADR.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Edit `pm-status`**: summary `## Status` gains `- ADRs: <n> accepted, <n> proposed` after `Stack`, counted from the `Status:` lines of `<PM root>/decisions/ADR-*.md`; omit the line when the folder is missing or has no ADR. `mine` is unchanged.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Verify** — the `rg` matches in both; markdownlint 0 errors.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Commit** — `git commit -m \"feat(pm-purview): record accepted recommendations as adrs; pm-status counts adrs\"`.",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 7,
         "title": "Managed section, install, and version",
-        "checked": 0,
+        "checked": 5,
         "total": 5,
         "steps": [
           {
             "text": "**Step 1: Edit the reference**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Install** — replace the section between the markers in `AGENTS.md` with the reference body (the start marker without `version=`).",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Bump** — `just bump prerelease`; Expected: `package.json` `\"version\": \"21.0.0-pre.5\"`.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Verify** — `just validate`, `just test`, `just lint-check`, `just version-check`; Expected: all pass.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Commit** — `git add skills/pm-setup/references/AGENTS-section.md AGENTS.md package.json` then `git commit -m \"feat(pm-setup): adrs across the pm skills in the rules; 21.0.0-pre.5\"`.",
-            "checked": false
+            "checked": true
           }
         ]
       }
@@ -762,7 +762,7 @@
           "title": "ADRs across the PM skills",
           "owner": "agent",
           "size": "M",
-          "detail": "execute, 0/34 plan steps"
+          "detail": "execute, 34/34 plan steps"
         }
       ],
       "next": [
@@ -1719,6 +1719,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "In the Decisions view, turning every status chip off writes `?status=`, which reloads as the default; ADRs with no status ignore the status chips; with one category there is no category chip, so a shared `?category=x` filters invisibly until Clear; and without JavaScript the superseded rows cannot be shown. Decide the intended behaviour and pin it with tests."
+    },
+    {
+      "file": "planning/inbox/2026-11-22-1632-r-039-review-minors.md",
+      "title": "R-039 final review minors",
+      "captured": "2026-11-22 16:32",
+      "source": "agent (R-039 execute)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "skills/pm-discover/SKILL.md, skills/pm-revise/SKILL.md, skills/pm-purview/SKILL.md, skills/pm-checkpoint/SKILL.md, skills/pm-shape/SKILL.md, skills/pm-review/SKILL.md",
+      "context": "R-039 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Minor findings from the R-039 final review, deferred:\n\n- `pm-discover` and `pm-revise` write `Supersedes ADR-NNN <title> in design.` under an inbox file's `## Notes` without the `<YYYY-MM-DD>` prefix the Inbox file format uses.\n- `pm-purview` in `check` mode, run inside `pm-shape` or `pm-discover`, is not explicitly stopped before step 6, whose ADR write contradicts \"This skill never runs `pm-adr`\" in those skills; exclude `check` mode from step 6.\n- `pm-checkpoint` (`done`) looks for the item's ADRs on its branch; a design stage run in a separate worktree writes them in the main worktree (`pm-adr` Guard), so `done` would stop with \"has no file\".\n- `pm-shape` and `pm-review` print `## For this question` for an ADR even when a `## For this discussion` legend already lists it; the Communication contract says to reuse it.\n- An ADR or inbox file written mid-workflow is uncommitted at `done`, whose guard stops on uncommitted PM state in the item's worktree (predates R-039; applies to `pm-park` too)."
     }
   ],
   "briefs": [
@@ -1843,7 +1858,7 @@
       "item": "R-039",
       "source": null,
       "context": "The design stage records each architecture decision with `pm-adr new` as `proposed`, and nothing moved it to `accepted`, so proposed ADRs piled up whether or not the work that carried them was built. Other skills (`pm-review`, `pm-purview`, `pm-revise`) also need to change ADRs, and the ADR record is written only by `pm-adr`.",
-      "decision": "`pm-checkpoint` (`done`) reads the ADR IDs the item's spec names, refuses to close when one has no file, and runs `pm-adr accept` on each named ADR that is still `proposed` and whose `Item` is the closing item, changing only its `Status` line on the item's branch inside the Completion record commit. `proposed` therefore means a decision not yet built. Every skill that changes an ADR applies a `pm-adr` mode's write steps, without that mode's output or commit; the calling skill's PM commit covers the ADR files.",
+      "decision": "`pm-checkpoint` (`done`) reads the ADR IDs the item's spec names, refuses to close when one has no file, and runs `pm-adr accept` on each named ADR that is still `proposed` and whose `Item` is the closing item (or that supersedes, through `pm-revise`, an ADR the spec names), changing only its `Status` line on the item's branch inside the Completion record commit. `proposed` therefore means a decision not yet built. Every skill that changes an ADR applies a `pm-adr` mode's write steps, without that mode's output or commit; the calling skill's PM commit covers the ADR files.",
       "alternatives": "- Do nothing: ADRs stay `proposed` until the user runs `pm-adr accept`; the status says nothing about whether the decision shipped.\n- List the proposed ADRs in `done`'s Note and leave them proposed: no automatic change, but they accumulate for `pm-review`.\n- Ask once at close: most control, one more question at every close.\n- Chosen: accept at close, because the spec was approved and its `Done when` checks passed. Strongest argument against: an ADR the spec names only in passing is accepted without a separate look.",
       "consequences": "- `pm-review` and `pm-help` only see proposed ADRs that no closed item carried.\n- An unmerged completion that `pm-revise` reverses leaves its ADRs accepted; a reversed decision is superseded, never set back to `proposed`."
     }
@@ -1852,7 +1867,7 @@
     "next": 3,
     "later": 9,
     "nextMax": 5,
-    "openInbox": 14,
+    "openInbox": 15,
     "discuss": 1,
     "shapingBriefs": 0,
     "done": 22,

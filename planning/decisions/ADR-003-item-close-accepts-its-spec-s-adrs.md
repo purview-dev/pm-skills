@@ -13,7 +13,7 @@ The design stage records each architecture decision with `pm-adr new` as `propos
 
 ## Decision
 
-`pm-checkpoint` (`done`) reads the ADR IDs the item's spec names, refuses to close when one has no file, and runs `pm-adr accept` on each named ADR that is still `proposed` and whose `Item` is the closing item, changing only its `Status` line on the item's branch inside the Completion record commit. `proposed` therefore means a decision not yet built. Every skill that changes an ADR applies a `pm-adr` mode's write steps, without that mode's output or commit; the calling skill's PM commit covers the ADR files.
+`pm-checkpoint` (`done`) reads the ADR IDs the item's spec names, refuses to close when one has no file, and runs `pm-adr accept` on each named ADR that is still `proposed` and whose `Item` is the closing item (or that supersedes, through `pm-revise`, an ADR the spec names), changing only its `Status` line on the item's branch inside the Completion record commit. `proposed` therefore means a decision not yet built. Every skill that changes an ADR applies a `pm-adr` mode's write steps, without that mode's output or commit; the calling skill's PM commit covers the ADR files.
 
 ## Alternatives
 
