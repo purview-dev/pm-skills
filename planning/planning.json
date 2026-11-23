@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-23T15:52:57+00:00",
+  "generatedAt": "2026-11-23T16:18:34+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-013-docs-site-package",
-    "head": "035c3b537b221a78077caca0a7aa7d9be2a453d3"
+    "head": "ab6ecaa3357b1e39eaf716cf7dc47b37817ba8b8"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -1595,6 +1595,21 @@
       "brief": "planning/briefs/2026-11-17-docs-site-package.md",
       "reviewed": "never",
       "idea": "The package must contain everything before 1.0.0. Research reports (`planning/research/`) are not in the export; add them to the export (schemaVersion 6, a rules bump) and give them a view in the package (M). Sliced out of R-013 by the user's choice on 2026-11-23; 1.0.0 depends on it."
+    },
+    {
+      "file": "planning/inbox/2026-11-23-1600-purview-dev-adopts-astroc4-markers.md",
+      "title": "purview.dev adopts astroc4 markers",
+      "captured": "2026-11-23 16:00",
+      "source": "agent (R-045 design)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "purview-dev/purview-dev src/src/lib/docs/diagrams.ts",
+      "context": "R-045 design",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Once astroc4 `1.0.0-prerelease.9` ships the `markers` option (R-045, ADR-007), move purview.dev's sync-time marker rewrite (`src/src/lib/docs/diagrams.ts`) onto astroc4's markers, so the `purview:likec4` marker has one implementation."
     }
   ],
   "briefs": [
@@ -1794,13 +1809,29 @@
       "decision": "`@purview-dev/pm-docs-site` renders every ```` ```mermaid ```` fence to inline SVG at build time with Pele, through a Sätteri mdast plugin, or a remark plugin on Astro's default processor if Sätteri does not work with the pinned Astro. Pele's CSS variables map to Starlight's for light and dark mode. A fence that does not parse fails the build and names the file. It applies wherever the package renders Markdown, including ADR sections (ADR-002).",
       "alternatives": "- Client-side `mermaid` script: adds JavaScript to every page and breaks build determinism.\n- `rehype-mermaid`: needs a headless browser (Playwright) at build time.\n- Do nothing: diagrams stay code blocks.",
       "consequences": "- No browser and no client JavaScript for diagrams.\n- `pele`, `satteri`, and `@astrojs/markdown-satteri` become exact-pinned package dependencies.\n- A diagram type Pele cannot render is rewritten, never rendered in the browser."
+    },
+    {
+      "id": "ADR-007",
+      "path": "planning/decisions/ADR-007-likec4-markers-render-through-astroc4.md",
+      "title": "LikeC4 markers render through astroc4",
+      "status": "proposed",
+      "supersededBy": null,
+      "date": "2026-11-23",
+      "category": "architecture",
+      "supersedes": null,
+      "item": "R-045",
+      "source": null,
+      "context": "The wiki writes diagrams as pairs: a `` marker around a Mermaid fence. purview.dev renders the LikeC4 view; GitHub shows the Mermaid. The user wants LikeC4 everywhere on the docs site, with Mermaid as the fallback. The marker spec is purview.dev's `skills/purview-site-docs/references/diagrams.md`. Spec: `docs/superpowers/specs/2026-11-23-docs-site-package-architecture-view-design.md`.",
+      "decision": "`@purview-dev/astroc4` gains a `markers` option (default on), implemented inside its `likec4Fences` Sätteri plugin. Each marker block becomes the LikeC4 view it names; a block that cannot be drawn keeps its Mermaid with a warning and never fails the build. `markers.root` is the repository root, so a model may live anywhere in the repository. `@purview-dev/pm-docs-site`'s `architecture` option loads astroc4 as an optional peer dependency and passes its `docs.root` as `markers.root`.",
+      "alternatives": "- A marker plugin inside `pm-docs-site`: no outside release, but purview.dev keeps a second implementation of the same marker.\n- Client-side rewriting: breaks build determinism and adds JavaScript.\n- Do nothing: the docs site shows only the Mermaid fallback.",
+      "consequences": "- purview.dev and the docs site can share one implementation (purview.dev's move is a follow-up).\n- R-045 depends on an astroc4 prerelease (`1.0.0-prerelease.9`) that the user merges.\n- Markers work in `.md` only; MDX rejects HTML comments. ADR sections fall back to Mermaid because exported text has no page path."
     }
   ],
   "counts": {
     "next": 4,
     "later": 11,
     "nextMax": 5,
-    "openInbox": 6,
+    "openInbox": 7,
     "discuss": 0,
     "shapingBriefs": 0,
     "done": 25,
