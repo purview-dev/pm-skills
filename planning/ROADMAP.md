@@ -14,18 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-045 Docs-site package: architecture view
-
-- Serves: V4
-- Milestone: M1
-- Owner: agent
-- Done when: with `pmDocsSite({ architecture: ... })` pointing at a LikeC4 model, the build renders one page per view folder at `/architecture/<group>/` through `@purview-dev/astroc4`, and a ```` ```likec4 ```` fence in a repository docs page renders a diagram; `examples/demo/` builds with a LikeC4 model and `just package-test` passes; a site without the option builds without astroc4 installed.
-- Size: M
-- Depends on: none
-- Status: ready
-- Brief: planning/briefs/2026-11-17-docs-site-package.md
-- Note: From R-013 design (2026-11-23): the user chose to build it before R-013 so no architecture-module site is left without a path when the templates are deleted. Port `skills/pm-docs-site/templates/architecture/` (MODULE.md, `src/lib/architecture.ts`, `src/pages/architecture/[group].astro`) into the package as an option; astroc4 and its peers (`@astrojs/react`, `react`, `react-dom`, `likec4`, `@likec4/core`) as optional peer dependencies. R-013's spec (`docs/superpowers/specs/2026-11-23-docs-site-package-publish-and-migrate-design.md`, sections 3 and 4) consumes the option name and its peer-dependency steps. This repository's model: `docs/wiki/diagrams/pm-skills.c4`.
-
 ### R-013 Docs-site package: publish and migrate
 
 - Serves: V4

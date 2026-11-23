@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-23T15:51:45+00:00",
+  "generatedAt": "2026-11-23T15:52:57+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-013-docs-site-package",
-    "head": "7a31d9d0f69ef12f9312f766ea00961ce100ae53"
+    "head": "035c3b537b221a78077caca0a7aa7d9be2a453d3"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -215,50 +215,40 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
-    "brief": null,
-    "milestone": null,
+    "status": "active",
+    "item": {
+      "id": "R-045",
+      "title": "Docs-site package: architecture view",
+      "serves": [
+        "V4"
+      ],
+      "owner": "agent",
+      "size": "M",
+      "dependsOn": [],
+      "revisits": null
+    },
+    "stage": "design",
+    "session": "feat/r-013-docs-site-package",
+    "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+    "milestone": "M1",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-23",
+    "doneWhen": [
+      "With `pmDocsSite({ architecture: ... })` pointing at a LikeC4 model, the build renders one page per view folder at `/architecture/<group>/` through `@purview-dev/astroc4`, and a ```` ```likec4 ```` fence in a repository docs page renders a diagram.",
+      "`examples/demo/` builds with a LikeC4 model and `just package-test` passes.",
+      "A site without the option builds without astroc4 installed."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-045",
-        "title": "Docs-site package: architecture view",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "agent",
-        "doneWhen": "with `pmDocsSite({ architecture: ... })` pointing at a LikeC4 model, the build renders one page per view folder at `/architecture/<group>/` through `@purview-dev/astroc4`, and a ```` ```likec4 ```` fence in a repository docs page renders a diagram; `examples/demo/` builds with a LikeC4 model and `just package-test` passes; a site without the option builds without astroc4 installed.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-        "note": "From R-013 design (2026-11-23): the user chose to build it before R-013 so no architecture-module site is left without a path when the templates are deleted. Port `skills/pm-docs-site/templates/architecture/` (MODULE.md, `src/lib/architecture.ts`, `src/pages/architecture/[group].astro`) into the package as an option; astroc4 and its peers (`@astrojs/react`, `react`, `react-dom`, `likec4`, `@likec4/core`) as optional peer dependencies. R-013's spec (`docs/superpowers/specs/2026-11-23-docs-site-package-publish-and-migrate-design.md`, sections 3 and 4) consumes the option name and its peer-dependency steps. This repository's model: `docs/wiki/diagrams/pm-skills.c4`.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-013",
         "title": "Docs-site package: publish and migrate",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "waiting",
         "serves": [
           "V4"
@@ -294,7 +284,7 @@
         "id": "R-034",
         "title": "Engineering file and pm-engineering skill",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V5"
@@ -318,7 +308,7 @@
         "id": "R-041",
         "title": "ADR skill follow-ups",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V5"
@@ -342,7 +332,7 @@
         "id": "R-040",
         "title": "ADR link and export edge cases",
         "section": "next",
-        "position": 5,
+        "position": 4,
         "label": "next",
         "serves": [
           "V4",
@@ -642,15 +632,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-045",
           "title": "Docs-site package: architecture view",
           "owner": "agent",
           "size": "M",
-          "detail": "ready"
-        },
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-034",
           "title": "Engineering file and pm-engineering skill",
@@ -1609,9 +1600,9 @@
   "briefs": [
     {
       "path": "planning/briefs/2026-11-17-docs-site-package.md",
-      "id": "R-013",
+      "id": "R-045",
       "title": "Docs site as a versioned package",
-      "status": "on roadmap (R-013)",
+      "status": "on roadmap (R-045), active",
       "origin": "user request",
       "updated": "2026-11-23",
       "decision": "2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.",
@@ -1806,7 +1797,7 @@
     }
   ],
   "counts": {
-    "next": 5,
+    "next": 4,
     "later": 11,
     "nextMax": 5,
     "openInbox": 6,
@@ -1824,11 +1815,10 @@
     "reviewDue": false,
     "lastReview": "2026-11-22",
     "claimable": [
-      "R-045",
       "R-034",
       "R-041",
       "R-040"
     ],
-    "drift": true
+    "drift": false
   }
 }
