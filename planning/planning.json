@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-23T16:18:34+00:00",
+  "generatedAt": "2026-11-23T16:18:45+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-013-docs-site-package",
-    "head": "ab6ecaa3357b1e39eaf716cf7dc47b37817ba8b8"
+    "head": "1e1dd45bab0f09a77e2042223a585fd2bef757c3"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -227,11 +227,11 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-013-docs-site-package",
     "brief": "planning/briefs/2026-11-17-docs-site-package.md",
     "milestone": "M1",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-23-docs-site-package-architecture-view-design.md",
     "plan": null,
     "started": "2026-11-23",
     "doneWhen": [
@@ -638,7 +638,7 @@
           "title": "Docs-site package: architecture view",
           "owner": "agent",
           "size": "M",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
