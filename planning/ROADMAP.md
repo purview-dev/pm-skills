@@ -14,6 +14,18 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
+### R-045 Docs-site package: architecture view
+
+- Serves: V4
+- Milestone: M1
+- Owner: agent
+- Done when: with `pmDocsSite({ architecture: ... })` pointing at a LikeC4 model, the build renders one page per view folder at `/architecture/<group>/` through `@purview-dev/astroc4`, and a ```` ```likec4 ```` fence in a repository docs page renders a diagram; `examples/demo/` builds with a LikeC4 model and `just package-test` passes; a site without the option builds without astroc4 installed.
+- Size: M
+- Depends on: none
+- Status: ready
+- Brief: planning/briefs/2026-11-17-docs-site-package.md
+- Note: From R-013 design (2026-11-23): the user chose to build it before R-013 so no architecture-module site is left without a path when the templates are deleted. Port `skills/pm-docs-site/templates/architecture/` (MODULE.md, `src/lib/architecture.ts`, `src/pages/architecture/[group].astro`) into the package as an option; astroc4 and its peers (`@astrojs/react`, `react`, `react-dom`, `likec4`, `@likec4/core`) as optional peer dependencies. R-013's spec (`docs/superpowers/specs/2026-11-23-docs-site-package-publish-and-migrate-design.md`, sections 3 and 4) consumes the option name and its peer-dependency steps. This repository's model: `docs/wiki/diagrams/pm-skills.c4`.
+
 ### R-013 Docs-site package: publish and migrate
 
 - Serves: V4
@@ -21,7 +33,7 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Owner: both
 - Done when: `npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore`, and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; a scratch export at schemaVersion 6 fails the build until the package's range includes it.
 - Size: M
-- Depends on: R-009, R-010, R-011, R-012, R-014, R-019, R-027, R-028, R-029, R-031
+- Depends on: R-009, R-010, R-011, R-012, R-014, R-019, R-027, R-028, R-029, R-031, R-045
 - Status: paused
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 - Paused checkpoint: 2026-11-23 15:35. Stopped at: design done and approved; spec `docs/superpowers/specs/2026-11-23-docs-site-package-publish-and-migrate-design.md` on branch `feat/r-013-docs-site-package`. Next action: after the architecture item is done, claim R-013 (pm-next switches to its branch), merge the PM branch into it, check the architecture option name and peer-dependency steps against spec sections 3 and 4, then run `superpowers:writing-plans` on the spec. Start with: `pm-next R-013`. Decisions: R-013 publishes `0.1.0-pre.4`, not `1.0.0` (the package is not stable until it contains everything, with complete instructions); architecture, brief and inbox pages, research, and the `1.0.0` release are sliced out (inbox 2026-11-23-1525-*), and architecture is built first so no architecture site is left without a path; stay on rules 21 (`21.0.0-pre.7`), not 22; `docs-site/` depends on `file:../packages/pm-docs-site`; Mermaid renders at build time with Pele; the Aspire step asks before adding the AppHost resource and asks separately before adding its tests; `dev` gains `--port`/`--host`; ADR-005 and ADR-006 proposed. Context: the branch tracks `origin/main` as its upstream from `git switch -c`; the item Note's notes (2) and (3) are resolved by the migration, and (4) goes in the brief's Revisions.

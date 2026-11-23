@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-23T15:37:36+00:00",
+  "generatedAt": "2026-11-23T15:51:45+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-013-docs-site-package",
-    "head": "748430d8b57320f3f1cf59781fc6384272acb407"
+    "head": "7a31d9d0f69ef12f9312f766ea00961ce100ae53"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -231,11 +231,35 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-013",
-        "title": "Docs-site package: publish and migrate",
+        "id": "R-045",
+        "title": "Docs-site package: architecture view",
         "section": "next",
         "position": 1,
         "label": "next",
+        "serves": [
+          "V4"
+        ],
+        "milestone": "M1",
+        "owner": "agent",
+        "doneWhen": "with `pmDocsSite({ architecture: ... })` pointing at a LikeC4 model, the build renders one page per view folder at `/architecture/<group>/` through `@purview-dev/astroc4`, and a ```` ```likec4 ```` fence in a repository docs page renders a diagram; `examples/demo/` builds with a LikeC4 model and `just package-test` passes; a site without the option builds without astroc4 installed.",
+        "size": "M",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+        "note": "From R-013 design (2026-11-23): the user chose to build it before R-013 so no architecture-module site is left without a path when the templates are deleted. Port `skills/pm-docs-site/templates/architecture/` (MODULE.md, `src/lib/architecture.ts`, `src/pages/architecture/[group].astro`) into the package as an option; astroc4 and its peers (`@astrojs/react`, `react`, `react-dom`, `likec4`, `@likec4/core`) as optional peer dependencies. R-013's spec (`docs/superpowers/specs/2026-11-23-docs-site-package-publish-and-migrate-design.md`, sections 3 and 4) consumes the option name and its peer-dependency steps. This repository's model: `docs/wiki/diagrams/pm-skills.c4`.",
+        "revisits": null,
+        "claimable": true
+      },
+      {
+        "id": "R-013",
+        "title": "Docs-site package: publish and migrate",
+        "section": "next",
+        "position": 2,
+        "label": "waiting",
         "serves": [
           "V4"
         ],
@@ -253,7 +277,8 @@
           "R-027",
           "R-028",
           "R-029",
-          "R-031"
+          "R-031",
+          "R-045"
         ],
         "status": {
           "value": "paused",
@@ -263,13 +288,13 @@
         "brief": "planning/briefs/2026-11-17-docs-site-package.md",
         "note": "Rewrites `pm-docs-site` and Non-interruption rule 9, so it bumps the rules major. From the 2026-11-22 review: (1) Done when moved to schemaVersion 6, because R-038 moved the export to 5 (inbox 2026-11-22-1501). (2) R-028's accessibility fixes (popup trigger, backdrop close, heading levels, card tab stops, collapse toggles, timeline zoom focus) exist only in `packages/pm-docs-site`; confirm the migrated `docs-site/` no longer carries the gaps of `skills/pm-docs-site/templates/`, or port the fixes if R-013 slips (inbox 2026-11-20-1844). (3) `just docs-check` still logs `[WARN] [content] Entry docs → 404 was not found.` from the template site; confirm it is gone after the migration, or give the template the package's fix (Starlight `disable404Route: true` and its own `src/pages/404.astro`; not a draft `404` entry, which prints a draft notice) (inbox 2026-11-21-1035). (4) The brief's Performance ramification (\"Render static HTML first and enhance with small islands\") is superseded: R-010 design (2026-11-18) chose rich interactive React islands for every view (React over Preact), and its Ramifications omit the React runtime dependency every consumer now gets (inbox 2026-11-18-0911; spec `docs/superpowers/specs/2026-11-18-docs-site-package-board-filters-design.md`).",
         "revisits": null,
-        "claimable": true
+        "claimable": false
       },
       {
         "id": "R-034",
         "title": "Engineering file and pm-engineering skill",
         "section": "next",
-        "position": 2,
+        "position": 3,
         "label": "next",
         "serves": [
           "V5"
@@ -293,7 +318,7 @@
         "id": "R-041",
         "title": "ADR skill follow-ups",
         "section": "next",
-        "position": 3,
+        "position": 4,
         "label": "next",
         "serves": [
           "V5"
@@ -317,7 +342,7 @@
         "id": "R-040",
         "title": "ADR link and export edge cases",
         "section": "next",
-        "position": 4,
+        "position": 5,
         "label": "next",
         "serves": [
           "V4",
@@ -620,11 +645,11 @@
       "now": [],
       "next": [
         {
-          "id": "R-013",
-          "title": "Docs-site package: publish and migrate",
-          "owner": "both",
+          "id": "R-045",
+          "title": "Docs-site package: architecture view",
+          "owner": "agent",
           "size": "M",
-          "detail": "paused"
+          "detail": "ready"
         },
         {
           "id": "R-034",
@@ -649,7 +674,15 @@
         }
       ],
       "foryou": [],
-      "waiting": [],
+      "waiting": [
+        {
+          "id": "R-013",
+          "title": "Docs-site package: publish and migrate",
+          "owner": "both",
+          "size": "M",
+          "detail": "needs R-045 Docs-site package: architecture view"
+        }
+      ],
       "done": [
         {
           "date": "2026-11-22",
@@ -1530,30 +1563,13 @@
       "discuss": "no",
       "related": [
         "R-013",
-        "inbox 2026-11-23-1525-docs-site-package-architecture",
+        "R-045",
         "2026-11-23-1525-docs-site-package-record-pages",
         "2026-11-23-1525-docs-site-package-research"
       ],
       "brief": "planning/briefs/2026-11-17-docs-site-package.md",
       "reviewed": "never",
-      "idea": "Not stable until it contains everything, with complete instructions (user, 2026-11-23). Release `@purview-dev/pm-docs-site` 1.0.0 once R-013 and the architecture, brief and inbox pages, and research items are done (S, both). This replaces the brief's 2026-11-18 answer that R-013 releases 1.0.0; R-013 publishes 0.1.0-pre.4 instead."
-    },
-    {
-      "file": "planning/inbox/2026-11-23-1525-docs-site-package-architecture.md",
-      "title": "Docs-site package: architecture view",
-      "captured": "2026-11-23 15:25",
-      "source": "user",
-      "kind": "feature",
-      "severity": null,
-      "affects": "packages/pm-docs-site",
-      "context": "R-013 design",
-      "discuss": "no",
-      "related": [
-        "R-013"
-      ],
-      "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-      "reviewed": "never",
-      "idea": "The package must contain everything before 1.0.0. Architecture: LikeC4 diagrams rendered through `@purview-dev/astroc4`, as the `architecture` template module does today, as a package option (M). This repository's model at `docs/wiki/diagrams/pm-skills.c4` would use it. Sliced out of R-013 by the user's choice on 2026-11-23; 1.0.0 depends on it."
+      "idea": "Not stable until it contains everything, with complete instructions (user, 2026-11-23). Release `@purview-dev/pm-docs-site` 1.0.0 once R-013, R-045 Docs-site package: architecture view, and the brief and inbox pages, and research items are done (S, both). This replaces the brief's 2026-11-18 answer that R-013 releases 1.0.0; R-013 publishes 0.1.0-pre.4 instead."
     },
     {
       "file": "planning/inbox/2026-11-23-1525-docs-site-package-record-pages.md",
@@ -1790,10 +1806,10 @@
     }
   ],
   "counts": {
-    "next": 4,
+    "next": 5,
     "later": 11,
     "nextMax": 5,
-    "openInbox": 7,
+    "openInbox": 6,
     "discuss": 0,
     "shapingBriefs": 0,
     "done": 25,
@@ -1808,7 +1824,7 @@
     "reviewDue": false,
     "lastReview": "2026-11-22",
     "claimable": [
-      "R-013",
+      "R-045",
       "R-034",
       "R-041",
       "R-040"
