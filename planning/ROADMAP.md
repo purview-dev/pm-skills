@@ -14,18 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-013 Docs-site package: publish and migrate
-
-- Serves: V4
-- Milestone: M1
-- Owner: both
-- Done when: `npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore` and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; and a scratch export at schemaVersion 6 fails the build until the package's range includes it.
-- Size: M
-- Depends on: R-009, R-010, R-011, R-012, R-014, R-019, R-027, R-028, R-029, R-031
-- Status: ready
-- Brief: planning/briefs/2026-11-17-docs-site-package.md
-- Note: Rewrites `pm-docs-site` and Non-interruption rule 9, so it bumps the rules major. From the 2026-11-22 review: (1) Done when moved to schemaVersion 6, because R-038 moved the export to 5 (inbox 2026-11-22-1501). (2) R-028's accessibility fixes (popup trigger, backdrop close, heading levels, card tab stops, collapse toggles, timeline zoom focus) exist only in `packages/pm-docs-site`; confirm the migrated `docs-site/` no longer carries the gaps of `skills/pm-docs-site/templates/`, or port the fixes if R-013 slips (inbox 2026-11-20-1844). (3) `just docs-check` still logs `[WARN] [content] Entry docs → 404 was not found.` from the template site; confirm it is gone after the migration, or give the template the package's fix (Starlight `disable404Route: true` and its own `src/pages/404.astro`; not a draft `404` entry, which prints a draft notice) (inbox 2026-11-21-1035). (4) The brief's Performance ramification ("Render static HTML first and enhance with small islands") is superseded: R-010 design (2026-11-18) chose rich interactive React islands for every view (React over Preact), and its Ramifications omit the React runtime dependency every consumer now gets (inbox 2026-11-18-0911; spec `docs/superpowers/specs/2026-11-18-docs-site-package-board-filters-design.md`).
-
 ### R-034 Engineering file and pm-engineering skill
 
 - Serves: V5

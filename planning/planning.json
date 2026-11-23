@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-22T19:33:47+00:00",
+  "generatedAt": "2026-11-23T15:09:07+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-044-merge-proof-pm-sync",
-    "head": "cd82c0d96918be823ba92cdeb6ef5920eeb705c7"
+    "branch": "feat/r-013-docs-site-package",
+    "head": "6b585cdcd07b1cee28c8f7db95151a59a03ffd29"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -215,61 +215,52 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
-    "brief": null,
-    "milestone": null,
+    "status": "active",
+    "item": {
+      "id": "R-013",
+      "title": "Docs-site package: publish and migrate",
+      "serves": [
+        "V4"
+      ],
+      "owner": "both",
+      "size": "M",
+      "dependsOn": [
+        "R-009",
+        "R-010",
+        "R-011",
+        "R-012",
+        "R-014",
+        "R-019",
+        "R-027",
+        "R-028",
+        "R-029",
+        "R-031"
+      ],
+      "revisits": null
+    },
+    "stage": "design",
+    "session": "feat/r-013-docs-site-package",
+    "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+    "milestone": "M1",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-23",
+    "doneWhen": [
+      "`npm view @purview-dev/pm-docs-site version` returns the released version.",
+      "`docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore`, and `just docs-check` passes.",
+      "Two builds from the same `planning.json` and lockfile give byte-identical HTML.",
+      "A scratch export at schemaVersion 6 fails the build until the package's range includes it."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-013",
-        "title": "Docs-site package: publish and migrate",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "both",
-        "doneWhen": "`npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore` and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; and a scratch export at schemaVersion 6 fails the build until the package's range includes it.",
-        "size": "M",
-        "dependsOn": [
-          "R-009",
-          "R-010",
-          "R-011",
-          "R-012",
-          "R-014",
-          "R-019",
-          "R-027",
-          "R-028",
-          "R-029",
-          "R-031"
-        ],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-        "note": "Rewrites `pm-docs-site` and Non-interruption rule 9, so it bumps the rules major. From the 2026-11-22 review: (1) Done when moved to schemaVersion 6, because R-038 moved the export to 5 (inbox 2026-11-22-1501). (2) R-028's accessibility fixes (popup trigger, backdrop close, heading levels, card tab stops, collapse toggles, timeline zoom focus) exist only in `packages/pm-docs-site`; confirm the migrated `docs-site/` no longer carries the gaps of `skills/pm-docs-site/templates/`, or port the fixes if R-013 slips (inbox 2026-11-20-1844). (3) `just docs-check` still logs `[WARN] [content] Entry docs → 404 was not found.` from the template site; confirm it is gone after the migration, or give the template the package's fix (Starlight `disable404Route: true` and its own `src/pages/404.astro`; not a draft `404` entry, which prints a draft notice) (inbox 2026-11-21-1035). (4) The brief's Performance ramification (\"Render static HTML first and enhance with small islands\") is superseded: R-010 design (2026-11-18) chose rich interactive React islands for every view (React over Preact), and its Ramifications omit the React runtime dependency every consumer now gets (inbox 2026-11-18-0911; spec `docs/superpowers/specs/2026-11-18-docs-site-package-board-filters-design.md`).",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-034",
         "title": "Engineering file and pm-engineering skill",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V5"
@@ -293,7 +284,7 @@
         "id": "R-041",
         "title": "ADR skill follow-ups",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V5"
@@ -317,7 +308,7 @@
         "id": "R-040",
         "title": "ADR link and export edge cases",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4",
@@ -617,15 +608,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-013",
           "title": "Docs-site package: publish and migrate",
           "owner": "both",
           "size": "M",
-          "detail": "ready"
-        },
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-034",
           "title": "Engineering file and pm-engineering skill",
@@ -1524,9 +1516,9 @@
       "path": "planning/briefs/2026-11-17-docs-site-package.md",
       "id": "R-013",
       "title": "Docs site as a versioned package",
-      "status": "on roadmap (R-013)",
+      "status": "on roadmap (R-013), active",
       "origin": "user request",
-      "updated": "2026-11-20",
+      "updated": "2026-11-23",
       "decision": "2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.",
       "problem": "The docs site is chaotic to maintain and builds non-deterministically: each consumer carries its own copy of the templates, resolves its own package versions, and any template change forces a rules-major bump on every consumer.",
       "doneWhen": "`docs-site/` contains only `package.json`, `astro.config.mjs`, and `bun.lock` (plus `.gitignore`), and `just docs-check` passes.",
@@ -1687,7 +1679,7 @@
     }
   ],
   "counts": {
-    "next": 4,
+    "next": 3,
     "later": 11,
     "nextMax": 5,
     "openInbox": 3,
@@ -1705,7 +1697,6 @@
     "reviewDue": false,
     "lastReview": "2026-11-22",
     "claimable": [
-      "R-013",
       "R-034",
       "R-041",
       "R-040"
