@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-23T15:09:07+00:00",
+  "generatedAt": "2026-11-23T15:37:36+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-013-docs-site-package",
-    "head": "6b585cdcd07b1cee28c8f7db95151a59a03ffd29"
+    "head": "748430d8b57320f3f1cf59781fc6384272acb407"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -215,52 +215,61 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-013",
-      "title": "Docs-site package: publish and migrate",
-      "serves": [
-        "V4"
-      ],
-      "owner": "both",
-      "size": "M",
-      "dependsOn": [
-        "R-009",
-        "R-010",
-        "R-011",
-        "R-012",
-        "R-014",
-        "R-019",
-        "R-027",
-        "R-028",
-        "R-029",
-        "R-031"
-      ],
-      "revisits": null
-    },
-    "stage": "design",
-    "session": "feat/r-013-docs-site-package",
-    "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-    "milestone": "M1",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
+    "brief": null,
+    "milestone": null,
     "spec": null,
     "plan": null,
-    "started": "2026-11-23",
-    "doneWhen": [
-      "`npm view @purview-dev/pm-docs-site version` returns the released version.",
-      "`docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore`, and `just docs-check` passes.",
-      "Two builds from the same `planning.json` and lockfile give byte-identical HTML.",
-      "A scratch export at schemaVersion 6 fails the build until the package's range includes it."
-    ],
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
+        "id": "R-013",
+        "title": "Docs-site package: publish and migrate",
+        "section": "next",
+        "position": 1,
+        "label": "next",
+        "serves": [
+          "V4"
+        ],
+        "milestone": "M1",
+        "owner": "both",
+        "doneWhen": "`npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore`, and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; a scratch export at schemaVersion 6 fails the build until the package's range includes it.",
+        "size": "M",
+        "dependsOn": [
+          "R-009",
+          "R-010",
+          "R-011",
+          "R-012",
+          "R-014",
+          "R-019",
+          "R-027",
+          "R-028",
+          "R-029",
+          "R-031"
+        ],
+        "status": {
+          "value": "paused",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+        "note": "Rewrites `pm-docs-site` and Non-interruption rule 9, so it bumps the rules major. From the 2026-11-22 review: (1) Done when moved to schemaVersion 6, because R-038 moved the export to 5 (inbox 2026-11-22-1501). (2) R-028's accessibility fixes (popup trigger, backdrop close, heading levels, card tab stops, collapse toggles, timeline zoom focus) exist only in `packages/pm-docs-site`; confirm the migrated `docs-site/` no longer carries the gaps of `skills/pm-docs-site/templates/`, or port the fixes if R-013 slips (inbox 2026-11-20-1844). (3) `just docs-check` still logs `[WARN] [content] Entry docs → 404 was not found.` from the template site; confirm it is gone after the migration, or give the template the package's fix (Starlight `disable404Route: true` and its own `src/pages/404.astro`; not a draft `404` entry, which prints a draft notice) (inbox 2026-11-21-1035). (4) The brief's Performance ramification (\"Render static HTML first and enhance with small islands\") is superseded: R-010 design (2026-11-18) chose rich interactive React islands for every view (React over Preact), and its Ramifications omit the React runtime dependency every consumer now gets (inbox 2026-11-18-0911; spec `docs/superpowers/specs/2026-11-18-docs-site-package-board-filters-design.md`).",
+        "revisits": null,
+        "claimable": true
+      },
+      {
         "id": "R-034",
         "title": "Engineering file and pm-engineering skill",
         "section": "next",
-        "position": 1,
+        "position": 2,
         "label": "next",
         "serves": [
           "V5"
@@ -284,7 +293,7 @@
         "id": "R-041",
         "title": "ADR skill follow-ups",
         "section": "next",
-        "position": 2,
+        "position": 3,
         "label": "next",
         "serves": [
           "V5"
@@ -308,7 +317,7 @@
         "id": "R-040",
         "title": "ADR link and export edge cases",
         "section": "next",
-        "position": 3,
+        "position": 4,
         "label": "next",
         "serves": [
           "V4",
@@ -608,16 +617,15 @@
   },
   "board": {
     "columns": {
-      "now": [
+      "now": [],
+      "next": [
         {
           "id": "R-013",
           "title": "Docs-site package: publish and migrate",
           "owner": "both",
           "size": "M",
-          "detail": "design"
-        }
-      ],
-      "next": [
+          "detail": "paused"
+        },
         {
           "id": "R-034",
           "title": "Engineering file and pm-engineering skill",
@@ -1509,6 +1517,77 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Deferred minors from the R-044 final review. (1) `release` reports a pure fast-forward of the PM branch as \"Moved 0 PM commits\". (2) The carry commit does not consult `PM state commit: ask | never`, and a carry onto a PM branch that is not checked out leaves `planning.json` stale (reported in its line). (3) No test for a detached HEAD or `core.autocrlf=true`. (4) Remote names containing `/` are split wrongly in `options()`, and a PM branch that exists only on the remote makes `rev-list` throw (fails safe). (5) Existing behaviour, not R-044: PM commits made on a pending pull request's branch after its last push are never delivered if the pull request merges without another push."
+    },
+    {
+      "file": "planning/inbox/2026-11-23-1525-docs-site-package-1-0-0.md",
+      "title": "Docs-site package: release 1.0.0",
+      "captured": "2026-11-23 15:25",
+      "source": "user",
+      "kind": "feature",
+      "severity": null,
+      "affects": "packages/pm-docs-site",
+      "context": "R-013 design",
+      "discuss": "no",
+      "related": [
+        "R-013",
+        "inbox 2026-11-23-1525-docs-site-package-architecture",
+        "2026-11-23-1525-docs-site-package-record-pages",
+        "2026-11-23-1525-docs-site-package-research"
+      ],
+      "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+      "reviewed": "never",
+      "idea": "Not stable until it contains everything, with complete instructions (user, 2026-11-23). Release `@purview-dev/pm-docs-site` 1.0.0 once R-013 and the architecture, brief and inbox pages, and research items are done (S, both). This replaces the brief's 2026-11-18 answer that R-013 releases 1.0.0; R-013 publishes 0.1.0-pre.4 instead."
+    },
+    {
+      "file": "planning/inbox/2026-11-23-1525-docs-site-package-architecture.md",
+      "title": "Docs-site package: architecture view",
+      "captured": "2026-11-23 15:25",
+      "source": "user",
+      "kind": "feature",
+      "severity": null,
+      "affects": "packages/pm-docs-site",
+      "context": "R-013 design",
+      "discuss": "no",
+      "related": [
+        "R-013"
+      ],
+      "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+      "reviewed": "never",
+      "idea": "The package must contain everything before 1.0.0. Architecture: LikeC4 diagrams rendered through `@purview-dev/astroc4`, as the `architecture` template module does today, as a package option (M). This repository's model at `docs/wiki/diagrams/pm-skills.c4` would use it. Sliced out of R-013 by the user's choice on 2026-11-23; 1.0.0 depends on it."
+    },
+    {
+      "file": "planning/inbox/2026-11-23-1525-docs-site-package-record-pages.md",
+      "title": "Docs-site package: brief and inbox pages",
+      "captured": "2026-11-23 15:25",
+      "source": "user",
+      "kind": "feature",
+      "severity": null,
+      "affects": "packages/pm-docs-site",
+      "context": "R-013 design",
+      "discuss": "no",
+      "related": [
+        "R-013"
+      ],
+      "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+      "reviewed": "never",
+      "idea": "The package must contain everything before 1.0.0. A page per brief and per inbox file, as items, risks, and ADRs already have, with links and Linked from (S). Sliced out of R-013 by the user's choice on 2026-11-23; 1.0.0 depends on it."
+    },
+    {
+      "file": "planning/inbox/2026-11-23-1525-docs-site-package-research.md",
+      "title": "Docs-site package: research reports",
+      "captured": "2026-11-23 15:25",
+      "source": "user",
+      "kind": "feature",
+      "severity": null,
+      "affects": "skills/pm-export, packages/pm-docs-site",
+      "context": "R-013 design",
+      "discuss": "no",
+      "related": [
+        "R-013"
+      ],
+      "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+      "reviewed": "never",
+      "idea": "The package must contain everything before 1.0.0. Research reports (`planning/research/`) are not in the export; add them to the export (schemaVersion 6, a rules bump) and give them a view in the package (M). Sliced out of R-013 by the user's choice on 2026-11-23; 1.0.0 depends on it."
     }
   ],
   "briefs": [
@@ -1516,7 +1595,7 @@
       "path": "planning/briefs/2026-11-17-docs-site-package.md",
       "id": "R-013",
       "title": "Docs site as a versioned package",
-      "status": "on roadmap (R-013), active",
+      "status": "on roadmap (R-013)",
       "origin": "user request",
       "updated": "2026-11-23",
       "decision": "2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.",
@@ -1676,13 +1755,45 @@
       "decision": "One script, `skills/pm-next/scripts/sync.ts` (**PM sync**), is the only thing that moves the PM branch.\n\n- `release` runs from the item branch right after `pm-next` cuts it. It moves the PM branch back to `<remote>/<PM branch>`, because the item branch now carries its commits.\n- `pull` fast-forwards the PM branch, or repairs a diverged one.\n  - Each local-only commit, which must touch only the PM root, is delivered when some remote commit already holds its change: a three-way merge of that commit's own change onto the remote commit changes nothing. This holds for merge-commit, squash, and rebase merges alike.\n  - Undelivered commits are carried as one `docs(pm): carry` commit, built with `commit-tree`.\n  - A conflict stops it before anything moves.\n- `driver` registers a `merge=pm-export` driver that keeps the current side of the derived `planning.json`, and sets `branch.<PM branch>.mergeOptions` to `--ff-only`, so a plain `git pull` on the PM branch never makes a merge.",
       "alternatives": "- **Require merge commits for pull requests.** Rejected by the user: the lifecycle must work under every merge method.\n- **Prove delivery by the `## Done` line on the remote.** Rejected: it fails once the item branch is deleted, and it says nothing about commits made after the cut.\n- **Repair with one whole-tree merge from the fork point.** Rejected in review: delivered state that upstream later deleted or changed (a triaged inbox file, a closed item) would come back as a carry.\n- **Carry with `git apply -3`.** Rejected: it fails on files a squash already created.",
       "consequences": "- After the normal lifecycle, the pull that follows a merge is a fast-forward under any merge method.\n- A refused plain pull is fixed with `just pm-sync`, or with `bun <pm-next skill>/scripts/sync.ts pull`.\n- The rules allow `branch -f`, `reset --keep`, `reset --soft`, `commit-tree`, and `config` for PM sync only.\n- The carry commit bypasses commit hooks, because its changes already passed them when first committed.\n- GitHub's server-side merge does not run custom drivers, so a pull request whose `planning.json` conflicts is updated locally.\n- Needs git 2.40 or later (`merge-tree --write-tree --merge-base`)."
+    },
+    {
+      "id": "ADR-005",
+      "path": "planning/decisions/ADR-005-docs-sites-consume-the-pm-docs-site-package.md",
+      "title": "Docs sites consume the pm-docs-site package",
+      "status": "proposed",
+      "supersededBy": null,
+      "date": "2026-11-23",
+      "category": "architecture",
+      "supersedes": null,
+      "item": "R-013",
+      "source": null,
+      "context": "Consumer docs sites carried about 40 copied template files rendered by `skills/pm-docs-site/scripts/site.ts`, resolved their own Astro and Starlight versions, and any template change forced a rules bump (brief `planning/briefs/2026-11-17-docs-site-package.md`). Spec: `docs/superpowers/specs/2026-11-23-docs-site-package-publish-and-migrate-design.md`.",
+      "decision": "Every docs site, including this repository's `docs-site/`, is a four-file consumer (`package.json`, `astro.config.ts`, `bun.lock`, `.gitignore`) of `@purview-dev/pm-docs-site`, configured through `pmDocsSite()` options. The skill's templates (except the `aspire` AppHost snippets) and `site.ts` are deleted. The skill states a minimum package version, and `scaffold` and `upgrade` pin `latest` exactly. This repository's `docs-site/` depends on the local package (`file:../packages/pm-docs-site`), like `examples/demo/`.",
+      "alternatives": "- Tidy the templates in place: fixes version spread but keeps about 40 copied files per consumer.\n- Pin the published version in `docs-site/`: the true consumer path, but every package release needs a second pull request after publishing.\n- A root Bun workspace: moves `bun.lock` out of `docs-site/` and changes the repository layout for one site.",
+      "consequences": "- A template change is a package release, not a rules bump.\n- `upgrade` migrates a template site once, using a frozen list of template files.\n- Consumers lose file-level edits; customisation is through options.\n- The architecture module must exist as a package option before the migration ships."
+    },
+    {
+      "id": "ADR-006",
+      "path": "planning/decisions/ADR-006-mermaid-renders-at-build-time-with-pele.md",
+      "title": "Mermaid renders at build time with Pele",
+      "status": "proposed",
+      "supersededBy": null,
+      "date": "2026-11-23",
+      "category": "architecture",
+      "supersedes": null,
+      "item": "R-013",
+      "source": null,
+      "context": "The wiki pages `docs-site/` serves hold 12 Mermaid fences that render as code blocks. Diagrams too small for LikeC4 need a light option, and builds must stay byte-identical. The user chose Pele (<https://hideoo.dev/notes/starlight-add-mermaid-diagrams-using-pele>). Spec: `docs/superpowers/specs/2026-11-23-docs-site-package-publish-and-migrate-design.md`.",
+      "decision": "`@purview-dev/pm-docs-site` renders every ```` ```mermaid ```` fence to inline SVG at build time with Pele, through a Sätteri mdast plugin, or a remark plugin on Astro's default processor if Sätteri does not work with the pinned Astro. Pele's CSS variables map to Starlight's for light and dark mode. A fence that does not parse fails the build and names the file. It applies wherever the package renders Markdown, including ADR sections (ADR-002).",
+      "alternatives": "- Client-side `mermaid` script: adds JavaScript to every page and breaks build determinism.\n- `rehype-mermaid`: needs a headless browser (Playwright) at build time.\n- Do nothing: diagrams stay code blocks.",
+      "consequences": "- No browser and no client JavaScript for diagrams.\n- `pele`, `satteri`, and `@astrojs/markdown-satteri` become exact-pinned package dependencies.\n- A diagram type Pele cannot render is rewritten, never rendered in the browser."
     }
   ],
   "counts": {
-    "next": 3,
+    "next": 4,
     "later": 11,
     "nextMax": 5,
-    "openInbox": 3,
+    "openInbox": 7,
     "discuss": 0,
     "shapingBriefs": 0,
     "done": 25,
@@ -1697,6 +1808,7 @@
     "reviewDue": false,
     "lastReview": "2026-11-22",
     "claimable": [
+      "R-013",
       "R-034",
       "R-041",
       "R-040"
