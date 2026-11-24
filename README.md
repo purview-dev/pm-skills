@@ -57,7 +57,7 @@ skill set, other install options, and the first run are in
 | [`pm-status`](skills/pm-status/SKILL.md) | Summary or your queue (read-only) | User asks |
 | [`pm-export`](skills/pm-export/SKILL.md) | Write the whole plan as `planning.json` plus its schema with a bundled Bun script, check them, or query one value or ID (read-only) | User asks, or a tool needs the plan as JSON |
 | [`pm-lint`](skills/pm-lint/SKILL.md) | Check every PM file against its format and schema rules, fix the layout ones, or print a pre-commit hook (lefthook, husky, git) | User asks; every PM commit runs it |
-| [`pm-docs-site`](skills/pm-docs-site/SKILL.md) | Plan, build, extend, upgrade, or check the local, searchable site that renders `planning.json`, with milestone and feature pages by default | User asks; builds run inside the site item's workflow |
+| [`pm-docs-site`](skills/pm-docs-site/SKILL.md) | Plan, build, extend, upgrade, or check the local, searchable site that renders `planning.json`, built on the `@purview-dev/pm-docs-site` package, with milestone and feature pages by default; upgrade migrates a template-built site onto the package | User asks; builds run inside the site item's workflow |
 | [`pm-help`](skills/pm-help/SKILL.md) | Explain each skill, find what is missing, recommend the next skill (read-only) | Any time you are unsure |
 
 ## How it fits together
@@ -75,8 +75,8 @@ the project site from `planning.json` as an npm package, so a site is
 `package.json`, a lockfile, and `astro.config.ts`, with Astro and
 Starlight pinned by the package, instead of a copy of the `pm-docs-site`
 templates. It is in prerelease on npm under the `prerelease` dist-tag,
-and until R-013 migrates the skill onto it,
-`pm-docs-site` still renders the templates. It is versioned and tagged on its own
+and `pm-docs-site` builds every site on it (at least `0.1.0-pre.4`). It
+is versioned and tagged on its own
 (`pm-docs-site-v<version>`) and published from
 `.github/workflows/publish-pm-docs-site.yml`. See
 [The docs-site package](docs/wiki/guide/Docs-Site-Package.md).

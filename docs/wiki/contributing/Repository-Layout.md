@@ -57,7 +57,8 @@ packages/
     LICENSE.md             a copy of the root licence, checked by validate
 docs/wiki/                 this documentation, published on purview.dev
 planning/                  this repository's own PM state
-docs-site/                 this repository's own project site
+docs-site/                 this repository's own project site: four files, on
+                           file:../packages/pm-docs-site
 scripts/
   validate.ts
   setup-skills.ts

@@ -62,31 +62,36 @@ and `rules.md` differ, and requires a fresh `pm-init` install and the
 breaks a rule fails `just test`. When a skill's file format changes, change
 its rule in the same commit.
 `pm-docs-site` plans, builds, and checks a local Astro and Starlight site
-that renders that export. Its spec is
-`skills/pm-docs-site/references/spec.md`, and the site ships as templates
-in `skills/pm-docs-site/templates/` (`site/` for the core, one folder per
-module with a `MODULE.md`). The core's optional views (Now, Milestones,
-Features, Inbox, Briefs, Strategy) are listed in `VIEWS` in
-`scripts/site.ts`, on unless a manifest's `views` leaves them out. The templates read one `schemaVersion`
-(`SCHEMA_VERSION` in `templates/site/src/lib/planning.ts`, the
-`planning-types.ts` literal, the fixture, and the SKILL.md sentence), and
-`scripts/validate.ts` fails when it differs from the export schema, so a
-schema change ships with the template change that reads it. It also checks
-that every template placeholder is documented in the skill and that the
-copied Astro Components Kit files keep their MIT attribution. The skill is
+that renders that export, built on the `@purview-dev/pm-docs-site` package
+in `packages/pm-docs-site/`. Its spec is
+`skills/pm-docs-site/references/spec.md`. A package site is four files
+(`package.json`, `astro.config.ts`, `bun.lock`, `.gitignore`), and every
+page, view, and module comes from the package; the skill states a
+`Minimum package version` and `This skill reads schemaVersion N.`, never
+the current package version. `skills/pm-docs-site/scripts/consumer.ts`
+writes a package site (`write`) and migrates a site the old templates
+rendered (`inspect`, `migrate`), deleting only the paths frozen in
+`skills/pm-docs-site/references/template-files.md`; the skill ships no
+site templates and no `site.ts`, only `templates/aspire/` (the AppHost
+snippets). `scripts/validate.ts` fails when the package's
+`SUPPORTED_SCHEMA_VERSIONS` (`packages/pm-docs-site/lib/schema-version.ts`)
+lacks the export schema's `schemaVersion`, when the SKILL.md sentence names
+another version, when the SKILL.md minimum is above the package's version
+(SemVer order), when `packages/pm-docs-site/test/fixtures/planning.json`
+does not validate against the schema, when `docs-site/` holds anything but
+its four files, and when a copied Astro Components Kit file in
+`packages/pm-docs-site/src/components/lib/` loses its MIT attribution, so
+a schema change ships with the package change that reads it. The skill is
 the one exception to the PM-root-only boundary: its build modes write the
 site, as a step of the site item's `execute` stage (Non-interruption rule 9
 in the managed section), and never commit.
-`skills/pm-docs-site/scripts/site.ts` renders a site from its manifest
-(`<site root>/pm-docs-site.json`) and the templates, and either writes the
-template-owned files or checks them. `docs-site/` is rendered this way, so
-`just validate` fails when a template changes without
-`bun skills/pm-docs-site/scripts/site.ts write docs-site`. Edit only its
-site-owned files by hand (`package.json`, `src/docs-sources.ts`). A
-template change is verified by `just docs-check` on `docs-site/`, and, for
-a module this site does not use (`architecture`, `aspire`) or the core
-without `repo-docs`, by rendering into a scratch repository and running
-`bun run test`, `bun run check`, and `bun run build` there.
+`docs-site/` is this repository's package site: its dependency is
+`"@purview-dev/pm-docs-site": "file:../packages/pm-docs-site"`, and its
+options are in `astro.config.ts`. `just docs-check` builds the package
+first, then installs the site, and runs `bun run check` and
+`bun run build` there. A package change is verified by `just package-test`
+(the package's tests, its browser tests, and the demo site) and
+`just docs-check`.
 `pm-item` edits single roadmap items; `pm-board` and `pm-roadmap` are the
 task-board and full-roadmap views with move, add, and insert operations;
 `pm-status` is a read-only summary or user-queue view; `pm-up-next` is a
@@ -121,8 +126,9 @@ resumes.
 
 ## Build, test, and lint
 
-The skills have no build system; the docs site (`docs-site/`) is the one
-built and unit-tested part. Validation, Markdown linting, and the docs-site
+The skills have no build system; the docs-site package
+(`packages/pm-docs-site/`) and the site built on it (`docs-site/`) are the
+built and tested parts. Validation, Markdown linting, and the docs-site
 check run locally and in CI (`.github/workflows/ci.yml`, which runs the
 same `bun` commands as the `just` recipes). Markdown is linted with
 `markdownlint-cli2`, using `.markdownlint-cli2.jsonc` (default rules, with
@@ -135,8 +141,8 @@ same `bun` commands as the `just` recipes). Markdown is linted with
   `bunx skills add ./ -y` instead, which copies the skills, so edits to
   `skills/` go stale until it runs again.
 - Serve the project site: `just docs` (<http://localhost:4321>). Search
-  works only on a build: `just docs-preview`. Check it matches the
-  templates, then test, type-check, and build it: `just docs-check`.
+  works only on a build: `just docs-preview`. Build the package, then
+  type-check and build the site: `just docs-check`.
 - Open the demo site (`examples/demo/`, an invented plan that fills every
   view, built on the local `packages/pm-docs-site`): `just demo`. Check it:
   `just demo-check` (part of `just package-test`). Its
@@ -151,10 +157,13 @@ same `bun` commands as the `just` recipes). Markdown is linted with
 - Lint all Markdown, validate skills, and test their scripts:
   `just lint-check` (auto-fix Markdown: `just lint-fix`)
 - Validate only (`scripts/validate.ts`: frontmatter, README, managed-section
-  and setup inventory, markers, template placeholders, the export schema
-  against its example, the docs-site templates against the schema, the
-  section installed in this file, and `docs-site/` against the templates):
-  `just validate`
+  and setup inventory, markers, `pm-init` template placeholders, the export
+  schema against its example, the `pm-docs-site` package's supported
+  schema versions and fixture against the schema, the skill's minimum
+  package version against the package's, the Astro Components Kit MIT
+  attribution, the section installed in this file, `docs-site/` holding
+  only its four files, and the package's licence copy and pinned versions
+  in its docs): `just validate`
 - Lint one file: `bunx markdownlint-cli2 skills/pm-next/SKILL.md`
 - Adding a shipped skill: create `skills/<name>/SKILL.md`, then list it in
   the README table, the managed-section table, the `pm-setup` inventory, and
@@ -672,11 +681,11 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   other finding is corrected by the skill that owns the file. A repository
   may run `pm-lint check --staged` as a pre-commit hook.
 - **Docs site:** the optional local Astro site that `pm-docs-site` builds
-  from its templates. It reads the **Export file** only, never writes the
-  PM root, and is code, not PM state: its files are committed by the
-  workflow that builds them. A site whose `SCHEMA_VERSION` is older than
-  the export's `schemaVersion` fails its build until `pm-docs-site upgrade`
-  runs.
+  from the `@purview-dev/pm-docs-site` package. It reads the **Export
+  file** only, never writes the PM root, and is code, not PM state: its
+  files are committed by the workflow that builds them. A site whose
+  package does not read the export's `schemaVersion` fails its build until
+  `pm-docs-site upgrade` runs.
 - **Merged-unclosed:** an item whose Session branch is merged into the PM
   branch while `NOW.md` still holds it active. It means the **Completion
   record** did not ride the branch. `pm-rejoin` finds and repairs it.
@@ -862,9 +871,11 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    whose `Note` names `pm-docs-site`, in the session that owns it, on a
    branch other than the PM branch, when the plan step or the user names
    them; rule 4's question does not apply. They write only the site
-   folder, the `Docs` group in the `justfile`, and the AppHost files their
-   `aspire` module lists. They never write the PM root, and never stage,
-   commit, push, or create branches: the workflow commits their files.
+   folder's four files, the `Docs` group in the `justfile`, and the
+   AppHost files the Aspire step edits on the user's yes, and run `bun add`
+   of the package in the site folder. They never write the PM root, and
+   never stage, commit, push, or create branches: the workflow commits
+   their files.
    `pm-docs-site` `plan` and `check` are PM skills and follow rules 2 to 6.
 10. **`pm-checkpoint` push and pop suspend and restore an operation.** When
     the user asks to stack, suspend, pause-and-restore, or handle an
@@ -1338,6 +1349,14 @@ GitHub's server-side merge does not run custom drivers, so a pull
 request whose `planning.json` conflicts is updated locally (merge the PM
 branch into it) and the next PM commit regenerates the export. Run
 `pm-setup` once to register the driver. No setting is added.
+
+Version 21 also builds the **Docs site** on a package. `pm-docs-site` now
+installs `@purview-dev/pm-docs-site` (at least `0.1.0-pre.4`), and the
+site is four files: `package.json`, `astro.config.ts`, `bun.lock`, and
+`.gitignore`. `pm-docs-site upgrade` migrates a site built from the
+templates, including one with the architecture module, onto the package.
+Mermaid fences in the docs and ADR pages render as diagrams. Run
+`pm-docs-site check` for an installed site. No setting is added.
 
 ## Asking the user (mandatory)
 
