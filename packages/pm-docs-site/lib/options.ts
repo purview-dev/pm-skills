@@ -28,6 +28,27 @@ function checkDocs(docs: unknown): void {
 	}
 }
 
+/**
+ * Throw a pm-docs-site message for a malformed `architecture` option. `null`
+ * is handled by the caller as absent, so this only runs for a defined,
+ * non-null value.
+ */
+function checkArchitecture(architecture: unknown): void {
+	if (typeof architecture !== 'object' || Array.isArray(architecture)) {
+		throw new Error('pm-docs-site: architecture must be an object');
+	}
+
+	const value = architecture as { project?: unknown; highlighting?: unknown };
+
+	if (value.project !== undefined && (typeof value.project !== 'string' || value.project === '')) {
+		throw new Error('pm-docs-site: architecture.project must be a path');
+	}
+
+	if (value.highlighting !== undefined && typeof value.highlighting !== 'boolean') {
+		throw new Error('pm-docs-site: architecture.highlighting must be true or false');
+	}
+}
+
 /** @param root the site root, absolute */
 export function resolveOptions(options: PmDocsSiteOptions, root: string): ResolvedOptions {
 	if (!options || typeof options.title !== 'string' || options.title === '') {
@@ -44,14 +65,28 @@ export function resolveOptions(options: PmDocsSiteOptions, root: string): Resolv
 
 	if (options.docs !== undefined) checkDocs(options.docs);
 
+	if (options.architecture !== undefined && options.architecture !== null) checkArchitecture(options.architecture);
+
 	const views = Object.fromEntries(VIEW_NAMES.map((name) => [name, listed.includes(name)])) as Record<ViewName, boolean>;
+
+	const docs = options.docs ? { root: resolve(root, options.docs.root), sources: options.docs.sources } : null;
+
+	const architecture =
+		options.architecture === undefined || options.architecture === null
+			? null
+			: {
+					project: options.architecture.project !== undefined ? resolve(root, options.architecture.project) : null,
+					highlighting: options.architecture.highlighting ?? true,
+					markersRoot: docs ? docs.root : root,
+				};
 
 	return {
 		title: options.title,
 		description: options.description ?? null,
 		planning: resolve(root, options.planning ?? DEFAULT_PLANNING),
 		planningLabel: (options.planning ?? DEFAULT_PLANNING).replace(/\\/g, '/'),
-		docs: options.docs ? { root: resolve(root, options.docs.root), sources: options.docs.sources } : null,
+		docs,
 		views,
+		architecture,
 	};
 }

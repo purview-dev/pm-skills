@@ -65,3 +65,61 @@ describe('resolveOptions', () => {
 		);
 	});
 });
+
+describe('architecture option', () => {
+	it('is null when absent', () => {
+		expect(resolveOptions({ title: 'T' }, root).architecture).toBeNull();
+	});
+
+	it('treats null like absent', () => {
+		expect(resolveOptions({ title: 'T', architecture: null }, root).architecture).toBeNull();
+	});
+
+	it('applies the defaults from an empty object', () => {
+		expect(resolveOptions({ title: 'T', architecture: {} }, root).architecture).toEqual({
+			project: null,
+			highlighting: true,
+			markersRoot: root,
+		});
+	});
+
+	it('resolves project from the site root and markersRoot from docs.root', () => {
+		const resolved = resolveOptions({ title: 'T', architecture: { project: 'arch' }, docs: { root: '..', sources: [] } }, root);
+
+		expect(resolved.architecture).toEqual({
+			project: resolve(root, 'arch'),
+			highlighting: true,
+			markersRoot: resolve(root, '..'),
+		});
+	});
+
+	it('keeps highlighting false when set', () => {
+		expect(resolveOptions({ title: 'T', architecture: { highlighting: false } }, root).architecture).toEqual({
+			project: null,
+			highlighting: false,
+			markersRoot: root,
+		});
+	});
+
+	it.each([
+		['x', 'pm-docs-site: architecture must be an object'],
+		[1, 'pm-docs-site: architecture must be an object'],
+		[[], 'pm-docs-site: architecture must be an object'],
+		[true, 'pm-docs-site: architecture must be an object'],
+	])('rejects a malformed architecture option %p', (architecture, message) => {
+		// @ts-expect-error malformed on purpose
+		expect(() => resolveOptions({ title: 'T', architecture }, root)).toThrow(message);
+	});
+
+	it.each([[''], [1]])('rejects an invalid architecture.project %p', (project) => {
+		// @ts-expect-error malformed on purpose
+		expect(() => resolveOptions({ title: 'T', architecture: { project } }, root)).toThrow('pm-docs-site: architecture.project must be a path');
+	});
+
+	it('rejects a non-boolean architecture.highlighting', () => {
+		// @ts-expect-error malformed on purpose
+		expect(() => resolveOptions({ title: 'T', architecture: { highlighting: 'yes' } }, root)).toThrow(
+			'pm-docs-site: architecture.highlighting must be true or false',
+		);
+	});
+});
