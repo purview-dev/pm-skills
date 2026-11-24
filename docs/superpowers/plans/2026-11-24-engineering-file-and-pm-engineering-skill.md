@@ -37,12 +37,14 @@ Each line has its test in Task 1, Step 1.
 ### Task 1: pm-lint `engineering` kind and rules
 
 **Files:**
+
 - Modify: `skills/pm-lint/scripts/structure.ts` (`Kind`, `TOP_FILES`, `KEYS`, `FILE_KEYS`, `checkStructure` checkers, new `engineeringBlocks` and `checkEngineering`, `fixStructure`)
 - Modify: `skills/pm-lint/scripts/rules.ts` (8 `rule(...)` entries after the `risks/` group)
 - Modify: `skills/pm-lint/references/rules.md` (Scope row for `ENGINEERING.md`; `### engineering` table after `### risks`)
 - Test: `skills/pm-lint/scripts/lint.test.ts` (new `describe("engineering rules", ...)`)
 
 **Interfaces:**
+
 - Consumes: `Context.adrs` (`{ id, status }[]`), `requireSections`, `checkBlockFields`, `findSection`, `sections`, `fields`, `fieldMap`, `sortByDate`, `trimBlank`, `idNumber`, `isDate` (all existing in `structure.ts`).
 - Produces: `KEYS.technology`, `KEYS.principle` (readonly string tuples as in Global Constraints); `export function engineeringBlocks(lines: Line[], section: Section): EngineeringBlock[]` with `interface EngineeringBlock { id: string; title: string; heading: number; start: number; end: number; fields: Map<string, Field>; list: Field[] }` (`id` is `EP-NNN` or `""`, `title` is the rest of the heading or the whole heading for technology).
 
@@ -61,12 +63,13 @@ const engRules = async (file: () => string) => (await lint({ root: repo({ "ENGIN
 ```
 
 Tests (one `it` each):
+
 - `accepts a valid file`: `engineering([tech("Bun"), tech("Zod", { Kind: "library", Decision: "none" })], [principle("EP-001", "TypeScript for every script"), principle("EP-002", "Reviewed docs", { Check: "review" })], ["- 2026-11-24 Jest. Reason: replaced by bun test."])` -> `[]`.
 - `accepts a CRLF file`: same text with `\n` -> `\r\n` -> `[]`.
 - `checks sections`: a file with `## Principles` before `## Technology` and no `## Removed` -> rules contain `engineering/sections`.
 - `checks technology blocks`: `### Bun` and `### bun` -> `engineering/technology`; a block missing `Reason` -> `engineering/technology`; fields out of order -> `engineering/technology`.
 - `checks principle blocks`: heading `### Use TypeScript` (no ID) -> `engineering/principle`; `EP-1` -> `engineering/principle`; 9-word title -> `title/length`.
-- `checks values`: `Check: bun test` -> `engineering/values`; `Decision: ADR-009` -> `engineering/values`; `Decision: ADR-002, ADR-001` -> `engineering/values`; `Source: ` (empty) -> `engineering/values`; `Added: today` -> `engineering/values`.
+- `checks values`: `Check: bun test` -> `engineering/values`; `Decision: ADR-009` -> `engineering/values`; `Decision: ADR-002, ADR-001` -> `engineering/values`; `Source:` (empty) -> `engineering/values`; `Added: today` -> `engineering/values`.
 - `warns on a superseded decision`: `tech("Bun", { Decision: "ADR-001" })` -> exactly one finding, rule `engineering/decision-current`, severity `warning`.
 - `checks principle IDs across Principles and Removed`: `principle("EP-001", ...)` plus removed `- 2026-11-20 EP-001 Old rule. Reason: dropped.` -> `engineering/id-unique`.
 - `checks removed lines`: `- Jest removed` -> `engineering/removed`.
@@ -95,7 +98,7 @@ Expected: FAIL (no `engineering/` findings; `ENGINEERING.md` is linted as plain 
   - `engineering/order`: technology by `localeCompare` of the lowercased name, principles by `idNumber`, Removed newest first.
 - `fixStructure`: for `kind === "engineering"`, reorder Technology and Principles blocks (as the Open risks reorder, bottom section first so line numbers stay valid) and `sortByDate` the Removed section.
 - `rules.ts`: the 8 rules, `engineering/order` fixable, `engineering/decision-current` severity `warning`, the rest `error`; texts as the spec's table.
-- `rules.md`: Scope row `| \`ENGINEERING.md\` | **Engineering file** (Shared definitions) | format, fields, engineering |` after `RISKS.md`; the `### engineering` table copied from the spec.
+- `rules.md`: Scope row `| \`ENGINEERING.md\` | **Engineering file** (Shared definitions) | format, fields, engineering |` after `RISKS.md`; the`### engineering` table copied from the spec.
 
 - [ ] **Step 4: Run the tests to verify they pass**
 
@@ -112,23 +115,26 @@ git commit -m "feat(pm-lint): engineering file schema and rules (R-034)"
 ### Task 2: pm-init template
 
 **Files:**
+
 - Create: `skills/pm-init/templates/ENGINEERING.md`
 - Modify: `skills/pm-init/SKILL.md:36-47` (file table row after `RISKS.md`), `:148` (the `Created:` line)
 - Test: existing `passes for a fresh pm-init install` in `lint.test.ts`; add `it("writes ENGINEERING.md on a fresh install")` asserting `existsSync(join(initRoot(), "planning", "ENGINEERING.md"))` (add `existsSync` to the `node:fs` import).
 
 - [ ] **Step 1: Write the failing test** (the `existsSync` assertion above).
 - [ ] **Step 2: Run** `bun test skills/pm-lint/scripts/lint.test.ts -t "fresh"` — Expected: FAIL on the new test.
-- [ ] **Step 3: Write the template**: `# Engineering`, an HTML comment in the `RISKS.md` template's style stating "Written only by pm-engineering. A missing file is empty. Reasons beyond one line live in ADRs (Decision). Principle IDs are EP-NNN and never reused, including removed ones.", both block formats from Global Constraints, then the three empty `##` sections. Add the `| \`ENGINEERING.md\` | \`<PM root>/ENGINEERING.md\` |` row and `ENGINEERING.md` to the `Created:` line after `RISKS.md`.
+- [ ] **Step 3: Write the template**: `# Engineering`, an HTML comment in the `RISKS.md` template's style stating "Written only by pm-engineering. A missing file is empty. Reasons beyond one line live in ADRs (Decision). Principle IDs are EP-NNN and never reused, including removed ones.", both block formats from Global Constraints, then the three empty `##` sections. Add the `ENGINEERING.md` row (destination `<PM root>/ENGINEERING.md`) and `ENGINEERING.md` to the `Created:` line after `RISKS.md`.
 - [ ] **Step 4: Run** `bun test skills/pm-lint/scripts/lint.test.ts` and `just validate` — Expected: PASS (validate checks template placeholders).
 - [ ] **Step 5: Commit**: `git add skills/pm-init skills/pm-lint/scripts/lint.test.ts` then `git commit -m "feat(pm-init): engineering file template (R-034)"`.
 
 ### Task 3: Managed section
 
 **Files:**
+
 - Modify: `skills/pm-setup/references/AGENTS-section.md`
 - Modify: `AGENTS.md` (the installed section between the markers, kept equal to the reference minus `version=`)
 
 **Interfaces:**
+
 - Produces: the names Task 4's skill cites: **Engineering file**, **Principle IDs**, the `pm-engineering` table row.
 
 - [ ] **Step 1: Edit the reference**, each item from the spec's "Shared definitions" section:
@@ -146,10 +152,12 @@ git commit -m "feat(pm-lint): engineering file schema and rules (R-034)"
 ### Task 4: The pm-engineering skill and its table rows
 
 **Files:**
+
 - Create: `skills/pm-engineering/SKILL.md`
 - Modify: `README.md` (skills table, after `pm-adr`), `skills/pm-setup/SKILL.md:68-72` (inventory list), `skills/pm-help/SKILL.md` (skill guide row after `pm-adr`)
 
 **Interfaces:**
+
 - Consumes: Task 3's definitions by name; Task 1's rule IDs for the output Note.
 
 - [ ] **Step 1: Run** `just validate` — Expected: FAIL (`pm-engineering` tables).
@@ -158,7 +166,7 @@ git commit -m "feat(pm-lint): engineering file schema and rules (R-034)"
   - `add`/`change` refuse a `Decision` ADR that is superseded or deprecated: `ADR-NNN <title> (<status>) is superseded by ADR-MMM <title>. Use it instead?` as a choice question.
   - Technology blocks are inserted alphabetically, principles by ID, Removed newest first.
   - Every write runs one PM commit with `docs(pm): <add|change|remove> <name or EP-NNN> engineering`.
-- [ ] **Step 3: Add the rows**: README `| [\`pm-engineering\`](skills/pm-engineering/SKILL.md) | Show, add, change, or remove the technology and engineering principles | User asks (view mid-task) |`; `pm-engineering` in the `pm-setup` inventory list after `pm-adr`; `pm-help` row: purpose, triggers `"we use zod"`, `"show the principles"`, `"remove Jest"`, writes `ENGINEERING.md`.
+- [ ] **Step 3: Add the rows**: README `| [\`pm-engineering\`](skills/pm-engineering/SKILL.md) | Show, add, change, or remove the technology and engineering principles | User asks (view mid-task) |`;`pm-engineering` in the `pm-setup` inventory list after `pm-adr`;`pm-help` row: purpose, triggers `"we use zod"`,`"show the principles"`,`"remove Jest"`, writes`ENGINEERING.md`.
 - [ ] **Step 4: Run** `just validate` and `bunx markdownlint-cli2 skills/pm-engineering/SKILL.md README.md skills/pm-help/SKILL.md skills/pm-setup/SKILL.md` — Expected: PASS.
 - [ ] **Step 5: Commit**: `git add skills/pm-engineering README.md skills/pm-setup/SKILL.md skills/pm-help/SKILL.md` then `git commit -m "feat(pm-engineering): engineering file skill (R-034)"`.
 

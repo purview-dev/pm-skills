@@ -103,7 +103,7 @@ Structure follows `pm-risk`: frontmatter, Modes table, Guard, Steps, Output temp
 
 | Mode | Trigger | Writes |
 | --- | --- | --- |
-| `view [technology | principles | <name or EP-NNN>]` | "show the engineering file", "what do we use", "show EP-002" | nothing |
+| `view [technology \| principles \| <name or EP-NNN>]` | "show the engineering file", "what do we use", "show EP-002" | nothing |
 | `add technology <name>` / `add principle <title>` | "we use X", "record a principle", "adopted zod" | one block |
 | `change <name or EP-NNN> <field> <value>` | "bump Bun to 1.3", "EP-002 applies to src/**" | the named fields |
 | `remove <name or EP-NNN> <reason>` | "we dropped Jest" | removes the block, adds one `## Removed` line |
