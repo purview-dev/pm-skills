@@ -14,28 +14,28 @@ export class PlanningExportError extends Error {
 /**
  * Throw unless the export's schemaVersion is one this package reads.
  * @param path the export's path, for the message
+ * @param supported the schemaVersions to accept; defaults to the ones this package reads
  */
-export function checkSchemaVersion(version: unknown, path: string): void {
-	if (typeof version === 'number' && SUPPORTED_SCHEMA_VERSIONS.includes(version)) return;
+export function checkSchemaVersion(version: unknown, path: string, supported: readonly number[] = SUPPORTED_SCHEMA_VERSIONS): void {
+	if (typeof version === 'number' && supported.includes(version)) return;
 
-	throw new PlanningExportError(
-		`${path} has schemaVersion ${String(version)}; this site reads schemaVersion ${SUPPORTED_SCHEMA_VERSIONS.join(', ')}.`,
-	);
+	throw new PlanningExportError(`${path} has schemaVersion ${String(version)}; this site reads schemaVersion ${supported.join(', ')}.`);
 }
 
 /**
  * Throw unless the parsed export is an object with a schemaVersion this package
  * reads, so `null`, an array, or a scalar fails with the pm-export hint.
  * @param path the export's path, for the message
+ * @param supported the schemaVersions to accept; defaults to the ones this package reads
  */
-export function checkExport(value: unknown, path: string): asserts value is { schemaVersion: number } {
+export function checkExport(value: unknown, path: string, supported: readonly number[] = SUPPORTED_SCHEMA_VERSIONS): asserts value is { schemaVersion: number } {
 	if (value === null || typeof value !== 'object' || Array.isArray(value)) {
 		const kind = value === null ? 'null' : Array.isArray(value) ? 'an array' : typeof value;
 
 		throw new PlanningExportError(`${path} does not hold a plan export (found ${kind}).`);
 	}
 
-	checkSchemaVersion((value as { schemaVersion?: unknown }).schemaVersion, path);
+	checkSchemaVersion((value as { schemaVersion?: unknown }).schemaVersion, path, supported);
 }
 
 /**
@@ -43,8 +43,9 @@ export function checkExport(value: unknown, path: string): asserts value is { sc
  * unsupported schemaVersion throws PlanningExportError, which names the path
  * and the pm-export hint.
  * @param path the export's path, for the message
+ * @param supported the schemaVersions to accept; defaults to the ones this package reads
  */
-export function parseExport(text: string, path: string): { schemaVersion: number } {
+export function parseExport(text: string, path: string, supported: readonly number[] = SUPPORTED_SCHEMA_VERSIONS): { schemaVersion: number } {
 	let value: unknown;
 
 	try {
@@ -53,7 +54,7 @@ export function parseExport(text: string, path: string): { schemaVersion: number
 		throw new PlanningExportError(`${path} is not valid JSON (${(error as Error).message}).`);
 	}
 
-	checkExport(value, path);
+	checkExport(value, path, supported);
 
 	return value;
 }
