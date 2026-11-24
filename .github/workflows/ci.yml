@@ -63,6 +63,10 @@ jobs:
         with:
           node-version: 24
 
+      - name: Install the pm-docs-site package
+        working-directory: packages/pm-docs-site
+        run: bun install --frozen-lockfile
+
       - name: Build the pm-docs-site package
         working-directory: packages/pm-docs-site
         run: node scripts/build.ts
