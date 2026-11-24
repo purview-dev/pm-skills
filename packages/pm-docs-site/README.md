@@ -63,6 +63,7 @@ export default {
 | `planning` | path from the site root | `../planning/planning.json` |
 | `docs` | `{ root, sources }`; `root` from the site root, each source a folder and globs | none: no repository pages |
 | `views` | any of `now`, `milestones`, `graph`, `features`, `inbox`, `briefs`, `strategy`, `decisions` | all eight |
+| `architecture` | `{ project?, highlighting? }`: LikeC4 diagrams (see [Architecture](#architecture)) | none: no LikeC4 |
 
 Home, Board, Roadmap, Log and Risks are always rendered. A docs source has
 `label`, `base`, `include`, and optionally `prefix`, `indexFile`, `order`,
@@ -169,6 +170,66 @@ view can be shared; `Clear` returns to the default. Every ADR has its own
 page with its header fields and its Context, Decision, Alternatives, and
 Consequences rendered from Markdown, and search indexes it. A feature page
 lists the ADRs whose `Item` is that item.
+
+## Architecture
+
+The `architecture` option turns on [LikeC4](https://likec4.dev) diagrams,
+rendered by [`@purview-dev/astroc4`](https://github.com/purview-dev/astroc4).
+It is optional: a site without it never loads astroc4 or LikeC4, and does
+not need them installed. A site with it installs them next to this package:
+
+```bash
+bun add --exact @purview-dev/astroc4@1.0.0-prerelease.9 likec4 @likec4/core shiki @astrojs/markdown-satteri
+```
+
+Without them, the build stops with that command in its error message.
+
+```ts
+pmDocsSite({
+  title: 'My project',
+  docs: { root: '..', sources: [/* ... */] },
+  architecture: { project: '../docs/architecture/likec4' },
+});
+```
+
+| Field | Type | Default |
+| --- | --- | --- |
+| `project` | a LikeC4 project folder (a LikeC4 config file and a `views/` folder), from the site root | none: no architecture pages |
+| `highlighting` | boolean: highlight LikeC4 source in code blocks | `true` |
+
+With the option set:
+
+- **Diagram markers** in the repository docs render as LikeC4 views. A
+  marker wraps the Mermaid diagram GitHub shows, so one page reads well in
+  both places:
+
+  ````markdown
+  <!-- purview:likec4 file="../diagrams/the-loop.c4" view="theLoop" title="The loop" -->
+  ```mermaid
+  flowchart LR
+    resume[pm-resume] --> next[pm-next]
+  ```
+
+  [LikeC4 model](../diagrams/the-loop.c4)
+  <!-- /purview:likec4 -->
+  ````
+
+  `file` is relative to the page, or `/`-rooted at the docs root, and must
+  stay inside it, so a model can live anywhere under the docs root. `view`
+  defaults to the model's first view; `title`, `description`, `height`
+  (default `420`), `collapsible`, and `defaultOpen` are optional. When the
+  model cannot be read or the view is not declared, the Mermaid diagram stays
+  and the build logs a warning naming the page, line, and reason; a marker
+  never fails the build. Markers work in `.md` pages only, and ADR sections
+  always show the Mermaid, because exported ADR text has no page to resolve
+  `file` against. The marker is purview.dev's diagram pair; astroc4's
+  Fences guide describes it in full.
+- **` ```likec4 ` fences** in the repository docs render as diagrams, as in
+  astroc4.
+- **With `project`**, one page per folder under `<project>/views/`, at
+  `/architecture/<folder>/`, each showing every view declared there, and an
+  `Architecture` sidebar group linking them. A `project` without a `views/`
+  folder fails the build with a message naming the folder.
 
 ## CLI
 

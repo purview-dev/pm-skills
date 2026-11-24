@@ -73,9 +73,28 @@ linked. The integration adds `@astrojs/react` itself, so a site is still three f
 | `planning` | `../planning/planning.json` | The export, relative to the site folder |
 | `docs` | none | `{ root, sources }`: repository Markdown, each source one sidebar group |
 | `views` | all six | Any of `now`, `milestones`, `features`, `inbox`, `briefs`, `strategy` |
+| `architecture` | none | `{ project?, highlighting? }`: LikeC4 diagrams, below |
 
 Home, Board, Roadmap, Log, and Risks are always rendered. A docs source has `label`, `base`, and
 `include` globs, and optionally `prefix`, `indexFile`, `order`, `collapsed`, and `hidden`.
+
+## Architecture diagrams
+
+The `architecture` option turns on LikeC4 diagrams through `@purview-dev/astroc4`. It is optional: a
+site without it never loads astroc4 or LikeC4. A site with it installs them next to the package:
+
+```bash
+bun add --exact @purview-dev/astroc4@1.0.0-prerelease.9 likec4 @likec4/core shiki @astrojs/markdown-satteri
+```
+
+- **Diagram markers.** A `<!-- purview:likec4 file="…" view="…" -->` comment, then a Mermaid fence,
+  then `<!-- /purview:likec4 -->`, renders as the LikeC4 view on the site, while GitHub shows the
+  Mermaid. `file` is relative to the page, or `/`-rooted at the docs root. A model that cannot be
+  read, or a view it does not declare, keeps the Mermaid and logs a warning; a marker never fails
+  the build. Markers work in `.md` pages only, and ADR sections always show the Mermaid.
+- **` ```likec4 ` fences** render as diagrams.
+- **`project`** names a LikeC4 project folder (a config file and a `views/` folder). The site then
+  has one page per views folder at `/architecture/<folder>/` and an `Architecture` sidebar group.
 
 ## Commands
 
