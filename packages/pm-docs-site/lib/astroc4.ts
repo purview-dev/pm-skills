@@ -5,7 +5,7 @@
 /** The Starlight plugin astroc4's default export returns, given its options. */
 export type Astroc4Plugin = (options: Record<string, unknown>) => unknown;
 
-const INSTALL_COMMAND = 'bun add --exact @purview-dev/astroc4@1.0.0-prerelease.9 likec4 @likec4/core shiki @astrojs/markdown-satteri';
+export const INSTALL_COMMAND = 'bun add --exact @purview-dev/astroc4@1.0.0-prerelease.9 likec4 @likec4/core shiki @astrojs/markdown-satteri';
 
 /**
  * Dynamically imports @purview-dev/astroc4's Starlight plugin, so it loads
