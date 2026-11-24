@@ -10,6 +10,17 @@ const SEQUENCE = '```mermaid\nsequenceDiagram\n  Alice->>Bob: Hello\n```\n';
 const FLOWCHART = '```mermaid\nflowchart LR\n  A[Mermaid text] --> B[SVG]\n```\n';
 const INVALID = '```mermaid\nsequenceDiagram\n  A->>\n```\n';
 
+// Flowchart and sequence diagrams identify their elements with `data-id="<label>"`,
+// never a literal, idPrefix-derived `id="..."`: Pele only writes idPrefix into the
+// DOM for a diagram type that needs an SVG-referenced `<defs>`, confirmed by
+// rendering one (a Sankey diagram's gradient fill). The id-uniqueness and
+// id-stability tests below render Sankey fences so they exercise the actual
+// `idPrefix` string mermaidFences() computes (the source hash and the
+// per-document fence counter), not incidental label differences.
+const SANKEY_A = '```mermaid\nsankey-beta\n\nA,B,10\n```\n';
+const SANKEY_B = '```mermaid\nsankey-beta\n\nC,D,20\n```\n';
+const TWO_SANKEY_FENCES = '```mermaid\nsankey-beta\n\nA,B,10\n```\n\n```mermaid\nsankey-beta\n\nC,D,20\n```\n';
+
 /** Render Markdown through a fresh Sätteri processor carrying only the Mermaid fence. */
 async function renderMarkdown(source: string, fileURL?: URL): Promise<string> {
 	const processor = satteri({ mdastPlugins: [mermaidFences()] });
@@ -19,9 +30,9 @@ async function renderMarkdown(source: string, fileURL?: URL): Promise<string> {
 	return code;
 }
 
-/** Literal `id="..."` attributes; the `\b` boundary also catches `data-id="..."`, which is what Pele's non-Sankey diagrams carry. */
-function idsOf(html: string): string[] {
-	return [...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]!);
+/** The literal `pele-<hash>-<n>-...` ids `mermaidFences()`'s `idPrefix` produces. */
+function peleIds(html: string): string[] {
+	return [...html.matchAll(/\bid="(pele-[^"]+)"/g)].map((match) => match[1]!);
 }
 
 describe('mermaidFences', () => {
@@ -42,20 +53,43 @@ describe('mermaidFences', () => {
 	});
 
 	it('ids are equal across two renders of the same source', async () => {
-		const first = await renderMarkdown(SEQUENCE);
-		const second = await renderMarkdown(SEQUENCE);
+		const first = await renderMarkdown(SANKEY_A);
+		const second = await renderMarkdown(SANKEY_A);
 
 		expect(first).toBe(second);
+		// The html equality above already implies this, but pin the mechanism
+		// directly: the same idPrefix (hash of the source), not just the same output.
+		expect(peleIds(first)).toEqual(peleIds(second));
+		expect(peleIds(first).length).toBeGreaterThan(0);
 	});
 
 	it('two sources with one fence each get distinct ids', async () => {
-		const first = await renderMarkdown(SEQUENCE);
-		const second = await renderMarkdown(FLOWCHART);
-		const firstIds = idsOf(first);
-		const secondIds = idsOf(second);
+		// Two separate renderMarkdown calls, one fence each: the case loaders/adrs.ts
+		// hits when two different ADR sections each carry a fence (Review Focus 1).
+		// A counter that restarted at 0 for each call, without hashing the source,
+		// would give both their first fence the same id; the hash must tell them apart.
+		const first = await renderMarkdown(SANKEY_A);
+		const second = await renderMarkdown(SANKEY_B);
+		const firstIds = peleIds(first);
+		const secondIds = peleIds(second);
 
 		expect(firstIds.length).toBeGreaterThan(0);
+		expect(secondIds.length).toBeGreaterThan(0);
 		for (const id of firstIds) expect(secondIds).not.toContain(id);
+	});
+
+	it('two fences in one source get sequential, distinct ids sharing one prefix', async () => {
+		// One renderMarkdown call, two fences: the per-document counter (not the
+		// hash) must tell them apart, since they share the same factory.source.
+		const html = await renderMarkdown(TWO_SANKEY_FENCES);
+		const ids = peleIds(html);
+		const prefixes = ids.map((id) => id.replace(/^(pele-[^-]+)-\d+-.*$/, '$1'));
+		const indices = ids.map((id) => id.replace(/^pele-[^-]+-(\d+)-.*$/, '$1'));
+
+		expect(ids.length).toBe(2);
+		expect(new Set(ids).size).toBe(2);
+		expect(prefixes[0]).toBe(prefixes[1]);
+		expect([...indices].sort()).toEqual(['0', '1']);
 	});
 
 	it('a fence that does not parse throws naming the file', async () => {
