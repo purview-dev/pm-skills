@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-24T20:46:34+00:00",
+  "generatedAt": "2026-11-24T22:30:43+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-013-docs-site-package",
-    "head": "d7b8cae3d68f70e8ac0ca00965fc58dfb8fca796"
+    "branch": "feat/r-034-engineering-file-and-pm-engineering-skill",
+    "head": "3d7f55c06e4c63ff62fdbb9360cbf977a0cda348"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -221,50 +221,38 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
-    "brief": null,
-    "milestone": null,
+    "status": "active",
+    "item": {
+      "id": "R-034",
+      "title": "Engineering file and pm-engineering skill",
+      "serves": [
+        "V5"
+      ],
+      "owner": "agent",
+      "size": "M",
+      "dependsOn": [],
+      "revisits": null
+    },
+    "stage": "design",
+    "session": "feat/r-034-engineering-file-and-pm-engineering-skill",
+    "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
+    "milestone": "M4",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-24",
+    "doneWhen": [
+      "`pm-engineering add` writes a linted entry to `planning/ENGINEERING.md` (`## Technology` and `## Principles`, each entry citing its `Source`), and the skill is listed in the README, managed-section, `pm-setup`, and `pm-help` tables with `just validate` and `just test` passing."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-034",
-        "title": "Engineering file and pm-engineering skill",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V5"
-        ],
-        "milestone": "M4",
-        "owner": "agent",
-        "doneWhen": "`pm-engineering add` writes a linted entry to `planning/ENGINEERING.md` (`## Technology` and `## Principles`, each entry citing its `Source`), and the skill is listed in the README, managed-section, `pm-setup`, and `pm-help` tables with `just validate` and `just test` passing.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
-        "note": null,
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-041",
         "title": "ADR skill follow-ups",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V5"
@@ -288,7 +276,7 @@
         "id": "R-040",
         "title": "ADR link and export edge cases",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4",
@@ -666,15 +654,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-034",
           "title": "Engineering file and pm-engineering skill",
           "owner": "agent",
           "size": "M",
-          "detail": "ready"
-        },
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-041",
           "title": "ADR skill follow-ups",
@@ -1805,9 +1794,9 @@
       "path": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
       "id": "R-034",
       "title": "Technology and engineering principles sections",
-      "status": "on roadmap (R-034, R-035, R-036, R-037)",
+      "status": "on roadmap (R-034, R-035, R-036, R-037), active",
       "origin": "planning/inbox/2026-11-20-1528-technology-and-engineering-principles.md",
-      "updated": "2026-11-22",
+      "updated": "2026-11-24",
       "decision": "2026-11-20 Keep it parked. Reason: SCOPE CHANGE to v1; no `V` line or milestone covers it and M1 Reproducible docs site is the current focus. Next: `pm-strategy` adds a `V` line and a milestone after M1, then the four slices go to Later under it.",
       "problem": "A solo developer's technology choices, adopted packages, and engineering principles are decided once and then lost: nothing in PM state records what was adopted and why (answer 2026-11-20).",
       "doneWhen": "`pm-init` in a scratch repository with a `package.json` and an `AGENTS.md` writes `planning/ENGINEERING.md` with `## Technology` and `## Principles`, each entry citing its `Source`, and `pm-lint check` passes on it.",
@@ -2008,7 +1997,7 @@
     }
   ],
   "counts": {
-    "next": 3,
+    "next": 2,
     "later": 14,
     "nextMax": 5,
     "openInbox": 11,
@@ -2026,7 +2015,6 @@
     "reviewDue": true,
     "lastReview": "2026-11-22",
     "claimable": [
-      "R-034",
       "R-041",
       "R-040"
     ],
