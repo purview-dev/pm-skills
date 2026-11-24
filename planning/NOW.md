@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-034 Engineering file and pm-engineering skill
 - Session: feat/r-034-engineering-file-and-pm-engineering-skill
-- Stage: plan
+- Stage: execute
 - Brief: planning/briefs/2026-11-20-technology-and-engineering-principles.md
 - Milestone: M4
 - Serves: V5
@@ -24,7 +24,7 @@ Milestone: optional; the item's milestone while it is active
 - Revisits:
 - Note: 2026-11-24: Started as is: the Current focus milestone M1 Reproducible docs site is done (2026-11-24) and M4 is next in milestone order; run pm-strategy to set the focus.
 - Spec: docs/superpowers/specs/2026-11-24-engineering-file-and-pm-engineering-skill-design.md
-- Plan:
+- Plan: docs/superpowers/plans/2026-11-24-engineering-file-and-pm-engineering-skill.md
 - Started: 2026-11-24
 
 ## Done when

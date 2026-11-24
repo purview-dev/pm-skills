@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-24T23:24:32+00:00",
+  "generatedAt": "2026-11-24T23:28:54+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-034-engineering-file-and-pm-engineering-skill",
-    "head": "dd192dc819987e06260971a14fa8356b998a4923"
+    "head": "65f943c34fbcb2acef71776105e53ec4a930ff08"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -233,19 +233,161 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-034-engineering-file-and-pm-engineering-skill",
     "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
     "milestone": "M4",
     "spec": "docs/superpowers/specs/2026-11-24-engineering-file-and-pm-engineering-skill-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-24-engineering-file-and-pm-engineering-skill.md",
     "started": "2026-11-24",
     "doneWhen": [
       "`pm-engineering add` writes a linted entry to `planning/ENGINEERING.md` (`## Technology` and `## Principles`, each entry citing its `Source`), and the skill is listed in the README, managed-section, `pm-setup`, and `pm-help` tables with `just validate` and `just test` passing."
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-24-engineering-file-and-pm-engineering-skill.md",
+    "checked": 0,
+    "total": 24,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "pm-lint `engineering` kind and rules",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run the tests to verify they fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run the tests to verify they pass**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "pm-init template",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing test** (the `existsSync` assertion above).",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run** `bun test skills/pm-lint/scripts/lint.test.ts -t \"fresh\"` — Expected: FAIL on the new test.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Write the template**: `# Engineering`, an HTML comment in the `RISKS.md` template's style stating \"Written only by pm-engineering. A missing file is empty. Reasons beyond one line live in ADRs (Decision). Principle IDs are EP-NNN and never reused, including removed ones.\", both block formats from Global Constraints, then the three empty `##` sections. Add the `| \\`ENGINEERING.md\\` | \\`<PM root>/ENGINEERING.md\\` |` row and `ENGINEERING.md` to the `Created:` line after `RISKS.md`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run** `bun test skills/pm-lint/scripts/lint.test.ts` and `just validate` — Expected: PASS (validate checks template placeholders).",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**: `git add skills/pm-init skills/pm-lint/scripts/lint.test.ts` then `git commit -m \"feat(pm-init): engineering file template (R-034)\"`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "Managed section",
+        "checked": 0,
+        "total": 4,
+        "steps": [
+          {
+            "text": "**Step 1: Edit the reference**, each item from the spec's \"Shared definitions\" section:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Install the section here**: replace the text between `<!-- pm-skills:start -->` and `<!-- pm-skills:end -->` in `AGENTS.md` with the reference body (marker without `version=`).",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Run** `just validate` — Expected: FAIL only on `pm-engineering` missing from the README, `pm-setup`, and `pm-help` (Task 4), or on the skill folder missing; no managed-section drift error.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Commit**: `git add skills/pm-setup/references/AGENTS-section.md AGENTS.md` then `git commit -m \"feat(pm-setup): engineering file in the managed rules (R-034)\"`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "The pm-engineering skill and its table rows",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Run** `just validate` — Expected: FAIL (`pm-engineering` tables).",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Write `SKILL.md`** in `skills/pm-risk/SKILL.md`'s structure: frontmatter (`name: pm-engineering`; description starting \"Use when the user asks to show, add, change, or remove the project's technology or engineering principles ...\"), the follow-the-rules paragraph, Modes table, Guard, Steps, Output templates (one for writes, one for `view`). Behaviour exactly as the spec's \"The skill\" section, plus:",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Add the rows**: README `| [\\`pm-engineering\\`](skills/pm-engineering/SKILL.md) | Show, add, change, or remove the technology and engineering principles | User asks (view mid-task) |`; `pm-engineering` in the `pm-setup` inventory list after `pm-adr`; `pm-help` row: purpose, triggers `\"we use zod\"`, `\"show the principles\"`, `\"remove Jest\"`, writes `ENGINEERING.md`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run** `just validate` and `bunx markdownlint-cli2 skills/pm-engineering/SKILL.md README.md skills/pm-help/SKILL.md skills/pm-setup/SKILL.md` — Expected: PASS.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**: `git add skills/pm-engineering README.md skills/pm-setup/SKILL.md skills/pm-help/SKILL.md` then `git commit -m \"feat(pm-engineering): engineering file skill (R-034)\"`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 5,
+        "title": "Rehearsal, version, full check",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Rehearse `add`** in a scratch directory outside the repository: copy `skills/pm-init/templates/*` into `<scratch>/planning/` (the `-README.md` files into their folders, as `initRoot` does), add `planning/decisions/ADR-001-use-bun.md` in the ADR format, then follow `pm-engineering add technology Bun` (`Decision: ADR-001`, `Source: package.json`) and `add principle TypeScript for every script` (`Check: review`, `Source: user (2026-11-24)`) by the skill's steps, writing the blocks by hand as the skill specifies.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run** `bun skills/pm-lint/scripts/lint.ts check --root <scratch> --pm-root planning/` — Expected: `pm-lint: clean`. Paste the two blocks and the output into the final report.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Bump**: `just bump prerelease` — Expected: `package.json` `21.0.0-pre.9`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run** `just lint-check` and `just version-check` — Expected: PASS.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**: `git add package.json` then `git commit -m \"chore: bump version to 21.0.0-pre.9 (R-034)\"`.",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -660,7 +802,7 @@
           "title": "Engineering file and pm-engineering skill",
           "owner": "agent",
           "size": "M",
-          "detail": "plan"
+          "detail": "execute, 0/24 plan steps"
         }
       ],
       "next": [
