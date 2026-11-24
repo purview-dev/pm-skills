@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync, readdirSync, readFileSync, rmdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, dirname, join, relative, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -254,6 +254,7 @@ export async function migrate(siteDir: string, skillDir: string, includeUnlisted
 }
 
 export function write(siteDir: string, options: ConsumerOptions): string[] {
+  mkdirSync(siteDir, { recursive: true });
   writeFileSync(join(siteDir, "astro.config.ts"), renderAstroConfig(options));
   writePackage(siteDir);
   const written = ["astro.config.ts", "package.json"];

@@ -236,6 +236,13 @@ describe("write", () => {
     expect(pkg.dependencies).toBeUndefined();
   });
 
+  it("creates a site folder that does not exist", () => {
+    const site = join(scratch(), "nested", "site");
+    const result = run("write", site, "--options", JSON.stringify({ title: "New" }));
+    expect(result.status).toBe(0);
+    expect(files(site)).toEqual([".gitignore", "astro.config.ts", "package.json"]);
+  });
+
   it("keeps an existing .gitignore", () => {
     const site = join(scratch(), "site");
     mkdirSync(site);

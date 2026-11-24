@@ -98,7 +98,9 @@ Search is part of the package.
   commits.
 - A package site has no pages, components, or `src/` folder: never add
   one. Edit only the `pmDocsSite()` options in `astro.config.ts` and the
-  scripts in `package.json`. Never fill a page from anything but the export
+  scripts in `package.json`; `upgrade` also adds, from `extraConfig`, the
+  other integrations beside `pmDocsSite(...)` and the top-level options
+  (`site`, `base`) in `defineConfig`, and nothing else. Never fill a page from anything but the export
   (spec rules 1 and 3), and never copy a `docs/` or PM file into the site
   (spec rule 6).
 - Never invent an option value. Derive it from the repository as the steps
