@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-24T13:57:14+00:00",
+  "generatedAt": "2026-11-24T14:17:25+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-043-per-session-context-report",
-    "head": "56ce1d838fee971da5c8f46ddd4557cf97f604b4"
+    "head": "7fc76e9c26b8fab26fa42a62893256a505a660d3"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
