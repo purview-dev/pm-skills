@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-24T22:30:43+00:00",
+  "generatedAt": "2026-11-24T23:24:32+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-034-engineering-file-and-pm-engineering-skill",
-    "head": "3d7f55c06e4c63ff62fdbb9360cbf977a0cda348"
+    "head": "dd192dc819987e06260971a14fa8356b998a4923"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -233,11 +233,11 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-034-engineering-file-and-pm-engineering-skill",
     "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
     "milestone": "M4",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-24-engineering-file-and-pm-engineering-skill-design.md",
     "plan": null,
     "started": "2026-11-24",
     "doneWhen": [
@@ -660,7 +660,7 @@
           "title": "Engineering file and pm-engineering skill",
           "owner": "agent",
           "size": "M",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
@@ -1758,6 +1758,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "During R-013, `bun test scripts/` gave 198 pass and 5 fail while builds and browser tests ran at the same time, and the same suite gave 244 pass and 0 fail on an idle machine. The failing tests were seen in `skills/pm-lint` and `skills/pm-next/scripts/sync.test.ts`, which spawn git subprocesses; they time out or race under load, so a pre-push `just lint-check` can fail without a code change."
+    },
+    {
+      "file": "planning/inbox/2026-11-24-2309-current-focus-names-a-done-milestone.md",
+      "title": "Current focus names a done milestone",
+      "captured": "2026-11-24 23:09",
+      "source": "agent (pm-next, R-034 design)",
+      "kind": "question",
+      "severity": null,
+      "affects": "planning/STRATEGY.md",
+      "context": "R-034 design",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "`STRATEGY.md` Current focus is M1 Reproducible docs site, which is `Status: done (2026-11-24)`, while every item in Next serves M4 Recorded technical decisions. Set a new focus with pm-strategy."
     }
   ],
   "briefs": [
@@ -1994,13 +2009,29 @@
       "decision": "Estimate tokens as `ceil(characters / 4)` on LF-normalised text, labelled `estimated tokens`, and compare the relative change per session type, not absolute numbers.",
       "alternatives": "- An exact tokenizer package: breaks the dependency-free scripts, and none matches current Claude models.\n- The token-counting API: needs a key and the network.\n- Do nothing: growth stays unmeasured.",
       "consequences": "- Absolute numbers may be off by 20% or more; relative drops are measured consistently.\n- No dependency, works offline, costs GBP 0."
+    },
+    {
+      "id": "ADR-009",
+      "path": "planning/decisions/ADR-009-engineering-file-records-current-state.md",
+      "title": "Engineering file records state, ADRs reasons",
+      "status": "proposed",
+      "supersededBy": null,
+      "date": "2026-11-24",
+      "category": "architecture",
+      "supersedes": null,
+      "item": "R-034",
+      "source": null,
+      "context": "A repository's adopted technology and engineering principles are not recorded in PM state, so agents build items that break them (brief `planning/briefs/2026-11-20-technology-and-engineering-principles.md`). Since ADR-001, technical decisions (technology, library, pattern) live in ADRs, so a second record of why a technology was adopted would drift from its ADR. Spec: `docs/superpowers/specs/2026-11-24-engineering-file-and-pm-engineering-skill-design.md`.",
+      "decision": "`<PM root>/ENGINEERING.md`, owned only by `pm-engineering`, records the current state: the technology in use (`### <Name>` blocks) and the principles work must follow (`### EP-NNN <Title>` blocks, IDs never reused). Each entry carries a one-line `Reason` and a `Decision: ADR-NNN | none` field; the full why and its alternatives stay in the ADR. A removed entry leaves one line under `## Removed`.",
+      "alternatives": "- Entries carry their own full reasons, no ADR link: simpler, but duplicates the ADRs and drifts from them.\n- Principles only, technology in ADRs alone: an ADR records a decision, not what is in use now, and the Done when of R-034 needs `## Technology`.\n- Do nothing: choices stay in `AGENTS.md` and agent memory, unread by any stage.",
+      "consequences": "- One place answers \"what do we use and what must we follow\"; ADRs keep answering \"why\".\n- Entries without an ADR (`Decision: none`) are allowed, so older choices can be recorded without writing an ADR first.\n- `pm-lint` checks that a `Decision` names an existing ADR."
     }
   ],
   "counts": {
     "next": 2,
     "later": 14,
     "nextMax": 5,
-    "openInbox": 11,
+    "openInbox": 12,
     "discuss": 0,
     "shapingBriefs": 0,
     "done": 28,
@@ -2018,6 +2049,6 @@
       "R-041",
       "R-040"
     ],
-    "drift": true
+    "drift": false
   }
 }
