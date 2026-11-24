@@ -226,20 +226,20 @@ git commit -m "feat(pm-docs-site): render mermaid fences with Pele at build time
 - Modify: `docs-site/package.json`, `docs-site/bun.lock`
 - Modify: `justfile` (`docs`, `docs-preview`, `docs-check`), `.github/workflows/ci.yml` (the `docs-site` job)
 
-- [ ] **Step 1: Run** `bun skills/pm-docs-site/scripts/consumer.ts migrate docs-site`. Expected: exit 0, with exactly the four files and `node_modules/` left.
-- [ ] **Step 2: Edit `astro.config.ts`.** Set `views` to `['now', 'milestones', 'graph', 'features', 'inbox', 'briefs', 'strategy', 'decisions']` and `docs.root` to `'..'`, keep the four sources, and write a header comment naming the `just` recipes. In `package.json`, set the only dependency to `"@purview-dev/pm-docs-site": "file:../packages/pm-docs-site"`. Run `bun install` in `docs-site/` to regenerate `bun.lock`.
-- [ ] **Step 3: Update `justfile`.**
+- [x] **Step 1: Run** `bun skills/pm-docs-site/scripts/consumer.ts migrate docs-site`. Expected: exit 0, with exactly the four files and `node_modules/` left.
+- [x] **Step 2: Edit `astro.config.ts`.** Set `views` to `['now', 'milestones', 'graph', 'features', 'inbox', 'briefs', 'strategy', 'decisions']` and `docs.root` to `'..'`, keep the four sources, and write a header comment naming the `just` recipes. In `package.json`, set the only dependency to `"@purview-dev/pm-docs-site": "file:../packages/pm-docs-site"`. Run `bun install` in `docs-site/` to regenerate `bun.lock`.
+- [x] **Step 3: Update `justfile`.**
   - `docs`, `docs-preview`, and `docs-check` first run `cd packages/pm-docs-site && node scripts/build.ts` (as `demo` does: drop the `working-directory` attribute and use `cd docs-site && …` lines).
   - `docs-check` runs install, `bun run check`, and `bun run build`, with no `site.ts check` and no `bun run test`.
   - The comments say "the pm-docs-site package".
-- [ ] **Step 4: Update CI.** In the `docs-site` job, add Node 24 setup, the package install, and `node scripts/build.ts` before "Install". Delete "Match the pm-docs-site templates" and "Test".
-- [ ] **Step 5: Run** `just docs-check 2>&1 | Tee-Object docs-check.log`.
+- [x] **Step 4: Update CI.** In the `docs-site` job, add Node 24 setup, the package install, and `node scripts/build.ts` before "Install". Delete "Match the pm-docs-site templates" and "Test".
+- [x] **Step 5: Run** `just docs-check 2>&1 | Tee-Object docs-check.log`.
   - Expected: pass, and `Select-String docs-check.log -Pattern '404 was not found'` prints nothing (item Note 3).
   - Check the 12 wiki fences rendered: grep `docs-site/dist/docs/` for `language-mermaid` (expected 0), and count pages with `<svg id="pele-` (expected 4 files, from 12 fences).
   - If Pele rejects a fence, rewrite that diagram in a form Pele renders, and record it for the PR body.
   - Delete `docs-check.log`.
-- [ ] **Step 6: Run** `node packages/pm-docs-site/scripts/check-reproducible.ts docs-site`. Expected: `reproducible: …`.
-- [ ] **Step 7: Commit** `refactor(docs-site): consume the pm-docs-site package`.
+- [x] **Step 6: Run** `node packages/pm-docs-site/scripts/check-reproducible.ts docs-site`. Expected: `reproducible: …`.
+- [x] **Step 7: Commit** `refactor(docs-site): consume the pm-docs-site package`.
 
 ### Task 8: Rewrite the `pm-docs-site` skill, and remove the templates
 
