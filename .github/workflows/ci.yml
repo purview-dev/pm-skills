@@ -43,15 +43,12 @@ jobs:
       - name: Lint Markdown
         run: bunx markdownlint-cli2 "**/*.md" "#node_modules"
 
-  # Mirrors `just docs-check`: the repository's own pm-docs-site site, built
-  # from planning/planning.json. A template change that breaks a consumer's
-  # site breaks this one first.
+  # Mirrors `just docs-check`: the repository's own pm-docs-site site, a
+  # consumer of the pm-docs-site package, built from planning/planning.json.
+  # A package change that breaks a consumer's site breaks this one first.
   docs-site:
     name: Docs site
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: docs-site
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -61,19 +58,25 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Match the pm-docs-site templates
-        run: bun ../skills/pm-docs-site/scripts/site.ts check .
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Build the pm-docs-site package
+        working-directory: packages/pm-docs-site
+        run: node scripts/build.ts
 
       - name: Install
+        working-directory: docs-site
         run: bun install --frozen-lockfile
 
-      - name: Test
-        run: bun run test
-
       - name: Type-check
+        working-directory: docs-site
         run: bun run check
 
       - name: Build
+        working-directory: docs-site
         run: bun run build
 
   # Mirrors `just package-test`: the pm-docs-site package (on npm as a

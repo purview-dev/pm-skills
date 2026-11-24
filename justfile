@@ -47,30 +47,28 @@ bump part *args:
 version-check base="":
     bun scripts/check-version.ts {{base}}
 
-# Serve the project site (plan, README, every skill) at http://localhost:4321. Requires Bun.
+# Serve the project site (plan, README, every skill) at http://localhost:4321. Builds the pm-docs-site package first. Needs Node 24 or later.
 [group('Docs')]
-[working-directory('docs-site')]
 docs:
-    bun install --frozen-lockfile
-    bun run dev
+    cd packages/pm-docs-site && node scripts/build.ts
+    cd docs-site && bun install --frozen-lockfile
+    cd docs-site && bun run dev
 
-# Build the project site with its search index, then serve the build at http://localhost:4321. Requires Bun.
+# Build the project site with its search index, then serve the build at http://localhost:4321. Builds the pm-docs-site package first. Needs Node 24 or later.
 [group('Docs')]
-[working-directory('docs-site')]
 docs-preview:
-    bun install --frozen-lockfile
-    bun run build
-    bun run preview
+    cd packages/pm-docs-site && node scripts/build.ts
+    cd docs-site && bun install --frozen-lockfile
+    cd docs-site && bun run build
+    cd docs-site && bun run preview
 
-# Check the project site against the pm-docs-site templates, then test, type-check and build it.
+# Build the pm-docs-site package, then type-check and build the project site.
 [group('Docs')]
-[working-directory('docs-site')]
 docs-check:
-    bun ../skills/pm-docs-site/scripts/site.ts check .
-    bun install --frozen-lockfile
-    bun run test
-    bun run check
-    bun run build
+    cd packages/pm-docs-site && node scripts/build.ts
+    cd docs-site && bun install --frozen-lockfile
+    cd docs-site && bun run check
+    cd docs-site && bun run build
 
 # Test and type-check the pm-docs-site package (published from publish-pm-docs-site.yml), then run its browser tests in Chromium. Its builds need Node 24 or later.
 [group('Docs')]

@@ -5,19 +5,12 @@
 	"type": "module",
 	"description": "The plan for pm-skills, from planning/planning.json, with every skill and its references.",
 	"scripts": {
-		"dev": "astro dev",
-		"build": "astro build",
+		"dev": "pm-docs-site dev",
+		"build": "pm-docs-site build",
 		"preview": "astro preview",
-		"check": "astro check",
-		"test": "vitest run"
+		"check": "pm-docs-site check"
 	},
 	"dependencies": {
-		"@astrojs/starlight": "^0.42.10",
-		"astro": "^7.4.8"
-	},
-	"devDependencies": {
-		"@astrojs/check": "^0.9.12",
-		"typescript": "6",
-		"vitest": "^5.1.0"
+		"@purview-dev/pm-docs-site": "file:../packages/pm-docs-site"
 	}
 }
