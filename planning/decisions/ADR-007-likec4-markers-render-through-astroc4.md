@@ -1,6 +1,6 @@
 # ADR-007 LikeC4 markers render through astroc4
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-23
 - Category: architecture
 - Supersedes: none
