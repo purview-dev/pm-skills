@@ -66,7 +66,7 @@ Collect these facts. Write nothing yet.
    in `<PM state directory>/config.md`, if that file exists. A legacy
    marker's `version=` counts only when `config.md` records none.
 4. **Installed skills:** for each of `pm-init`, `pm-resume`, `pm-rejoin`,
-   `pm-next`, `pm-up-next`, `pm-park`, `pm-bug`, `pm-risk`, `pm-adr`,
+   `pm-next`, `pm-up-next`, `pm-park`, `pm-bug`, `pm-risk`, `pm-adr`, `pm-engineering`,
    `pm-shape`, `pm-discover`, `pm-strategy`, `pm-purview`, `pm-checkpoint`,
    `pm-pause`, `pm-revise`, `pm-review`, `pm-item`, `pm-board`, `pm-roadmap`,
    `pm-status`, `pm-export`, `pm-lint`, `pm-docs-site`, and `pm-help`, check that a
