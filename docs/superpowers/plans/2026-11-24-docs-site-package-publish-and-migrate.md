@@ -287,18 +287,18 @@ git commit -m "feat(pm-docs-site): render mermaid fences with Pele at build time
 - Modify: `README.md` (the `pm-docs-site` row), `docs/wiki/contributing/Repository-Layout.md`
 - Modify: `package.json` (via `just bump prerelease`)
 
-- [ ] **Step 1: Edit the managed section.**
+- [x] **Step 1: Edit the managed section.**
   - Rule 9: the build modes write "the site folder's four files, the `Docs` group in the `justfile`, and the AppHost files the Aspire step edits on the user's yes, and run `bun add` of the package in the site folder". The rest of the rule stays.
   - **Docs site** definition: "that `pm-docs-site` builds from the `@purview-dev/pm-docs-site` package".
   - Version 21 paragraph: `pm-docs-site` now installs `@purview-dev/pm-docs-site` (at least `0.1.0-pre.4`), and `pm-docs-site upgrade` migrates a template site, including one with the architecture module. Mermaid fences render.
   - Do not change the marker version (it stays 21).
-- [ ] **Step 2: Reinstall the section** in `AGENTS.md` (replace between the markers with the reference minus `version=`).
+- [x] **Step 2: Reinstall the section** in `AGENTS.md` (replace between the markers with the reference minus `version=`).
   - Rewrite the repository `pm-docs-site` paragraph: the four-file `docs-site/` on `file:../packages/pm-docs-site`, `consumer.ts` and `references/template-files.md`, the new validate checks, `just docs-check` building the package first, and no `site.ts`.
   - Update the `Validate only` bullet's list to match.
-- [ ] **Step 3: Update `pm-help`.** In the row, write "builds a local site on the `@purview-dev/pm-docs-site` package". In check 20, a `pm-docs-site.json` means `template site: run pm-docs-site upgrade`, and a package site compares its dependency with the minimum and the export's `schemaVersion` with the supported list. Update the README row and `Repository-Layout.md` the same way.
-- [ ] **Step 4: Run** `just bump prerelease`. Expected: `package.json` is `21.0.0-pre.8`.
-- [ ] **Step 5: Run** `just lint-check && just version-check`. Expected: both pass.
-- [ ] **Step 6: Commit** `feat(pm-skills): docs-site rules name the package; 21.0.0-pre.8`.
+- [x] **Step 3: Update `pm-help`.** In the row, write "builds a local site on the `@purview-dev/pm-docs-site` package". In check 20, a `pm-docs-site.json` means `template site: run pm-docs-site upgrade`, and a package site compares its dependency with the minimum and the export's `schemaVersion` with the supported list. Update the README row and `Repository-Layout.md` the same way.
+- [x] **Step 4: Run** `just bump prerelease`. Expected: `package.json` is `21.0.0-pre.8`.
+- [x] **Step 5: Run** `just lint-check && just version-check`. Expected: both pass.
+- [x] **Step 6: Commit** `feat(pm-skills): docs-site rules name the package; 21.0.0-pre.8`.
 
 ### Task 10: Scratch verification of the skill
 
