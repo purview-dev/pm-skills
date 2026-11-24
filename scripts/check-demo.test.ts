@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 
 import { afterEach, describe, expect, it } from "bun:test";
 
-import { ALLOWED, checkDemo, PLACEHOLDERS, RENDERED_DIAGRAMS } from "./check-demo.ts";
+import { ALLOWED, ARCHITECTURE_VIEWS, checkDemo, PLACEHOLDERS, RENDERED_DIAGRAMS } from "./check-demo.ts";
 
 const dirs: string[] = [];
 
@@ -141,5 +141,39 @@ describe("checkDemo", () => {
 
   it("names every page whose marker must render", () => {
     expect(RENDERED_DIAGRAMS).toContain("docs/guide/diagrams/index.html");
+  });
+
+  /** A minimal astro-island as astroc4's LikeC4View.astro emits it for a project view. */
+  function island(viewId: string, projectId = "architecture"): string {
+    return `<astro-island component-url="/_astro/LikeC4ProjectView.4SGd25x3.js" component-export="default" props="{&quot;viewId&quot;:[0,&quot;${viewId}&quot;],&quot;projectId&quot;:[0,&quot;${projectId}&quot;]}" ssr client="only"></astro-island>`;
+  }
+
+  it("passes an architecture page whose island names its view id", () => {
+    const dir = dist({ "architecture/overview/index.html": `<h1>Architecture: Overview</h1>${island("overview")}` });
+
+    expect(checkDemo(dir, ["architecture/overview/index.html"])).toEqual([]);
+  });
+
+  it("reports an architecture page with no LikeC4ProjectView island at all", () => {
+    const dir = dist({ "architecture/overview/index.html": "<h1>Architecture: Overview</h1><p>System overview</p>" });
+
+    expect(checkDemo(dir, ["architecture/overview/index.html"])).toEqual([
+      'architecture/overview/index.html: missing LikeC4ProjectView island for view "overview"',
+    ]);
+  });
+
+  it("reports an architecture page whose island names the wrong view id", () => {
+    const dir = dist({ "architecture/overview/index.html": `<h1>Architecture: Overview</h1>${island("services")}` });
+
+    expect(checkDemo(dir, ["architecture/overview/index.html"])).toEqual([
+      'architecture/overview/index.html: missing LikeC4ProjectView island for view "overview"',
+    ]);
+  });
+
+  it("names every architecture page and the view ids it must render", () => {
+    expect(ARCHITECTURE_VIEWS).toEqual({
+      "architecture/overview/index.html": ["overview"],
+      "architecture/services/index.html": ["services"],
+    });
   });
 });

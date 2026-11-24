@@ -35,6 +35,21 @@ export const PLACEHOLDERS: { text: string; reason: string }[] = [
  */
 export const RENDERED_DIAGRAMS: string[] = ["docs/guide/diagrams/index.html"];
 
+/**
+ * Architecture pages and the LikeC4 project view id(s) each must render: one
+ * page per folder under the architecture project's views/, so the page's
+ * title and list come from pm-docs-site's own folder scan (lib/architecture.ts)
+ * regardless of whether the project actually compiled. This checks the other
+ * half: astroc4's `<LikeC4View project="architecture" viewId="...">` renders
+ * as a `LikeC4ProjectView` island naming that same view id, so the project's
+ * real LikeC4 workspace resolved it (a page with the right title but a
+ * missing or mismatched island means the project failed to load).
+ */
+export const ARCHITECTURE_VIEWS: Record<string, string[]> = {
+  "architecture/overview/index.html": ["overview"],
+  "architecture/services/index.html": ["services"],
+};
+
 function placeholderCount(html: string, text: string): number {
   const escaped = text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   return (html.match(new RegExp(`>\\s*${escaped}\\s*<`, "g")) ?? []).length;
@@ -111,6 +126,14 @@ export function checkDemo(distDir: string, expectedPages: string[]): string[] {
     const html = readFileSync(join(distDir, page), "utf8");
     if (!html.includes("data-astroc4-fence")) failures.push(`${page}: missing data-astroc4-fence (marker did not render)`);
     if (html.includes("language-mermaid")) failures.push(`${page}: language-mermaid fallback still present`);
+  }
+  for (const page of pages.filter((path) => path in ARCHITECTURE_VIEWS)) {
+    const html = readFileSync(join(distDir, page), "utf8");
+    for (const viewId of ARCHITECTURE_VIEWS[page]!) {
+      if (!html.includes(`&quot;viewId&quot;:[0,&quot;${viewId}&quot;]`)) {
+        failures.push(`${page}: missing LikeC4ProjectView island for view "${viewId}"`);
+      }
+    }
   }
   return failures;
 }
