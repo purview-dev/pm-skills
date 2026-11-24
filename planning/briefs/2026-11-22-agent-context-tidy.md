@@ -1,6 +1,6 @@
 # Agent context analysis and planning tidy skill
 
-- Status: on roadmap (R-043, R-046, R-047, R-048, R-049)
+- Status: on roadmap (R-043, R-046, R-047, R-048, R-049), active
 - Origin: planning/inbox/2026-11-22-1232-agent-context-tidy-skill.md
 - Updated: 2026-11-24
 

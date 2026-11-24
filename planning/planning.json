@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-24T13:43:53+00:00",
+  "generatedAt": "2026-11-24T13:44:47+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "main",
-    "head": "09140c952c7565c3a445c2748dc80c58624c5460"
+    "branch": "feat/r-043-per-session-context-report",
+    "head": "6d042f0c8b29d6b2697475b52871ca51dac3aa2b"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -215,50 +215,42 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
-    "brief": null,
+    "status": "active",
+    "item": {
+      "id": "R-043",
+      "title": "Per-session context report",
+      "serves": [
+        "V2"
+      ],
+      "owner": "agent",
+      "size": "M",
+      "dependsOn": [],
+      "revisits": null
+    },
+    "stage": "design",
+    "session": "feat/r-043-per-session-context-report",
+    "brief": "planning/briefs/2026-11-22-agent-context-tidy.md",
     "milestone": null,
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-24",
+    "doneWhen": [
+      "`bun skills/pm-help/scripts/context.ts --root .` prints one line per session type (`always`, `resume`, `claim`, `checkpoint`, `review`) with estimated tokens and the three largest files.",
+      "`pm-help` diagnose prints that table.",
+      "A `planning/research/` report records the baseline table.",
+      "A test fails when the script's map names a missing skill or file.",
+      "`just lint-check` and `just validate` pass."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-043",
-        "title": "Per-session context report",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V2"
-        ],
-        "milestone": null,
-        "owner": "agent",
-        "doneWhen": "`bun skills/pm-help/scripts/context.ts --root .` prints one line per session type (`always`, `resume`, `claim`, `checkpoint`, `review`) with estimated tokens and the three largest files; `pm-help` diagnose prints that table; a `planning/research/` report records the baseline table; a test fails when the script's map names a missing skill or file; `just lint-check` and `just validate` pass.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-22-agent-context-tidy.md",
-        "note": "From pm-shape 2026-11-22 (inbox 2026-11-22-1232), reshaped 2026-11-24 into 5 slices (R-043, R-046 to R-049); the upgrade-notes move went to R-046. A rules change. Dependency-free estimate (characters / 4), shipped in `pm-help` diagnose rather than a new skill; the `pm-tidy` archive slice is deferred until the report's PM state line recommends it.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-013",
         "title": "Docs-site package: publish and migrate",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4"
@@ -294,7 +286,7 @@
         "id": "R-034",
         "title": "Engineering file and pm-engineering skill",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V5"
@@ -318,7 +310,7 @@
         "id": "R-041",
         "title": "ADR skill follow-ups",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V5"
@@ -342,7 +334,7 @@
         "id": "R-040",
         "title": "ADR link and export edge cases",
         "section": "next",
-        "position": 5,
+        "position": 4,
         "label": "next",
         "serves": [
           "V4",
@@ -720,15 +712,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-043",
           "title": "Per-session context report",
           "owner": "agent",
           "size": "M",
-          "detail": "ready"
-        },
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-013",
           "title": "Docs-site package: publish and migrate",
@@ -1766,7 +1759,7 @@
       "path": "planning/briefs/2026-11-22-agent-context-tidy.md",
       "id": "R-043",
       "title": "Agent context analysis and planning tidy skill",
-      "status": "on roadmap (R-043, R-046, R-047, R-048, R-049)",
+      "status": "on roadmap (R-043, R-046, R-047, R-048, R-049), active",
       "origin": "planning/inbox/2026-11-22-1232-agent-context-tidy-skill.md",
       "updated": "2026-11-24",
       "decision": "2026-11-22 Added to Later as R-043 Per-session context report and upgrade notes move (Unassigned, M). Why: preventive work with no observed symptom, serving no milestone, while Next is full of M1 and M4 work.",
@@ -1941,7 +1934,7 @@
     }
   ],
   "counts": {
-    "next": 5,
+    "next": 4,
     "later": 14,
     "nextMax": 5,
     "openInbox": 7,
@@ -1959,7 +1952,6 @@
     "reviewDue": false,
     "lastReview": "2026-11-22",
     "claimable": [
-      "R-043",
       "R-013",
       "R-034",
       "R-041",
