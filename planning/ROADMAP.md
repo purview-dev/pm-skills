@@ -14,6 +14,17 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
+### R-043 Per-session context report
+
+- Serves: V2
+- Owner: agent
+- Done when: `bun skills/pm-help/scripts/context.ts --root .` prints one line per session type (`always`, `resume`, `claim`, `checkpoint`, `review`) with estimated tokens and the three largest files; `pm-help` diagnose prints that table; a `planning/research/` report records the baseline table; a test fails when the script's map names a missing skill or file; `just lint-check` and `just validate` pass.
+- Size: M
+- Depends on: none
+- Status: ready
+- Brief: planning/briefs/2026-11-22-agent-context-tidy.md
+- Note: From pm-shape 2026-11-22 (inbox 2026-11-22-1232), reshaped 2026-11-24 into 5 slices (R-043, R-046 to R-049); the upgrade-notes move went to R-046. A rules change. Dependency-free estimate (characters / 4), shipped in `pm-help` diagnose rather than a new skill; the `pm-tidy` archive slice is deferred until the report's PM state line recommends it.
+
 ### R-013 Docs-site package: publish and migrate
 
 - Serves: V4
@@ -167,13 +178,46 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Status: ready
 - Note: From the 2026-11-22 review; review minors in `packages/pm-docs-site` (inbox 2026-11-18-1222, 2026-11-20-1844 x3). R-010 board: (1) the 3s reveal of a pending board also fires on a slow but successful hydration; document it in `components.css` and the `useBoardUrlState.ts` header, or tune it. (2) The pending mark is also set on `/plan/roadmap/?owner=...`; scope it to the Board page. (3) `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`. (4) The lane header is a plain `div`; use an `h3` or `role="heading"`. (5) Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed. (6) The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page. (7) A collapsed column's vertical title stretches the shared header row. (8) `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab`; its header comment lists only some changes. (9) `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array. (10) `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id`; `tagHref` never asserted. (11) `integration.test.ts` asserts the integration names two ways. (12) `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`. (13) The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP. R-028: (14) `test/island-imports.test.ts` scans only `.ts` and `.tsx` under `src/components`, so an `.astro` client `<script>` that value-imports a server-only lib is not caught. (15) `start()` in `src/scripts/plan.ts` adds `pointerdown`, `pointerup`, and `click` listeners on `document` each run, so they stack under view transitions. (16) `test/browser/board.browser.ts` test "a localStorage that throws leaves the Board usable" pins Starlight theme-script error counts per `<starlight-theme-select>`; a Starlight upgrade fails it with no fault in the package; loosen it or report the unguarded `localStorage` read upstream. R-031 (inbox 2026-11-21-1205): (17) `relativeImports` in `test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports in comments, and misses template-literal dynamic imports (false failures only). (18) In `scripts/check-demo.ts`, a `plan-empty` element's text is cut off at a nested `plan-empty` element. (19) `src/pages/plan/log.astro` labels a known ID whose page is not built with the logged title, not the export's current title, and no test covers that view-off case.
 
-### R-043 Per-session context report and upgrade notes move
+### R-046 Upgrade, format, and git rules move to references
 
 - Serves: V2
 - Owner: agent
-- Done when: `bun skills/pm-help/scripts/context.ts --root .` prints one line per session type (`always`, `resume`, `claim`, `checkpoint`, `review`) with estimated tokens and the three largest files; the managed section holds no `Version N` paragraphs and `skills/pm-setup/references/upgrade-notes.md` holds them; the report's `always` line is at least 1,400 tokens lower than before; a `planning/research/` report records the before and after table; `just lint-check` and `just validate` pass.
+- Done when: the managed section holds no `Version N` paragraphs, no file-format blocks, and no Committing PM state, Completion rides the branch, Feature branches, PM sync, Pull latest, or PM base bodies; `skills/pm-setup/references/upgrade.md`, `formats.md`, and `git.md` hold them; every `SKILL.md` that cites one names its file; `just validate` fails when a cited reference file is missing; the R-043 report's `always` line is at least 6,500 tokens lower than its baseline.
 - Size: M
+- Depends on: R-043
+- Status: ready
+- Brief: planning/briefs/2026-11-22-agent-context-tidy.md
+- Note: Slice 2 of 5 from pm-shape 2026-11-24. A rules change; may stay on rules 21 while `main` is the unreleased `21.0.0-pre.N` line.
+
+### R-047 Core rules file and a 15 KB managed section
+
+- Serves: V2
+- Owner: agent
+- Done when: the managed section is 15,000 characters or less and holds the skill table, the Non-interruption rules, Read before deciding, and a pointer index; `skills/pm-setup/references/rules.md` holds the remaining shared rules and each PM skill reads it once per session; `just validate` fails above 15,000 characters; `pm-help` diagnose reports a missing reference file.
+- Size: M
+- Depends on: R-046
+- Status: ready
+- Brief: planning/briefs/2026-11-22-agent-context-tidy.md
+- Note: Slice 3 of 5 from pm-shape 2026-11-24. A rules change.
+
+### R-048 Repository AGENTS.md top part into dedicated files
+
+- Serves: V2
+- Owner: agent
+- Done when: this repository's top part of `AGENTS.md` (before the managed section) is 3,000 characters or less and indexes the dedicated files that now hold its content; `just lint-check` and `just validate` pass.
+- Size: S
 - Depends on: none
 - Status: ready
 - Brief: planning/briefs/2026-11-22-agent-context-tidy.md
-- Note: From pm-shape 2026-11-22 (inbox 2026-11-22-1232). A rules bump. Dependency-free estimate (characters / 4), shipped in `pm-help` diagnose rather than a new skill; the `pm-tidy` archive slice is deferred until the report's PM state line recommends it.
+- Note: Slice 4 of 5 from pm-shape 2026-11-24. No `skills/` change, so no rules bump. The target folder is decided in design.
+
+### R-049 Trim the largest SKILL.md files
+
+- Serves: V2
+- Owner: agent
+- Done when: `pm-export`, `pm-docs-site`, `pm-setup`, `pm-help`, and `pm-checkpoint` `SKILL.md` are each at least 30% smaller, with the moved modes in their `references/`; the R-043 report's `claim` and `checkpoint` lines are lower than after R-047; `just lint-check` passes.
+- Size: M
+- Depends on: R-047
+- Status: ready
+- Brief: planning/briefs/2026-11-22-agent-context-tidy.md
+- Note: Slice 5 of 5 from pm-shape 2026-11-24. A rules change. Conflicts with R-041 and R-032 edits to the same skills.
