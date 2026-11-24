@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, utimesSync, w
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 
+import { buildReport } from "./context.ts";
 import { MapError, loadMap, parseMap } from "./map.ts";
 import { agentFiles, agentSections, countChars, findSkill, followReferences, toTokens } from "./sources.ts";
 
@@ -142,5 +143,105 @@ describe("sources", () => {
     const agent = put(root, "AGENTS.md", "Read <pm-setup skill>/references/rules.md. Ignore references/local.md.\n");
     put(root, "skills/pm-setup/references/rules.md", "rules\n");
     expect(followReferences([agent], root, home)).toEqual({ files: [join(root, "skills/pm-setup/references/rules.md")], missing: [] });
+  });
+});
+describe("report", () => {
+  const SKILLS = ["pm-resume", "pm-next", "pm-checkpoint", "pm-review"];
+  const MANAGED = `## B\n\n${"managed rules text ".repeat(20)}\n`;
+  const AGENT = `# Repo\n\n## Build\n\nbuild text\n\n<!-- pm-skills:start -->\n${MANAGED}<!-- pm-skills:end -->\n`;
+  const map = () => loadMap(SHIPPED);
+  const report = (date = "2026-11-24") => buildReport({ root, pmRoot: "planning/", home, map: map(), date });
+  const session = (r: ReturnType<typeof report>, id: string) => r.sessions.find((s) => s.id === id)!;
+  const chars = (path: string) => countChars(readFileSync(join(root, path), "utf8"));
+
+  beforeEach(() => {
+    put(root, "AGENTS.md", AGENT);
+    for (const skill of SKILLS) put(root, `skills/${skill}/SKILL.md`, `# ${skill}\n\nsteps\n`);
+    put(root, "planning/config.md", "# Config\n\n## Handoffs\n\n| Stage | Skill | Output |\n| --- | --- | --- |\n| design | `sp:brain` | specs |\n");
+    put(root, "planning/NOW.md", "# Now\n\n- Status: idle\n- Brief:\n");
+    put(root, "planning/ROADMAP.md", "# Roadmap\n\n## Next\n\n### R-001 One\n\n- Owner: agent\n- Status: ready\n- Brief: planning/briefs/one.md\n\n## Later\n");
+    put(root, "planning/briefs/one.md", "# One\n\nbrief text\n");
+    put(root, "planning/LOG.md", "# Log\n\n## Done\n");
+    put(root, "planning/decisions/ADR-001-x.md", "# ADR-001 X\n");
+    put(root, "planning/decisions/README.md", "# Decisions\n");
+    put(root, "planning/inbox/2026-01-01-0000-idea.md", "# Idea\n");
+    put(root, "planning/inbox/README.md", "# Inbox\n");
+  });
+
+  test("resume is always plus its skill and PM files", () => {
+    const r = report();
+    const resume = session(r, "resume");
+    const own = chars("skills/pm-resume/SKILL.md") + ["config.md", "NOW.md", "ROADMAP.md"].reduce((n, f) => n + chars(`planning/${f}`), 0);
+    expect(resume.chars).toBe(session(r, "always").chars + own);
+  });
+
+  test("LOG.md counts as partial", () => {
+    const log = session(report(), "checkpoint").contributors.find((c) => c.name === "planning/LOG.md")!;
+    expect(log.partial).toBe(true);
+  });
+
+  test("moving managed text into a cited reference lowers always and keeps resume", () => {
+    const before = report();
+    const pointer = "Read <pm-setup skill>/references/rules.md.\n";
+    writeFileSync(join(root, "AGENTS.md"), AGENT.replace(MANAGED, pointer));
+    put(root, "skills/pm-setup/references/rules.md", MANAGED);
+    const after = report();
+    expect(session(after, "always").chars).toBeLessThan(session(before, "always").chars);
+    expect(session(after, "resume").chars).toBe(session(before, "resume").chars + countChars(pointer));
+  });
+
+  test("claim counts the next item's brief and the ADRs as partial", () => {
+    const claim = session(report(), "claim");
+    expect(claim.contributors.find((c) => c.name === "planning/briefs/one.md")?.chars).toBe(chars("planning/briefs/one.md"));
+    expect(claim.contributors.find((c) => c.name === "planning/decisions/ADR-001-x.md")?.partial).toBe(true);
+    expect(claim.contributors.some((c) => c.name.endsWith("decisions/README.md"))).toBe(false);
+  });
+
+  test("claim reports a missing handoff skill", () => {
+    const claim = session(report(), "claim");
+    expect(claim.missing).toContain("handoff sp:brain not installed");
+    expect(claim.tokensWithoutHandoff).toBeUndefined();
+  });
+
+  test("claim counts an installed handoff skill separately", () => {
+    put(home, ".claude/plugins/cache/m/sp/1.0.0/skills/brain/SKILL.md", "# Brain\n\nlots of design text\n");
+    const claim = session(report(), "claim");
+    expect(claim.contributors.find((c) => c.handoff)?.chars).toBeGreaterThan(0);
+    expect(claim.tokensWithoutHandoff!).toBeLessThan(claim.tokens);
+  });
+
+  test("review counts inbox files but not the inbox README", () => {
+    const names = session(report(), "review").contributors.map((c) => c.name);
+    expect(names).toContain("planning/inbox/2026-01-01-0000-idea.md");
+    expect(names).not.toContain("planning/inbox/README.md");
+  });
+
+  test("a missing skill is reported, not fatal", () => {
+    rmSync(join(root, "skills/pm-review"), { recursive: true });
+    expect(session(report(), "review").missing).toContain("skill pm-review");
+  });
+
+  test("tidy flags a file at its limit and not one character below", () => {
+    writeFileSync(join(root, "planning/ROADMAP.md"), "x".repeat(31999));
+    expect(report().tidy).toEqual([]);
+    writeFileSync(join(root, "planning/ROADMAP.md"), "x".repeat(32000));
+    expect(report().tidy).toEqual([{ file: "planning/ROADMAP.md", chars: 32000, limit: 32000 }]);
+  });
+
+  test("tidy flags a brief at 24000 characters", () => {
+    writeFileSync(join(root, "planning/briefs/one.md"), "y".repeat(24000));
+    expect(report().tidy).toEqual([{ file: "planning/briefs/one.md", chars: 24000, limit: 24000 }]);
+  });
+
+  test("no PM root still gives five sessions", () => {
+    rmSync(join(root, "planning"), { recursive: true });
+    const r = report();
+    expect(r.sessions.map((s) => s.id)).toEqual(["always", "resume", "claim", "checkpoint", "review"]);
+    expect(r.tidy).toEqual([]);
+  });
+
+  test("contributors are sorted largest first", () => {
+    const list = session(report(), "resume").contributors.map((c) => c.chars);
+    expect(list).toEqual([...list].sort((a, b) => b - a));
   });
 });
