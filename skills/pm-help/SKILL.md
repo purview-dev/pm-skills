@@ -62,7 +62,7 @@ asked, the skill's own `SKILL.md` steps.
 | `pm-export` | A tool needs the whole plan as JSON, you want the export refreshed or validated, or you want one value or ID from it | "export the plan", "update the status JSON", "what does the export say about R-012?" | `<PM root>/planning.json` and `planning.schema.json` (write); nothing (check, query) |
 | `pm-lint` | You want the PM files checked or fixed against their format rules, or a pre-commit hook that checks them | "lint the planning files", "fix the PM formatting", "add a pre-commit hook for the plan" | Nothing (check, rules, hook); the PM files it fixes (fix) |
 | `pm-docs-site` | You want the plan as a local, searchable web site (Board, Roadmap, Milestones, Features, Log, Risks, Now, Inbox, Briefs, Strategy), a module or view added to it, or to know whether it is current | "add a docs site", "add the features page", "is the docs site current?" | `ROADMAP.md` (plan); the site folder, inside the item's workflow (build modes) |
-| `pm-help` | Not sure which skill to use | "pm help" | Nothing |
+| `pm-help` | Not sure which skill to use, or what is missing in the setup and how much context each session loads | "pm help" | Nothing |
 
 Concepts to explain on request, from the pm-skills section: the PM root,
 item IDs and fields, owners (agent, user, both), claimable items, the
@@ -83,7 +83,8 @@ interruption, or while a pull request is pending, and pulling before every
 move), the operation stack and `pm-checkpoint` push/pop, the pause file
 (`pm-pause` writes it, `pm-resume` continues and deletes it), `merged-unclosed` items,
 named references (why an ID always carries its title), the Context budget
-(one item per context, a fresh session between items), and the two ways a
+(one item per context, a fresh session between items), the context report
+(estimated tokens per session type, characters / 4), and the two ways a
 workflow may be interrupted (`pm-revise` to correct, `pm-checkpoint`
 push/pop to suspend).
 
@@ -123,6 +124,7 @@ push/pop to suspend).
    | 27 | If `<PM root>/decisions/` exists: no ADR has `Status: proposed` with a `Date` at least the review cadence before today (imported ADRs included), except one whose `Item` is still open (in `NOW.md` or `ROADMAP.md`) | `<n> ADRs proposed since <oldest date>` | `pm-review` |
    | 28 | If `<PM root>/decisions/` exists: the `adr/*` rules (`adr/header`, `adr/sections`, `adr/id`, `adr/links`) report nothing, with `bun <pm-lint skill>/scripts/lint.ts check <PM root>/decisions --root . --no-export` when Bun is installed, else by reading each ADR | `<n> ADR findings: <first file:line rule>` | `pm-adr check` |
    | 29 | If `<PM root>/planning.json` exists: `git check-attr merge -- <PM root>/planning.json` prints `pm-export`, `git config merge.pm-export.driver` is set, and the PM branch has not diverged from `<remote>/<PM branch>` (against the remote refs already fetched) | `planning.json merge driver not registered`, or `<PM branch> diverged from <remote>/<PM branch> (<a> ahead, <b> behind)` | `pm-setup`, or `bun <pm-next skill>/scripts/sync.ts pull` |
+   | 30 | If Bun is installed: `bun <pm-help skill>/scripts/context.ts --root . --format json` lists no `tidy` entry | `<file> is <n> characters (limit <m>); tidy it` | `pm-park` the tidy work |
 
    Stop at the first failing check among 1 to 4; later checks depend on
    them.
@@ -159,6 +161,10 @@ push/pop to suspend).
 
 - <finding>: fix with `<skill or command>`
 
+## Context
+
+<the table and bullets printed by `bun <pm-help skill>/scripts/context.ts --root .` | Context report needs Bun.>
+
 ## Skills
 
 | Skill | Use it when |
@@ -173,7 +179,12 @@ push/pop to suspend).
 ```
 
 Omit `What's missing` when every check passes. The Skills table lists
-every skill; it is exempt from the 5-bullet limit.
+every skill; it is exempt from the 5-bullet limit. The `Context` section
+is the context report's output verbatim: estimated tokens (characters / 4)
+for each session type with its three largest contributors, from the
+session map in `references/sessions.json`. It is information, never a
+finding (check 30 reports a tidy recommendation), and explain mode never
+runs it.
 
 ## Output (explain)
 
