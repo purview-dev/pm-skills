@@ -202,20 +202,20 @@ git commit -m "feat(pm-docs-site): render mermaid fences with Pele at build time
   - `migrate <site> [--include-unlisted]` stops with exit 1 and lists `unlisted` when it is non-empty and the flag is absent, before deleting anything. Otherwise it deletes the listed paths, then the manifest, writes `astro.config.ts`, and rewrites `package.json` (the dependency the caller adds next; scripts `dev`/`build`/`check` = `pm-docs-site <cmd>`, `preview` = `astro preview`; name, `private`, `type`, and `description` kept). It prints the hand-edit `Note` naming `git show HEAD:<path>`.
   - `write <site> --options <json>` writes `astro.config.ts`, `package.json` (as `migrate` does), and `.gitignore` (`node_modules/`, `dist/`, `.astro/`) when it is missing.
 
-- [ ] **Step 1: Generate the inventory, before any template is deleted.** Run a one-off `bun -e` that imports `render` from `skills/pm-docs-site/scripts/site.ts` and renders a manifest with every module (`repo-docs`, `architecture`) and every view. The architecture module's placeholder values come from `templates/architecture/MODULE.md`. Collect the paths, adding `SITE_OWNED` and `pm-docs-site.json`.
+- [x] **Step 1: Generate the inventory, before any template is deleted.** Run a one-off `bun -e` that imports `render` from `skills/pm-docs-site/scripts/site.ts` and renders a manifest with every module (`repo-docs`, `architecture`) and every view. The architecture module's placeholder values come from `templates/architecture/MODULE.md`. Collect the paths, adding `SITE_OWNED` and `pm-docs-site.json`.
   - Write `references/template-files.md`: a short heading, one sentence on its purpose (frozen on 2026-11-24, read by `consumer.ts migrate`), and one bullet per path, `` - `<path>` `<sha256 of docs-site/<path> or none>` ``.
   - The SHA-256 is that of this repository's current `docs-site/` file, or `none` when this site does not have it.
   - Do not commit the one-off command.
-- [ ] **Step 2: Write failing tests.** Use a scratch template site made with `site.ts write` into a temp folder (still present at this point), plus `git show main:docs-site/<path>` for the real one:
+- [x] **Step 2: Write failing tests.** Use a scratch template site made with `site.ts write` into a temp folder (still present at this point), plus `git show main:docs-site/<path>` for the real one:
   - `inspect` on the real site gives title `pm-skills project`, its description, the four sources in order, no `views` (the manifest has none), and `unlisted: []`.
   - `migrate` on a scratch copy leaves exactly `package.json`, `astro.config.ts`, `.gitignore`, and `bun.lock`.
   - `migrate` with an added `src/pages/extra.astro` exits 1, lists `src/pages/extra.astro`, and leaves every file in place (Review Focus 5). With `--include-unlisted`, it deletes the file.
   - `renderAstroConfig` output for the real site's options equals a checked-in expected string. Write that string once by hand from spec section 2.
   - A manifest with `LIKEC4_DIR` gives `architectureDir` and `options.architecture.project`.
-- [ ] **Step 3: Run** `bun test skills/pm-docs-site/`. Expected: FAIL.
-- [ ] **Step 4: Implement** `consumer.ts`. It deletes only listed paths and removes folders it empties.
-- [ ] **Step 5: Run** the tests. Expected: PASS.
-- [ ] **Step 6: Commit** `feat(pm-docs-site): consumer script and frozen template inventory`.
+- [x] **Step 3: Run** `bun test skills/pm-docs-site/`. Expected: FAIL.
+- [x] **Step 4: Implement** `consumer.ts`. It deletes only listed paths and removes folders it empties.
+- [x] **Step 5: Run** the tests. Expected: PASS.
+- [x] **Step 6: Commit** `feat(pm-docs-site): consumer script and frozen template inventory`.
 
 ### Task 7: Migrate `docs-site/`
 
