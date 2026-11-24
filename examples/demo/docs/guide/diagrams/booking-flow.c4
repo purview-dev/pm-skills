@@ -1,0 +1,34 @@
+// A self-contained model for the purview:likec4 marker in docs/guide/diagrams.md.
+// Its own specification, model, and views, so it compiles on its own.
+specification {
+  element actor {
+    style {
+      shape person
+    }
+  }
+  element step {
+    style {
+      shape rectangle
+    }
+  }
+}
+
+model {
+  customer = actor 'Customer'
+  page = step 'Booking page'
+  api = step 'Booking API'
+  payments = step 'Hosted checkout'
+
+  customer -> page 'picks a class'
+  page -> api 'creates a booking'
+  api -> payments 'redirects for payment'
+  payments -> customer 'confirms'
+}
+
+views {
+  view bookingFlow {
+    title 'Booking flow'
+    include *
+    autoLayout LeftRight
+  }
+}

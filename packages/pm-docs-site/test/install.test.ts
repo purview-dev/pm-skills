@@ -61,6 +61,10 @@ describe('an installed package', () => {
 			);
 			run(['bun', 'install'], consumer);
 
+			// The fixture config never sets `architecture`, so the optional peer is
+			// never pulled in: a site that does not ask for diagrams needs no astroc4.
+			expect(existsSync(join(consumer, 'node_modules', '@purview-dev', 'astroc4'))).toBe(false);
+
 			// Every declaration import resolves inside the tarball, at any depth: a
 			// `.ts` specifier left in a .d.ts would point at a file that does not ship.
 			const pkgDir = join(consumer, 'node_modules', '@purview-dev', 'pm-docs-site');

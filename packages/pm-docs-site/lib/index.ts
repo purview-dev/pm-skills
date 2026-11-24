@@ -13,6 +13,7 @@ import react from '@astrojs/react';
 import starlight from '@astrojs/starlight';
 import type { AstroIntegration } from 'astro';
 
+import { loadAstroc4 } from './astroc4.ts';
 import { containsPath } from './fs-allow.ts';
 import { resolveOptions } from './options.ts';
 import { buildSidebar } from './sidebar.ts';
@@ -95,13 +96,28 @@ function optimizedDependencies(include: unknown, root: string): string[] {
 const VIRTUAL_ID = 'virtual:pm-docs-site/config';
 const RESOLVED_ID = `\0${VIRTUAL_ID}`;
 
+/** The `plugins` Starlight accepts, read off its own options type so this file never imports it directly. */
+type StarlightPlugins = Parameters<typeof starlight>[0]['plugins'];
+
+/**
+ * Loads the astroc4 Starlight plugin, so a test can inject a stub instead
+ * of the real `@purview-dev/astroc4` import. Not part of the public options
+ * type: a consumer's astro.config.ts only ever passes one argument.
+ */
+export interface PmDocsSiteInternals {
+	loadAstroc4?: () => Promise<(options: Record<string, unknown>) => unknown>;
+}
+
 /** The pm-docs-site integration: the plan pages, Starlight, and the docs collection. */
-export default function pmDocsSite(options: PmDocsSiteOptions): AstroIntegration & { pmDocsSiteOptions: PmDocsSiteOptions } {
+export default function pmDocsSite(
+	options: PmDocsSiteOptions,
+	internals: PmDocsSiteInternals = {},
+): AstroIntegration & { pmDocsSiteOptions: PmDocsSiteOptions } {
 	return {
 		name: 'pm-docs-site',
 		pmDocsSiteOptions: options,
 		hooks: {
-			'astro:config:setup': ({ config, updateConfig, injectRoute }) => {
+			'astro:config:setup': async ({ config, updateConfig, injectRoute }) => {
 				const root = fileURLToPath(config.root);
 				const resolved = resolveOptions(options, root);
 				// A consumer that adds React itself keeps its own: two would register the renderer twice.
@@ -115,6 +131,15 @@ export default function pmDocsSite(options: PmDocsSiteOptions): AstroIntegration
 					}
 				}
 
+				const { architecture } = resolved;
+				// Loaded only when the option is set, so a site that never asks for
+				// architecture diagrams never pulls in LikeC4, Shiki, or astroc4 itself.
+				const astroc4 = architecture ? await (internals.loadAstroc4 ?? loadAstroc4)() : null;
+
+				if (architecture?.project) {
+					injectRoute({ pattern: '/architecture/[group]', entrypoint: new URL('../src/routes/architecture/[group].astro', import.meta.url) });
+				}
+
 				updateConfig({
 					srcDir: new URL('../src/', import.meta.url),
 					integrations: [
@@ -126,6 +151,18 @@ export default function pmDocsSite(options: PmDocsSiteOptions): AstroIntegration
 							disable404Route: true,
 							// Every page uses the full width (src/styles/width.css).
 							customCss: [fileURLToPath(new URL('../src/styles/width.css', import.meta.url))],
+							...(astroc4
+								? {
+										plugins: [
+											astroc4({
+												...(architecture!.project ? { projects: { architecture: architecture!.project } } : {}),
+												fences: true,
+												markers: { root: architecture!.markersRoot },
+												highlighting: architecture!.highlighting,
+											}),
+										] as StarlightPlugins,
+									}
+								: {}),
 						}),
 						...(hasReact ? [] : [react()]),
 					],

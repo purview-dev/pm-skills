@@ -10,6 +10,11 @@
 		"preview": "astro preview"
 	},
 	"dependencies": {
-		"@purview-dev/pm-docs-site": "file:../../packages/pm-docs-site"
+		"@purview-dev/pm-docs-site": "file:../../packages/pm-docs-site",
+		"@astrojs/markdown-satteri": "0.4.10",
+		"@likec4/core": "1.61.0",
+		"@purview-dev/astroc4": "1.0.0-prerelease.9",
+		"likec4": "1.61.0",
+		"shiki": "4.6.0"
 	}
 }

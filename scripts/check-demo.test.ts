@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 
 import { afterEach, describe, expect, it } from "bun:test";
 
-import { ALLOWED, checkDemo, PLACEHOLDERS } from "./check-demo.ts";
+import { ALLOWED, ARCHITECTURE_VIEWS, checkDemo, PLACEHOLDERS, RENDERED_DIAGRAMS } from "./check-demo.ts";
 
 const dirs: string[] = [];
 
@@ -120,5 +120,133 @@ describe("checkDemo", () => {
   it("gives every allowlist entry a reason", () => {
     expect(ALLOWED.length).toBeGreaterThan(0);
     for (const entry of ALLOWED) expect(entry.reason.trim(), entry.text).not.toBe("");
+  });
+
+  it("passes a diagrams page whose marker rendered the astroc4 fence", () => {
+    const dir = dist({
+      "docs/guide/diagrams/index.html": '<section class="not-content likec4-md-fence" data-astroc4-fence data-view-id="overview.overview"></section>',
+    });
+
+    expect(checkDemo(dir, ["docs/guide/diagrams/index.html"])).toEqual([]);
+  });
+
+  it("reports a diagrams page that kept the mermaid fallback instead of the astroc4 fence", () => {
+    const dir = dist({ "docs/guide/diagrams/index.html": '<pre><code class="language-mermaid">flowchart LR</code></pre>' });
+
+    expect(checkDemo(dir, ["docs/guide/diagrams/index.html"])).toEqual([
+      "docs/guide/diagrams/index.html: missing data-astroc4-fence (marker did not render)",
+      "docs/guide/diagrams/index.html: language-mermaid fallback still present",
+    ]);
+  });
+
+  it("names every page whose marker must render", () => {
+    expect(RENDERED_DIAGRAMS).toContain("docs/guide/diagrams/index.html");
+  });
+
+  /** A minimal astro-island as astroc4's LikeC4View.astro emits it for a project view. */
+  function island(viewId: string, projectId = "architecture"): string {
+    return `<astro-island component-url="/_astro/LikeC4ProjectView.4SGd25x3.js" component-export="default" props="{&quot;viewId&quot;:[0,&quot;${viewId}&quot;],&quot;projectId&quot;:[0,&quot;${projectId}&quot;]}" ssr client="only"></astro-island>`;
+  }
+
+  /**
+   * A minimal compiled LikeC4 project chunk, shaped like the real build's
+   * `_astro/model.*.js`: `projectId`, and each view keyed by id in the views
+   * map with a `sourcePath` and a matching `id` field.
+   */
+  function modelChunk(viewIds: string[], projectId = "architecture"): string {
+    const views = viewIds.map((id) => `${id}:{_type:\`element\`,sourcePath:\`views/${id}/model.c4\`,title:\`${id}\`,id:\`${id}\`}`).join(",");
+
+    return `var n=e({projectId:\`${projectId}\`,project:{id:\`${projectId}\`},views:{${views}}});`;
+  }
+
+  it("passes an architecture page whose island names its view id and the compiled model declares it", () => {
+    const dir = dist({
+      "architecture/overview/index.html": `<h1>Architecture: Overview</h1>${island("overview")}`,
+      "_astro/model.test.js": modelChunk(["overview"]),
+    });
+
+    expect(checkDemo(dir, ["architecture/overview/index.html"])).toEqual([]);
+  });
+
+  it("reports an architecture page with no LikeC4ProjectView island at all", () => {
+    const dir = dist({
+      "architecture/overview/index.html": "<h1>Architecture: Overview</h1><p>System overview</p>",
+      "_astro/model.test.js": modelChunk(["overview"]),
+    });
+
+    expect(checkDemo(dir, ["architecture/overview/index.html"])).toEqual([
+      'architecture/overview/index.html: missing LikeC4ProjectView island for view "overview"',
+    ]);
+  });
+
+  it("reports an architecture page whose island names the wrong view id", () => {
+    const dir = dist({
+      "architecture/overview/index.html": `<h1>Architecture: Overview</h1>${island("services")}`,
+      "_astro/model.test.js": modelChunk(["overview"]),
+    });
+
+    expect(checkDemo(dir, ["architecture/overview/index.html"])).toEqual([
+      'architecture/overview/index.html: missing LikeC4ProjectView island for view "overview"',
+    ]);
+  });
+
+  it("reports a view missing from the compiled model when no chunk exists at all", () => {
+    const dir = dist({ "architecture/overview/index.html": `<h1>Architecture: Overview</h1>${island("overview")}` });
+
+    expect(checkDemo(dir, ["architecture/overview/index.html"])).toEqual([
+      'architecture/overview/index.html: view "overview" missing from the compiled architecture project model',
+    ]);
+  });
+
+  it("reports a view missing from the compiled model when the chunk exists but does not declare it", () => {
+    const dir = dist({
+      "architecture/overview/index.html": `<h1>Architecture: Overview</h1>${island("overview")}`,
+      // The chunk is the right project, but only declares a different view.
+      "_astro/model.test.js": modelChunk(["services"]),
+    });
+
+    expect(checkDemo(dir, ["architecture/overview/index.html"])).toEqual([
+      'architecture/overview/index.html: view "overview" missing from the compiled architecture project model',
+    ]);
+  });
+
+  it("does not let a stray matching id without a sourcePath satisfy the compiled-model check", () => {
+    const dir = dist({
+      "architecture/overview/index.html": `<h1>Architecture: Overview</h1>${island("overview")}`,
+      // An element id "overview" in the right project's chunk, but no sourcePath: not a view.
+      "_astro/model.test.js": "var n=e({projectId:`architecture`,elements:{overview:{title:`overview`,id:`overview`}}});",
+    });
+
+    expect(checkDemo(dir, ["architecture/overview/index.html"])).toEqual([
+      'architecture/overview/index.html: view "overview" missing from the compiled architecture project model',
+    ]);
+  });
+
+  it("does not let a different project's chunk satisfy the compiled-model check", () => {
+    const dir = dist({
+      "architecture/overview/index.html": `<h1>Architecture: Overview</h1>${island("overview")}`,
+      // A real view declaration, but under an unrelated project.
+      "_astro/model.test.js": modelChunk(["overview"], "other"),
+    });
+
+    expect(checkDemo(dir, ["architecture/overview/index.html"])).toEqual([
+      'architecture/overview/index.html: view "overview" missing from the compiled architecture project model',
+    ]);
+  });
+
+  it("reports both a missing island and a missing compiled view together, in order", () => {
+    const dir = dist({ "architecture/overview/index.html": "<h1>Architecture: Overview</h1>" });
+
+    expect(checkDemo(dir, ["architecture/overview/index.html"])).toEqual([
+      'architecture/overview/index.html: missing LikeC4ProjectView island for view "overview"',
+      'architecture/overview/index.html: view "overview" missing from the compiled architecture project model',
+    ]);
+  });
+
+  it("names every architecture page and the view ids it must render", () => {
+    expect(ARCHITECTURE_VIEWS).toEqual({
+      "architecture/overview/index.html": ["overview"],
+      "architecture/services/index.html": ["services"],
+    });
   });
 });

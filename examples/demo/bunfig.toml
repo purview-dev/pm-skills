@@ -1,0 +1,4 @@
+[install]
+# @purview-dev/astroc4 only: our own package, released from purview-dev/astroc4's
+# workflow with provenance; every other package keeps the minimumReleaseAge policy.
+minimumReleaseAgeExcludes = ["@purview-dev/astroc4"]

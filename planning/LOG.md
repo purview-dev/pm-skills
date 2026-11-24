@@ -4,6 +4,7 @@
 
 ## Done
 
+- 2026-11-24 R-045 Docs-site package: architecture view. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-23-docs-site-package-architecture-view.md. Result: branch feat/r-013-docs-site-package.
 - 2026-11-22 R-044 Merge-proof PM sync. Milestone: none. Owner: agent. Plan: docs/superpowers/plans/2026-11-22-merge-proof-pm-sync.md. Result: branch feat/r-044-merge-proof-pm-sync.
 - 2026-11-22 R-025 Docs-site package: feature pages list revisions. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-22-feature-pages-list-revisions.md. Result: branch feat/r-025-docs-site-package-feature-pages-list-revisions.
 - 2026-11-22 R-039 ADRs across the PM skills. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-22-adrs-across-the-pm-skills.md. Result: branch feat/r-039-adrs-across-the-pm-skills.

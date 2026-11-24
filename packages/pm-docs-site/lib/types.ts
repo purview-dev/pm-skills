@@ -34,6 +34,8 @@ export interface PmDocsSiteOptions {
 	docs?: { root: string; sources: DocsSource[] };
 	/** The optional views to render. Default: all seven. */
 	views?: ViewName[];
+	/** LikeC4 architecture diagrams via astroc4. `null` is treated like absent. Default: none. */
+	architecture?: { project?: string; highlighting?: boolean } | null;
 }
 
 /** The options with defaults applied and every path absolute. */
@@ -45,4 +47,5 @@ export interface ResolvedOptions {
 	planningLabel: string;
 	docs: { root: string; sources: DocsSource[] } | null;
 	views: Record<ViewName, boolean>;
+	architecture: { project: string | null; highlighting: boolean; markersRoot: string } | null;
 }

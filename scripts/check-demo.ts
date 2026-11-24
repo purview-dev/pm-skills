@@ -29,6 +29,80 @@ export const PLACEHOLDERS: { text: string; reason: string }[] = [
   { text: "No status", reason: "milestones/index.astro: a milestone without a Status" },
 ];
 
+/**
+ * Pages whose purview:likec4 marker must render astroc4's fence, not fall back
+ * to the Mermaid pair it wraps: a fallback means the marker failed to resolve.
+ */
+export const RENDERED_DIAGRAMS: string[] = ["docs/guide/diagrams/index.html"];
+
+/**
+ * Architecture pages and the LikeC4 project view id(s) each must render: one
+ * page per folder under the architecture project's views/, so the page's
+ * title and list come from pm-docs-site's own folder scan (lib/architecture.ts)
+ * regardless of whether the project actually compiled. This checks the other
+ * half: astroc4's `<LikeC4View project="architecture" viewId="...">` renders
+ * as a `LikeC4ProjectView` island naming that same view id, so the project's
+ * real LikeC4 workspace resolved it (a page with the right title but a
+ * missing or mismatched island means the project failed to load).
+ */
+export const ARCHITECTURE_VIEWS: Record<string, string[]> = {
+  "architecture/overview/index.html": ["overview"],
+  "architecture/services/index.html": ["services"],
+};
+
+/**
+ * This map is hand-kept rather than derived from the `.c4` source files
+ * (pm-docs-site's own `viewGroups`/`viewsIn`, lib/architecture.ts): deriving
+ * it would need the demo's project folder, which `checkDemo` is not given
+ * (it only reads `distDir`, so every existing and new test here builds a
+ * synthetic dist/ with no sibling source tree). It would also prove nothing
+ * extra: `viewsIn` is the same regex scan the review found insufficient on
+ * its own, so deriving the expected ids from it and then checking them
+ * against the compiled model (below) is no stronger than listing the ids by
+ * hand and checking those — the compiled-model check is what adds the
+ * missing evidence, not where the id list comes from.
+ */
+
+/**
+ * The LikeC4 project id astroc4 registers the `architecture` option's
+ * project folder under — hardcoded in packages/pm-docs-site/lib/index.ts
+ * (`projects: { architecture: architecture!.project }`), not derived from
+ * the folder name.
+ */
+const ARCHITECTURE_PROJECT_ID = "architecture";
+
+/** The compiled chunk may quote string literals with backticks, `'`, or `"`. */
+const QUOTE = `['"\`]`;
+
+/** Every `_astro/*.js` chunk whose compiled LikeC4 model is the `architecture` project. */
+function architectureModelChunks(distDir: string): string[] {
+  const astroDir = join(distDir, "_astro");
+  if (!existsSync(astroDir)) return [];
+  const projectMarker = new RegExp(`projectId:${QUOTE}${ARCHITECTURE_PROJECT_ID}${QUOTE}`);
+  return readdirSync(astroDir)
+    .filter((file) => file.endsWith(".js"))
+    .map((file) => readFileSync(join(astroDir, file), "utf8"))
+    .filter((source) => projectMarker.test(source));
+}
+
+/**
+ * Whether a compiled LikeC4 project chunk declares `viewId` as a real view
+ * (not just a stray matching string, or an element that happens to share the
+ * id): its key in the views map, `{viewId}:{...}`, whose object carries a
+ * `sourcePath` (only a view has one; an element does not) and an `id` field
+ * equal to `viewId`, within the same object. Field order is not assumed;
+ * only that both appear within the object's opening span.
+ */
+function chunkDeclaresView(source: string, viewId: string): boolean {
+  const key = new RegExp(`(?<![\\w$])${viewId}:\\{`, "g");
+
+  for (let match = key.exec(source); match; match = key.exec(source)) {
+    const window = source.slice(match.index, match.index + 400);
+    if (/\bsourcePath:/.test(window) && new RegExp(`\\bid:${QUOTE}${viewId}${QUOTE}`).test(window)) return true;
+  }
+  return false;
+}
+
 function placeholderCount(html: string, text: string): number {
   const escaped = text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   return (html.match(new RegExp(`>\\s*${escaped}\\s*<`, "g")) ?? []).length;
@@ -99,6 +173,30 @@ export function checkDemo(distDir: string, expectedPages: string[]): string[] {
     }
     for (const entry of PLACEHOLDERS) {
       if (placeholderCount(html, entry.text) > 0) failures.push(`${page}: placeholder "${entry.text}"`);
+    }
+  }
+  for (const page of pages.filter((path) => RENDERED_DIAGRAMS.includes(path))) {
+    const html = readFileSync(join(distDir, page), "utf8");
+    if (!html.includes("data-astroc4-fence")) failures.push(`${page}: missing data-astroc4-fence (marker did not render)`);
+    if (html.includes("language-mermaid")) failures.push(`${page}: language-mermaid fallback still present`);
+  }
+  const architecturePages = pages.filter((path) => path in ARCHITECTURE_VIEWS);
+  // Read once: every architecture page shares the same compiled project.
+  const modelChunks = architecturePages.length > 0 ? architectureModelChunks(distDir) : [];
+  for (const page of architecturePages) {
+    const html = readFileSync(join(distDir, page), "utf8");
+    for (const viewId of ARCHITECTURE_VIEWS[page]!) {
+      if (!html.includes(`&quot;viewId&quot;:[0,&quot;${viewId}&quot;]`)) {
+        failures.push(`${page}: missing LikeC4ProjectView island for view "${viewId}"`);
+      }
+      // The island's props only carry the view id the page asked for (from
+      // pm-docs-site's folder scan), not whether that view exists in the
+      // compiled LikeC4 project: that's resolved client-side, so a page can
+      // look right above and still have nothing to show. Check the server
+      // build's own compiled model for the view.
+      if (!modelChunks.some((source) => chunkDeclaresView(source, viewId))) {
+        failures.push(`${page}: view "${viewId}" missing from the compiled architecture project model`);
+      }
     }
   }
   return failures;

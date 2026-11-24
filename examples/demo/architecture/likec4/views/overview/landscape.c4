@@ -1,0 +1,32 @@
+// Slotwise: the booking page, its dashboard, and the services behind them.
+specification {
+  element actor {
+    style {
+      shape person
+    }
+  }
+  element system {
+    style {
+      shape rectangle
+    }
+  }
+}
+
+model {
+  customer = actor 'Customer' {
+    description 'Books a class through the booking page'
+  }
+  slotwise = system 'Slotwise' {
+    description 'Booking page, dashboard, and the services behind them'
+  }
+
+  customer -> slotwise 'books a class'
+}
+
+views {
+  view overview {
+    title 'System overview'
+    include *
+    autoLayout LeftRight
+  }
+}
