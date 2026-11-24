@@ -16,7 +16,10 @@
 	--pele-surface-alt: var(--sl-color-gray-5);
 	--pele-border: var(--sl-color-hairline);
 	--pele-accent: var(--sl-color-accent);
+	--pele-critical: var(--sl-color-red);
+	--pele-error: var(--sl-color-red);
 	--pele-font: var(--sl-font);
+	--pele-font-mono: var(--sl-font-mono);
 	--pele-radius: 0.25rem;
 	--pele-series-1: var(--sl-color-accent);
 	--pele-series-2: var(--sl-color-orange);

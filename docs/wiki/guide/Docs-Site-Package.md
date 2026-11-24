@@ -52,7 +52,7 @@ export default {
 };
 ```
 
-```gitignore
+```text
 node_modules/
 dist/
 .astro/
@@ -124,9 +124,11 @@ The CLI runs under Node 24 or later.
 | `pm-docs-site peers architecture` | Prints the `architecture` option's install command (see [Architecture diagrams](#architecture-diagrams)) |
 
 A site folder without `astro.config.*` builds from `--title <title>` and `--planning <path>`.
-`--port <n>` and `--host <host>` set `dev` and `build`'s Astro server config, may appear before or
-after the site-dir positional in either order, and otherwise fall back to the `PORT` and `HOST`
-environment variables (an Aspire `AddViteApp` resource sets `PORT`); a flag always wins.
+`--port <n>` and `--host <host>` set `dev` and `build`'s Astro server config, and may appear before
+or after the site-dir positional in either order. For `dev` only, they otherwise fall back to the
+`PORT` and `HOST` environment variables (an Aspire `AddViteApp` resource sets `PORT`); a flag always
+wins, `build` and `check` never read them, and a `dev` environment `PORT` that is not a port number
+is ignored with a warning on stderr instead of failing the command.
 
 ## Running under Aspire
 

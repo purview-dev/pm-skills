@@ -53,7 +53,7 @@ export default {
 };
 ```
 
-```gitignore
+```text
 node_modules/
 dist/
 .astro/
@@ -274,9 +274,11 @@ The CLI runs under Node 24 or later.
   config; they may appear before or after the site-dir positional, in either
   order (`pm-docs-site dev docs-site --port 4399` and
   `pm-docs-site dev --port 4399 docs-site` both treat `4399` as the port).
-  Without a flag, the `PORT` and `HOST` environment variables are read
-  instead (an Aspire `AddViteApp` resource sets `PORT`); a flag always wins
-  over the environment.
+  For `dev` only, without a flag the `PORT` and `HOST` environment variables
+  are read instead (an Aspire `AddViteApp` resource sets `PORT`); a flag
+  always wins over the environment. `build` and `check` never read them. A
+  `dev` environment `PORT` that is not a port number is ignored with a
+  warning on stderr, instead of failing the command.
 - `pm-docs-site peers architecture` prints the `architecture` option's
   install command (see [Architecture](#architecture)), so a consumer, the
   skill, and this README never have to state astroc4's exact version.

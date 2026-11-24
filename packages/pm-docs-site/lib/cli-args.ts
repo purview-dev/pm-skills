@@ -32,9 +32,14 @@ function parsePort(value: string): number {
 
 /**
  * `--title`/`--planning`/`--port`/`--host` may appear before or after the
- * site-dir positional, in any order. `--port` and `--host` fall back to the
- * `PORT` and `HOST` environment variables (an Aspire `AddViteApp` resource
- * sets `PORT`), with a flag always winning over the environment.
+ * site-dir positional, in any order. For `dev` only, `--port` and `--host`
+ * fall back to the `PORT` and `HOST` environment variables (an Aspire
+ * `AddViteApp` resource sets `PORT`), with a flag always winning over the
+ * environment; `build` and `check` never read them, since they run once and
+ * have no server to bind. A `dev` environment `PORT` that is not a port
+ * number is ignored with a warning on stderr, instead of throwing: an
+ * Aspire-set `PORT` is outside this CLI's control, so a bad value there
+ * should not fail the dev server.
  */
 export function parse(argv: string[], env: NodeJS.ProcessEnv): { command: string | undefined; siteDir: string; flags: Flags; server: Server } {
 	const flags: Flags = {};
@@ -62,12 +67,22 @@ export function parse(argv: string[], env: NodeJS.ProcessEnv): { command: string
 		}
 	}
 
-	if (port === undefined && env.PORT !== undefined) port = parsePort(env.PORT);
-	if (host === undefined && env.HOST !== undefined) host = env.HOST;
+	const command = positional[0];
+
+	if (command === 'dev') {
+		if (port === undefined && env.PORT !== undefined) {
+			try {
+				port = parsePort(env.PORT);
+			} catch {
+				console.error(`pm-docs-site: ignoring PORT=${env.PORT} (needs a port number, 1-65535)`);
+			}
+		}
+		if (host === undefined && env.HOST !== undefined) host = env.HOST;
+	}
 
 	const server: Server = {};
 	if (port !== undefined) server.port = port;
 	if (host !== undefined) server.host = host;
 
-	return { command: positional[0], siteDir: resolve(positional[1] ?? process.cwd()), flags, server };
+	return { command, siteDir: resolve(positional[1] ?? process.cwd()), flags, server };
 }

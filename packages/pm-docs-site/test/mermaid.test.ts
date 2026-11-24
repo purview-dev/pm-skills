@@ -9,6 +9,7 @@ import { markdownProcessor, mermaidFences } from '../lib/mermaid.ts';
 const SEQUENCE = '```mermaid\nsequenceDiagram\n  Alice->>Bob: Hello\n```\n';
 const FLOWCHART = '```mermaid\nflowchart LR\n  A[Mermaid text] --> B[SVG]\n```\n';
 const INVALID = '```mermaid\nsequenceDiagram\n  A->>\n```\n';
+const TILDE_SEQUENCE = '~~~mermaid\nsequenceDiagram\n  Alice->>Bob: Hello\n~~~\n';
 
 // Flowchart and sequence diagrams identify their elements with `data-id="<label>"`,
 // never a literal, idPrefix-derived `id="..."`: Pele only writes idPrefix into the
@@ -46,6 +47,14 @@ describe('mermaidFences', () => {
 
 	it('renders a flowchart LR fence', async () => {
 		const html = await renderMarkdown(FLOWCHART);
+
+		expect(html).toContain('<svg');
+		expect(html).not.toContain('language-mermaid');
+		expect(html).not.toContain('<pre');
+	});
+
+	it('renders a ~~~mermaid fence (tilde fence marker) to inline svg', async () => {
+		const html = await renderMarkdown(TILDE_SEQUENCE);
 
 		expect(html).toContain('<svg');
 		expect(html).not.toContain('language-mermaid');

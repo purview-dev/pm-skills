@@ -355,6 +355,24 @@ describe('pm-docs-site arguments', () => {
 		expect(result.server).toEqual({});
 	});
 
+	it('the PORT/HOST environment fallback applies to dev only: build ignores it', () => {
+		const result = parse(['build'], { PORT: '5000', HOST: 'localhost' });
+
+		expect(result.server).toEqual({});
+	});
+
+	it('parse(["build"], { PORT: "abc" }) does not throw and gives an empty server', () => {
+		const result = parse(['build'], { PORT: 'abc' });
+
+		expect(result.server).toEqual({});
+	});
+
+	it('parse(["dev"], { PORT: "abc" }) does not throw, warns on stderr, and gives an empty server', () => {
+		const result = parse(['dev'], { PORT: 'abc' });
+
+		expect(result.server).toEqual({});
+	});
+
 	it(
 		'dev --port 4399 serves on 4399',
 		async () => {

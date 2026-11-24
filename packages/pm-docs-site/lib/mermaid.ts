@@ -14,7 +14,9 @@ import { render } from 'pele';
 import type { MdastPluginDefinition, MdastPluginList, PluginFactoryContext } from 'satteri';
 
 const FENCE_LANG = 'mermaid';
-const FENCE_MARK = '```' + FENCE_LANG;
+// Markdown allows either fence marker (```` ``` ```` or `~~~`); the shortcut
+// below only needs to rule out a document with neither.
+const FENCE_MARKS = ['```' + FENCE_LANG, '~~~' + FENCE_LANG];
 
 /**
  * The Sätteri mdast-plugin factory shape astroc4's `likec4Fences` returns:
@@ -51,7 +53,7 @@ function describe(fileURL: URL | undefined): string {
  */
 export function mermaidFences(): SatteriMdastPluginFactory {
 	return (factory) => {
-		if (!factory.source.includes(FENCE_MARK)) return null;
+		if (!FENCE_MARKS.some((mark) => factory.source.includes(mark))) return null;
 
 		const prefix = createHash('sha256').update(factory.source).digest('hex').slice(0, 8);
 		let index = 0;
