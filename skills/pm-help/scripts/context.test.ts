@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, utimesSync, w
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 
-import { type Report, buildReport, detectPmRoot, main, normalisePmRoot, renderText } from "./context.ts";
+import { type Report, buildReport, detectPmRoot, main, nameOf, normalisePmRoot, renderText } from "./context.ts";
 import { MapError, loadMap, parseMap } from "./map.ts";
 import { agentFiles, agentSections, countChars, findSkill, followReferences, toTokens } from "./sources.ts";
 
@@ -312,5 +312,42 @@ describe("cli", () => {
     put(root, "AGENTS.md", "- PM state directory: `pm/`\n");
     expect(detectPmRoot(root)).toBe("pm/");
     expect(detectPmRoot(home)).toBe("planning/");
+  });
+});
+describe("review fixes", () => {
+  const base = (): Report => ({
+    version: 1,
+    date: "2026-11-24",
+    sessions: [
+      { id: "claim", chars: 400, tokens: 100, tokensWithoutHandoff: 60, contributors: [
+        { name: ".agents/skills/brainstorming/SKILL.md", chars: 160, tokens: 40, partial: false, handoff: true },
+        { name: "AGENTS.md", chars: 240, tokens: 60, partial: false },
+      ], missing: ["skill pm-next", "handoff sp:brain not installed"] },
+    ],
+    tidy: [],
+  });
+
+  test("renderText labels the handoff contributor", () => {
+    expect(renderText(base())).toContain("| claim | 100 | AGENTS.md 100; handoff: .agents/skills/brainstorming/SKILL.md 0 |");
+  });
+
+  test("renderText lists what each session is missing", () => {
+    expect(renderText(base())).toContain("- Missing: claim: skill pm-next, handoff sp:brain not installed\n");
+  });
+
+  test("renderText omits the missing line when nothing is missing", () => {
+    const report = base();
+    report.sessions[0]!.missing = [];
+    expect(renderText(report)).not.toContain("Missing");
+  });
+
+  test.if(process.platform === "win32")("nameOf gives ~/ for a home file on another drive", () => {
+    expect(nameOf("C:\\Users\\me\\.claude\\skills\\x\\SKILL.md", "P:\\repo", "C:\\Users\\me")).toBe("~/.claude/skills/x/SKILL.md");
+  });
+
+  test("a brief path that is a folder does not crash the report", () => {
+    put(root, "AGENTS.md", "# A\n");
+    put(root, "planning/NOW.md", "# Now\n\n- Status: active\n- Brief: planning\n");
+    expect(() => buildReport({ root, pmRoot: "planning/", home, map: loadMap(SHIPPED), date: "2026-11-24" })).not.toThrow();
   });
 });

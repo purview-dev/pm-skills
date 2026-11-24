@@ -6,9 +6,9 @@
 // characters / 4 (ADR-008). The session map is ../references/sessions.json.
 // Exit codes: 0 report (missing skills or files included), 2 usage or an invalid map.
 
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, statSync } from "node:fs";
 import { homedir } from "node:os";
-import { join, relative, resolve, sep } from "node:path";
+import { isAbsolute, join, relative, resolve, sep } from "node:path";
 
 import { MapError, type SessionId, type SessionMap, type SessionSpec, loadMap } from "./map.ts";
 import { agentFiles, agentSections, type Contributor, countChars, findSkill, followReferences, readText, toTokens } from "./sources.ts";
@@ -45,10 +45,18 @@ export interface ReportOptions {
 
 const toPosix = (path: string) => path.split(sep).join("/");
 
+const isFile = (path: string): boolean => {
+  try {
+    return statSync(path).isFile();
+  } catch {
+    return false;
+  }
+};
+
 /** A repository-relative name, or `~/...` for a file under the home folder. */
-function nameOf(path: string, root: string, home: string): string {
+export function nameOf(path: string, root: string, home: string): string {
   const inRoot = relative(root, path);
-  if (!inRoot.startsWith("..")) return toPosix(inRoot);
+  if (!inRoot.startsWith("..") && !isAbsolute(inRoot)) return toPosix(inRoot);
   return `~/${toPosix(relative(home, path))}`;
 }
 
@@ -96,7 +104,11 @@ function buildSession(spec: SessionSpec, opts: ReportOptions, agents: string[]):
   const add = (path: string, partial = false, handoff = false) => {
     const name = nameOf(path, root, home);
     if (contributors.some((c) => c.name === name)) return;
-    contributors.push(contributor(name, readText(path), partial, handoff));
+    try {
+      contributors.push(contributor(name, readText(path), partial, handoff));
+    } catch {
+      missing.push(`unreadable ${name}`);
+    }
   };
 
   if (spec.agentFile) {
@@ -118,7 +130,7 @@ function buildSession(spec: SessionSpec, opts: ReportOptions, agents: string[]):
     for (const file of spec.partial ?? []) if (existsSync(join(pm, file))) add(join(pm, file), true);
     if (spec.brief) {
       const brief = briefFor(spec.id, pm);
-      if (brief && existsSync(join(root, brief))) add(join(root, brief));
+      if (brief && isFile(join(root, brief))) add(join(root, brief));
     }
     if (spec.decisions) for (const path of markdownIn(join(pm, "decisions"), (f) => /^ADR-/.test(f))) add(path, true);
     if (spec.inbox) for (const path of markdownIn(join(pm, "inbox"), (f) => f !== "README.md")) add(path);
@@ -182,7 +194,7 @@ export function renderText(report: Report): string {
     const top = [...s.contributors]
       .sort((a, b) => b.chars - a.chars || a.name.localeCompare(b.name))
       .slice(0, 3)
-      .map((c) => `${c.partial ? "≤ " : ""}${c.name} ${hundreds(c.tokens)}`)
+      .map((c) => `${c.partial ? "≤ " : ""}${c.handoff ? "handoff: " : ""}${c.name} ${hundreds(c.tokens)}`)
       .join("; ");
     return `| ${s.id} | ${hundreds(s.tokens)} | ${top} |`;
   });
@@ -197,6 +209,7 @@ export function renderText(report: Report): string {
     "| --- | --- | --- |",
     ...rows,
     "",
+    ...report.sessions.filter((s) => s.missing.length > 0).map((s) => `- Missing: ${s.id}: ${s.missing.join(", ")}`),
     pmState,
     "- Estimated tokens are characters / 4; ≤ marks files read in part, counted whole.",
     "",

@@ -83,12 +83,16 @@ export function findSkill(name: string, root: string, home: string): string | nu
   const plugins = join(home, ".claude", "plugins");
   if (!existsSync(plugins)) return null;
   let best: { dir: string; mtime: number } | null = null;
-  for (const match of new Bun.Glob(`**/skills/${skill}/SKILL.md`).scanSync({ cwd: plugins, onlyFiles: true })) {
-    const path = match.replace(/\\/g, "/");
-    if (!path.split("/").includes(plugin)) continue;
-    const full = join(plugins, match);
-    const mtime = statSync(full).mtimeMs;
-    if (best === null || mtime > best.mtime) best = { dir: dirname(full), mtime };
+  try {
+    for (const match of new Bun.Glob(`**/skills/${skill}/SKILL.md`).scanSync({ cwd: plugins, onlyFiles: true })) {
+      const path = match.replace(/\\/g, "/");
+      if (!path.split("/").includes(plugin)) continue;
+      const full = join(plugins, match);
+      const mtime = statSync(full).mtimeMs;
+      if (best === null || mtime > best.mtime) best = { dir: dirname(full), mtime };
+    }
+  } catch {
+    // An unreadable plugins folder means the skill is not found there.
   }
   return best?.dir ?? null;
 }
