@@ -9,14 +9,13 @@ on purview.dev (the *Docs-site package* guide page), part of the
 [PM Skills](https://purview.dev/projects/pm-skills/) project.
 
 Prerelease: builds are on npm under the `prerelease` dist-tag
-(`bun add @purview-dev/pm-docs-site@prerelease`). Until roadmap item R-013
-migrates the `pm-docs-site` skill to it, the skill and this repository's
-`docs-site/` still render the skill's templates.
+(`bun add @purview-dev/pm-docs-site@prerelease`).
 
 ## A consumer site
 
-Three files: `package.json`, a lockfile, and `astro.config.ts`. No `src/`
-folder: the integration points Astro's `srcDir` at the package.
+Four files: `package.json`, `astro.config.ts`, `.gitignore`, and the `bun.lock`
+that `bun add @purview-dev/pm-docs-site --exact` writes. No `src/` folder: the
+integration points Astro's `srcDir` at the package.
 
 On Windows, keep the site and the installed package on the same drive: Astro
 cannot build a site whose root is on another drive than the package's `src/`,
@@ -32,7 +31,7 @@ so a package linked from another drive fails the build.
     "build": "pm-docs-site build",
     "check": "pm-docs-site check"
   },
-  "dependencies": { "@purview-dev/pm-docs-site": "0.1.0-pre.3" }
+  "dependencies": { "@purview-dev/pm-docs-site": "0.1.0-pre.4" }
 }
 ```
 
@@ -53,6 +52,16 @@ export default {
   ],
 };
 ```
+
+```gitignore
+node_modules/
+dist/
+.astro/
+```
+
+`bun.lock` is never hand-written: `bun add @purview-dev/pm-docs-site --exact`
+(or `bun install` once it is in `package.json`) writes it alongside the three
+files above.
 
 ## Options
 
@@ -98,7 +107,7 @@ with the filter bar hidden; the column collapse toggles appear only once
 the island loads.
 
 The integration adds `@astrojs/react` itself, so a consumer site stays the
-three files above.
+four files above.
 
 ## Roadmap timeline
 
@@ -170,6 +179,22 @@ view can be shared; `Clear` returns to the default. Every ADR has its own
 page with its header fields and its Context, Decision, Alternatives, and
 Consequences rendered from Markdown, and search indexes it. A feature page
 lists the ADRs whose `Item` is that item.
+
+## Mermaid
+
+` ```mermaid ` fences in repository docs pages and in ADR sections render to
+inline SVG with [Pele](https://pele.run) at build time: there is no
+client-side renderer and no browser in the build. Pele supports every
+diagram type built into Mermaid 12.1.0. A fence that does not parse fails the
+build and names the file:
+
+```text
+pm-docs-site: <file>: mermaid fence is not valid (<message>)
+```
+
+A consumer that sets its own `markdown.processor` to something other than
+Sätteri keeps that processor unchanged; Mermaid fences are then off, with a
+build warning naming the reason, never a crash.
 
 ## Architecture
 
@@ -245,6 +270,37 @@ The CLI runs under Node 24 or later.
 - `pm-docs-site check [site-dir]` builds nothing. It reads the export, checks
   its `schemaVersion`, and checks every docs source folder exists, then exits
   0, or 1 with one line per problem.
+- `--port <n>` and `--host <host>` set `dev` and `build`'s Astro server
+  config; they may appear before or after the site-dir positional, in either
+  order (`pm-docs-site dev docs-site --port 4399` and
+  `pm-docs-site dev --port 4399 docs-site` both treat `4399` as the port).
+  Without a flag, the `PORT` and `HOST` environment variables are read
+  instead (an Aspire `AddViteApp` resource sets `PORT`); a flag always wins
+  over the environment.
+- `pm-docs-site peers architecture` prints the `architecture` option's
+  install command (see [Architecture](#architecture)), so a consumer, the
+  skill, and this README never have to state astroc4's exact version.
+
+## Running under Aspire
+
+The `pm-docs-site` skill's `aspire` module wires the site into the
+repository's Aspire AppHost as a Vite app resource, in run mode only: it is a
+local reading aid, not a deployed resource. The plain variant (no
+ResourceKit) adds this to the AppHost's `Program.cs` (or `AppHost.cs`), after
+the other resources and before `Build()`:
+
+```csharp
+// The project site: a local reading aid, so it runs only when the AppHost runs.
+if (builder.ExecutionContext.IsRunMode)
+{
+    builder.AddViteApp("docs", "../../docs-site").WithBun(installArgs: ["--frozen-lockfile"]);
+}
+```
+
+Replace `"../../docs-site"` with the site folder's path relative to the
+AppHost project folder. `AddViteApp` sets the `PORT` environment variable,
+which the CLI's `--port` fallback reads, so the site serves on the port
+Aspire assigns it.
 
 ## Supported exports
 
