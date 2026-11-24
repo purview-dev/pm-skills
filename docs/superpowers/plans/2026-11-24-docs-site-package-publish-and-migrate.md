@@ -98,7 +98,7 @@ git commit -m "feat(pm-docs-site): render mermaid fences with Pele at build time
 - Produces: the CLI command `pm-docs-site peers architecture`, which prints `INSTALL_COMMAND` on stdout and exits 0. Any other `peers` argument prints the usage and exits 2. Task 7 uses it so the skill never states the astroc4 version.
 - Produces: `USAGE` becomes `usage: pm-docs-site <dev | build | check> [site-dir] [--title <title>] [--planning <path>] [--port <n>] [--host <host>] | pm-docs-site peers architecture`.
 
-- [ ] **Step 1: Write the failing tests** (`describe('pm-docs-site arguments')`):
+- [x] **Step 1: Write the failing tests** (`describe('pm-docs-site arguments')`):
   - `parse(['dev', '--port', '4399'], {})` gives `server.port === 4399`, and `siteDir` is the cwd.
   - `parse(['dev', 'site', '--port', '4399', '--host', '0.0.0.0'], {})` gives siteDir `…/site`, port 4399, and host `0.0.0.0`.
   - `parse(['dev', '--port', '4399', 'site'], {})` gives siteDir `…/site` (Review Focus 4).
@@ -108,13 +108,13 @@ git commit -m "feat(pm-docs-site): render mermaid fences with Pele at build time
   - `parse(['dev'], {})` gives `server` `{}`, so Astro's default 4321 applies.
   - `dev --port 4399 serves on 4399`: spawn `runCli('dev', fixtureSite, '--port', '4399')`, poll `http://localhost:4399/` until it returns 200 or 60 s pass, then kill the process.
   - `peers architecture prints the astroc4 install command`: stdout equals `INSTALL_COMMAND` plus a newline.
-- [ ] **Step 2: Run** `bun test test/cli.test.ts`. Expected: the new cases FAIL.
-- [ ] **Step 3: Implement.**
+- [x] **Step 2: Run** `bun test test/cli.test.ts`. Expected: the new cases FAIL.
+- [x] **Step 3: Implement.**
   - `parse` reads `--port` and `--host` as it reads `--title`, with `PORT` and `HOST` as the fallbacks.
   - `main` sets `inline.server = server` for `dev` and `build`. It handles `peers` before `loadSiteOptions`.
   - Check the arguments that `AddViteApp` passes in the Aspire version `templates/aspire/MODULE.md` targets (`aspire` skill, or <https://aspire.dev>). If it passes a form other than `--port <n>` or `PORT`, support that form too, and add a test for it.
-- [ ] **Step 4: Run** `bun test test/cli.test.ts`. Expected: PASS.
-- [ ] **Step 5: Commit** `feat(pm-docs-site): dev and build take --port and --host`.
+- [x] **Step 4: Run** `bun test test/cli.test.ts`. Expected: PASS.
+- [x] **Step 5: Commit** `feat(pm-docs-site): dev and build take --port and --host`.
 
 ### Task 3: The schemaVersion 6 test seam
 
