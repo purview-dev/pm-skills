@@ -1,5 +1,8 @@
 404.html
+architecture/overview/index.html
+architecture/services/index.html
 docs/guide/architecture/index.html
+docs/guide/diagrams/index.html
 docs/guide/getting-started/index.html
 docs/readme/index.html
 index.html

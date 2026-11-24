@@ -1,0 +1,40 @@
+// The services behind Slotwise's booking page and dashboard.
+specification {
+  element service {
+    style {
+      shape rectangle
+    }
+  }
+  element store {
+    style {
+      shape storage
+    }
+  }
+}
+
+model {
+  api = service 'Booking API' {
+    description 'Holds studios, classes, and bookings'
+  }
+  payments = service 'Payment provider' {
+    description 'Hosted checkout; no card data reaches Slotwise'
+  }
+  worker = service 'Email worker' {
+    description 'Sends confirmation emails in the studio timezone'
+  }
+  db = store 'Postgres' {
+    description 'Studios, classes, bookings, and payments'
+  }
+
+  api -> db 'reads and writes'
+  api -> payments 'redirects to hosted checkout'
+  worker -> db 'reads upcoming bookings'
+}
+
+views {
+  view services {
+    title 'Services'
+    include *
+    autoLayout LeftRight
+  }
+}

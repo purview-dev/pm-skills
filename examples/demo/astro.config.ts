@@ -12,6 +12,7 @@ export default defineConfig({
 				root: 'docs',
 				sources: [{ label: 'Guide', base: '.', include: ['README.md', 'guide/*.md'], prefix: 'docs/' }],
 			},
+			architecture: { project: 'architecture/likec4' },
 		}),
 	],
 });

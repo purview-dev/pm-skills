@@ -29,6 +29,12 @@ export const PLACEHOLDERS: { text: string; reason: string }[] = [
   { text: "No status", reason: "milestones/index.astro: a milestone without a Status" },
 ];
 
+/**
+ * Pages whose purview:likec4 marker must render astroc4's fence, not fall back
+ * to the Mermaid pair it wraps: a fallback means the marker failed to resolve.
+ */
+export const RENDERED_DIAGRAMS: string[] = ["docs/guide/diagrams/index.html"];
+
 function placeholderCount(html: string, text: string): number {
   const escaped = text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   return (html.match(new RegExp(`>\\s*${escaped}\\s*<`, "g")) ?? []).length;
@@ -100,6 +106,11 @@ export function checkDemo(distDir: string, expectedPages: string[]): string[] {
     for (const entry of PLACEHOLDERS) {
       if (placeholderCount(html, entry.text) > 0) failures.push(`${page}: placeholder "${entry.text}"`);
     }
+  }
+  for (const page of pages.filter((path) => RENDERED_DIAGRAMS.includes(path))) {
+    const html = readFileSync(join(distDir, page), "utf8");
+    if (!html.includes("data-astroc4-fence")) failures.push(`${page}: missing data-astroc4-fence (marker did not render)`);
+    if (html.includes("language-mermaid")) failures.push(`${page}: language-mermaid fallback still present`);
   }
   return failures;
 }

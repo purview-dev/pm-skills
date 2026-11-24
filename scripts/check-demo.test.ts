@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 
 import { afterEach, describe, expect, it } from "bun:test";
 
-import { ALLOWED, checkDemo, PLACEHOLDERS } from "./check-demo.ts";
+import { ALLOWED, checkDemo, PLACEHOLDERS, RENDERED_DIAGRAMS } from "./check-demo.ts";
 
 const dirs: string[] = [];
 
@@ -120,5 +120,26 @@ describe("checkDemo", () => {
   it("gives every allowlist entry a reason", () => {
     expect(ALLOWED.length).toBeGreaterThan(0);
     for (const entry of ALLOWED) expect(entry.reason.trim(), entry.text).not.toBe("");
+  });
+
+  it("passes a diagrams page whose marker rendered the astroc4 fence", () => {
+    const dir = dist({
+      "docs/guide/diagrams/index.html": '<section class="not-content likec4-md-fence" data-astroc4-fence data-view-id="overview.overview"></section>',
+    });
+
+    expect(checkDemo(dir, ["docs/guide/diagrams/index.html"])).toEqual([]);
+  });
+
+  it("reports a diagrams page that kept the mermaid fallback instead of the astroc4 fence", () => {
+    const dir = dist({ "docs/guide/diagrams/index.html": '<pre><code class="language-mermaid">flowchart LR</code></pre>' });
+
+    expect(checkDemo(dir, ["docs/guide/diagrams/index.html"])).toEqual([
+      "docs/guide/diagrams/index.html: missing data-astroc4-fence (marker did not render)",
+      "docs/guide/diagrams/index.html: language-mermaid fallback still present",
+    ]);
+  });
+
+  it("names every page whose marker must render", () => {
+    expect(RENDERED_DIAGRAMS).toContain("docs/guide/diagrams/index.html");
   });
 });
