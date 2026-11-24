@@ -61,13 +61,42 @@
 		"react": "19.3.1",
 		"react-dom": "19.3.1"
 	},
+	"peerDependencies": {
+		"@astrojs/markdown-satteri": "0.4.10",
+		"@likec4/core": "1.61.0",
+		"@purview-dev/astroc4": "1.0.0-prerelease.9",
+		"likec4": "1.61.0",
+		"shiki": "4.6.0"
+	},
+	"peerDependenciesMeta": {
+		"@astrojs/markdown-satteri": {
+			"optional": true
+		},
+		"@likec4/core": {
+			"optional": true
+		},
+		"@purview-dev/astroc4": {
+			"optional": true
+		},
+		"likec4": {
+			"optional": true
+		},
+		"shiki": {
+			"optional": true
+		}
+	},
 	"devDependencies": {
 		"@astrojs/check": "0.9.12",
+		"@astrojs/markdown-satteri": "0.4.10",
+		"@likec4/core": "1.61.0",
 		"@playwright/test": "1.65.1",
+		"@purview-dev/astroc4": "1.0.0-prerelease.9",
 		"@types/bun": "1.4.4",
 		"@types/node": "26.6.6",
 		"@types/react": "19.3.0",
 		"@types/react-dom": "19.3.0",
+		"likec4": "1.61.0",
+		"shiki": "4.6.0",
 		"typescript": "6.0.3"
 	}
 }
