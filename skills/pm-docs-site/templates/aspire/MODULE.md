@@ -1,7 +1,9 @@
 # Module: aspire
 
 Runs the site as a Vite app resource in the repository's Aspire AppHost, in
-run mode only. Spec: section 10 of `references/spec.md`.
+run mode only, when the user answers yes in the skill's Aspire step. Spec:
+section 6 of `references/spec.md`. This file holds the C# AppHost
+snippets; the TypeScript AppHost form is in the Aspire step of `SKILL.md`.
 
 ## Applies when
 
@@ -12,9 +14,14 @@ run mode only. Spec: section 10 of `references/spec.md`.
 
 ## Values
 
+The Aspire step fills these placeholders when it copies a snippet or
+`DocsSiteKit.cs`; derive each from the repository, or ask.
+
 | Placeholder | Value |
 | --- | --- |
 | `{{APPHOST_TO_SITE}}` | The site root relative to the AppHost project folder, with `/` separators (for example `../../docs-site`) |
+| `{{SITE_ROOT}}` | `DocsSiteKit.cs` only: the site root, repository-relative, no trailing slash (`docs-site`) |
+| `{{PM_ROOT}}` | `DocsSiteKit.cs` only: the PM root with its trailing slash (`planning/`) |
 | `{{RESOURCES_CLASS}}` | ResourceKit only: the static class that holds the resource-name constants (the one other `[ResourceDefinition<T>(...)]` attributes name) |
 | `{{KIT_NAMESPACE}}` | ResourceKit only: the namespace of the folder that holds the other resource kits |
 
@@ -64,8 +71,9 @@ Match the file's indentation (tabs or spaces) and its comment style.
 ## Tests
 
 When the repository has AppHost composition tests (a test project that
-builds the AppHost with `DistributedApplicationTestingBuilder`), add two
-tests beside them, using their framework, helpers, and naming:
+builds the AppHost with `DistributedApplicationTestingBuilder`) and the user
+answers `Add them` in the Aspire step, add two tests beside them, using
+their framework, helpers, and naming:
 
 - `AppHost_InRunMode_HasTheDocsSiteWithAnHttpEndpoint`: the `docs` resource
   exists and has an `EndpointAnnotation` with `UriScheme` `http`.
@@ -107,7 +115,8 @@ When there are no composition tests, add none and say so in the output
 
 ## Check
 
-- `dotnet build` of the AppHost succeeds, and the two tests pass.
+- `dotnet build` of the AppHost succeeds, and the two tests pass when they
+  were added.
 - Running the AppHost shows the `docs` resource running, with an `http`
   endpoint that serves the Home page.
 - Files the AppHost regenerates on build (for example an `.aspirec4/`

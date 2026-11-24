@@ -38,11 +38,9 @@ skills/
     references/planning.example.json
   pm-docs-site/
     SKILL.md
-    references/spec.md
-    scripts/site.ts          renders a site from its manifest; write or check
-    templates/site/          the core site (Astro, Starlight, plan pages)
-    templates/repo-docs/     module: the repository's Markdown, read in place
-    templates/architecture/  module: LikeC4 views through AstroC4
+    references/spec.md       the four-file site on the @purview-dev/pm-docs-site package
+    references/template-files.md  the frozen list of files the old templates rendered
+    scripts/consumer.ts      writes a package site, or migrates a template site onto it
     templates/aspire/        module: the AppHost resource
   pm-help/SKILL.md
 packages/
