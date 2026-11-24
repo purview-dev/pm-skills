@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, spyOn } from "bun:test";
-import { cpSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -62,6 +62,10 @@ function initRoot(): string {
 describe("clean PM state", () => {
   it("passes for a fresh pm-init install", async () => {
     expect(await lint({ root: initRoot(), pmRoot: "planning/" })).toEqual([]);
+  });
+
+  it("writes ENGINEERING.md on a fresh install", () => {
+    expect(existsSync(join(initRoot(), "planning", "ENGINEERING.md"))).toBe(true);
   });
 
   it("passes for the fixture project, with the export built and validated", async () => {
