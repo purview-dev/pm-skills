@@ -1,13 +1,14 @@
-import { existsSync, mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import { describe, expect, it, mock } from 'bun:test';
+import { afterAll, describe, expect, it, mock } from 'bun:test';
 
 import { loadAstroc4 } from '../lib/astroc4.ts';
 import pmDocsSite from '../lib/index.ts';
 import { resolveOptions } from '../lib/options.ts';
+import { runCli, scratchFixture, siteConfig } from './helpers';
 
 const fixtureSite = new URL('./fixtures/site/', import.meta.url);
 const DEFAULT_ROOT = fileURLToPath(pathToFileURL('/site/'));
@@ -317,4 +318,79 @@ describe('pm-docs-site:fs-allow', () => {
 
 		expect(config.server.fs.allow).toEqual([entry]);
 	});
+});
+
+describe('mermaid fences, built through the fixture site', () => {
+	const BUILD = 180_000;
+	// The fixture site's own options (test/fixtures/site/astro.config.ts), so the docs collection is on.
+	const FIXTURE_SITE_OPTIONS = `{ title: 'Fixture plan', planning: '../planning.json', docs: { root: '../docs', sources: [{ label: 'Guide', base: '.', include: ['README.md', 'guide/*.md'], prefix: 'docs/' }] } }`;
+	const scratches: string[] = [];
+
+	afterAll(() => {
+		for (const dir of scratches) rmSync(dir, { recursive: true, force: true });
+	});
+
+	function scratchSite(prefix: string): string {
+		const dir = scratchFixture(prefix);
+
+		scratches.push(dir);
+		writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(FIXTURE_SITE_OPTIONS));
+
+		return dir;
+	}
+
+	it(
+		'a repo-docs page with a mermaid fence builds to svg',
+		() => {
+			const dir = scratchSite('mermaid-docs-');
+
+			writeFileSync(join(dir, 'docs', 'guide', 'diagram.md'), '# Diagram\n\n```mermaid\nflowchart LR\n  A --> B\n```\n');
+
+			const result = runCli(['build', join(dir, 'site')]);
+
+			expect(result.code, result.stderr).toBe(0);
+			const html = readFileSync(join(dir, 'site', 'dist', 'docs', 'guide', 'diagram', 'index.html'), 'utf8');
+
+			expect(html).toContain('<svg');
+			expect(html).not.toContain('language-mermaid');
+		},
+		BUILD,
+	);
+
+	it(
+		'an ADR section with a mermaid fence builds to svg',
+		() => {
+			const dir = scratchSite('mermaid-adr-');
+			const planningPath = join(dir, 'planning.json');
+			const planning = JSON.parse(readFileSync(planningPath, 'utf8')) as { adrs: { id: string; decision: string }[] };
+			const adr = planning.adrs.find((entry) => entry.id === 'ADR-003')!;
+
+			adr.decision = `${adr.decision}\n\n\`\`\`mermaid\nflowchart LR\n  A --> B\n\`\`\`\n`;
+			writeFileSync(planningPath, JSON.stringify(planning));
+
+			const result = runCli(['build', join(dir, 'site')]);
+
+			expect(result.code, result.stderr).toBe(0);
+			const html = readFileSync(join(dir, 'site', 'dist', 'plan', 'decisions', 'adr-003', 'index.html'), 'utf8');
+
+			expect(html).toContain('<svg');
+			expect(html).not.toContain('language-mermaid');
+		},
+		BUILD,
+	);
+
+	it(
+		'an invalid fence fails the build naming the file',
+		() => {
+			const dir = scratchSite('mermaid-invalid-');
+
+			writeFileSync(join(dir, 'docs', 'guide', 'broken.md'), '# Broken\n\n```mermaid\nsequenceDiagram\n  A->>\n```\n');
+
+			const result = runCli(['build', join(dir, 'site')]);
+
+			expect(result.code).not.toBe(0);
+			expect(result.stderr).toContain('broken.md');
+		},
+		BUILD,
+	);
 });

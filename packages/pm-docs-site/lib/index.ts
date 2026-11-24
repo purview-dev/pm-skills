@@ -12,9 +12,11 @@ import { fileURLToPath } from 'node:url';
 import react from '@astrojs/react';
 import starlight from '@astrojs/starlight';
 import type { AstroIntegration } from 'astro';
+import type { MarkdownProcessor } from 'astro/markdown';
 
 import { loadAstroc4 } from './astroc4.ts';
 import { containsPath } from './fs-allow.ts';
+import { markdownProcessor } from './mermaid.ts';
 import { resolveOptions } from './options.ts';
 import { buildSidebar } from './sidebar.ts';
 import type { PmDocsSiteOptions, ViewName } from './types.ts';
@@ -117,9 +119,10 @@ export default function pmDocsSite(
 		name: 'pm-docs-site',
 		pmDocsSiteOptions: options,
 		hooks: {
-			'astro:config:setup': async ({ config, updateConfig, injectRoute }) => {
+			'astro:config:setup': async ({ config, updateConfig, injectRoute, logger }) => {
 				const root = fileURLToPath(config.root);
 				const resolved = resolveOptions(options, root);
+				const processor = markdownProcessor(config.markdown?.processor, (message) => logger.warn(message));
 				// A consumer that adds React itself keeps its own: two would register the renderer twice.
 				const hasReact = (config.integrations ?? []).some((integration) => integration.name === REACT_INTEGRATION);
 
@@ -149,8 +152,12 @@ export default function pmDocsSite(
 							sidebar: buildSidebar(resolved),
 							// src/pages/404.astro is the not-found page (it says why).
 							disable404Route: true,
-							// Every page uses the full width (src/styles/width.css).
-							customCss: [fileURLToPath(new URL('../src/styles/width.css', import.meta.url))],
+							// Every page uses the full width (src/styles/width.css); pele.css themes
+							// every ```mermaid fence Pele renders (lib/mermaid.ts) with Starlight's colors.
+							customCss: [
+								fileURLToPath(new URL('../src/styles/width.css', import.meta.url)),
+								fileURLToPath(new URL('../src/styles/pele.css', import.meta.url)),
+							],
 							...(astroc4
 								? {
 										plugins: [
@@ -166,6 +173,7 @@ export default function pmDocsSite(
 						}),
 						...(hasReact ? [] : [react()]),
 					],
+					...(processor !== undefined ? { markdown: { processor: processor as MarkdownProcessor } } : {}),
 					vite: {
 						optimizeDeps: { include: optimizedDependencies(config.vite?.optimizeDeps?.include, root) },
 						plugins: [
