@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-24T14:58:54+00:00",
+  "generatedAt": "2026-11-24T20:45:20+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-013-docs-site-package",
-    "head": "62d000e09a7eb2672ca3aabaedae0221b9344e5b"
+    "head": "d83a49c0fd27f83273cb09392b3c481cee9e0ecb"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -261,326 +261,326 @@
   },
   "plan": {
     "path": "docs/superpowers/plans/2026-11-24-docs-site-package-publish-and-migrate.md",
-    "checked": 0,
+    "checked": 60,
     "total": 60,
     "tasks": [
       {
         "number": 1,
         "title": "Mermaid fences rendered by Pele",
-        "checked": 0,
+        "checked": 9,
         "total": 9,
         "steps": [
           {
             "text": "**Step 1: Write the failing tests** in `test/mermaid.test.ts`, rendering through `satteri({ mdastPlugins: [mermaidFences()] })` on a Markdown string:",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Run** `cd packages/pm-docs-site && bun test test/mermaid.test.ts`. Expected: FAIL, because `lib/mermaid.ts` does not exist.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Add the dependencies:** `bun add --exact pele@1.13.0 satteri@0.11.7 @astrojs/markdown-satteri@0.4.10` in `packages/pm-docs-site`, then remove `@astrojs/markdown-satteri` from `peerDependencies` and `peerDependenciesMeta`.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Implement `mermaidFences()` and `markdownProcessor()`.**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Run** `bun test test/mermaid.test.ts`. Expected: PASS.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 6: Wire `lib/index.ts`.**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 7: Add integration cases** to `test/integration.test.ts`, building the existing fixture site through the helpers (`siteConfig`, `runCli`):",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 8: Run** `bun test && bun run check` in `packages/pm-docs-site`. Expected: all pass, with no new `astro-check` errors.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 9: Commit**",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 2,
         "title": "CLI `--port`/`--host`, and `peers`",
-        "checked": 0,
+        "checked": 5,
         "total": 5,
         "steps": [
           {
             "text": "**Step 1: Write the failing tests** (`describe('pm-docs-site arguments')`):",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Run** `bun test test/cli.test.ts`. Expected: the new cases FAIL.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Implement.**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Run** `bun test test/cli.test.ts`. Expected: PASS.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Commit** `feat(pm-docs-site): dev and build take --port and --host`.",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 3,
         "title": "The schemaVersion 6 test seam",
-        "checked": 0,
+        "checked": 5,
         "total": 5,
         "steps": [
           {
             "text": "**Step 1: Write the failing tests.**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Run** both files. Expected: the seam case FAILS (wrong arity). The CLI case may already pass, so confirm it fails for the right reason before keeping it.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Implement** the parameter.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Run** `bun test`. Expected: PASS.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Commit** `test(pm-docs-site): pin the unsupported schemaVersion failure`.",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 4,
         "title": "The reproducible-build check, and Mermaid in the demo",
-        "checked": 0,
+        "checked": 7,
         "total": 7,
         "steps": [
           {
             "text": "**Step 1: Write failing tests** for `htmlDigests` and `firstDifference`, using two temp folders: equal folders give `null`, one changed byte gives that path, and an extra file gives its path.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Run** them. Expected: FAIL.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Implement** the script and wire it into `just package-test` (after `demo-check`) and into CI.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Run** `node scripts/check-reproducible.ts ../../examples/demo` from `packages/pm-docs-site`. Expected: `reproducible: …`. If it fails, find the source of the differing bytes (asset hash, ordering, or time), make it deterministic in the package, and add a test that pins the fix.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Demo Mermaid.**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 6: Run** `just package-test`. Expected: PASS.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 7: Commit** `feat(pm-docs-site): check two builds give identical HTML`.",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 5,
         "title": "Package `0.1.0-pre.4` and its instructions",
-        "checked": 0,
+        "checked": 5,
         "total": 5,
         "steps": [
           {
             "text": "**Step 1:** Set `version` to `0.1.0-pre.4`.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Update the README.**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3:** Make the same changes in `docs/wiki/guide/Docs-Site-Package.md`, with every version mention at `0.1.0-pre.4`.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Run** `just validate` (the `versionDrift` check) and `bunx markdownlint-cli2 packages/pm-docs-site/README.md docs/wiki/guide/Docs-Site-Package.md`. Expected: both clean.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Commit** `docs(pm-docs-site): document the 0.1.0-pre.4 consumer`.",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 6,
         "title": "The template inventory and `consumer.ts`",
-        "checked": 0,
+        "checked": 6,
         "total": 6,
         "steps": [
           {
             "text": "**Step 1: Generate the inventory, before any template is deleted.** Run a one-off `bun -e` that imports `render` from `skills/pm-docs-site/scripts/site.ts` and renders a manifest with every module (`repo-docs`, `architecture`) and every view. The architecture module's placeholder values come from `templates/architecture/MODULE.md`. Collect the paths, adding `SITE_OWNED` and `pm-docs-site.json`.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Write failing tests.** Use a scratch template site made with `site.ts write` into a temp folder (still present at this point), plus `git show main:docs-site/<path>` for the real one:",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Run** `bun test skills/pm-docs-site/`. Expected: FAIL.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Implement** `consumer.ts`. It deletes only listed paths and removes folders it empties.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Run** the tests. Expected: PASS.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 6: Commit** `feat(pm-docs-site): consumer script and frozen template inventory`.",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 7,
         "title": "Migrate `docs-site/`",
-        "checked": 0,
+        "checked": 7,
         "total": 7,
         "steps": [
           {
             "text": "**Step 1: Run** `bun skills/pm-docs-site/scripts/consumer.ts migrate docs-site`. Expected: exit 0, with exactly the four files and `node_modules/` left.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Edit `astro.config.ts`.** Set `views` to `['now', 'milestones', 'graph', 'features', 'inbox', 'briefs', 'strategy', 'decisions']` and `docs.root` to `'..'`, keep the four sources, and write a header comment naming the `just` recipes. In `package.json`, set the only dependency to `\"@purview-dev/pm-docs-site\": \"file:../packages/pm-docs-site\"`. Run `bun install` in `docs-site/` to regenerate `bun.lock`.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Update `justfile`.**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Update CI.** In the `docs-site` job, add Node 24 setup, the package install, and `node scripts/build.ts` before \"Install\". Delete \"Match the pm-docs-site templates\" and \"Test\".",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Run** `just docs-check 2>&1 | Tee-Object docs-check.log`.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 6: Run** `node packages/pm-docs-site/scripts/check-reproducible.ts docs-site`. Expected: `reproducible: …`.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 7: Commit** `refactor(docs-site): consume the pm-docs-site package`.",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 8,
         "title": "Rewrite the `pm-docs-site` skill, and remove the templates",
-        "checked": 0,
+        "checked": 6,
         "total": 6,
         "steps": [
           {
             "text": "**Step 1: Write the failing `validate.ts` checks.**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Rewrite SKILL.md** to spec section 3, keeping the Guard, the Output templates, and Communication-contract headings.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Rewrite `references/spec.md`** to the package site: rules, the four files, the data contract by reference to the package README, Aspire (section 10 kept), tests and acceptance, and Not doing. Delete the template-file, component, and page-file sections.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Delete** the three template folders and `scripts/site.ts`. Switch `consumer.test.ts` to its own scratch generator.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Run** `just validate && just test && bunx markdownlint-cli2 \"skills/pm-docs-site/**/*.md\"`. Expected: all pass.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 6: Commit** `feat(pm-docs-site)!: build sites on the pm-docs-site package`. The commit body states that the rules stay on 21 (prerelease line).",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 9,
         "title": "Rules, agent instructions, help, and version",
-        "checked": 0,
+        "checked": 6,
         "total": 6,
         "steps": [
           {
             "text": "**Step 1: Edit the managed section.**",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Reinstall the section** in `AGENTS.md` (replace between the markers with the reference minus `version=`).",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Update `pm-help`.** In the row, write \"builds a local site on the `@purview-dev/pm-docs-site` package\". In check 20, a `pm-docs-site.json` means `template site: run pm-docs-site upgrade`, and a package site compares its dependency with the minimum and the export's `schemaVersion` with the supported list. Update the README row and `Repository-Layout.md` the same way.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4: Run** `just bump prerelease`. Expected: `package.json` is `21.0.0-pre.8`.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 5: Run** `just lint-check && just version-check`. Expected: both pass.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 6: Commit** `feat(pm-skills): docs-site rules name the package; 21.0.0-pre.8`.",
-            "checked": false
+            "checked": true
           }
         ]
       },
       {
         "number": 10,
         "title": "Scratch verification of the skill",
-        "checked": 0,
+        "checked": 4,
         "total": 4,
         "steps": [
           {
             "text": "**Step 1: Upgrade.** In a temp folder, recreate the pre-migration site with `git archive main docs-site | tar -x -C <tmp>`. Run `consumer.ts migrate <tmp>/docs-site`. Expected: `astro.config.ts` and `package.json` equal this branch's `docs-site/` apart from the Task 7 Step 2 edits (`views`), and only those edits.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 2: Scaffold.** In a scratch repository with a `README.md`, `docs/`, and a `planning/planning.json` copied from this repository, follow SKILL.md `scaffold`, using `file:` to this branch's built package because `pre.4` is not yet on npm. Expected: `bun run check` and `bun run build` pass.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 3: Aspire.** When `dotnet --version` succeeds, run `dotnet new aspire-apphost` in a scratch folder and follow the Aspire step.",
-            "checked": false
+            "checked": true
           },
           {
             "text": "**Step 4:** Record the three results in the PR body draft. The `Done when` check `npm view @purview-dev/pm-docs-site version` = `0.1.0-pre.4` runs only after the merge, through `publish-pm-docs-site.yml`.",
-            "checked": false
+            "checked": true
           }
         ]
       }
@@ -1024,7 +1024,7 @@
           "title": "Docs-site package: publish and migrate",
           "owner": "both",
           "size": "M",
-          "detail": "execute, 0/60 plan steps"
+          "detail": "execute, 60/60 plan steps"
         }
       ],
       "next": [
@@ -2042,6 +2042,66 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Once astroc4 `1.0.0-prerelease.9` ships the `markers` option (R-045, ADR-007), move purview.dev's sync-time marker rewrite (`src/src/lib/docs/diagrams.ts`) onto astroc4's markers, so the `purview:likec4` marker has one implementation."
+    },
+    {
+      "file": "planning/inbox/2026-11-24-1512-bare-ids-in-questions-and-feedback.md",
+      "title": "Bare IDs in questions and feedback",
+      "captured": "2026-11-24 15:12",
+      "source": "user",
+      "kind": "bug",
+      "severity": "major",
+      "affects": "Named reference, Reference legend, and Asking the user rules (skills/pm-setup/references/AGENTS-section.md)",
+      "context": "R-013 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Saying `R-0XX, R-0XX, and R-0XX` are next with `M8` behind means nothing. Asking questions or providing feedback MUST - non-negotiable - every simply quote IDs only. Context is king.\n\nAlso - a question should aways include the ability to see the board/ roadmap/ more info"
+    },
+    {
+      "file": "planning/inbox/2026-11-24-1645-portable-vision-and-state-export.md",
+      "title": "Portable vision and state export",
+      "captured": "2026-11-24 16:45",
+      "source": "user",
+      "kind": "feature",
+      "severity": null,
+      "affects": null,
+      "context": "R-013 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "We need a means of exporting or extracting the vision/ current state in a means we can transfer to something like a Claude/ ChatGPT/ etc project, executive summary, etc"
+    },
+    {
+      "file": "planning/inbox/2026-11-24-2044-docs-site-package-cli-and-guard-gaps.md",
+      "title": "Docs-site package CLI and guard gaps",
+      "captured": "2026-11-24 20:44",
+      "source": "agent (R-013 execute, final review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site/lib/cli-args.ts, packages/pm-docs-site/test/cli.test.ts, packages/pm-docs-site/lib/mermaid.ts, skills/pm-docs-site/SKILL.md",
+      "context": "R-013 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "The R-013 final review parked four minor gaps for a later package release:\n\n- `--port=4399` (the `=` form) is not parsed, so it becomes the site folder, and any unknown flag silently becomes a positional argument (`lib/cli-args.ts`).\n- `test/cli.test.ts` \"dev --port 4399 serves on 4399\" uses a fixed port, which can collide with another process.\n- `skills/pm-docs-site/SKILL.md` Guard checks `bun --version` but not Node 24, so an older Node fails only at verify, after files are written.\n- Two byte-identical Markdown sources on one page (for example two ADR sections with the same text and fence) get the same Pele IDs (`lib/mermaid.ts`)."
+    },
+    {
+      "file": "planning/inbox/2026-11-24-2045-flaky-git-subprocess-tests-under-load.md",
+      "title": "Flaky git subprocess tests under load",
+      "captured": "2026-11-24 20:45",
+      "source": "agent (R-013 execute)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "skills/pm-lint/scripts/, skills/pm-next/scripts/sync.test.ts",
+      "context": "R-013 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "During R-013, `bun test scripts/` gave 198 pass and 5 fail while builds and browser tests ran at the same time, and the same suite gave 244 pass and 0 fail on an idle machine. The failing tests were seen in `skills/pm-lint` and `skills/pm-next/scripts/sync.test.ts`, which spawn git subprocesses; they time out or race under load, so a pre-push `just lint-check` can fail without a code change."
     }
   ],
   "briefs": [
@@ -2284,7 +2344,7 @@
     "next": 3,
     "later": 14,
     "nextMax": 5,
-    "openInbox": 7,
+    "openInbox": 11,
     "discuss": 0,
     "shapingBriefs": 0,
     "done": 27,
@@ -2296,7 +2356,7 @@
     "greenRisks": 0
   },
   "checks": {
-    "reviewDue": false,
+    "reviewDue": true,
     "lastReview": "2026-11-22",
     "claimable": [
       "R-034",
