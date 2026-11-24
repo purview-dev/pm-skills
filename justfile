@@ -50,6 +50,7 @@ version-check base="":
 # Serve the project site (plan, README, every skill) at http://localhost:4321. Builds the pm-docs-site package first. Needs Node 24 or later.
 [group('Docs')]
 docs:
+    cd packages/pm-docs-site && bun install --frozen-lockfile
     cd packages/pm-docs-site && node scripts/build.ts
     cd docs-site && bun install --frozen-lockfile
     cd docs-site && bun run dev
@@ -57,6 +58,7 @@ docs:
 # Build the project site with its search index, then serve the build at http://localhost:4321. Builds the pm-docs-site package first. Needs Node 24 or later.
 [group('Docs')]
 docs-preview:
+    cd packages/pm-docs-site && bun install --frozen-lockfile
     cd packages/pm-docs-site && node scripts/build.ts
     cd docs-site && bun install --frozen-lockfile
     cd docs-site && bun run build
@@ -65,6 +67,7 @@ docs-preview:
 # Build the pm-docs-site package, then type-check and build the project site.
 [group('Docs')]
 docs-check:
+    cd packages/pm-docs-site && bun install --frozen-lockfile
     cd packages/pm-docs-site && node scripts/build.ts
     cd docs-site && bun install --frozen-lockfile
     cd docs-site && bun run check
@@ -84,6 +87,7 @@ package-test: && demo-check
 # Build the package and the demo site (examples/demo, an invented plan that fills every view), then serve the build at http://localhost:4321. Needs Node 24 or later.
 [group('Docs')]
 demo:
+    cd packages/pm-docs-site && bun install --frozen-lockfile
     cd packages/pm-docs-site && node scripts/build.ts
     cd examples/demo && bun install --frozen-lockfile
     cd examples/demo && bun run build
@@ -95,6 +99,7 @@ demo-check:
     bun skills/pm-export/scripts/export.ts check --root examples/demo --pm-root planning/
     bun skills/pm-export/scripts/export.ts validate examples/demo/planning/planning.json
     bun skills/pm-lint/scripts/lint.ts check --root examples/demo --pm-root planning/
+    cd packages/pm-docs-site && bun install --frozen-lockfile
     cd packages/pm-docs-site && node scripts/build.ts
     cd examples/demo && bun install --frozen-lockfile
     cd examples/demo && bun run build
