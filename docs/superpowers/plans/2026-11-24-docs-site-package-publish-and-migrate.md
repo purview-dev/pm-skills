@@ -172,15 +172,15 @@ git commit -m "feat(pm-docs-site): render mermaid fences with Pele at build time
 - Modify: `packages/pm-docs-site/README.md`
 - Modify: `docs/wiki/guide/Docs-Site-Package.md`
 
-- [ ] **Step 1:** Set `version` to `0.1.0-pre.4`.
-- [ ] **Step 2: Update the README.**
+- [x] **Step 1:** Set `version` to `0.1.0-pre.4`.
+- [x] **Step 2: Update the README.**
   - Delete the "Until roadmap item R-013 migrates…" sentence.
   - Document the four-file consumer: the `package.json`, `astro.config.ts`, and `.gitignore` contents, and `bun.lock` from `bun add @purview-dev/pm-docs-site --exact`.
   - Document every option, with the table kept, plus a `## Mermaid` section (supported fences, build-time SVG, a parse error fails the build, a custom processor turns it off), and the CLI's `--port`/`--host`/`PORT`/`HOST` and `peers architecture`.
   - Add a `## Running under Aspire` section with the plain C# snippet from `skills/pm-docs-site/templates/aspire/MODULE.md`, run mode only.
-- [ ] **Step 3:** Make the same changes in `docs/wiki/guide/Docs-Site-Package.md`, with every version mention at `0.1.0-pre.4`.
-- [ ] **Step 4: Run** `just validate` (the `versionDrift` check) and `bunx markdownlint-cli2 packages/pm-docs-site/README.md docs/wiki/guide/Docs-Site-Package.md`. Expected: both clean.
-- [ ] **Step 5: Commit** `docs(pm-docs-site): document the 0.1.0-pre.4 consumer`.
+- [x] **Step 3:** Make the same changes in `docs/wiki/guide/Docs-Site-Package.md`, with every version mention at `0.1.0-pre.4`.
+- [x] **Step 4: Run** `just validate` (the `versionDrift` check) and `bunx markdownlint-cli2 packages/pm-docs-site/README.md docs/wiki/guide/Docs-Site-Package.md`. Expected: both clean.
+- [x] **Step 5: Commit** `docs(pm-docs-site): document the 0.1.0-pre.4 consumer`.
 
 ### Task 6: The template inventory and `consumer.ts`
 
