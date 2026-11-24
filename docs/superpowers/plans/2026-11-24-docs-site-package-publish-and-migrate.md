@@ -152,17 +152,17 @@ git commit -m "feat(pm-docs-site): render mermaid fences with Pele at build time
 - Produces: `export function firstDifference(a: Map<string, string>, b: Map<string, string>): string | null`, which returns a path that is missing from one map or differs between them, in sorted order.
 - Produces: the CLI `node scripts/check-reproducible.ts <site-dir>`. It runs `pm-docs-site build` twice with `--outDir` (or `ASTRO_OUT_DIR`: use whichever `astro.build` honours, and pass it through `inline.outDir` if needed) into `<site-dir>/.reproducible/a` and `/b`. It prints `reproducible: <n> pages` and exits 0, or `not reproducible: <path>` and exits 1. It removes `.reproducible/` afterwards.
 
-- [ ] **Step 1: Write failing tests** for `htmlDigests` and `firstDifference`, using two temp folders: equal folders give `null`, one changed byte gives that path, and an extra file gives its path.
-- [ ] **Step 2: Run** them. Expected: FAIL.
-- [ ] **Step 3: Implement** the script and wire it into `just package-test` (after `demo-check`) and into CI.
-- [ ] **Step 4: Run** `node scripts/check-reproducible.ts ../../examples/demo` from `packages/pm-docs-site`. Expected: `reproducible: …`. If it fails, find the source of the differing bytes (asset hash, ordering, or time), make it deterministic in the package, and add a test that pins the fix.
-- [ ] **Step 5: Demo Mermaid.**
+- [x] **Step 1: Write failing tests** for `htmlDigests` and `firstDifference`, using two temp folders: equal folders give `null`, one changed byte gives that path, and an extra file gives its path.
+- [x] **Step 2: Run** them. Expected: FAIL.
+- [x] **Step 3: Implement** the script and wire it into `just package-test` (after `demo-check`) and into CI.
+- [x] **Step 4: Run** `node scripts/check-reproducible.ts ../../examples/demo` from `packages/pm-docs-site`. Expected: `reproducible: …`. If it fails, find the source of the differing bytes (asset hash, ordering, or time), make it deterministic in the package, and add a test that pins the fix.
+- [x] **Step 5: Demo Mermaid.**
   - Add the fence to the demo page.
   - Add an assertion to `checkDemo`: the page has at least one `<svg` with an `id` starting `pele-`, and no `language-mermaid`. The demo also has architecture, so the same build checks Review Focus 2.
   - Add a matching case to `check-demo.test.ts`.
   - Re-export the demo only if its `planning/` changed (`AGENTS.md`: the demo export command).
-- [ ] **Step 6: Run** `just package-test`. Expected: PASS.
-- [ ] **Step 7: Commit** `feat(pm-docs-site): check two builds give identical HTML`.
+- [x] **Step 6: Run** `just package-test`. Expected: PASS.
+- [x] **Step 7: Commit** `feat(pm-docs-site): check two builds give identical HTML`.
 
 ### Task 5: Package `0.1.0-pre.4` and its instructions
 
