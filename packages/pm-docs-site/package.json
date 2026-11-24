@@ -1,6 +1,6 @@
 {
 	"name": "@purview-dev/pm-docs-site",
-	"version": "0.1.0-pre.3",
+	"version": "0.1.0-pre.4",
 	"type": "module",
 	"description": "A local, searchable project site for pm-skills: the board, roadmap, milestones, features, log, and risks from pm-export's planning.json, with the repository's Markdown, as an Astro and Starlight integration.",
 	"license": "MIT",
@@ -53,25 +53,24 @@
 		"test:browser:dev": "playwright test -c playwright.dev.config.ts"
 	},
 	"dependencies": {
+		"@astrojs/markdown-satteri": "0.4.10",
 		"@astrojs/react": "7.1.9",
 		"@astrojs/starlight": "0.42.10",
 		"@dagrejs/dagre": "3.1.3",
 		"@xyflow/react": "13.0.2",
 		"astro": "7.4.8",
+		"pele": "1.13.0",
 		"react": "19.3.1",
-		"react-dom": "19.3.1"
+		"react-dom": "19.3.1",
+		"satteri": "0.11.7"
 	},
 	"peerDependencies": {
-		"@astrojs/markdown-satteri": "0.4.10",
 		"@likec4/core": "1.61.0",
 		"@purview-dev/astroc4": "1.0.0-prerelease.9",
 		"likec4": "1.61.0",
 		"shiki": "4.6.0"
 	},
 	"peerDependenciesMeta": {
-		"@astrojs/markdown-satteri": {
-			"optional": true
-		},
 		"@likec4/core": {
 			"optional": true
 		},
@@ -87,7 +86,6 @@
 	},
 	"devDependencies": {
 		"@astrojs/check": "0.9.12",
-		"@astrojs/markdown-satteri": "0.4.10",
 		"@likec4/core": "1.61.0",
 		"@playwright/test": "1.65.1",
 		"@purview-dev/astroc4": "1.0.0-prerelease.9",

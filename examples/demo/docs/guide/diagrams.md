@@ -16,3 +16,13 @@ flowchart LR
 
 See the [architecture overview](/architecture/overview/) and
 [services](/architecture/services/) pages for the live, interactive views.
+
+A gift voucher redemption, rendered at build time with Mermaid:
+
+```mermaid
+sequenceDiagram
+  Customer->>Booking page: Enter voucher code
+  Booking page->>Booking API: Redeem voucher
+  Booking API->>Hosted checkout: Apply balance
+  Hosted checkout-->>Customer: Confirmation
+```

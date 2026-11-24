@@ -1,9 +1,11 @@
 import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 
 import { afterAll, describe, expect, it } from 'bun:test';
 
-import { expectedPages, FIXTURES, htmlPages, PACKAGE, runCli, SCRATCH, scratchFixture, siteConfig } from './helpers';
+import { INSTALL_COMMAND } from '../lib/astroc4.ts';
+import { parse } from '../lib/cli-args.ts';
+import { CLI, expectedPages, FIXTURES, htmlPages, PACKAGE, runCli, SCRATCH, scratchFixture, siteConfig } from './helpers';
 
 const BUILD = 180_000;
 // A check runs the CLI in a Node subprocess and builds nothing, but the start-up
@@ -193,18 +195,27 @@ describe('pm-docs-site check', () => {
 		expect(result.stdout).toContain('schemaVersion 5');
 	}, CHECK);
 
-	it('fails on a schemaVersion it does not read', () => {
-		const dir = scratchFixture('v6-');
-		const planning = JSON.parse(readFileSync(join(dir, 'planning.json'), 'utf8'));
-		writeFileSync(join(dir, 'planning.json'), JSON.stringify({ ...planning, schemaVersion: 6 }));
-		writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'V6', planning: '../planning.json' }`));
+	it(
+		'a scratch export at schemaVersion 6 fails check and build',
+		() => {
+			const dir = scratchFixture('v6-');
+			const planning = JSON.parse(readFileSync(join(dir, 'planning.json'), 'utf8'));
+			writeFileSync(join(dir, 'planning.json'), JSON.stringify({ ...planning, schemaVersion: 6 }));
+			writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'V6', planning: '../planning.json' }`));
 
-		const result = runCli(['check', join(dir, 'site')]);
+			const check = runCli(['check', join(dir, 'site')]);
 
-		expect(result.code).toBe(1);
-		expect(result.stdout + result.stderr).toContain('has schemaVersion 6; this site reads schemaVersion 5');
-		expect(existsSync(join(dir, 'site', 'dist'))).toBe(false);
-	}, CHECK);
+			expect(check.code).not.toBe(0);
+			expect(check.stderr).toContain('has schemaVersion 6; this site reads schemaVersion 5');
+			expect(existsSync(join(dir, 'site', 'dist'))).toBe(false);
+
+			const build = runCli(['build', join(dir, 'site')]);
+
+			expect(build.code).not.toBe(0);
+			expect(build.stdout + build.stderr).toContain('schemaVersion 6');
+		},
+		BUILD,
+	);
 
 	it('warns that --title and --planning are ignored when the site has a config file', () => {
 		const result = runCli(['check', FIXTURE_SITE, '--title', 'X', '--planning', 'nope.json']);
@@ -293,5 +304,119 @@ describe('pm-docs-site usage', () => {
 
 		expect(result.code).toBe(2);
 		expect(result.stderr).toContain('usage: pm-docs-site <dev | build | check> [site-dir]');
+	}, CHECK);
+});
+
+describe('pm-docs-site arguments', () => {
+	it('parse(["dev", "--port", "4399"]) gives the port, with siteDir the cwd', () => {
+		const result = parse(['dev', '--port', '4399'], {});
+
+		expect(result.server).toEqual({ port: 4399 });
+		expect(result.siteDir).toBe(resolve(process.cwd()));
+	});
+
+	it('parse(["dev", "site", "--port", "4399", "--host", "0.0.0.0"]) gives siteDir, port, and host', () => {
+		const result = parse(['dev', 'site', '--port', '4399', '--host', '0.0.0.0'], {});
+
+		expect(result.siteDir).toBe(resolve(process.cwd(), 'site'));
+		expect(result.server).toEqual({ port: 4399, host: '0.0.0.0' });
+	});
+
+	it('a --port given before the site folder is still the port, not the folder (Review Focus 4)', () => {
+		const result = parse(['dev', '--port', '4399', 'site'], {});
+
+		expect(result.siteDir).toBe(resolve(process.cwd(), 'site'));
+		expect(result.server).toEqual({ port: 4399 });
+	});
+
+	it('falls back to the PORT and HOST environment variables', () => {
+		const result = parse(['dev'], { PORT: '5000', HOST: 'localhost' });
+
+		expect(result.server).toEqual({ port: 5000, host: 'localhost' });
+	});
+
+	it('a --port flag wins over the PORT environment variable', () => {
+		const result = parse(['dev', '--port', '1'], { PORT: '2' });
+
+		expect(result.server).toEqual({ port: 1 });
+	});
+
+	it('--port abc throws a fixed message', () => {
+		expect(() => parse(['dev', '--port', 'abc'], {})).toThrow('pm-docs-site: --port needs a port number (1-65535)');
+	});
+
+	it('--port 0 throws the same fixed message', () => {
+		expect(() => parse(['dev', '--port', '0'], {})).toThrow('pm-docs-site: --port needs a port number (1-65535)');
+	});
+
+	it('parse(["dev"], {}) gives an empty server, so Astro\'s default port 4321 applies', () => {
+		const result = parse(['dev'], {});
+
+		expect(result.server).toEqual({});
+	});
+
+	it('the PORT/HOST environment fallback applies to dev only: build ignores it', () => {
+		const result = parse(['build'], { PORT: '5000', HOST: 'localhost' });
+
+		expect(result.server).toEqual({});
+	});
+
+	it('parse(["build"], { PORT: "abc" }) does not throw and gives an empty server', () => {
+		const result = parse(['build'], { PORT: 'abc' });
+
+		expect(result.server).toEqual({});
+	});
+
+	it('parse(["dev"], { PORT: "abc" }) does not throw, warns on stderr, and gives an empty server', () => {
+		const result = parse(['dev'], { PORT: 'abc' });
+
+		expect(result.server).toEqual({});
+	});
+
+	it(
+		'dev --port 4399 serves on 4399',
+		async () => {
+			const proc = Bun.spawn(['node', CLI, 'dev', FIXTURE_SITE, '--port', '4399'], { cwd: PACKAGE, stdout: 'pipe', stderr: 'pipe' });
+
+			try {
+				const deadline = Date.now() + 60_000;
+				let served = false;
+
+				while (Date.now() < deadline) {
+					try {
+						const response = await fetch('http://localhost:4399/');
+						served = response.status === 200;
+						if (served) break;
+					} catch {
+						// Not listening yet; keep polling until the deadline.
+					}
+
+					await Bun.sleep(250);
+				}
+
+				expect(served).toBe(true);
+			} finally {
+				proc.kill();
+				await proc.exited;
+			}
+		},
+		65_000,
+	);
+
+	it('peers architecture prints the astroc4 install command', () => {
+		const result = runCli(['peers', 'architecture']);
+
+		expect(result.code, result.stderr).toBe(0);
+		expect(result.stdout).toBe(`${INSTALL_COMMAND}\n`);
+	});
+
+	it('any other peers argument prints usage and exits 2', () => {
+		const bare = runCli(['peers']);
+		const unknown = runCli(['peers', 'nope']);
+
+		expect(bare.code).toBe(2);
+		expect(bare.stderr).toContain('usage: pm-docs-site <dev | build | check>');
+		expect(unknown.code).toBe(2);
+		expect(unknown.stderr).toContain('usage: pm-docs-site <dev | build | check>');
 	}, CHECK);
 });

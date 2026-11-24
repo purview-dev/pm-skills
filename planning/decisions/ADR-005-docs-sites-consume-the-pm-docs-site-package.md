@@ -1,6 +1,6 @@
 # ADR-005 Docs sites consume the pm-docs-site package
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-23
 - Category: architecture
 - Supersedes: none

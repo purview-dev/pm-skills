@@ -398,11 +398,11 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   other finding is corrected by the skill that owns the file. A repository
   may run `pm-lint check --staged` as a pre-commit hook.
 - **Docs site:** the optional local Astro site that `pm-docs-site` builds
-  from its templates. It reads the **Export file** only, never writes the
-  PM root, and is code, not PM state: its files are committed by the
-  workflow that builds them. A site whose `SCHEMA_VERSION` is older than
-  the export's `schemaVersion` fails its build until `pm-docs-site upgrade`
-  runs.
+  from the `@purview-dev/pm-docs-site` package. It reads the **Export
+  file** only, never writes the PM root, and is code, not PM state: its
+  files are committed by the workflow that builds them. A site whose
+  package does not read the export's `schemaVersion` fails its build until
+  `pm-docs-site upgrade` runs.
 - **Merged-unclosed:** an item whose Session branch is merged into the PM
   branch while `NOW.md` still holds it active. It means the **Completion
   record** did not ride the branch. `pm-rejoin` finds and repairs it.
@@ -588,9 +588,11 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    whose `Note` names `pm-docs-site`, in the session that owns it, on a
    branch other than the PM branch, when the plan step or the user names
    them; rule 4's question does not apply. They write only the site
-   folder, the `Docs` group in the `justfile`, and the AppHost files their
-   `aspire` module lists. They never write the PM root, and never stage,
-   commit, push, or create branches: the workflow commits their files.
+   folder's four files, the `Docs` group in the `justfile`, and the
+   AppHost files the Aspire step edits on the user's yes, and run `bun add`
+   of the package in the site folder. They never write the PM root, and
+   never stage, commit, push, or create branches: the workflow commits
+   their files.
    `pm-docs-site` `plan` and `check` are PM skills and follow rules 2 to 6.
 10. **`pm-checkpoint` push and pop suspend and restore an operation.** When
     the user asks to stack, suspend, pause-and-restore, or handle an
@@ -1064,6 +1066,14 @@ GitHub's server-side merge does not run custom drivers, so a pull
 request whose `planning.json` conflicts is updated locally (merge the PM
 branch into it) and the next PM commit regenerates the export. Run
 `pm-setup` once to register the driver. No setting is added.
+
+Version 21 also builds the **Docs site** on a package. `pm-docs-site` now
+installs `@purview-dev/pm-docs-site` (at least `0.1.0-pre.4`), and the
+site is four files: `package.json`, `astro.config.ts`, `bun.lock`, and
+`.gitignore`. `pm-docs-site upgrade` migrates a site built from the
+templates, including one with the architecture module, onto the package.
+Mermaid fences in the docs and ADR pages render as diagrams. Run
+`pm-docs-site check` for an installed site. No setting is added.
 
 ## Asking the user (mandatory)
 

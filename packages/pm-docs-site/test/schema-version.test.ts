@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test';
 
-import { checkExport, checkSchemaVersion, PlanningExportError, SUPPORTED_SCHEMA_VERSIONS } from '../lib/schema-version.ts';
+import { checkExport, checkSchemaVersion, parseExport, PlanningExportError, SUPPORTED_SCHEMA_VERSIONS } from '../lib/schema-version.ts';
 
 describe('checkExport', () => {
 	it('rejects null and arrays with the pm-export hint', () => {
@@ -29,6 +29,17 @@ describe('checkSchemaVersion', () => {
 		expect(() => checkSchemaVersion(version, 'p.json')).toThrow(
 			`p.json has schemaVersion ${String(version)}; this site reads schemaVersion 5. Run the pm-export skill to write planning.json.`,
 		);
+	});
+});
+
+describe('parseExport', () => {
+	it('throws for an unsupported schemaVersion, naming it and the version this site reads', () => {
+		expect(() => parseExport('{"schemaVersion":6}', 'p.json')).toThrow('schemaVersion 6');
+		expect(() => parseExport('{"schemaVersion":6}', 'p.json')).toThrow('reads schemaVersion 5');
+	});
+
+	it('accepts an unsupported schemaVersion when the caller widens the supported list', () => {
+		expect(parseExport('{"schemaVersion":6}', 'p.json', [5, 6])).toEqual({ schemaVersion: 6 });
 	});
 });
 

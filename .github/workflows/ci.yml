@@ -31,9 +31,9 @@ jobs:
       - name: Validate skills
         run: bun scripts/validate.ts
 
-      # Mirrors `just test`: the version scripts, pm-export's exporter and pm-lint against their fixtures, pm-help's context report, and pm-next's PM branch sync.
+      # Mirrors `just test`: the version scripts, pm-export's exporter and pm-lint against their fixtures, pm-help's context report, pm-next's PM branch sync, and pm-docs-site's consumer script.
       - name: Test scripts
-        run: bun test scripts/ skills/pm-export/ skills/pm-help/ skills/pm-lint/ skills/pm-next/
+        run: bun test scripts/ skills/pm-export/ skills/pm-help/ skills/pm-lint/ skills/pm-next/ skills/pm-docs-site/
 
       # Mirrors `just pm-lint`: planning/ against the PM file format rules.
       - name: Lint PM state
@@ -43,15 +43,12 @@ jobs:
       - name: Lint Markdown
         run: bunx markdownlint-cli2 "**/*.md" "#node_modules"
 
-  # Mirrors `just docs-check`: the repository's own pm-docs-site site, built
-  # from planning/planning.json. A template change that breaks a consumer's
-  # site breaks this one first.
+  # Mirrors `just docs-check`: the repository's own pm-docs-site site, a
+  # consumer of the pm-docs-site package, built from planning/planning.json.
+  # A package change that breaks a consumer's site breaks this one first.
   docs-site:
     name: Docs site
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: docs-site
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -61,19 +58,29 @@ jobs:
         with:
           bun-version: latest
 
-      - name: Match the pm-docs-site templates
-        run: bun ../skills/pm-docs-site/scripts/site.ts check .
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
 
-      - name: Install
+      - name: Install the pm-docs-site package
+        working-directory: packages/pm-docs-site
         run: bun install --frozen-lockfile
 
-      - name: Test
-        run: bun run test
+      - name: Build the pm-docs-site package
+        working-directory: packages/pm-docs-site
+        run: node scripts/build.ts
+
+      - name: Install
+        working-directory: docs-site
+        run: bun install --frozen-lockfile
 
       - name: Type-check
+        working-directory: docs-site
         run: bun run check
 
       - name: Build
+        working-directory: docs-site
         run: bun run build
 
   # Mirrors `just package-test`: the pm-docs-site package (on npm as a
@@ -145,6 +152,9 @@ jobs:
       - name: Demo pages have content
         working-directory: ${{ github.workspace }}
         run: bun scripts/check-demo.ts
+
+      - name: Demo build is reproducible
+        run: node scripts/check-reproducible.ts ../../examples/demo
 
   # Mirrors `just version-check` (the lefthook pre-push hook): a skills change
   # ships in a release, so it must raise the rules version and package.json

@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-24T14:26:08+00:00",
+  "generatedAt": "2026-11-24T20:46:34+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-043-per-session-context-report",
-    "head": "de498384f3d7b0a4d44d9d9e0211d29651cd9715"
+    "branch": "feat/r-013-docs-site-package",
+    "head": "d7b8cae3d68f70e8ac0ca00965fc58dfb8fca796"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -65,7 +65,7 @@
         ],
         "exitCriteria": "`npm view @purview-dev/pm-docs-site version` returns a version, `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore`, and `just docs-check` passes.",
         "target": null,
-        "status": "active"
+        "status": "done (2026-11-24)"
       },
       {
         "id": "M4",
@@ -146,6 +146,12 @@
       }
     ],
     "decisions": [
+      {
+        "date": "2026-11-24",
+        "decision": "M1 Reproducible docs site complete.",
+        "why": "R-013 moved docs-site/ to package.json, astro.config.ts, bun.lock, and .gitignore on @purview-dev/pm-docs-site, just docs-check passes, and npm view @purview-dev/pm-docs-site version returns a version (0.1.0-pre.4 publishes on merge).",
+        "rejected": "none."
+      },
       {
         "date": "2026-11-22",
         "decision": "R-033 ADR directory setting and design handoff moved to the top of Next, ahead of the M1 items.",
@@ -231,46 +237,10 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-013",
-        "title": "Docs-site package: publish and migrate",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M1",
-        "owner": "both",
-        "doneWhen": "`npm view @purview-dev/pm-docs-site version` returns the released version; `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore`, and `just docs-check` passes; two builds from the same `planning.json` and lockfile give byte-identical HTML; a scratch export at schemaVersion 6 fails the build until the package's range includes it.",
-        "size": "M",
-        "dependsOn": [
-          "R-009",
-          "R-010",
-          "R-011",
-          "R-012",
-          "R-014",
-          "R-019",
-          "R-027",
-          "R-028",
-          "R-029",
-          "R-031",
-          "R-045"
-        ],
-        "status": {
-          "value": "paused",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-        "note": "Rewrites `pm-docs-site` and Non-interruption rule 9, so it bumps the rules major. From the 2026-11-22 review: (1) Done when moved to schemaVersion 6, because R-038 moved the export to 5 (inbox 2026-11-22-1501). (2) R-028's accessibility fixes (popup trigger, backdrop close, heading levels, card tab stops, collapse toggles, timeline zoom focus) exist only in `packages/pm-docs-site`; confirm the migrated `docs-site/` no longer carries the gaps of `skills/pm-docs-site/templates/`, or port the fixes if R-013 slips (inbox 2026-11-20-1844). (3) `just docs-check` still logs `[WARN] [content] Entry docs → 404 was not found.` from the template site; confirm it is gone after the migration, or give the template the package's fix (Starlight `disable404Route: true` and its own `src/pages/404.astro`; not a draft `404` entry, which prints a draft notice) (inbox 2026-11-21-1035). (4) The brief's Performance ramification (\"Render static HTML first and enhance with small islands\") is superseded: R-010 design (2026-11-18) chose rich interactive React islands for every view (React over Preact), and its Ramifications omit the React runtime dependency every consumer now gets (inbox 2026-11-18-0911; spec `docs/superpowers/specs/2026-11-18-docs-site-package-board-filters-design.md`).",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-034",
         "title": "Engineering file and pm-engineering skill",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V5"
@@ -294,7 +264,7 @@
         "id": "R-041",
         "title": "ADR skill follow-ups",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V5"
@@ -318,7 +288,7 @@
         "id": "R-040",
         "title": "ADR link and export edge cases",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4",
@@ -699,13 +669,6 @@
       "now": [],
       "next": [
         {
-          "id": "R-013",
-          "title": "Docs-site package: publish and migrate",
-          "owner": "both",
-          "size": "M",
-          "detail": "paused"
-        },
-        {
           "id": "R-034",
           "title": "Engineering file and pm-engineering skill",
           "owner": "agent",
@@ -730,6 +693,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-24",
+          "id": "R-013",
+          "title": "Docs-site package: publish and migrate",
+          "milestone": "M1",
+          "owner": "both",
+          "plan": "docs/superpowers/plans/2026-11-24-docs-site-package-publish-and-migrate.md",
+          "result": "branch feat/r-013-docs-site-package"
+        },
         {
           "date": "2026-11-24",
           "id": "R-043",
@@ -976,6 +948,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-24",
+        "kind": "done",
+        "id": "R-013",
+        "title": "Docs-site package: publish and migrate",
+        "milestone": "M1",
+        "owner": "both",
+        "result": "branch feat/r-013-docs-site-package"
+      },
       {
         "date": "2026-11-24",
         "kind": "done",
@@ -1295,6 +1276,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-24",
+        "id": "R-013",
+        "title": "Docs-site package: publish and migrate",
+        "milestone": "M1",
+        "owner": "both",
+        "plan": "docs/superpowers/plans/2026-11-24-docs-site-package-publish-and-migrate.md",
+        "result": "branch feat/r-013-docs-site-package"
+      },
       {
         "date": "2026-11-24",
         "id": "R-043",
@@ -1719,20 +1709,85 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Once astroc4 `1.0.0-prerelease.9` ships the `markers` option (R-045, ADR-007), move purview.dev's sync-time marker rewrite (`src/src/lib/docs/diagrams.ts`) onto astroc4's markers, so the `purview:likec4` marker has one implementation."
+    },
+    {
+      "file": "planning/inbox/2026-11-24-1512-bare-ids-in-questions-and-feedback.md",
+      "title": "Bare IDs in questions and feedback",
+      "captured": "2026-11-24 15:12",
+      "source": "user",
+      "kind": "bug",
+      "severity": "major",
+      "affects": "Named reference, Reference legend, and Asking the user rules (skills/pm-setup/references/AGENTS-section.md)",
+      "context": "R-013 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Saying `R-0XX, R-0XX, and R-0XX` are next with `M8` behind means nothing. Asking questions or providing feedback MUST - non-negotiable - every simply quote IDs only. Context is king.\n\nAlso - a question should aways include the ability to see the board/ roadmap/ more info"
+    },
+    {
+      "file": "planning/inbox/2026-11-24-1645-portable-vision-and-state-export.md",
+      "title": "Portable vision and state export",
+      "captured": "2026-11-24 16:45",
+      "source": "user",
+      "kind": "feature",
+      "severity": null,
+      "affects": null,
+      "context": "R-013 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "We need a means of exporting or extracting the vision/ current state in a means we can transfer to something like a Claude/ ChatGPT/ etc project, executive summary, etc"
+    },
+    {
+      "file": "planning/inbox/2026-11-24-2044-docs-site-package-cli-and-guard-gaps.md",
+      "title": "Docs-site package CLI and guard gaps",
+      "captured": "2026-11-24 20:44",
+      "source": "agent (R-013 execute, final review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site/lib/cli-args.ts, packages/pm-docs-site/test/cli.test.ts, packages/pm-docs-site/lib/mermaid.ts, skills/pm-docs-site/SKILL.md",
+      "context": "R-013 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "The R-013 final review parked four minor gaps for a later package release:\n\n- `--port=4399` (the `=` form) is not parsed, so it becomes the site folder, and any unknown flag silently becomes a positional argument (`lib/cli-args.ts`).\n- `test/cli.test.ts` \"dev --port 4399 serves on 4399\" uses a fixed port, which can collide with another process.\n- `skills/pm-docs-site/SKILL.md` Guard checks `bun --version` but not Node 24, so an older Node fails only at verify, after files are written.\n- Two byte-identical Markdown sources on one page (for example two ADR sections with the same text and fence) get the same Pele IDs (`lib/mermaid.ts`)."
+    },
+    {
+      "file": "planning/inbox/2026-11-24-2045-flaky-git-subprocess-tests-under-load.md",
+      "title": "Flaky git subprocess tests under load",
+      "captured": "2026-11-24 20:45",
+      "source": "agent (R-013 execute)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "skills/pm-lint/scripts/, skills/pm-next/scripts/sync.test.ts",
+      "context": "R-013 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "During R-013, `bun test scripts/` gave 198 pass and 5 fail while builds and browser tests ran at the same time, and the same suite gave 244 pass and 0 fail on an idle machine. The failing tests were seen in `skills/pm-lint` and `skills/pm-next/scripts/sync.test.ts`, which spawn git subprocesses; they time out or race under load, so a pre-push `just lint-check` can fail without a code change."
     }
   ],
   "briefs": [
     {
       "path": "planning/briefs/2026-11-17-docs-site-package.md",
-      "id": "R-013",
+      "id": null,
       "title": "Docs site as a versioned package",
-      "status": "on roadmap (R-013)",
+      "status": "done",
       "origin": "user request",
       "updated": "2026-11-24",
       "decision": "2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.",
       "problem": "The docs site is chaotic to maintain and builds non-deterministically: each consumer carries its own copy of the templates, resolves its own package versions, and any template change forces a rules-major bump on every consumer.",
       "doneWhen": "`docs-site/` contains only `package.json`, `astro.config.mjs`, and `bun.lock` (plus `.gitignore`), and `just docs-check` passes.",
-      "revisions": []
+      "revisions": [
+        {
+          "date": "2026-11-24",
+          "text": "Ramifications, Performance: \"Render static HTML first and enhance with small islands\" is superseded. R-010 (2026-11-18) made every view a rich interactive React island (React, not Preact), and every consumer now carries the React runtime as a dependency of `@purview-dev/pm-docs-site` (inbox 2026-11-18-0911; spec `docs/superpowers/specs/2026-11-18-docs-site-package-board-filters-design.md`)."
+        }
+      ]
     },
     {
       "path": "planning/briefs/2026-11-18-pm-docs-site-typescript.md",
@@ -1891,7 +1946,7 @@
       "id": "ADR-005",
       "path": "planning/decisions/ADR-005-docs-sites-consume-the-pm-docs-site-package.md",
       "title": "Docs sites consume the pm-docs-site package",
-      "status": "proposed",
+      "status": "accepted",
       "supersededBy": null,
       "date": "2026-11-23",
       "category": "architecture",
@@ -1907,7 +1962,7 @@
       "id": "ADR-006",
       "path": "planning/decisions/ADR-006-mermaid-renders-at-build-time-with-pele.md",
       "title": "Mermaid renders at build time with Pele",
-      "status": "proposed",
+      "status": "accepted",
       "supersededBy": null,
       "date": "2026-11-23",
       "category": "architecture",
@@ -1953,13 +2008,13 @@
     }
   ],
   "counts": {
-    "next": 4,
+    "next": 3,
     "later": 14,
     "nextMax": 5,
-    "openInbox": 7,
+    "openInbox": 11,
     "discuss": 0,
     "shapingBriefs": 0,
-    "done": 27,
+    "done": 28,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -1968,10 +2023,9 @@
     "greenRisks": 0
   },
   "checks": {
-    "reviewDue": false,
+    "reviewDue": true,
     "lastReview": "2026-11-22",
     "claimable": [
-      "R-013",
       "R-034",
       "R-041",
       "R-040"

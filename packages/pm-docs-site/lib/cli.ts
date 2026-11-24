@@ -1,46 +1,35 @@
 #!/usr/bin/env node
-// pm-docs-site <dev | build | check> [site-dir] [--title <t>] [--planning <p>]
+// pm-docs-site <dev | build | check> [site-dir] [--title <t>] [--planning <p>] [--port <n>] [--host <h>]
+// pm-docs-site peers architecture
 //
 // dev and build run Astro on the site folder: with its astro.config file when it
 // has one, else with the integration built from --title and --planning. check
 // builds nothing: it reads the export and the docs sources and reports problems.
+// --port and --host (or the PORT and HOST environment variables, an Aspire
+// AddViteApp resource sets PORT) pass through to Astro's dev and build server
+// config, so an Aspire AppHost resource can serve the site on its own port.
+// peers architecture prints the astroc4 install command, so the skill never
+// has to state its exact version.
+//
+// Argument parsing (`parse`) lives in cli-args.ts, a side-effect-free module,
+// so a test can import it without running main() below, which this file calls
+// unconditionally as the process entry point.
 
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import type { AstroInlineConfig } from 'astro';
 
+import { INSTALL_COMMAND } from './astroc4.ts';
+import { parse } from './cli-args.ts';
 import { disableUpdateCheck } from './dev-env.ts';
 import { resolveOptions } from './options.ts';
 import { parseExport } from './schema-version.ts';
 import { loadSiteOptions } from './site-options.ts';
 import type { ResolvedOptions } from './types.ts';
 
-interface Flags {
-	title?: string;
-	planning?: string;
-}
-
-const USAGE = 'usage: pm-docs-site <dev | build | check> [site-dir] [--title <title>] [--planning <path>]';
-
-function parse(argv: string[]): { command: string | undefined; siteDir: string; flags: Flags } {
-	const flags: Flags = {};
-	const positional: string[] = [];
-
-	for (let index = 0; index < argv.length; index++) {
-		const arg = argv[index] as string;
-
-		if (arg === '--title' || arg === '--planning') {
-			const value = argv[++index];
-			if (value === undefined) throw new Error(`pm-docs-site: ${arg} needs a value`);
-			flags[arg === '--title' ? 'title' : 'planning'] = value;
-		} else {
-			positional.push(arg);
-		}
-	}
-
-	return { command: positional[0], siteDir: resolve(positional[1] ?? process.cwd()), flags };
-}
+const USAGE =
+	'usage: pm-docs-site <dev | build | check> [site-dir] [--title <title>] [--planning <path>] [--port <n>] [--host <host>] | pm-docs-site peers architecture';
 
 /** The problems check finds, one line each. */
 function problems(options: ResolvedOptions): string[] {
@@ -65,7 +54,19 @@ function problems(options: ResolvedOptions): string[] {
 }
 
 async function main(): Promise<number | null> {
-	const { command, siteDir, flags } = parse(process.argv.slice(2));
+	const argv = process.argv.slice(2);
+
+	if (argv[0] === 'peers') {
+		if (argv.length === 2 && argv[1] === 'architecture') {
+			console.log(INSTALL_COMMAND);
+			return 0;
+		}
+
+		console.error(USAGE);
+		return 2;
+	}
+
+	const { command, siteDir, flags, server } = parse(argv, process.env);
 
 	if (command !== 'dev' && command !== 'build' && command !== 'check') {
 		console.error(USAGE);
@@ -87,7 +88,7 @@ async function main(): Promise<number | null> {
 	}
 
 	const astro = await import('astro');
-	const inline: AstroInlineConfig = { root: siteDir };
+	const inline: AstroInlineConfig = { root: siteDir, server };
 
 	if (!configFile) {
 		const { default: pmDocsSite } = await import('./index.ts');

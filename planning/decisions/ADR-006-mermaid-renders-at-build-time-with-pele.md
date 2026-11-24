@@ -1,6 +1,6 @@
 # ADR-006 Mermaid renders at build time with Pele
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-23
 - Category: architecture
 - Supersedes: none

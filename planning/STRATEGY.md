@@ -31,7 +31,7 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 - Serves: V4
 - Exit criteria: `npm view @purview-dev/pm-docs-site version` returns a version, `docs-site/` holds only `package.json`, `astro.config.ts`, `bun.lock`, and `.gitignore`, and `just docs-check` passes.
 - Target: none
-- Status: active
+- Status: done (2026-11-24)
 
 ### M4 Recorded technical decisions
 
@@ -98,6 +98,8 @@ Newest first. Nothing in this file changes without a line here.
 
 - <YYYY-MM-DD> <decision>. Why: <reason>. Rejected: <alternatives>.
 -->
+
+- 2026-11-24 M1 Reproducible docs site complete. Why: R-013 moved docs-site/ to package.json, astro.config.ts, bun.lock, and .gitignore on @purview-dev/pm-docs-site, just docs-check passes, and npm view @purview-dev/pm-docs-site version returns a version (0.1.0-pre.4 publishes on merge). Rejected: none.
 
 - 2026-11-22 R-033 ADR directory setting and design handoff moved to the top of Next, ahead of the M1 items. Why: the user asked for the ADRs next. Rejected: keeping it behind R-025 and R-013.
 - 2026-11-22 Re-planned roadmap. Why: V5 and M4 added; R-033 to R-035 join Next after the two M1 items, R-036 and R-037 lead Later under M4. Rejected: M4 items ahead of R-013 Docs-site package: publish and migrate.
