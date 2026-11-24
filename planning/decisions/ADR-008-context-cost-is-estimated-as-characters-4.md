@@ -1,6 +1,6 @@
 # ADR-008 Context cost is estimated as characters / 4
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-24
 - Category: tooling
 - Supersedes: none
