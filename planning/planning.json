@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-23T16:18:45+00:00",
+  "generatedAt": "2026-11-24T08:28:50+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-013-docs-site-package",
-    "head": "1e1dd45bab0f09a77e2042223a585fd2bef757c3"
+    "head": "14b1e23ed5dff9a65251dedce942c97b170322c4"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -227,12 +227,12 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-013-docs-site-package",
     "brief": "planning/briefs/2026-11-17-docs-site-package.md",
     "milestone": "M1",
     "spec": "docs/superpowers/specs/2026-11-23-docs-site-package-architecture-view-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-23-docs-site-package-architecture-view.md",
     "started": "2026-11-23",
     "doneWhen": [
       "With `pmDocsSite({ architecture: ... })` pointing at a LikeC4 model, the build renders one page per view folder at `/architecture/<group>/` through `@purview-dev/astroc4`, and a ```` ```likec4 ```` fence in a repository docs page renders a diagram.",
@@ -241,7 +241,12 @@
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-23-docs-site-package-architecture-view.md",
+    "checked": 0,
+    "total": 52,
+    "tasks": []
+  },
   "roadmap": {
     "next": [
       {
@@ -638,7 +643,7 @@
           "title": "Docs-site package: architecture view",
           "owner": "agent",
           "size": "M",
-          "detail": "plan"
+          "detail": "execute, 0/52 plan steps"
         }
       ],
       "next": [

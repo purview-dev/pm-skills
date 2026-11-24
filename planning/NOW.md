@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-045 Docs-site package: architecture view
 - Session: feat/r-013-docs-site-package
-- Stage: plan
+- Stage: execute
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 - Milestone: M1
 - Serves: V4
@@ -24,7 +24,7 @@ Milestone: optional; the item's milestone while it is active
 - Revisits:
 - Note: From R-013 design (2026-11-23): the user chose to build it before R-013 so no architecture-module site is left without a path when the templates are deleted. Port `skills/pm-docs-site/templates/architecture/` (MODULE.md, `src/lib/architecture.ts`, `src/pages/architecture/[group].astro`) into the package as an option; astroc4 and its peers (`@astrojs/react`, `react`, `react-dom`, `likec4`, `@likec4/core`) as optional peer dependencies. R-013's spec (`docs/superpowers/specs/2026-11-23-docs-site-package-publish-and-migrate-design.md`, sections 3 and 4) consumes the option name and its peer-dependency steps. This repository's model: `docs/wiki/diagrams/pm-skills.c4`. 2026-11-23: claimed on feat/r-013-docs-site-package at the user's request, because R-045 exists only on that branch.
 - Spec: docs/superpowers/specs/2026-11-23-docs-site-package-architecture-view-design.md
-- Plan:
+- Plan: docs/superpowers/plans/2026-11-23-docs-site-package-architecture-view.md
 - Started: 2026-11-23
 
 ## Done when
