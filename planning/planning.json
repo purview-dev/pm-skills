@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-24T13:44:47+00:00",
+  "generatedAt": "2026-11-24T13:52:27+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-043-per-session-context-report",
-    "head": "6d042f0c8b29d6b2697475b52871ca51dac3aa2b"
+    "head": "b5a50b5619a7ccf8416368ed17a45790a44590be"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -227,11 +227,11 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-043-per-session-context-report",
     "brief": "planning/briefs/2026-11-22-agent-context-tidy.md",
     "milestone": null,
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-24-per-session-context-report-design.md",
     "plan": null,
     "started": "2026-11-24",
     "doneWhen": [
@@ -718,7 +718,7 @@
           "title": "Per-session context report",
           "owner": "agent",
           "size": "M",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
@@ -1931,6 +1931,22 @@
       "decision": "`@purview-dev/astroc4` gains a `markers` option (default on), implemented inside its `likec4Fences` Sätteri plugin. Each marker block becomes the LikeC4 view it names; a block that cannot be drawn keeps its Mermaid with a warning and never fails the build. `markers.root` is the repository root, so a model may live anywhere in the repository. `@purview-dev/pm-docs-site`'s `architecture` option loads astroc4 as an optional peer dependency and passes its `docs.root` as `markers.root`.",
       "alternatives": "- A marker plugin inside `pm-docs-site`: no outside release, but purview.dev keeps a second implementation of the same marker.\n- Client-side rewriting: breaks build determinism and adds JavaScript.\n- Do nothing: the docs site shows only the Mermaid fallback.",
       "consequences": "- purview.dev and the docs site can share one implementation (purview.dev's move is a follow-up).\n- R-045 depends on an astroc4 prerelease (`1.0.0-prerelease.9`) that the user merges.\n- Markers work in `.md` only; MDX rejects HTML comments. ADR sections fall back to Mermaid because exported text has no page path."
+    },
+    {
+      "id": "ADR-008",
+      "path": "planning/decisions/ADR-008-context-cost-is-estimated-as-characters-4.md",
+      "title": "Context cost is estimated as characters / 4",
+      "status": "proposed",
+      "supersededBy": null,
+      "date": "2026-11-24",
+      "category": "tooling",
+      "supersedes": null,
+      "item": "R-043",
+      "source": null,
+      "context": "The context report (`skills/pm-help/scripts/context.ts`) measures the cost of each session type, so R-046 to R-049 can cut the managed section and trim the skills against a baseline. The shipped scripts import only `node:` and `bun:` builtins, and no offline tokenizer matches current Claude models. Spec: `docs/superpowers/specs/2026-11-24-per-session-context-report-design.md`.",
+      "decision": "Estimate tokens as `ceil(characters / 4)` on LF-normalised text, labelled `estimated tokens`, and compare the relative change per session type, not absolute numbers.",
+      "alternatives": "- An exact tokenizer package: breaks the dependency-free scripts, and none matches current Claude models.\n- The token-counting API: needs a key and the network.\n- Do nothing: growth stays unmeasured.",
+      "consequences": "- Absolute numbers may be off by 20% or more; relative drops are measured consistently.\n- No dependency, works offline, costs GBP 0."
     }
   ],
   "counts": {
