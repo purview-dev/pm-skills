@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, utimesSync, w
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 
-import { buildReport } from "./context.ts";
+import { type Report, buildReport, detectPmRoot, main, normalisePmRoot, renderText } from "./context.ts";
 import { MapError, loadMap, parseMap } from "./map.ts";
 import { agentFiles, agentSections, countChars, findSkill, followReferences, toTokens } from "./sources.ts";
 
@@ -243,5 +243,74 @@ describe("report", () => {
   test("contributors are sorted largest first", () => {
     const list = session(report(), "resume").contributors.map((c) => c.chars);
     expect(list).toEqual([...list].sort((a, b) => b - a));
+  });
+});
+describe("cli", () => {
+  const fixed = (): Report => ({
+    version: 1,
+    date: "2026-11-24",
+    sessions: [
+      { id: "always", chars: 86844, tokens: 21711, contributors: [
+        { name: "AGENTS.md#pm-skills", chars: 69454, tokens: 17364, partial: false },
+        { name: "AGENTS.md#Build", chars: 7508, tokens: 1877, partial: false },
+        { name: "AGENTS.md#Arch", chars: 7705, tokens: 1927, partial: false },
+        { name: "AGENTS.md#Tiny", chars: 40, tokens: 10, partial: false },
+      ], missing: [] },
+      { id: "resume", chars: 100000, tokens: 25000, contributors: [
+        { name: "AGENTS.md", chars: 86844, tokens: 21711, partial: false },
+        { name: "planning/LOG.md", chars: 7200, tokens: 1800, partial: true },
+      ], missing: [] },
+    ],
+    tidy: [],
+  });
+
+  test("renderText gives the fixed layout", () => {
+    expect(renderText(fixed())).toBe(
+      "## Context 2026-11-24\n\n" +
+        "| Session | Est. tokens | Largest |\n| --- | --- | --- |\n" +
+        "| always | 21,700 | AGENTS.md#pm-skills 17,400; AGENTS.md#Arch 1,900; AGENTS.md#Build 1,900 |\n" +
+        "| resume | 25,000 | AGENTS.md 21,700; ≤ planning/LOG.md 1,800 |\n\n" +
+        "- PM state: no tidy needed\n" +
+        "- Estimated tokens are characters / 4; ≤ marks files read in part, counted whole.\n",
+    );
+  });
+
+  test("renderText names each tidy entry", () => {
+    const report = { ...fixed(), tidy: [{ file: "planning/ROADMAP.md", chars: 33100, limit: 32000 }, { file: "planning/LOG.md", chars: 32000, limit: 32000 }] };
+    expect(renderText(report)).toContain(
+      "- Tidy recommended: planning/ROADMAP.md 33,100 characters (limit 32,000); planning/LOG.md 32,000 characters (limit 32,000)\n",
+    );
+  });
+
+  test("main prints JSON with five sessions", () => {
+    put(root, "AGENTS.md", "# A\n");
+    const { code, out } = main(["--root", root, "--format", "json"], { cwd: root, home });
+    expect(code).toBe(0);
+    const json = JSON.parse(out);
+    expect(json.version).toBe(1);
+    expect(json.sessions).toHaveLength(5);
+  });
+
+  test("main rejects an unknown format and an unknown flag", () => {
+    expect(main(["--format", "xml"], { cwd: root, home }).code).toBe(2);
+    expect(main(["--bogus"], { cwd: root, home }).code).toBe(2);
+  });
+
+  test("main reports an invalid map with exit 2", () => {
+    const bad = put(root, "bad.json", "{}");
+    const { code, out } = main(["--root", root], { cwd: root, home, mapPath: bad });
+    expect(code).toBe(2);
+    expect(out).toContain("invalid session map");
+  });
+
+  test("pm-root is normalised", () => {
+    expect(normalisePmRoot("planning")).toBe("planning/");
+    expect(normalisePmRoot(".\\planning\\")).toBe("planning/");
+  });
+
+  test("pm-root defaults to the PM state directory in AGENTS.md", () => {
+    put(root, "AGENTS.md", "- PM state directory: `pm/`\n");
+    expect(detectPmRoot(root)).toBe("pm/");
+    expect(detectPmRoot(home)).toBe("planning/");
   });
 });
