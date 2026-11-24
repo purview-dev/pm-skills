@@ -50,7 +50,7 @@
 - Produces: `export function mermaidFences(): SatteriMdastPluginFactory` from `lib/mermaid.ts`. Use the factory type `@astrojs/markdown-satteri` exports, the same shape astroc4's `likec4Fences` returns: `(factory) => { name, code(node, ctx) } | null`.
 - Produces: `export function markdownProcessor(existing: unknown, warn: (message: string) => void): unknown | undefined` in `lib/mermaid.ts`. It returns the processor to set, or `undefined` to leave the consumer's processor alone.
 
-- [ ] **Step 1: Write the failing tests** in `test/mermaid.test.ts`, rendering through `satteri({ mdastPlugins: [mermaidFences()] })` on a Markdown string:
+- [x] **Step 1: Write the failing tests** in `test/mermaid.test.ts`, rendering through `satteri({ mdastPlugins: [mermaidFences()] })` on a Markdown string:
   - `renders a sequenceDiagram fence to inline svg`: the output contains `<svg`, and contains neither `language-mermaid` nor `<pre`.
   - `renders a flowchart LR fence`: same assertions.
   - `ids are equal across two renders of the same source`: the two HTML strings are `===`.
@@ -58,26 +58,26 @@
   - `a fence that does not parse throws naming the file`: with `fileURL` `file:///x/docs/bad.md` and body `sequenceDiagram\n  A->>`, the render rejects with a message containing `bad.md` and `mermaid`.
   - `without a fileURL the error names the source as markdown`: the message contains `(markdown)`. This is the ADR case, since `loaders/adrs.ts` passes no `fileURL`.
   - `markdownProcessor` cases: `undefined` returns a Sätteri processor (`isSatteriProcessor` is true). An existing Sätteri processor with plugin `p` returns one whose `options.mdastPlugins` is `[p, <mermaid>]`. A non-Sätteri object returns `undefined` and calls `warn` once with text containing `Mermaid` (Review Focus 3).
-- [ ] **Step 2: Run** `cd packages/pm-docs-site && bun test test/mermaid.test.ts`. Expected: FAIL, because `lib/mermaid.ts` does not exist.
-- [ ] **Step 3: Add the dependencies:** `bun add --exact pele@1.13.0 satteri@0.11.7 @astrojs/markdown-satteri@0.4.10` in `packages/pm-docs-site`, then remove `@astrojs/markdown-satteri` from `peerDependencies` and `peerDependenciesMeta`.
-- [ ] **Step 4: Implement `mermaidFences()` and `markdownProcessor()`.**
+- [x] **Step 2: Run** `cd packages/pm-docs-site && bun test test/mermaid.test.ts`. Expected: FAIL, because `lib/mermaid.ts` does not exist.
+- [x] **Step 3: Add the dependencies:** `bun add --exact pele@1.13.0 satteri@0.11.7 @astrojs/markdown-satteri@0.4.10` in `packages/pm-docs-site`, then remove `@astrojs/markdown-satteri` from `peerDependencies` and `peerDependenciesMeta`.
+- [x] **Step 4: Implement `mermaidFences()` and `markdownProcessor()`.**
   - The factory returns `null` when `factory.source` has no ```` ```mermaid ````.
   - `code(node, ctx)` acts only when `node.lang === 'mermaid'`. It calls Pele's `render(node.value, { idPrefix })` and then `ctx.replaceNode(node, { type: 'html', value: svg })`.
   - `idPrefix` is `` `pele-${sha256(factory.source).slice(0, 8)}-${n}` ``, with `n` counting per factory call in document order. The hash keeps the prefix stable across builds and distinct across sources.
   - On an error, throw `` `pm-docs-site: ${where}: mermaid fence is not valid (${message})` ``, where `where` is the `fileURL` path or `(markdown)`.
   - Check the Pele `render` signature against its `dist/index.d.ts` before calling it.
   - If `@astrojs/markdown-satteri` fails under Astro `7.4.8`, use the spec's fallback: a remark plugin on Astro's default processor that calls the same `render`. Record the switch in the task's commit body.
-- [ ] **Step 5: Run** `bun test test/mermaid.test.ts`. Expected: PASS.
-- [ ] **Step 6: Wire `lib/index.ts`.**
+- [x] **Step 5: Run** `bun test test/mermaid.test.ts`. Expected: PASS.
+- [x] **Step 6: Wire `lib/index.ts`.**
   - In `astro:config:setup`, pass `config.markdown?.processor` and `logger.warn` to `markdownProcessor`. When it returns a processor, add `markdown: { processor }` to the `updateConfig` call.
   - Add `fileURLToPath(new URL('../src/styles/pele.css', import.meta.url))` to `customCss` after `width.css`.
   - Write `pele.css` from the variables in Pele's README, mapping them to Starlight's (`--pele-bg: var(--sl-color-bg)`, `--pele-fg: var(--sl-color-text)`, and the rest). Write the selector against the element or class that Step 1's actual SVG output carries, not against the article's `.pele`.
-- [ ] **Step 7: Add integration cases** to `test/integration.test.ts`, building the existing fixture site through the helpers (`siteConfig`, `runCli`):
+- [x] **Step 7: Add integration cases** to `test/integration.test.ts`, building the existing fixture site through the helpers (`siteConfig`, `runCli`):
   - `a repo-docs page with a mermaid fence builds to svg`: add a fenced page to a scratch copy of `test/fixtures/docs`, build, and assert that its HTML has `<svg` and no `language-mermaid`.
   - `an ADR section with a mermaid fence builds to svg`: add the fence to one ADR section of a scratch `planning.json`, build, and assert the same on `/plan/decisions/<id>/`.
   - `an invalid fence fails the build naming the file`: `runCli('build', …)` exits non-zero, and stderr contains the page's file name.
-- [ ] **Step 8: Run** `bun test && bun run check` in `packages/pm-docs-site`. Expected: all pass, with no new `astro-check` errors.
-- [ ] **Step 9: Commit**
+- [x] **Step 8: Run** `bun test && bun run check` in `packages/pm-docs-site`. Expected: all pass, with no new `astro-check` errors.
+- [x] **Step 9: Commit**
 
 ```bash
 git add packages/pm-docs-site
