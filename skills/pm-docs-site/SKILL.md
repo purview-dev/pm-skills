@@ -265,11 +265,17 @@ Search is part of the package.
 ## Steps (upgrade)
 
 1. Confirm the build-mode guard.
-2. **A package site** (no `pm-docs-site.json`): in the site root, run
-   `bun add @purview-dev/pm-docs-site@latest --exact`. A `file:` dependency
-   keeps its path: run `bun install` instead. With the `architecture`
-   option set, run the command `bunx pm-docs-site peers architecture`
-   prints. Go to step 9.
+2. **A package site** (no `pm-docs-site.json`): in the site root, record
+   the installed `@purview-dev/pm-docs-site` version from `package.json`,
+   then run `bun add @purview-dev/pm-docs-site@latest --exact`. A `file:`
+   dependency keeps its path: run `bun install` instead. Compare the
+   installed version after the add with `Minimum package version` and with
+   the version recorded before it, in SemVer order. Below either, restore
+   `package.json` and `bun.lock` to their state before the add and stop
+   with `package below minimum (<installed> < <minimum>)` or `latest is
+   older than the installed version (<installed> < <previous>)`. With the
+   `architecture` option set, run the command `bunx pm-docs-site peers
+   architecture` prints. Go to step 9.
 3. **A template site** without a manifest (a `src/lib/planning.ts` with
    `PlanningExportError`): write `pm-docs-site.json` first, with its
    `modules` and `values` (`SITE_TITLE`, `SITE_DESCRIPTION`,
@@ -292,9 +298,17 @@ Search is part of the package.
    `base`) in `defineConfig`. A Starlight option the template did not set
    cannot be carried, because the package configures Starlight: name it in
    the `Note`.
-7. **Install** in the site root: `bun add @purview-dev/pm-docs-site
-   --exact`. When `architectureDir` is set, run the command
-   `bunx pm-docs-site peers architecture` prints.
+7. **Install** in the site root: record the installed
+   `@purview-dev/pm-docs-site` version from `package.json`, when the
+   template left one (otherwise there is none to compare), then run
+   `bun add @purview-dev/pm-docs-site --exact`. Compare the installed
+   version after the add with `Minimum package version` and, when one was
+   recorded, with the version recorded before it, in SemVer order. Below
+   either, restore `package.json` and `bun.lock` to their state before the
+   add and stop with `package below minimum (<installed> < <minimum>)` or
+   `latest is older than the installed version (<installed> < <previous>)`.
+   When `architectureDir` is set, run the command `bunx pm-docs-site peers
+   architecture` prints.
 8. **Views and Aspire.** When the manifest listed `views`, the mapped list
    is kept; when it lacks `graph` or `decisions`, add the `Note` line
    `Views graph and decisions are off: the site's views list predates
@@ -346,7 +360,9 @@ an AppHost resource.
    tests`, and the `Explain <ID>` escape option for the active item. On
    yes, add the two tests in `MODULE.md` **Tests**. Record the answer in
    the `Note`; with no composition tests, add none and say so.
-6. **Check** as `MODULE.md` **Check** says.
+6. **Check.** C# AppHost — as `MODULE.md` **Check** says. TypeScript
+   AppHost — run the AppHost (`aspire run`) and confirm the `docs` resource
+   serves the Home page, then stop it.
 
 ## Output (plan)
 

@@ -89,6 +89,8 @@ A bump that raises the major also raises the marker and `Rules version` in
    - Otherwise, from the conventional commits since the last tag: `minor`
      (or `preminor`) when any `feat` is present, else `patch` (or
      `prepatch`).
+   A `BREAKING CHANGE:` footer or `!` never picks the part: the major is
+   the rules marker, and along an unreleased `N.0.0-<pre>` line it stays N.
    Never offer a part that raises the major without a skills change. State
    the part, the resulting version, and the paths or commits that decided it.
 3. **Confirm.** Ask one choice question: `Bump to which version?` with the
