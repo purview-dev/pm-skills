@@ -127,13 +127,13 @@ git commit -m "feat(pm-docs-site): render mermaid fences with Pele at build time
 
 - Produces: `checkSchemaVersion(version: unknown, path: string, supported: readonly number[] = SUPPORTED_SCHEMA_VERSIONS): void`. `checkExport` and `parseExport` gain the same optional last parameter and pass it through. Production callers do not change.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `schema-version.test.ts`: `parseExport('{"schemaVersion":6}', 'p.json')` throws a `PlanningExportError` whose message contains `schemaVersion 6` and `reads schemaVersion 5`. `parseExport('{"schemaVersion":6}', 'p.json', [5, 6])` returns `{ schemaVersion: 6 }`.
   - `cli.test.ts`: `a scratch export at schemaVersion 6 fails check and build`. Copy the fixture with `scratchFixture`, set `schemaVersion: 6` in its `planning.json`, then assert that `runCli('check', dir)` and `runCli('build', dir)` both exit non-zero, with stderr containing `schemaVersion 6`.
-- [ ] **Step 2: Run** both files. Expected: the seam case FAILS (wrong arity). The CLI case may already pass, so confirm it fails for the right reason before keeping it.
-- [ ] **Step 3: Implement** the parameter.
-- [ ] **Step 4: Run** `bun test`. Expected: PASS.
-- [ ] **Step 5: Commit** `test(pm-docs-site): pin the unsupported schemaVersion failure`.
+- [x] **Step 2: Run** both files. Expected: the seam case FAILS (wrong arity). The CLI case may already pass, so confirm it fails for the right reason before keeping it.
+- [x] **Step 3: Implement** the parameter.
+- [x] **Step 4: Run** `bun test`. Expected: PASS.
+- [x] **Step 5: Commit** `test(pm-docs-site): pin the unsupported schemaVersion failure`.
 
 ### Task 4: The reproducible-build check, and Mermaid in the demo
 
