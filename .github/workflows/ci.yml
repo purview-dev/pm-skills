@@ -31,9 +31,9 @@ jobs:
       - name: Validate skills
         run: bun scripts/validate.ts
 
-      # Mirrors `just test`: the version scripts, pm-export's exporter and pm-lint against their fixtures, pm-help's context report, and pm-next's PM branch sync.
+      # Mirrors `just test`: the version scripts, pm-export's exporter and pm-lint against their fixtures, pm-help's context report, pm-next's PM branch sync, and pm-docs-site's consumer script.
       - name: Test scripts
-        run: bun test scripts/ skills/pm-export/ skills/pm-help/ skills/pm-lint/ skills/pm-next/
+        run: bun test scripts/ skills/pm-export/ skills/pm-help/ skills/pm-lint/ skills/pm-next/ skills/pm-docs-site/
 
       # Mirrors `just pm-lint`: planning/ against the PM file format rules.
       - name: Lint PM state
