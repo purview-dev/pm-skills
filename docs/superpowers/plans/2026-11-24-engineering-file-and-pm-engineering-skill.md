@@ -1,6 +1,6 @@
 # Engineering file and pm-engineering skill Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Add the optional PM file `<PM root>/ENGINEERING.md`, its `pm-lint` schema and rules, its `pm-init` template, its managed-section definitions, and the `pm-engineering` skill (`view`, `add`, `change`, `remove`).
 
@@ -48,7 +48,7 @@ Each line has its test in Task 1, Step 1.
 - Consumes: `Context.adrs` (`{ id, status }[]`), `requireSections`, `checkBlockFields`, `findSection`, `sections`, `fields`, `fieldMap`, `sortByDate`, `trimBlank`, `idNumber`, `isDate` (all existing in `structure.ts`).
 - Produces: `KEYS.technology`, `KEYS.principle` (readonly string tuples as in Global Constraints); `export function engineeringBlocks(lines: Line[], section: Section): EngineeringBlock[]` with `interface EngineeringBlock { id: string; title: string; heading: number; start: number; end: number; fields: Map<string, Field>; list: Field[] }` (`id` is `EP-NNN` or `""`, `title` is the rest of the heading or the whole heading for technology).
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Add to `lint.test.ts`, using `repo()` (the fixture has ADR-001 `superseded by ADR-002` and ADR-002 `accepted`):
 
@@ -78,12 +78,12 @@ Tests (one `it` each):
 
 Also extend the `rules.md` catalogue test only if it enumerates groups by name (it compares `RULES` with `rules.md`, so Step 3's edits keep it green).
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `bun test skills/pm-lint/scripts/lint.test.ts -t "engineering"`
 Expected: FAIL (no `engineering/` findings; `ENGINEERING.md` is linted as plain Markdown).
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 - `structure.ts`: add `"engineering"` to `Kind`, `"ENGINEERING.md": "engineering"` to `TOP_FILES`, `KEYS.technology` and `KEYS.principle`, `FILE_KEYS.engineering = [...KEYS.technology, ...KEYS.principle]`, `engineering: checkEngineering` in the checkers map.
 - `engineeringBlocks` parses `###` blocks like `riskBlocks`, matching `/^(EP-\d{3,})\s+(.+)$/`.
@@ -100,12 +100,12 @@ Expected: FAIL (no `engineering/` findings; `ENGINEERING.md` is linted as plain 
 - `rules.ts`: the 8 rules, `engineering/order` fixable, `engineering/decision-current` severity `warning`, the rest `error`; texts as the spec's table.
 - `rules.md`: Scope row `| \`ENGINEERING.md\` | **Engineering file** (Shared definitions) | format, fields, engineering |` after `RISKS.md`; the`### engineering` table copied from the spec.
 
-- [ ] **Step 4: Run the tests to verify they pass**
+- [x] **Step 4: Run the tests to verify they pass**
 
 Run: `bun test skills/pm-lint/scripts/lint.test.ts`
 Expected: PASS, including the `rules.md` catalogue test.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add skills/pm-lint
@@ -120,11 +120,11 @@ git commit -m "feat(pm-lint): engineering file schema and rules (R-034)"
 - Modify: `skills/pm-init/SKILL.md:36-47` (file table row after `RISKS.md`), `:148` (the `Created:` line)
 - Test: existing `passes for a fresh pm-init install` in `lint.test.ts`; add `it("writes ENGINEERING.md on a fresh install")` asserting `existsSync(join(initRoot(), "planning", "ENGINEERING.md"))` (add `existsSync` to the `node:fs` import).
 
-- [ ] **Step 1: Write the failing test** (the `existsSync` assertion above).
-- [ ] **Step 2: Run** `bun test skills/pm-lint/scripts/lint.test.ts -t "fresh"` — Expected: FAIL on the new test.
-- [ ] **Step 3: Write the template**: `# Engineering`, an HTML comment in the `RISKS.md` template's style stating "Written only by pm-engineering. A missing file is empty. Reasons beyond one line live in ADRs (Decision). Principle IDs are EP-NNN and never reused, including removed ones.", both block formats from Global Constraints, then the three empty `##` sections. Add the `ENGINEERING.md` row (destination `<PM root>/ENGINEERING.md`) and `ENGINEERING.md` to the `Created:` line after `RISKS.md`.
-- [ ] **Step 4: Run** `bun test skills/pm-lint/scripts/lint.test.ts` and `just validate` — Expected: PASS (validate checks template placeholders).
-- [ ] **Step 5: Commit**: `git add skills/pm-init skills/pm-lint/scripts/lint.test.ts` then `git commit -m "feat(pm-init): engineering file template (R-034)"`.
+- [x] **Step 1: Write the failing test** (the `existsSync` assertion above).
+- [x] **Step 2: Run** `bun test skills/pm-lint/scripts/lint.test.ts -t "fresh"` — Expected: FAIL on the new test.
+- [x] **Step 3: Write the template**: `# Engineering`, an HTML comment in the `RISKS.md` template's style stating "Written only by pm-engineering. A missing file is empty. Reasons beyond one line live in ADRs (Decision). Principle IDs are EP-NNN and never reused, including removed ones.", both block formats from Global Constraints, then the three empty `##` sections. Add the `ENGINEERING.md` row (destination `<PM root>/ENGINEERING.md`) and `ENGINEERING.md` to the `Created:` line after `RISKS.md`.
+- [x] **Step 4: Run** `bun test skills/pm-lint/scripts/lint.test.ts` and `just validate` — Expected: PASS (validate checks template placeholders).
+- [x] **Step 5: Commit**: `git add skills/pm-init skills/pm-lint/scripts/lint.test.ts` then `git commit -m "feat(pm-init): engineering file template (R-034)"`.
 
 ### Task 3: Managed section
 
@@ -137,7 +137,7 @@ git commit -m "feat(pm-lint): engineering file schema and rules (R-034)"
 
 - Produces: the names Task 4's skill cites: **Engineering file**, **Principle IDs**, the `pm-engineering` table row.
 
-- [ ] **Step 1: Edit the reference**, each item from the spec's "Shared definitions" section:
+- [x] **Step 1: Edit the reference**, each item from the spec's "Shared definitions" section:
   - after the **ADR** entries: **Engineering file** (format block from Global Constraints; written only by `pm-engineering`; reasons beyond one line in an ADR) and **Principle IDs** (`EP-NNN`, highest in Principles and Removed plus 1, never reused);
   - **Optional files**: `ENGINEERING.md` may be missing in projects initialised before version 21;
   - **Named reference**: add `EP-NNN <title>` for a principle; a technology is named by its name;
@@ -145,9 +145,9 @@ git commit -m "feat(pm-lint): engineering file schema and rules (R-034)"
   - skills table row after `pm-adr`: `| \`pm-engineering\` | Show, add, change, or remove one technology or principle in the engineering file | User asks (view only during a workflow) |`;
   - Non-interruption rule 3 read-only exceptions: add `pm-engineering` in `view` mode;
   - upgrade notes: one `Version 21 also adds` paragraph after the last one: the engineering file and `pm-engineering`; a missing file is empty; `pm-lint` checks it; no setting is added.
-- [ ] **Step 2: Install the section here**: replace the text between `<!-- pm-skills:start -->` and `<!-- pm-skills:end -->` in `AGENTS.md` with the reference body (marker without `version=`).
-- [ ] **Step 3: Run** `just validate` — Expected: FAIL only on `pm-engineering` missing from the README, `pm-setup`, and `pm-help` (Task 4), or on the skill folder missing; no managed-section drift error.
-- [ ] **Step 4: Commit**: `git add skills/pm-setup/references/AGENTS-section.md AGENTS.md` then `git commit -m "feat(pm-setup): engineering file in the managed rules (R-034)"`.
+- [x] **Step 2: Install the section here**: replace the text between `<!-- pm-skills:start -->` and `<!-- pm-skills:end -->` in `AGENTS.md` with the reference body (marker without `version=`).
+- [x] **Step 3: Run** `just validate` — Expected: FAIL only on `pm-engineering` missing from the README, `pm-setup`, and `pm-help` (Task 4), or on the skill folder missing; no managed-section drift error.
+- [x] **Step 4: Commit**: `git add skills/pm-setup/references/AGENTS-section.md AGENTS.md` then `git commit -m "feat(pm-setup): engineering file in the managed rules (R-034)"`.
 
 ### Task 4: The pm-engineering skill and its table rows
 
@@ -160,20 +160,20 @@ git commit -m "feat(pm-lint): engineering file schema and rules (R-034)"
 
 - Consumes: Task 3's definitions by name; Task 1's rule IDs for the output Note.
 
-- [ ] **Step 1: Run** `just validate` — Expected: FAIL (`pm-engineering` tables).
-- [ ] **Step 2: Write `SKILL.md`** in `skills/pm-risk/SKILL.md`'s structure: frontmatter (`name: pm-engineering`; description starting "Use when the user asks to show, add, change, or remove the project's technology or engineering principles ..."), the follow-the-rules paragraph, Modes table, Guard, Steps, Output templates (one for writes, one for `view`). Behaviour exactly as the spec's "The skill" section, plus:
+- [x] **Step 1: Run** `just validate` — Expected: FAIL (`pm-engineering` tables).
+- [x] **Step 2: Write `SKILL.md`** in `skills/pm-risk/SKILL.md`'s structure: frontmatter (`name: pm-engineering`; description starting "Use when the user asks to show, add, change, or remove the project's technology or engineering principles ..."), the follow-the-rules paragraph, Modes table, Guard, Steps, Output templates (one for writes, one for `view`). Behaviour exactly as the spec's "The skill" section, plus:
   - New principle ID: Task 3's **Principle IDs** rule.
   - `add`/`change` refuse a `Decision` ADR that is superseded or deprecated: `ADR-NNN <title> (<status>) is superseded by ADR-MMM <title>. Use it instead?` as a choice question.
   - Technology blocks are inserted alphabetically, principles by ID, Removed newest first.
   - Every write runs one PM commit with `docs(pm): <add|change|remove> <name or EP-NNN> engineering`.
-- [ ] **Step 3: Add the rows**: README `| [\`pm-engineering\`](skills/pm-engineering/SKILL.md) | Show, add, change, or remove the technology and engineering principles | User asks (view mid-task) |`;`pm-engineering` in the `pm-setup` inventory list after `pm-adr`;`pm-help` row: purpose, triggers `"we use zod"`,`"show the principles"`,`"remove Jest"`, writes`ENGINEERING.md`.
-- [ ] **Step 4: Run** `just validate` and `bunx markdownlint-cli2 skills/pm-engineering/SKILL.md README.md skills/pm-help/SKILL.md skills/pm-setup/SKILL.md` — Expected: PASS.
-- [ ] **Step 5: Commit**: `git add skills/pm-engineering README.md skills/pm-setup/SKILL.md skills/pm-help/SKILL.md` then `git commit -m "feat(pm-engineering): engineering file skill (R-034)"`.
+- [x] **Step 3: Add the rows**: README `| [\`pm-engineering\`](skills/pm-engineering/SKILL.md) | Show, add, change, or remove the technology and engineering principles | User asks (view mid-task) |`;`pm-engineering` in the `pm-setup` inventory list after `pm-adr`;`pm-help` row: purpose, triggers `"we use zod"`,`"show the principles"`,`"remove Jest"`, writes`ENGINEERING.md`.
+- [x] **Step 4: Run** `just validate` and `bunx markdownlint-cli2 skills/pm-engineering/SKILL.md README.md skills/pm-help/SKILL.md skills/pm-setup/SKILL.md` — Expected: PASS.
+- [x] **Step 5: Commit**: `git add skills/pm-engineering README.md skills/pm-setup/SKILL.md skills/pm-help/SKILL.md` then `git commit -m "feat(pm-engineering): engineering file skill (R-034)"`.
 
 ### Task 5: Rehearsal, version, full check
 
-- [ ] **Step 1: Rehearse `add`** in a scratch directory outside the repository: copy `skills/pm-init/templates/*` into `<scratch>/planning/` (the `-README.md` files into their folders, as `initRoot` does), add `planning/decisions/ADR-001-use-bun.md` in the ADR format, then follow `pm-engineering add technology Bun` (`Decision: ADR-001`, `Source: package.json`) and `add principle TypeScript for every script` (`Check: review`, `Source: user (2026-11-24)`) by the skill's steps, writing the blocks by hand as the skill specifies.
-- [ ] **Step 2: Run** `bun skills/pm-lint/scripts/lint.ts check --root <scratch> --pm-root planning/` — Expected: `pm-lint: clean`. Paste the two blocks and the output into the final report.
-- [ ] **Step 3: Bump**: `just bump prerelease` — Expected: `package.json` `21.0.0-pre.9`.
-- [ ] **Step 4: Run** `just lint-check` and `just version-check` — Expected: PASS.
-- [ ] **Step 5: Commit**: `git add package.json` then `git commit -m "chore: bump version to 21.0.0-pre.9 (R-034)"`.
+- [x] **Step 1: Rehearse `add`** in a scratch directory outside the repository: copy `skills/pm-init/templates/*` into `<scratch>/planning/` (the `-README.md` files into their folders, as `initRoot` does), add `planning/decisions/ADR-001-use-bun.md` in the ADR format, then follow `pm-engineering add technology Bun` (`Decision: ADR-001`, `Source: package.json`) and `add principle TypeScript for every script` (`Check: review`, `Source: user (2026-11-24)`) by the skill's steps, writing the blocks by hand as the skill specifies.
+- [x] **Step 2: Run** `bun skills/pm-lint/scripts/lint.ts check --root <scratch> --pm-root planning/` — Expected: `pm-lint: clean`. Paste the two blocks and the output into the final report.
+- [x] **Step 3: Bump**: `just bump prerelease` — Expected: `package.json` `21.0.0-pre.9`.
+- [x] **Step 4: Run** `just lint-check` and `just version-check` — Expected: PASS.
+- [x] **Step 5: Commit**: `git add package.json` then `git commit -m "chore: bump version to 21.0.0-pre.9 (R-034)"`.
