@@ -34,12 +34,14 @@
 ### Task 1: Session map and its check
 
 **Files:**
+
 - Create: `skills/pm-help/references/sessions.json`
 - Create: `skills/pm-help/scripts/map.ts`
 - Create: `skills/pm-help/scripts/context.test.ts`
 - Modify: `justfile` (`test` recipe), `.github/workflows/ci.yml` (the `bun test scripts/ ...` line): add `skills/pm-help/`
 
 **Interfaces:**
+
 - Produces:
 
 ```ts
@@ -71,10 +73,12 @@ export function loadMap(path?: string): SessionMap;       // default: ../referen
 ### Task 2: Measuring sources
 
 **Files:**
+
 - Create: `skills/pm-help/scripts/sources.ts`
 - Test: `skills/pm-help/scripts/context.test.ts`
 
 **Interfaces:**
+
 - Produces:
 
 ```ts
@@ -107,10 +111,12 @@ export function followReferences(start: string[], root: string, home: string): {
 ### Task 3: The report
 
 **Files:**
+
 - Create: `skills/pm-help/scripts/context.ts` (report part)
 - Test: `skills/pm-help/scripts/context.test.ts`
 
 **Interfaces:**
+
 - Consumes: `SessionMap` (Task 1), every export of `sources.ts` (Task 2).
 - Produces:
 
@@ -124,7 +130,7 @@ export function buildReport(opts: ReportOptions): Report;
 
 Rules (from the spec): `always` = agent sections only. Every other session = the agent files whole, plus its skills' `SKILL.md`, references followed from those skills and from the agent files, its `pmFiles` (whole), `partial` files (`partial: true`), its brief, decisions (`partial: true`, every `decisions/ADR-*.md`), inbox files (every `inbox/*.md` except `README.md`), and the handoff skill (`handoff: true`; `tokensWithoutHandoff` set only when one was counted). The handoff skill name is the Skill column of the `config.md` Handoffs row whose Stage equals `handoff`. Brief selection for `claim` and `checkpoint`: as the spec's `brief` bullet. Missing skills go in `missing` as `skill <name>`, a missing handoff as `handoff <name> not installed`, missing references by path. Missing PM files count nothing and are not listed. Contributors sorted by `chars` descending; contributor names are repository-relative `/` paths.
 
-- [ ] **Step 1: Write the failing tests** with a synthetic repository (agent file, `skills/pm-resume/SKILL.md`, `skills/pm-next/SKILL.md`, `skills/pm-checkpoint/SKILL.md`, `skills/pm-review/SKILL.md`, a `planning/` with `config.md` holding a Handoffs row `| design | \`sp:brain\` | ... |`, `NOW.md` idle, `ROADMAP.md` with one ready agent item whose `Brief` exists, `LOG.md`, one ADR, one inbox file plus `README.md`):
+- [ ] **Step 1: Write the failing tests** with a synthetic repository (agent file, `skills/pm-resume/SKILL.md`, `skills/pm-next/SKILL.md`, `skills/pm-checkpoint/SKILL.md`, `skills/pm-review/SKILL.md`, a `planning/` with `config.md` whose Handoffs table has a `design` row naming the skill `sp:brain`, `NOW.md` idle, `ROADMAP.md` with one ready agent item whose `Brief` exists, `LOG.md`, one ADR, and one inbox file plus `inbox/README.md`):
   - `resume.chars` equals `always.chars` plus the exact `chars` of its listed files; `LOG.md`'s contributor has `partial: true`.
   - **Move guard:** move `## B` out of the agent file into `skills/pm-setup/references/rules.md` and add the line `Read <pm-setup skill>/references/rules.md.` to the agent file; `always.chars` drops, and `resume.chars` changes only by that added line's characters plus one newline.
   - `claim` counts the ready item's brief and the ADR (`partial: true`); with `sp:brain` installed under `home`, a `handoff: true` contributor and `tokensWithoutHandoff < tokens`; without it, `missing` holds `handoff sp:brain not installed`.
@@ -143,10 +149,12 @@ Rules (from the spec): `always` = agent sections only. Every other session = the
 ### Task 4: CLI and output
 
 **Files:**
+
 - Modify: `skills/pm-help/scripts/context.ts` (CLI part, header comment in the `lint.ts` style)
 - Test: `skills/pm-help/scripts/context.test.ts`
 
 **Interfaces:**
+
 - Consumes: `buildReport`, `loadMap`.
 - Produces:
 
@@ -158,7 +166,7 @@ export function main(argv: string[], env?: { cwd: string; home: string }): { cod
 `main` parses `[--root <dir>] [--pm-root <dir>] [--format text|json]`; `--pm-root` defaults to `PM state directory` in `AGENTS.md` or `CLAUDE.md`, else `planning/`, normalised as `pm-lint`'s `normalisePmRoot`. The script runs `main(process.argv.slice(2))` only under `import.meta.main`.
 
 - [ ] **Step 1: Write the failing tests:**
-  - `renderText` on a fixed `Report` gives exactly the spec's text example layout: heading `## Context <date>`, the 3-column table, at most 3 contributors per row as `<name> <tokens>` joined by `; `, `≤ ` before partial names, tokens rounded to the nearest 100 with `,` thousands separators (`21,700`), then `- PM state: no tidy needed` (or `- Tidy recommended: <file> <chars> characters (limit <limit>)`, one per entry, joined by `; `) and `- Estimated tokens are characters / 4; ≤ marks files read in part, counted whole.`
+  - `renderText` on a fixed `Report` gives exactly the spec's text example layout: heading `## Context <date>`, the 3-column table, at most 3 contributors per row as `<name> <tokens>` joined by a semicolon and a space, `≤` and a space before partial names, tokens rounded to the nearest 100 with `,` thousands separators (`21,700`), then `- PM state: no tidy needed` (or `- Tidy recommended: <file> <chars> characters (limit <limit>)`, one per entry, joined by a semicolon and a space) and `- Estimated tokens are characters / 4; ≤ marks files read in part, counted whole.`
   - `main(["--format", "json"])` output parses and has `version: 1` and 5 sessions.
   - `main(["--format", "xml"])` and `main(["--bogus"])` return code 2; an invalid map (point `loadMap` at a temp file via an unexported test hook or `env`) returns code 2 with the `MapError` message.
   - `--pm-root planning` and `--pm-root .\\planning\\` both resolve to `planning/`.
@@ -174,10 +182,11 @@ export function main(argv: string[], env?: { cwd: string; home: string }): { cod
 ### Task 5: pm-help diagnose and version
 
 **Files:**
+
 - Modify: `skills/pm-help/SKILL.md` (diagnosis table row 30, `## Output (overview)` template, the note after it, the `pm-help` skill guide row)
 - Modify: `package.json` via `just bump prerelease`
 
-- [ ] **Step 1: Add check 30** to the diagnosis table: `| 30 | If Bun is installed: \`bun <pm-help skill>/scripts/context.ts --root . --format json\` lists no \`tidy\` entry | \`<file> is <n> characters (limit <m>); tidy it\` | \`pm-park\` the tidy work |`.
+- [ ] **Step 1: Add check 30** to the diagnosis table, in the table's existing column style. Check: if Bun is installed, `bun <pm-help skill>/scripts/context.ts --root . --format json` lists no `tidy` entry. Finding: `<file> is <n> characters (limit <m>); tidy it`. Fix: `pm-park` the tidy work.
 
 - [ ] **Step 2: Add `## Context`** to the overview template after `## What's missing`: the script's text table and bullets, or `Context report needs Bun.` State below the template that the table is information, never a finding, that explain mode never runs it, and that the table is exempt from the 5-bullet limit.
 
@@ -192,6 +201,7 @@ export function main(argv: string[], env?: { cwd: string; home: string }): { cod
 ### Task 6: Baseline report and verification
 
 **Files:**
+
 - Create: `planning/research/2026-11-24-context-baseline.md`
 
 - [ ] **Step 1: Run** `bun skills/pm-help/scripts/context.ts --root .` and `--format json` on this branch.
