@@ -22,6 +22,7 @@ rules restate them as checks; they never add a field or a state.
 | `ROADMAP.md` | **Item fields** (Shared definitions) | format, fields, roadmap |
 | `LOG.md` | The `pm-init` template's line formats | format, log |
 | `RISKS.md` | **Risk register** (Shared definitions) | format, fields, risks |
+| `ENGINEERING.md` | **Engineering file** (Shared definitions) | format, fields, engineering |
 | `STACK.md` | **Stack file** (Shared definitions) | format, fields, stack |
 | `PAUSE.md` | **Pause file** (Shared definitions) | format, fields, pause |
 | `inbox/*.md` | **Inbox file** (Shared definitions) | format, fields, inbox |
@@ -177,6 +178,19 @@ header, a stack entry, the pause file, and the `config.md` sections.
 | `risks/order` | error | yes | Open is ordered red, amber, green, then by ID. |
 | `risks/id-unique` | error | no | A risk ID appears once across Open, Closed, and Removed. |
 | `risks/removed` | error | no | A removed risk is `- YYYY-MM-DD RK-NNN <title>. Reason: <reason>.` |
+
+### engineering
+
+| Rule | Severity | Fix | Requirement |
+| --- | --- | --- | --- |
+| `engineering/sections` | error | no | `ENGINEERING.md` has `## Technology`, `## Principles`, and `## Removed`, in that order. |
+| `engineering/technology` | error | no | A technology is `### <Name>` with Kind, Version, Reason, Decision, Source, and Added, in that order; its name is unique in the section (ignoring case). |
+| `engineering/principle` | error | no | A principle is `### EP-NNN <Title>` (title at most 8 words) with Rule, Applies to, Check, Decision, Source, and Added, in that order. |
+| `engineering/values` | error | no | Check is a backticked command or `review`; Decision is none or an existing ADR ID; Source is not empty; Added is YYYY-MM-DD. |
+| `engineering/decision-current` | warning | no | A `Decision` ADR is not superseded or deprecated (the fix is `pm-engineering change`). |
+| `engineering/id-unique` | error | no | A principle ID appears once across Principles and Removed. |
+| `engineering/order` | error | yes | Technology is alphabetical, Principles by ID, Removed newest first. |
+| `engineering/removed` | error | no | A removed line is `- YYYY-MM-DD <Name or EP-NNN title>. Reason: <reason>.` |
 
 ### adr
 

@@ -27,7 +27,7 @@ export interface Finding {
   message: string;
 }
 
-export type Kind = "config" | "vision" | "strategy" | "now" | "roadmap" | "log" | "risks" | "stack" | "pause" | "inbox" | "brief" | "adr" | "markdown";
+export type Kind = "config" | "vision" | "strategy" | "now" | "roadmap" | "log" | "risks" | "engineering" | "stack" | "pause" | "inbox" | "brief" | "adr" | "markdown";
 
 const TOP_FILES: Record<string, Kind> = {
   "config.md": "config",
@@ -37,6 +37,7 @@ const TOP_FILES: Record<string, Kind> = {
   "ROADMAP.md": "roadmap",
   "LOG.md": "log",
   "RISKS.md": "risks",
+  "ENGINEERING.md": "engineering",
   "STACK.md": "stack",
   "PAUSE.md": "pause",
 };
@@ -61,6 +62,8 @@ export const KEYS = {
   milestone: ["Serves", "Exit criteria", "Target", "Status"],
   focus: ["Milestone", "Why now"],
   risk: ["Likelihood", "Impact", "RAG", "RAG override", "Status", "Owner", "Affects", "Trigger", "Mitigation", "Raised", "Reviewed", "Closed"],
+  technology: ["Kind", "Version", "Reason", "Decision", "Source", "Added"],
+  principle: ["Rule", "Applies to", "Check", "Decision", "Source", "Added"],
   inbox: ["Captured", "Source", "Kind", "Severity", "Affects", "Context", "Discuss", "Related", "Brief", "Reviewed"],
   brief: ["Status", "Origin", "Updated"],
   adr: ["Status", "Date", "Category", "Supersedes", "Item", "Source"],
@@ -80,6 +83,7 @@ const FILE_KEYS: Partial<Record<Kind, readonly string[]>> = {
   roadmap: KEYS.item,
   strategy: [...KEYS.milestone, ...KEYS.focus],
   risks: KEYS.risk,
+  engineering: [...KEYS.technology, ...KEYS.principle],
   inbox: KEYS.inbox,
   brief: KEYS.brief,
   adr: KEYS.adr,
@@ -304,6 +308,7 @@ export function checkStructure(context: Context): Finding[] {
       roadmap: checkRoadmap,
       log: checkLog,
       risks: checkRisks,
+      engineering: checkEngineering,
       inbox: checkInbox,
       brief: checkBrief,
       adr: checkAdr,
@@ -756,6 +761,106 @@ function checkRisks(doc: Doc, add: Add) {
   }
 }
 
+/** One `###` block in ENGINEERING.md: a technology (`id` empty) or a principle (`id` is EP-NNN when the heading has one). */
+export interface EngineeringBlock {
+  id: string;
+  title: string;
+  heading: number;
+  start: number;
+  end: number;
+  fields: Map<string, Field>;
+  list: Field[];
+}
+
+const PRINCIPLE_ID = /^(EP-\d{3,})\s+(.+)$/;
+const REMOVED_ENGINEERING = /^\d{4}-\d{2}-\d{2} .+\. Reason: .+\.$/;
+const REMOVED_EP = /^\d{4}-\d{2}-\d{2} (EP-\d{3,})\b/;
+
+export function engineeringBlocks(lines: Line[], section: Section): EngineeringBlock[] {
+  return sections(lines, 3, section)
+    .slice(1)
+    .map((block) => {
+      const match = PRINCIPLE_ID.exec(block.heading!.text);
+      const list = fields(lines, block);
+      return { id: match?.[1] ?? "", title: match?.[2] ?? block.heading!.text, heading: block.heading!.n, start: block.start, end: block.end, fields: fieldMap(list), list };
+    });
+}
+
+/** Lowercased technology names, compared for order and duplicates. */
+const techKey = (block: EngineeringBlock) => block.title.toLowerCase();
+
+function checkEngineeringValues(block: EngineeringBlock, add: Add, context: Context) {
+  const get = (key: string) => val(block.fields, key);
+  const at = (key: string) => lineOf(block.fields, key, block.heading);
+  const name = block.id || block.title;
+  if (block.fields.has("check") && !/^`[^`]+`$|^review$/.test(get("Check"))) add(at("Check"), "engineering/values", `${name}: Check is a backticked command or review, not "${get("Check")}".`);
+  if (block.fields.has("decision")) {
+    const decision = get("Decision");
+    if (decision !== "none") {
+      const adr = /^ADR-\d{3,}$/.test(decision) ? context.adrs.find((a) => a.id === decision) : undefined;
+      if (!adr) add(at("Decision"), "engineering/values", `${name}: Decision is none or one ADR in the decisions folder, not "${decision}".`);
+      else if (/^superseded\b/i.test(adr.status) || /^deprecated$/i.test(adr.status)) {
+        add(at("Decision"), "engineering/decision-current", `${name}: ${adr.id} is ${adr.status}; run pm-engineering change.`);
+      }
+    }
+  }
+  if (block.fields.has("source") && get("Source") === "") add(at("Source"), "engineering/values", `${name}: Source is empty.`);
+  if (block.fields.has("added") && !isDate(get("Added"))) add(at("Added"), "engineering/values", `${name}: Added "${get("Added")}" is not YYYY-MM-DD.`);
+}
+
+function checkEngineering(doc: Doc, add: Add, context: Context) {
+  requireSections(doc, add, "engineering/sections", [["Technology", /^Technology/i], ["Principles", /^Principles/i], ["Removed", /^Removed/i]], true);
+  const technology = findSection(doc.h2, /^Technology/i);
+  if (technology) {
+    const blocks = engineeringBlocks(doc.lines, technology);
+    const seen = new Map<string, number>();
+    for (const block of blocks) {
+      const key = techKey(block);
+      if (seen.has(key)) add(block.heading, "engineering/technology", `${block.title} is also on line ${seen.get(key)}.`);
+      else seen.set(key, block.heading);
+      checkBlockFields(block.list, KEYS.technology, add, block.heading, "engineering/technology");
+      checkEngineeringValues(block, add, context);
+    }
+    const bad = blocks.find((b, i) => i > 0 && techKey(b).localeCompare(techKey(blocks[i - 1]!)) < 0);
+    if (bad) add(bad.heading, "engineering/order", "Technology is ordered alphabetically.");
+  }
+  const ids = new Map<string, number>();
+  const seenId = (id: string, n: number) => {
+    if (ids.has(id)) add(n, "engineering/id-unique", `${id} is also on line ${ids.get(id)}.`);
+    else ids.set(id, n);
+  };
+  const principles = findSection(doc.h2, /^Principles/i);
+  if (principles) {
+    const blocks = engineeringBlocks(doc.lines, principles);
+    for (const block of blocks) {
+      if (!block.id) {
+        add(block.heading, "engineering/principle", `"${block.title}" is not \`EP-NNN <Title>\`.`);
+        continue;
+      }
+      seenId(block.id, block.heading);
+      const words = block.title.split(/\s+/).length;
+      if (words > 8) add(block.heading, "title/length", `The title has ${words} words; the limit is 8.`);
+      checkBlockFields(block.list, KEYS.principle, add, block.heading, "engineering/principle");
+      checkEngineeringValues(block, add, context);
+    }
+    const numbered = blocks.filter((b) => b.id);
+    const bad = numbered.find((b, i) => i > 0 && idNumber(b.id) < idNumber(numbered[i - 1]!.id));
+    if (bad) add(bad.heading, "engineering/order", "Principles are ordered by ID.");
+  }
+  const removed = findSection(doc.h2, /^Removed/i);
+  if (removed) {
+    const list = bullets(doc.lines, removed);
+    for (const b of list) {
+      if (!REMOVED_ENGINEERING.test(b.text)) add(b.n, "engineering/removed", "A removed entry is `- YYYY-MM-DD <Name or EP-NNN title>. Reason: <reason>.`");
+      const id = REMOVED_EP.exec(b.text)?.[1];
+      if (id) seenId(id, b.n);
+    }
+    const date = (text: string) => /^(\d{4}-\d{2}-\d{2})/.exec(text)?.[1] ?? "";
+    const bad = list.find((b, i) => i > 0 && date(b.text) > date(list[i - 1]!.text));
+    if (bad) add(bad.n, "engineering/order", "Removed is newest first.");
+  }
+}
+
 function checkInbox(doc: Doc, add: Add) {
   const name = doc.rel.split("/").at(-1)!;
   if (!/^\d{4}-\d{2}-\d{2}-\d{4}-[a-z0-9]+(-[a-z0-9]+)*\.md$/.test(name)) add(1, "inbox/filename", `"${name}" is not YYYY-MM-DD-HHMM-<slug>.md.`);
@@ -931,6 +1036,27 @@ export function fixStructure(rel: string, text: string): string {
         out = [...out.slice(0, blocks[0]!.heading - 1), ...replaced, "", ...out.slice(blocks.at(-1)!.end)];
       }
     }
+  }
+  if (kind === "engineering") {
+    // Principles before Technology in the file is a section-order error, not a fix; sort each in place, bottom first.
+    lines = parseLines(out.join("\n") + "\n");
+    const h2 = sections(lines, 2);
+    const targets = [
+      { section: findSection(h2, /^Technology/i), compare: (a: EngineeringBlock, b: EngineeringBlock) => techKey(a).localeCompare(techKey(b)) },
+      { section: findSection(h2, /^Principles/i), compare: (a: EngineeringBlock, b: EngineeringBlock) => (a.id && b.id ? idNumber(a.id) - idNumber(b.id) : 0) },
+    ].filter((t): t is { section: Section; compare: (a: EngineeringBlock, b: EngineeringBlock) => number } => !!t.section).sort((a, b) => b.section.start - a.section.start);
+    for (const { section, compare } of targets) {
+      const blocks = engineeringBlocks(lines, section);
+      const sorted = [...blocks].sort(compare);
+      if (blocks.length > 1 && sorted.some((block, i) => block !== blocks[i])) {
+        const chunk = (b: EngineeringBlock) => trimBlank(out.slice(b.heading - 1, b.end));
+        const replaced = sorted.flatMap((b, i) => (i ? ["", ...chunk(b)] : chunk(b)));
+        out = [...out.slice(0, blocks[0]!.heading - 1), ...replaced, "", ...out.slice(blocks.at(-1)!.end)];
+      }
+    }
+    lines = parseLines(out.join("\n") + "\n");
+    const removed = findSection(sections(lines, 2), /^Removed/i);
+    if (removed) out = sortByDate(out, lines, removed);
   }
   if (kind === "log" || kind === "strategy") {
     lines = parseLines(out.join("\n") + "\n");
