@@ -254,7 +254,7 @@ git commit -m "feat(pm-docs-site): render mermaid fences with Pele at build time
 
 - Consumes: `consumer.ts` (Task 6), and `pm-docs-site peers architecture` (Task 2).
 
-- [ ] **Step 1: Write the failing `validate.ts` checks.**
+- [x] **Step 1: Write the failing `validate.ts` checks.**
   - Each check is a `fail(...)` with the message shown.
   - Run `just validate` before the SKILL.md rewrite. Expected: it fails on the minimum-version and four-file messages only where they are not yet true; record which.
   - The checks:
@@ -264,7 +264,7 @@ git commit -m "feat(pm-docs-site): render mermaid fences with Pele at build time
     - `readdirSync('docs-site')`, minus `node_modules`, `dist`, and `.astro`, equals the four names. Message: `docs-site: unexpected <name> (a package site holds package.json, astro.config.ts, bun.lock, .gitignore)`.
     - The MIT check moves to `packages/pm-docs-site/src/components/lib/*.astro`, which carry it today.
     - The fixture check moves to `packages/pm-docs-site/test/fixtures/planning.json`: same schemaVersion, required keys, and `validateSchema` as the template fixture had.
-- [ ] **Step 2: Rewrite SKILL.md** to spec section 3, keeping the Guard, the Output templates, and Communication-contract headings.
+- [x] **Step 2: Rewrite SKILL.md** to spec section 3, keeping the Guard, the Output templates, and Communication-contract headings.
   - Replace "Manifest and render script" and "Placeholders" with a `## Package` section: the line ``Minimum package version: `0.1.0-pre.4` ``, the `consumer.ts` commands, `This skill reads schemaVersion 5.`, and `bun add @purview-dev/pm-docs-site --exact`.
   - `check` reports `current`, `package below minimum (<installed> < <minimum>)`, `schema unsupported`, or `template site (run upgrade)`.
   - `scaffold`: `consumer.ts write`, then `bun add`, then the `Docs` justfile group, then `bun run check` and `bun run build`, then the Aspire step. Title and description come from the README and are printed in the Note.
@@ -272,10 +272,10 @@ git commit -m "feat(pm-docs-site): render mermaid fences with Pele at build time
   - `upgrade`: a package site runs `bun add …@latest --exact` and verifies. A template site runs `consumer.ts inspect`, then asks the unlisted-files question (`<n> files in <site> are not template files. How should upgrade continue?`, with `Stop so I can move them (recommended)` and `Delete them too`). It then shows `extraConfig`, runs `migrate` (with `--include-unlisted` on the second answer), runs `bun add`, and runs the architecture peers when `architectureDir` is set. Finally it verifies.
   - The Aspire step: detect an AppHost (`Sdk="Aspire.AppHost.Sdk"`, or `apphost.mts`/`apphost.ts` importing Aspire). Ask `Add the docs site to the Aspire AppHost <path>?` (`Add it (recommended)`, `Leave the AppHost alone`). On yes, use the C# variants, or TypeScript `addViteApp('docs', '<site>')` with Bun in run mode, verifying the TS names against the Aspire docs. Then ask `Add the two AppHost tests?` (`Add them (recommended)`, `Skip the tests`) only when composition tests exist. Record each answer in the Note.
   - In `MODULE.md`, drop its placeholder table's dependency on `SKILL.md` Placeholders, keeping `{{APPHOST_TO_SITE}}` and the rest as values the step fills.
-- [ ] **Step 3: Rewrite `references/spec.md`** to the package site: rules, the four files, the data contract by reference to the package README, Aspire (section 10 kept), tests and acceptance, and Not doing. Delete the template-file, component, and page-file sections.
-- [ ] **Step 4: Delete** the three template folders and `scripts/site.ts`. Switch `consumer.test.ts` to its own scratch generator.
-- [ ] **Step 5: Run** `just validate && just test && bunx markdownlint-cli2 "skills/pm-docs-site/**/*.md"`. Expected: all pass.
-- [ ] **Step 6: Commit** `feat(pm-docs-site)!: build sites on the pm-docs-site package`. The commit body states that the rules stay on 21 (prerelease line).
+- [x] **Step 3: Rewrite `references/spec.md`** to the package site: rules, the four files, the data contract by reference to the package README, Aspire (section 10 kept), tests and acceptance, and Not doing. Delete the template-file, component, and page-file sections.
+- [x] **Step 4: Delete** the three template folders and `scripts/site.ts`. Switch `consumer.test.ts` to its own scratch generator.
+- [x] **Step 5: Run** `just validate && just test && bunx markdownlint-cli2 "skills/pm-docs-site/**/*.md"`. Expected: all pass.
+- [x] **Step 6: Commit** `feat(pm-docs-site)!: build sites on the pm-docs-site package`. The commit body states that the rules stay on 21 (prerelease line).
 
 ### Task 9: Rules, agent instructions, help, and version
 
