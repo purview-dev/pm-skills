@@ -304,10 +304,10 @@ git commit -m "feat(pm-docs-site): render mermaid fences with Pele at build time
 
 No repository files change unless a run finds a defect. A defect is fixed in the task that owns it, with a test.
 
-- [ ] **Step 1: Upgrade.** In a temp folder, recreate the pre-migration site with `git archive main docs-site | tar -x -C <tmp>`. Run `consumer.ts migrate <tmp>/docs-site`. Expected: `astro.config.ts` and `package.json` equal this branch's `docs-site/` apart from the Task 7 Step 2 edits (`views`), and only those edits.
-- [ ] **Step 2: Scaffold.** In a scratch repository with a `README.md`, `docs/`, and a `planning/planning.json` copied from this repository, follow SKILL.md `scaffold`, using `file:` to this branch's built package because `pre.4` is not yet on npm. Expected: `bun run check` and `bun run build` pass.
-- [ ] **Step 3: Aspire.** When `dotnet --version` succeeds, run `dotnet new aspire-apphost` in a scratch folder and follow the Aspire step.
+- [x] **Step 1: Upgrade.** In a temp folder, recreate the pre-migration site with `git archive main docs-site | tar -x -C <tmp>`. Run `consumer.ts migrate <tmp>/docs-site`. Expected: `astro.config.ts` and `package.json` equal this branch's `docs-site/` apart from the Task 7 Step 2 edits (`views`), and only those edits.
+- [x] **Step 2: Scaffold.** In a scratch repository with a `README.md`, `docs/`, and a `planning/planning.json` copied from this repository, follow SKILL.md `scaffold`, using `file:` to this branch's built package because `pre.4` is not yet on npm. Expected: `bun run check` and `bun run build` pass.
+- [x] **Step 3: Aspire.** When `dotnet --version` succeeds, run `dotnet new aspire-apphost` in a scratch folder and follow the Aspire step.
   - On yes: `dotnet build` passes, and running the AppHost serves the Home page on the `docs` endpoint (this exercises `--port`).
   - On no: `git diff` of the AppHost is empty.
   - Without the .NET SDK, write `Aspire step not run: no .NET SDK` for the PR body and the checkpoint.
-- [ ] **Step 4:** Record the three results in the PR body draft. The `Done when` check `npm view @purview-dev/pm-docs-site version` = `0.1.0-pre.4` runs only after the merge, through `publish-pm-docs-site.yml`.
+- [x] **Step 4:** Record the three results in the PR body draft. The `Done when` check `npm view @purview-dev/pm-docs-site version` = `0.1.0-pre.4` runs only after the merge, through `publish-pm-docs-site.yml`.
