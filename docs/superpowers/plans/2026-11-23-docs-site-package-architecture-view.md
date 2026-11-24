@@ -58,16 +58,16 @@
   - `resolveMarkerFile(file: string, pageURL: URL, root: string): string`: the absolute path. It throws `Error` when the path is outside `root`.
   - `findRepositoryRoot(start: string): string`: the nearest ancestor (inclusive) holding `.git`, else `start`.
 
-- [ ] **Step 1: Branch.** `git -C P:\GitHub\purview-dev\astroc4 switch -c feat/likec4-markers main`. Expected: `Switched to a new branch`.
-- [ ] **Step 2: Port the reference tests.** Port the cases for `parseDiagramOptions` and `resolveDiagramPath` from `P:\GitHub\purview-dev\purview-dev\src\tests\unit\docs-diagrams.test.ts` into `markers.test.ts`, as vitest. Add these:
+- [x] **Step 1: Branch.** `git -C P:\GitHub\purview-dev\astroc4 switch -c feat/likec4-markers main`. Expected: `Switched to a new branch`.
+- [x] **Step 2: Port the reference tests.** Port the cases for `parseDiagramOptions` and `resolveDiagramPath` from `P:\GitHub\purview-dev\purview-dev\src\tests\unit\docs-diagrams.test.ts` into `markers.test.ts`, as vitest. Add these:
   - `resolveMarkerFile('../diagrams/a.c4', pathToFileURL('<root>/docs/guide/x.md'), '<root>')` equals `join('<root>','docs','diagrams','a.c4')`.
   - `resolveMarkerFile('/docs/a.c4', …)` equals `join('<root>','docs','a.c4')`.
   - `resolveMarkerFile('../../../etc/x.c4', …)` throws `/outside the repository/`.
   - `findRepositoryRoot` run in a temporary folder with `.git` two levels up returns that folder, and without one returns `start`.
-- [ ] **Step 3: Run and fail.** `bun run test src/__tests__/markers.test.ts`. Expected: FAIL (module not found).
-- [ ] **Step 4: Implement `src/markers.ts`.** Use `node:path` `resolve` and `relative`, with the same containment test as `readFenceFile` (`fences.ts:511-516`), against `root`.
-- [ ] **Step 5: Run and pass.** Same command. Expected: PASS.
-- [ ] **Step 6: Commit.** `git add src/markers.ts src/__tests__/markers.test.ts` then `git commit -m "feat: parse purview:likec4 markers"`.
+- [x] **Step 3: Run and fail.** `bun run test src/__tests__/markers.test.ts`. Expected: FAIL (module not found).
+- [x] **Step 4: Implement `src/markers.ts`.** Use `node:path` `resolve` and `relative`, with the same containment test as `readFenceFile` (`fences.ts:511-516`), against `root`.
+- [x] **Step 5: Run and pass.** Same command. Expected: PASS.
+- [x] **Step 6: Commit.** `git add src/markers.ts src/__tests__/markers.test.ts` then `git commit -m "feat: parse purview:likec4 markers"`.
 
 ### Task A2: Markers in the fence plugin
 
@@ -91,7 +91,7 @@
 - Mark the page as using the inline component exactly as an inline `file=` fence does, so the page script mounts it.
 - **Fallback** (no `fileURL`, unreadable file, undeclared view, a layout error, or a missing close): remove only the opening and closing nodes, and call `onMarkerFallback(\`${describe(fileURL)}:${line}: purview:likec4 marker kept its fallback — ${reason}\`)`. A missing close removes nothing.
 
-- [ ] **Step 1: Write the failing tests.** Use the mock-ctx style of `src/__tests__/fences.test.ts` with a temporary model file holding `view index { include * }`. Tests:
+- [x] **Step 1: Write the failing tests.** Use the mock-ctx style of `src/__tests__/fences.test.ts` with a temporary model file holding `view index { include * }`. Tests:
   - `valid marker becomes one placeholder`: one `html` node containing `data-astroc4-fence` and `data-view-id="index"`, with no `code` node of lang `mermaid` left.
   - `undeclared view keeps mermaid`: the `code` mermaid node remains, both marker nodes are removed, and `onMarkerFallback` is called once, with `/undeclared|not declared/`.
   - `unclosed marker is left as is`: the node count is unchanged and the fallback is called once.
@@ -101,10 +101,10 @@
   - `strict validation does not throw on a bad marker`.
   - `markers: false leaves comments`.
   - `mdx page ignores markers`.
-- [ ] **Step 2: Run and fail.** `bun run test src/__tests__/fences-markers.test.ts`. Expected: FAIL.
-- [ ] **Step 3: Implement** in `src/fences.ts` as described above.
-- [ ] **Step 4: Run and pass.** Run `bun run test`. Expected: all tests PASS, including the existing `fences.test.ts`.
-- [ ] **Step 5: Commit.** `git commit -am "feat: render purview:likec4 markers as diagrams"` (add the test file first).
+- [x] **Step 2: Run and fail.** `bun run test src/__tests__/fences-markers.test.ts`. Expected: FAIL.
+- [x] **Step 3: Implement** in `src/fences.ts` as described above.
+- [x] **Step 4: Run and pass.** Run `bun run test`. Expected: all tests PASS, including the existing `fences.test.ts`.
+- [x] **Step 5: Commit.** `git commit -am "feat: render purview:likec4 markers as diagrams"` (add the test file first).
 
 ### Task A3: The `markers` integration option
 
@@ -125,15 +125,15 @@
 - `onMarkerFallback` is `logger.warn`.
 - With `fences: false`, markers are off too. Document this.
 
-- [ ] **Step 1: Write the failing tests.** In `integration-fences.test.ts`, assert that the registered fence plugin receives:
+- [x] **Step 1: Write the failing tests.** In `integration-fences.test.ts`, assert that the registered fence plugin receives:
   - `markers.root` equal to the temporary repository root, when `.git` sits above the Astro root;
   - `markers: false` when the option is `false`;
   - a resolved `root` for `{ root: '..' }`;
   - the forwarded option through the Starlight plugin (as `plugin.test.ts` checks other options).
-- [ ] **Step 2: Run and fail.** `bun run test src/__tests__/integration-fences.test.ts`. Expected: FAIL.
-- [ ] **Step 3: Implement** as described above.
-- [ ] **Step 4: Run and pass.** `bun run test && bun run check`. Expected: PASS, 0 errors.
-- [ ] **Step 5: Commit.** `git commit -am "feat: markers option with a repository root"`.
+- [x] **Step 2: Run and fail.** `bun run test src/__tests__/integration-fences.test.ts`. Expected: FAIL.
+- [x] **Step 3: Implement** as described above.
+- [x] **Step 4: Run and pass.** `bun run test && bun run check`. Expected: PASS, 0 errors.
+- [x] **Step 5: Commit.** `git commit -am "feat: markers option with a repository root"`.
 
 ### Task A4: Playground, smoke, docs, and release prep
 
@@ -155,16 +155,16 @@
   - `skills/purview-astroc4-plugin/SKILL.md`.
 - Modify: `package.json` `version` → `1.0.0-prerelease.9`, and `CHANGELOG.md` gains `## [1.0.0-prerelease.9] - <date>` with `### Added` and a bold lead sentence.
 
-- [ ] **Step 1:** Write the playground page and the smoke assertions.
-- [ ] **Step 2:** Run `bun run test && bun run check && bun run build`, then the smoke test against preview (AGENTS.md verify loop). Expected: all pass, and the build logs one marker fallback warning, for the undeclared view.
-- [ ] **Step 3:** Update the docs, the version, and the CHANGELOG.
-- [ ] **Step 4:** Run the verify loop again. Expected: pass.
-- [ ] **Step 5: Commit.** `git commit -am "feat: markers playground, docs and 1.0.0-prerelease.9"`.
-- [ ] **Step 6: Ask the user before pushing.** It is outward-facing. On yes, run `git push -u origin feat/likec4-markers` and `gh pr create --fill --base main` in the astroc4 repository. Report the PR URL.
+- [x] **Step 1:** Write the playground page and the smoke assertions.
+- [x] **Step 2:** Run `bun run test && bun run check && bun run build`, then the smoke test against preview (AGENTS.md verify loop). Expected: all pass, and the build logs one marker fallback warning, for the undeclared view.
+- [x] **Step 3:** Update the docs, the version, and the CHANGELOG.
+- [x] **Step 4:** Run the verify loop again. Expected: pass.
+- [x] **Step 5: Commit.** `git commit -am "feat: markers playground, docs and 1.0.0-prerelease.9"`.
+- [x] **Step 6: Ask the user before pushing.** It is outward-facing. On yes, run `git push -u origin feat/likec4-markers` and `gh pr create --fill --base main` in the astroc4 repository. Report the PR URL.
 
 ### STOP: astroc4 release
 
-- [ ] **The user merges the astroc4 PR.** Then verify: `npm view @purview-dev/astroc4@1.0.0-prerelease.9 version`. Expected: `1.0.0-prerelease.9`.
+- [x] **The user merges the astroc4 PR.** Then verify: `npm view @purview-dev/astroc4@1.0.0-prerelease.9 version`. Expected: `1.0.0-prerelease.9`.
   - Until it passes, Part B may proceed through Task B4 against a local link (`bun link` in astroc4, then `bun link @purview-dev/astroc4` in the consumer). **Never commit a `link:` or out-of-repo `file:` dependency.**
   - If the release is still missing at Task B6, run `pm-checkpoint pause` with the open question `Merge the astroc4 PR so 1.0.0-prerelease.9 publishes.` Do not close R-045.
 
@@ -186,15 +186,15 @@
   - `ResolvedOptions.architecture: { project: string | null; highlighting: boolean; markersRoot: string } | null`
 - `project` is resolved absolute from the site root. `markersRoot` is the resolved `docs.root` when `docs` is set, else the site root.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `architecture absent → null`.
   - `{} → { project: null, highlighting: true, markersRoot: <site root> }`.
   - `{ project: 'arch' } with docs.root '..'`: `project` is `resolve(root,'arch')` and `markersRoot` is `resolve(root,'..')`.
   - `architecture: 'x'` throws `pm-docs-site: architecture must be an object`.
-- [ ] **Step 2:** Run `bun test test/options.test.ts`. Expected: FAIL.
-- [ ] **Step 3:** Implement, with a `checkArchitecture` beside `checkDocs`.
-- [ ] **Step 4:** Run the same command. Expected: PASS.
-- [ ] **Step 5: Commit.** `git commit -m "feat(pm-docs-site): architecture option" -- packages/pm-docs-site/lib packages/pm-docs-site/test/options.test.ts`
+- [x] **Step 2:** Run `bun test test/options.test.ts`. Expected: FAIL.
+- [x] **Step 3:** Implement, with a `checkArchitecture` beside `checkDocs`.
+- [x] **Step 4:** Run the same command. Expected: PASS.
+- [x] **Step 5: Commit.** `git commit -m "feat(pm-docs-site): architecture option" -- packages/pm-docs-site/lib packages/pm-docs-site/test/options.test.ts`
 
 ### Task B2: View-folder pages
 
@@ -214,11 +214,11 @@
   - `ViewGroup { slug: string; title: string; views: ViewRef[] }`
 - Consumes (B1): `ResolvedOptions.architecture`.
 
-- [ ] **Step 1:** Port the template's tests to `bun test`, with `viewGroups` taking an explicit `viewsDir`. Add the sidebar test: `Architecture` appears only when `architecture.project` is set.
-- [ ] **Step 2:** Run `bun test test/architecture.test.ts test/sidebar.test.ts`. Expected: FAIL.
-- [ ] **Step 3:** Implement `lib/architecture.ts`, the route, and the sidebar change. `viewGroups` reads `<project>/views`.
-- [ ] **Step 4:** Run the same command. Expected: PASS.
-- [ ] **Step 5: Commit.** `git commit -m "feat(pm-docs-site): architecture view-folder pages" -- packages/pm-docs-site`
+- [x] **Step 1:** Port the template's tests to `bun test`, with `viewGroups` taking an explicit `viewsDir`. Add the sidebar test: `Architecture` appears only when `architecture.project` is set.
+- [x] **Step 2:** Run `bun test test/architecture.test.ts test/sidebar.test.ts`. Expected: FAIL.
+- [x] **Step 3:** Implement `lib/architecture.ts`, the route, and the sidebar change. `viewGroups` reads `<project>/views`.
+- [x] **Step 4:** Run the same command. Expected: PASS.
+- [x] **Step 5: Commit.** `git commit -m "feat(pm-docs-site): architecture view-folder pages" -- packages/pm-docs-site`
 
 ### Task B3: Load astroc4 only when asked
 
@@ -241,15 +241,15 @@
   - `files`, if `lib/astroc4.ts` and `lib/architecture.ts` must ship (follow `scripts/build.ts`).
 - Test: `test/integration.test.ts`.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `no architecture → no astroc4 import`: `loadAstroc4` is not called, which is observable through an injectable loader or a spy.
   - `architecture set → starlight plugins include astroc4 with markers.root`.
   - `missing astroc4 → error names the bun add command`: simulate with a loader that throws `ERR_MODULE_NOT_FOUND`.
   - `/architecture/[group] injected only with project`.
-- [ ] **Step 2:** Run `bun test test/integration.test.ts`. Expected: FAIL.
-- [ ] **Step 3:** Implement. Before the release, install astroc4 through the local link from the STOP section.
-- [ ] **Step 4:** Run `bun test && bun run check`. Expected: PASS, 0 errors.
-- [ ] **Step 5: Commit.** `git commit -m "feat(pm-docs-site): load astroc4 for the architecture option" -- packages/pm-docs-site`
+- [x] **Step 2:** Run `bun test test/integration.test.ts`. Expected: FAIL.
+- [x] **Step 3:** Implement. Before the release, install astroc4 through the local link from the STOP section.
+- [x] **Step 4:** Run `bun test && bun run check`. Expected: PASS, 0 errors.
+- [x] **Step 5: Commit.** `git commit -m "feat(pm-docs-site): load astroc4 for the architecture option" -- packages/pm-docs-site`
 
 ### Task B4: Demo and the no-architecture build
 
@@ -265,12 +265,12 @@
 - Modify: `scripts/check-demo.ts`. `docs/guide/diagrams/index.html` has `data-astroc4-fence`, and no `language-mermaid`.
 - Modify: `packages/pm-docs-site/test/install.test.ts`. Assert that the packed-install site has no `node_modules/@purview-dev/astroc4` and that its build passes.
 
-- [ ] **Step 1:** Add the assertions to `check-demo.ts` and `install.test.ts`.
-- [ ] **Step 2:** Run `just demo-check`. Expected: FAIL (no architecture pages yet).
-- [ ] **Step 3:** Add the model, the page, the config, and the dependencies.
-- [ ] **Step 4:** Run `just package-test`. Expected: PASS, including `demo-check` and `install.test.ts`.
-- [ ] **Step 5:** Regenerate the demo export only if the demo PM files changed: `bun skills/pm-export/scripts/export.ts write --frozen --root examples/demo --pm-root planning/`.
-- [ ] **Step 6: Commit.** `git commit -m "feat(pm-docs-site): demo architecture and markers" -- examples/demo scripts/check-demo.ts packages/pm-docs-site/test/install.test.ts`
+- [x] **Step 1:** Add the assertions to `check-demo.ts` and `install.test.ts`.
+- [x] **Step 2:** Run `just demo-check`. Expected: FAIL (no architecture pages yet).
+- [x] **Step 3:** Add the model, the page, the config, and the dependencies.
+- [x] **Step 4:** Run `just package-test`. Expected: PASS, including `demo-check` and `install.test.ts`.
+- [x] **Step 5:** Regenerate the demo export only if the demo PM files changed: `bun skills/pm-export/scripts/export.ts write --frozen --root examples/demo --pm-root planning/`.
+- [x] **Step 6: Commit.** `git commit -m "feat(pm-docs-site): demo architecture and markers" -- examples/demo scripts/check-demo.ts packages/pm-docs-site/test/install.test.ts`
 
 ### Task B5: Docs
 
@@ -282,14 +282,14 @@
   - the marker, with a link to the purview.dev marker spec and astroc4's `Fences.md`;
   - `.md` only, the Mermaid fallback, and that ADR sections fall back to Mermaid.
 
-- [ ] **Step 1:** Write both sections.
-- [ ] **Step 2:** Run `bunx markdownlint-cli2 packages/pm-docs-site/README.md docs/wiki/guide/Docs-Site-Package.md && just validate`. Expected: 0 issues, and validate passes (version-drift checks).
-- [ ] **Step 3: Commit.** `git commit -m "docs(pm-docs-site): architecture option" -- packages/pm-docs-site/README.md docs/wiki/guide/Docs-Site-Package.md`
+- [x] **Step 1:** Write both sections.
+- [x] **Step 2:** Run `bunx markdownlint-cli2 packages/pm-docs-site/README.md docs/wiki/guide/Docs-Site-Package.md && just validate`. Expected: 0 issues, and validate passes (version-drift checks).
+- [x] **Step 3: Commit.** `git commit -m "docs(pm-docs-site): architecture option" -- packages/pm-docs-site/README.md docs/wiki/guide/Docs-Site-Package.md`
 
 ### Task B6: Pin the release and verify (after STOP)
 
-- [ ] **Step 1:** Confirm `npm view @purview-dev/astroc4@1.0.0-prerelease.9 version` prints `1.0.0-prerelease.9`. Otherwise follow the STOP section's pause.
-- [ ] **Step 2:** Remove the local links. Pin `1.0.0-prerelease.9` exactly in `packages/pm-docs-site/package.json` (devDependencies and peer) and `examples/demo/package.json`. Run `bun install` in both, and commit the updated `bun.lock` files.
-- [ ] **Step 3:** Run `just package-test && just lint-check && just validate && just version-check`. Expected: all pass.
-- [ ] **Step 4: Commit.** `git commit -m "build(pm-docs-site): pin astroc4 1.0.0-prerelease.9" -- packages/pm-docs-site examples/demo`
-- [ ] **Step 5:** Check R-045's `Done when` against the evidence from Step 3, then hand off to `pm-checkpoint done`.
+- [x] **Step 1:** Confirm `npm view @purview-dev/astroc4@1.0.0-prerelease.9 version` prints `1.0.0-prerelease.9`. Otherwise follow the STOP section's pause.
+- [x] **Step 2:** Remove the local links. Pin `1.0.0-prerelease.9` exactly in `packages/pm-docs-site/package.json` (devDependencies and peer) and `examples/demo/package.json`. Run `bun install` in both, and commit the updated `bun.lock` files.
+- [x] **Step 3:** Run `just package-test && just lint-check && just validate && just version-check`. Expected: all pass.
+- [x] **Step 4: Commit.** `git commit -m "build(pm-docs-site): pin astroc4 1.0.0-prerelease.9" -- packages/pm-docs-site examples/demo`
+- [x] **Step 5:** Check R-045's `Done when` against the evidence from Step 3, then hand off to `pm-checkpoint done`.
