@@ -53,8 +53,13 @@ export interface Inspection {
 const MANIFEST = "pm-docs-site.json";
 /** The package's default export path, relative to the site root. */
 const DEFAULT_PLANNING = "../planning/planning.json";
-/** Files a package site keeps: migrate rewrites or leaves them, never deletes them. */
-const CONSUMER_FILES = ["package.json", "astro.config.ts", "bun.lock", ".gitignore"];
+/**
+ * Files a template site already has that a package site keeps: migrate rewrites
+ * or leaves them, never deletes them. An existing astro.config.ts is not one of
+ * them: in a template site it is unlisted, so migrate stops instead of
+ * overwriting it.
+ */
+const CONSUMER_FILES = ["package.json", "bun.lock", ".gitignore"];
 /** Installed or built folders, never part of the site's source. */
 const GENERATED_DIRS = ["node_modules", "dist", ".astro"];
 const GITIGNORE = "node_modules/\ndist/\n.astro/\n";

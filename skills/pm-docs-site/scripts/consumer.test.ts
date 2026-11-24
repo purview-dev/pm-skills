@@ -196,6 +196,20 @@ describe("migrate", () => {
     expect(files(site)).toEqual([".gitignore", "astro.config.ts", "bun.lock", "package.json"]);
   });
 
+  it("stops on an existing astro.config.ts, and replaces it with --include-unlisted", () => {
+    const site = templateSite();
+    writeFileSync(join(site, "astro.config.ts"), "export default {};\n");
+    const before = files(site).map((file) => [file, readFileSync(join(site, file), "utf8")]);
+    const stopped = run("migrate", site);
+    expect(stopped.status).toBe(1);
+    expect(stopped.out).toContain("unlisted: astro.config.ts");
+    expect(files(site).map((file) => [file, readFileSync(join(site, file), "utf8")])).toEqual(before);
+    const result = run("migrate", site, "--include-unlisted");
+    expect(result.status).toBe(0);
+    expect(files(site)).toEqual([".gitignore", "astro.config.ts", "bun.lock", "package.json"]);
+    expect(readFileSync(join(site, "astro.config.ts"), "utf8")).toBe(EXPECTED_CONFIG);
+  });
+
   it("ignores node_modules, dist, and .astro", async () => {
     const site = templateSite();
     for (const dir of ["node_modules/x", "dist", ".astro"]) {
