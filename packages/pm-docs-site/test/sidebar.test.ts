@@ -1,4 +1,6 @@
-import { resolve } from 'node:path';
+import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 
 import { describe, expect, it } from 'bun:test';
 
@@ -61,5 +63,28 @@ describe('buildSidebar', () => {
 		];
 
 		expect(buildSidebar(resolveOptions({ title: 'T', docs: { root: '../docs', sources } }, site))).toHaveLength(1);
+	});
+
+	it('adds an Architecture group after the plan group, one link per view group, when architecture.project is set', async () => {
+		const project = await mkdtemp(join(tmpdir(), 'architecture-'));
+		await mkdir(join(project, 'views'));
+		await mkdir(join(project, 'views', 'billing'));
+		await writeFile(join(project, 'views', 'landscape.c4'), 'views {\n  view c1-context {\n  }\n}\n');
+		await writeFile(join(project, 'views', 'billing', 'flows.c4'), 'views {\n  view flow-invoice {\n  }\n}\n');
+
+		const options = resolveOptions({ title: 'T', architecture: { project } }, site);
+		const sidebar = buildSidebar(options);
+
+		expect(sidebar[1]).toEqual({
+			label: 'Architecture',
+			items: [
+				{ label: 'Overview', link: '/architecture/overview/' },
+				{ label: 'Billing', link: '/architecture/billing/' },
+			],
+		});
+	});
+
+	it('leaves out the Architecture group when architecture.project is not set', () => {
+		expect(buildSidebar(resolveOptions({ title: 'T' }, site))).toHaveLength(1);
 	});
 });

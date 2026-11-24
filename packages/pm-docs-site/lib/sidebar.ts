@@ -1,13 +1,17 @@
 // The Starlight sidebar: the plan, its optional views switched on in the
-// options, then one group per docs source that has pages.
+// options, the architecture group when a LikeC4 project is configured, then
+// one group per docs source that has pages.
 
+import { join } from 'node:path';
+
+import { viewGroups } from './architecture.ts';
 import { pagesOf } from './repo-docs.ts';
 import type { ResolvedOptions } from './types.ts';
 
 export type SidebarItem = string | { label: string; link: string } | { label: string; items: SidebarItem[]; collapsed?: boolean };
 
 export function buildSidebar(options: ResolvedOptions): SidebarItem[] {
-	const { views, docs } = options;
+	const { views, docs, architecture } = options;
 
 	const plan: (SidebarItem | false)[] = [
 		views.now && { label: 'Now', link: '/plan/now/' },
@@ -24,6 +28,15 @@ export function buildSidebar(options: ResolvedOptions): SidebarItem[] {
 		views.strategy && { label: 'Strategy', link: '/plan/strategy/' },
 	];
 
+	const architectureGroup: SidebarItem[] = architecture?.project
+		? [
+				{
+					label: 'Architecture',
+					items: viewGroups(join(architecture.project, 'views')).map((group) => ({ label: group.title, link: `/architecture/${group.slug}/` })),
+				},
+			]
+		: [];
+
 	const groups: SidebarItem[] = docs
 		? docs.sources
 				.filter((source) => !source.hidden)
@@ -36,5 +49,5 @@ export function buildSidebar(options: ResolvedOptions): SidebarItem[] {
 				.filter((group) => group.items.length > 0)
 		: [];
 
-	return [{ label: 'Plan', items: plan.filter((item) => item !== false) }, ...groups];
+	return [{ label: 'Plan', items: plan.filter((item) => item !== false) }, ...architectureGroup, ...groups];
 }
