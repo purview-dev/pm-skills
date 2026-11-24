@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-24T13:52:27+00:00",
+  "generatedAt": "2026-11-24T13:57:14+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-043-per-session-context-report",
-    "head": "b5a50b5619a7ccf8416368ed17a45790a44590be"
+    "head": "56ce1d838fee971da5c8f46ddd4557cf97f604b4"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -227,12 +227,12 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-043-per-session-context-report",
     "brief": "planning/briefs/2026-11-22-agent-context-tidy.md",
     "milestone": null,
     "spec": "docs/superpowers/specs/2026-11-24-per-session-context-report-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-24-per-session-context-report.md",
     "started": "2026-11-24",
     "doneWhen": [
       "`bun skills/pm-help/scripts/context.ts --root .` prints one line per session type (`always`, `resume`, `claim`, `checkpoint`, `review`) with estimated tokens and the three largest files.",
@@ -243,7 +243,193 @@
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-24-per-session-context-report.md",
+    "checked": 0,
+    "total": 33,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "Session map and its check",
+        "checked": 0,
+        "total": 7,
+        "steps": [
+          {
+            "text": "**Step 1: Write `sessions.json`** with the shape in the spec's \"The map\" section. Confirm each file list against the skill's own read step (`pm-resume` step 1, `pm-next` steps 1 and 10, `pm-checkpoint` step 5, `pm-review` step 1) and adjust the lists, not the shape.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Write the failing tests** in `context.test.ts`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Run** `bun test skills/pm-help/` — Expected: FAIL (`map.ts` missing).",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Implement `parseMap` and `loadMap` in `map.ts`.** Hand-written checks; the message names the path (`sessions[2].skills`).",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Run** `bun test skills/pm-help/` — Expected: PASS. Then temporarily rename `pm-resume` to `pm-resum` in `sessions.json`, run again, expect the first test to FAIL, and restore it.",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Add `skills/pm-help/`** to the `justfile` `test` recipe and the CI line; run `just test` — Expected: PASS.",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Commit** `feat(pm-help): session map for the context report (R-043)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "Measuring sources",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** against a temp repository built in `beforeEach` (`mkdtempSync`), with `home` set to a second temp folder:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run** `bun test skills/pm-help/` — Expected: FAIL (`sources.ts` missing).",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement `sources.ts`.** Citation pattern: `/(?:<([\\w:-]+) skill>\\/)?references\\/([\\w.-]+\\.md)/g`; without a skill prefix it resolves in the citing file's skill folder (`citingSkillDir`), and from the agent file without a prefix it is ignored.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run** `bun test skills/pm-help/` — Expected: PASS.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit** `feat(pm-help): measure agent sections, skills, and references (R-043)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "The report",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** with a synthetic repository (agent file, `skills/pm-resume/SKILL.md`, `skills/pm-next/SKILL.md`, `skills/pm-checkpoint/SKILL.md`, `skills/pm-review/SKILL.md`, a `planning/` with `config.md` whose Handoffs table has a `design` row naming the skill `sp:brain`, `NOW.md` idle, `ROADMAP.md` with one ready agent item whose `Brief` exists, `LOG.md`, one ADR, and one inbox file plus `inbox/README.md`):",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run** `bun test skills/pm-help/` — Expected: FAIL.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement `buildReport` in `context.ts`.**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run** `bun test skills/pm-help/` — Expected: PASS.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit** `feat(pm-help): build the per-session context report (R-043)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "CLI and output",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests:**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run** `bun test skills/pm-help/` — Expected: FAIL.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement `renderText` and `main`.**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run** `bun test skills/pm-help/` then `bun skills/pm-help/scripts/context.ts --root .` — Expected: PASS, and a table with 5 rows whose `always` row lists `AGENTS.md#pm-skills` first.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit** `feat(pm-help): context report CLI (R-043)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 5,
+        "title": "pm-help diagnose and version",
+        "checked": 0,
+        "total": 6,
+        "steps": [
+          {
+            "text": "**Step 1: Add check 30** to the diagnosis table, in the table's existing column style. Check: if Bun is installed, `bun <pm-help skill>/scripts/context.ts --root . --format json` lists no `tidy` entry. Finding: `<file> is <n> characters (limit <m>); tidy it`. Fix: `pm-park` the tidy work.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Add `## Context`** to the overview template after `## What's missing`: the script's text table and bullets, or `Context report needs Bun.` State below the template that the table is information, never a finding, that explain mode never runs it, and that the table is exempt from the 5-bullet limit.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Update the `pm-help` guide row** (\"What it writes\" stays `Nothing`) to mention the context table if the row describes diagnose output; otherwise leave it.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run** `just bump prerelease` — Expected: `package.json` is `21.0.0-pre.7`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Run** `just validate` and `bunx markdownlint-cli2 skills/pm-help/SKILL.md` — Expected: both pass.",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Commit** `feat(pm-help): context table in diagnose (R-043)` with `package.json`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 6,
+        "title": "Baseline report and verification",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Run** `bun skills/pm-help/scripts/context.ts --root .` and `--format json` on this branch.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Write the report:** `# Context baseline 2026-11-24`, the command and `git rev-parse --short HEAD`, the text table verbatim, a table of the top five contributors per session from the JSON, the `claim` total with and without the handoff skill, and `## Next`: `R-046 Upgrade, format, and git rules move to references is the first cut; its always line must drop by at least 6,500 tokens from this baseline.`",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Run** `just pm-lint` — Expected: clean.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run** `just lint-check` and `just validate` — Expected: both pass.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit** the report with the PM state as a PM commit (`docs(pm): R-043 context baseline`), through `git add -A -- planning` and `git commit -- planning`.",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -718,7 +904,7 @@
           "title": "Per-session context report",
           "owner": "agent",
           "size": "M",
-          "detail": "plan"
+          "detail": "execute, 0/33 plan steps"
         }
       ],
       "next": [

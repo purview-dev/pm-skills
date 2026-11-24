@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-043 Per-session context report
 - Session: feat/r-043-per-session-context-report
-- Stage: plan
+- Stage: execute
 - Brief: planning/briefs/2026-11-22-agent-context-tidy.md
 - Milestone:
 - Serves: V2
@@ -24,7 +24,7 @@ Milestone: optional; the item's milestone while it is active
 - Revisits:
 - Note: From pm-shape 2026-11-22 (inbox 2026-11-22-1232), reshaped 2026-11-24 into 5 slices (R-043, R-046 to R-049); the upgrade-notes move went to R-046. A rules change. Dependency-free estimate (characters / 4), shipped in `pm-help` diagnose rather than a new skill; the `pm-tidy` archive slice is deferred until the report's PM state line recommends it. 2026-11-24: Started as is outside the M1 focus, because the user chose Build it now in pm-shape.
 - Spec: docs/superpowers/specs/2026-11-24-per-session-context-report-design.md
-- Plan:
+- Plan: docs/superpowers/plans/2026-11-24-per-session-context-report.md
 - Started: 2026-11-24
 
 ## Done when
