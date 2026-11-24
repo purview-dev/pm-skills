@@ -1,6 +1,6 @@
 # ADR-009 Engineering file records state, ADRs reasons
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-24
 - Category: architecture
 - Supersedes: none
