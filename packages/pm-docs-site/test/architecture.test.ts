@@ -47,4 +47,11 @@ describe('viewGroups', () => {
 			['billing', 'Billing', ['flow-invoice']],
 		]);
 	});
+
+	it('throws a clear error when the views folder does not exist', async () => {
+		const project = await mkdtemp(join(tmpdir(), 'project-'));
+		const missing = join(project, 'views');
+
+		expect(() => viewGroups(missing)).toThrow(/needs a views folder/);
+	});
 });

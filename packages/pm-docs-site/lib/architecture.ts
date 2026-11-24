@@ -2,7 +2,7 @@
 // views declared there. Read from the model at build time, so a new view or
 // folder shows up without editing the site.
 
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 export interface ViewRef {
@@ -36,6 +36,8 @@ export function viewsIn(source: string): ViewRef[] {
 
 /** One group per views/ folder, Overview first (with the top-level views/*.c4), the rest by name. */
 export function viewGroups(viewsDir: string): ViewGroup[] {
+	if (!existsSync(viewsDir)) throw new Error(`pm-docs-site: architecture.project needs a views folder (${viewsDir})`);
+
 	const entries = readdirSync(viewsDir, { withFileTypes: true });
 	const read = (folder: string) =>
 		readdirSync(folder)
