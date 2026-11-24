@@ -21,7 +21,7 @@ validate:
 
 # Test the skills' scripts (pm-export's exporter, pm-lint, and pm-next's PM branch sync).
 test:
-    bun test scripts/ skills/pm-export/ skills/pm-lint/ skills/pm-next/
+    bun test scripts/ skills/pm-export/ skills/pm-help/ skills/pm-lint/ skills/pm-next/
 
 # Bring main up to date after a pull request merges, whatever the merge method (pm-next's PM sync).
 pm-sync:

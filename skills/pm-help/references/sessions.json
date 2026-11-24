@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "sessions": [
+    { "id": "always", "agentFile": true },
+    { "id": "resume", "skills": ["pm-resume"], "pmFiles": ["config.md", "NOW.md", "ROADMAP.md", "STRATEGY.md", "STACK.md", "PAUSE.md"] },
+    { "id": "claim", "skills": ["pm-next"], "handoff": "design", "pmFiles": ["config.md", "NOW.md", "ROADMAP.md", "STRATEGY.md"], "partial": ["LOG.md"], "brief": true, "decisions": true },
+    { "id": "checkpoint", "skills": ["pm-checkpoint"], "pmFiles": ["config.md", "NOW.md", "ROADMAP.md", "STRATEGY.md", "STACK.md"], "partial": ["LOG.md"], "brief": true },
+    { "id": "review", "skills": ["pm-review"], "pmFiles": ["config.md", "NOW.md", "ROADMAP.md", "STRATEGY.md", "VISION.md", "RISKS.md"], "partial": ["LOG.md"], "inbox": true }
+  ],
+  "tidy": { "LOG.md": 32000, "ROADMAP.md": 32000, "brief": 24000 }
+}

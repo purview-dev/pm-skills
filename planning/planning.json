@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-24T12:33:49+00:00",
+  "generatedAt": "2026-11-24T14:26:08+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-013-docs-site-package",
-    "head": "63affdf32f067bcd733a0faec07cbf50286f5e17"
+    "branch": "feat/r-043-per-session-context-report",
+    "head": "de498384f3d7b0a4d44d9d9e0211d29651cd9715"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -591,8 +591,8 @@
         "claimable": false
       },
       {
-        "id": "R-043",
-        "title": "Per-session context report and upgrade notes move",
+        "id": "R-046",
+        "title": "Upgrade, format, and git rules move to references",
         "section": "later",
         "position": 11,
         "label": "later",
@@ -601,8 +601,60 @@
         ],
         "milestone": null,
         "owner": "agent",
-        "doneWhen": "`bun skills/pm-help/scripts/context.ts --root .` prints one line per session type (`always`, `resume`, `claim`, `checkpoint`, `review`) with estimated tokens and the three largest files; the managed section holds no `Version N` paragraphs and `skills/pm-setup/references/upgrade-notes.md` holds them; the report's `always` line is at least 1,400 tokens lower than before; a `planning/research/` report records the before and after table; `just lint-check` and `just validate` pass.",
+        "doneWhen": "the managed section holds no `Version N` paragraphs, no file-format blocks, and no Committing PM state, Completion rides the branch, Feature branches, PM sync, Pull latest, or PM base bodies; `skills/pm-setup/references/upgrade.md`, `formats.md`, and `git.md` hold them; every `SKILL.md` that cites one names its file; `just validate` fails when a cited reference file is missing; the R-043 report's `always` line is at least 6,500 tokens lower than its baseline.",
         "size": "M",
+        "dependsOn": [
+          "R-043"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-22-agent-context-tidy.md",
+        "note": "Slice 2 of 5 from pm-shape 2026-11-24. A rules change; may stay on rules 21 while `main` is the unreleased `21.0.0-pre.N` line.",
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-047",
+        "title": "Core rules file and a 15 KB managed section",
+        "section": "later",
+        "position": 12,
+        "label": "waiting",
+        "serves": [
+          "V2"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "the managed section is 15,000 characters or less and holds the skill table, the Non-interruption rules, Read before deciding, and a pointer index; `skills/pm-setup/references/rules.md` holds the remaining shared rules and each PM skill reads it once per session; `just validate` fails above 15,000 characters; `pm-help` diagnose reports a missing reference file.",
+        "size": "M",
+        "dependsOn": [
+          "R-046"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-22-agent-context-tidy.md",
+        "note": "Slice 3 of 5 from pm-shape 2026-11-24. A rules change.",
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-048",
+        "title": "Repository AGENTS.md top part into dedicated files",
+        "section": "later",
+        "position": 13,
+        "label": "later",
+        "serves": [
+          "V2"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "this repository's top part of `AGENTS.md` (before the managed section) is 3,000 characters or less and indexes the dedicated files that now hold its content; `just lint-check` and `just validate` pass.",
+        "size": "S",
         "dependsOn": [],
         "status": {
           "value": "ready",
@@ -610,7 +662,33 @@
           "since": null
         },
         "brief": "planning/briefs/2026-11-22-agent-context-tidy.md",
-        "note": "From pm-shape 2026-11-22 (inbox 2026-11-22-1232). A rules bump. Dependency-free estimate (characters / 4), shipped in `pm-help` diagnose rather than a new skill; the `pm-tidy` archive slice is deferred until the report's PM state line recommends it.",
+        "note": "Slice 4 of 5 from pm-shape 2026-11-24. No `skills/` change, so no rules bump. The target folder is decided in design.",
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-049",
+        "title": "Trim the largest SKILL.md files",
+        "section": "later",
+        "position": 14,
+        "label": "waiting",
+        "serves": [
+          "V2"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "`pm-export`, `pm-docs-site`, `pm-setup`, `pm-help`, and `pm-checkpoint` `SKILL.md` are each at least 30% smaller, with the moved modes in their `references/`; the R-043 report's `claim` and `checkpoint` lines are lower than after R-047; `just lint-check` passes.",
+        "size": "M",
+        "dependsOn": [
+          "R-047"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-22-agent-context-tidy.md",
+        "note": "Slice 5 of 5 from pm-shape 2026-11-24. A rules change. Conflicts with R-041 and R-032 edits to the same skills.",
         "revisits": null,
         "claimable": false
       }
@@ -652,6 +730,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-24",
+          "id": "R-043",
+          "title": "Per-session context report",
+          "milestone": null,
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-24-per-session-context-report.md",
+          "result": "branch feat/r-043-per-session-context-report"
+        },
         {
           "date": "2026-11-24",
           "id": "R-045",
@@ -889,6 +976,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-24",
+        "kind": "done",
+        "id": "R-043",
+        "title": "Per-session context report",
+        "milestone": null,
+        "owner": "agent",
+        "result": "branch feat/r-043-per-session-context-report"
+      },
       {
         "date": "2026-11-24",
         "kind": "done",
@@ -1199,6 +1295,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-24",
+        "id": "R-043",
+        "title": "Per-session context report",
+        "milestone": null,
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-24-per-session-context-report.md",
+        "result": "branch feat/r-043-per-session-context-report"
+      },
       {
         "date": "2026-11-24",
         "id": "R-045",
@@ -1655,14 +1760,14 @@
     },
     {
       "path": "planning/briefs/2026-11-22-agent-context-tidy.md",
-      "id": "R-043",
+      "id": "R-046",
       "title": "Agent context analysis and planning tidy skill",
-      "status": "on roadmap (R-043)",
+      "status": "on roadmap (R-046, R-047, R-048, R-049)",
       "origin": "planning/inbox/2026-11-22-1232-agent-context-tidy-skill.md",
-      "updated": "2026-11-22",
+      "updated": "2026-11-24",
       "decision": "2026-11-22 Added to Later as R-043 Per-session context report and upgrade notes move (Unassigned, M). Why: preventive work with no observed symptom, serving no milestone, while Next is full of M1 and M4 work.",
       "problem": "An agent session loads the managed rules (65 KB) on every start, plus each skill it runs, plus the PM files those skills read. Nothing measures that cost per session type, so growth in the rules, the skills, or the planning state goes unnoticed until it hurts (answer 2026-11-22: both rules and state, measured first).",
-      "doneWhen": "`bun skills/pm-help/scripts/context.ts --root .` prints one line per session type (`always`, `resume`, `claim`, `checkpoint`, `review`) with estimated tokens and the three largest files.",
+      "doneWhen": "Slice 1, R-043: `bun skills/pm-help/scripts/context.ts --root .` prints one line per session type (`always`, `resume`, `claim`, `checkpoint`, `review`) with estimated tokens and the three largest files; a `planning/research/` report records the baseline table; a test fails when the script's map names a missing skill or file; `just lint-check` and `just validate` pass.",
       "revisions": []
     },
     {
@@ -1829,16 +1934,32 @@
       "decision": "`@purview-dev/astroc4` gains a `markers` option (default on), implemented inside its `likec4Fences` Sätteri plugin. Each marker block becomes the LikeC4 view it names; a block that cannot be drawn keeps its Mermaid with a warning and never fails the build. `markers.root` is the repository root, so a model may live anywhere in the repository. `@purview-dev/pm-docs-site`'s `architecture` option loads astroc4 as an optional peer dependency and passes its `docs.root` as `markers.root`.",
       "alternatives": "- A marker plugin inside `pm-docs-site`: no outside release, but purview.dev keeps a second implementation of the same marker.\n- Client-side rewriting: breaks build determinism and adds JavaScript.\n- Do nothing: the docs site shows only the Mermaid fallback.",
       "consequences": "- purview.dev and the docs site can share one implementation (purview.dev's move is a follow-up).\n- R-045 depends on an astroc4 prerelease (`1.0.0-prerelease.9`) that the user merges.\n- Markers work in `.md` only; MDX rejects HTML comments. ADR sections fall back to Mermaid because exported text has no page path."
+    },
+    {
+      "id": "ADR-008",
+      "path": "planning/decisions/ADR-008-context-cost-is-estimated-as-characters-4.md",
+      "title": "Context cost is estimated as characters / 4",
+      "status": "accepted",
+      "supersededBy": null,
+      "date": "2026-11-24",
+      "category": "tooling",
+      "supersedes": null,
+      "item": "R-043",
+      "source": null,
+      "context": "The context report (`skills/pm-help/scripts/context.ts`) measures the cost of each session type, so R-046 to R-049 can cut the managed section and trim the skills against a baseline. The shipped scripts import only `node:` and `bun:` builtins, and no offline tokenizer matches current Claude models. Spec: `docs/superpowers/specs/2026-11-24-per-session-context-report-design.md`.",
+      "decision": "Estimate tokens as `ceil(characters / 4)` on LF-normalised text, labelled `estimated tokens`, and compare the relative change per session type, not absolute numbers.",
+      "alternatives": "- An exact tokenizer package: breaks the dependency-free scripts, and none matches current Claude models.\n- The token-counting API: needs a key and the network.\n- Do nothing: growth stays unmeasured.",
+      "consequences": "- Absolute numbers may be off by 20% or more; relative drops are measured consistently.\n- No dependency, works offline, costs GBP 0."
     }
   ],
   "counts": {
     "next": 4,
-    "later": 11,
+    "later": 14,
     "nextMax": 5,
     "openInbox": 7,
     "discuss": 0,
     "shapingBriefs": 0,
-    "done": 26,
+    "done": 27,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
