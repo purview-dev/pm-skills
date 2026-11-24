@@ -36,6 +36,24 @@ export const PLACEHOLDERS: { text: string; reason: string }[] = [
 export const RENDERED_DIAGRAMS: string[] = ["docs/guide/diagrams/index.html"];
 
 /**
+ * Pages whose own standalone ```mermaid fence (outside any purview:likec4
+ * marker) must render through Pele as inline SVG, never fall back to a
+ * `language-mermaid` code block. The one page listed here is also in
+ * RENDERED_DIAGRAMS, so the one build that produces it proves astroc4 and
+ * Mermaid fences coexist (Review Focus 2).
+ *
+ * Checked by the `class="pele` Pele always writes on its root `<svg>`
+ * (`xmlns` comes first, so the class is never the attribute right after
+ * `<svg`), not a literal `id="pele-..."` attribute: Pele only writes its
+ * idPrefix into the DOM for a diagram type that needs an SVG-referenced
+ * `<defs>` (a Sankey diagram's gradient fill), confirmed by rendering a
+ * sequenceDiagram fence directly through Pele. A flowchart or sequence
+ * diagram's elements carry `data-id`, never a literal `id=` (lib/mermaid.test.ts
+ * makes the same observation for both).
+ */
+export const MERMAID_FENCES: string[] = ["docs/guide/diagrams/index.html"];
+
+/**
  * Architecture pages and the LikeC4 project view id(s) each must render: one
  * page per folder under the architecture project's views/, so the page's
  * title and list come from pm-docs-site's own folder scan (lib/architecture.ts)
@@ -175,9 +193,14 @@ export function checkDemo(distDir: string, expectedPages: string[]): string[] {
       if (placeholderCount(html, entry.text) > 0) failures.push(`${page}: placeholder "${entry.text}"`);
     }
   }
-  for (const page of pages.filter((path) => RENDERED_DIAGRAMS.includes(path))) {
+  for (const page of pages.filter((path) => RENDERED_DIAGRAMS.includes(path) || MERMAID_FENCES.includes(path))) {
     const html = readFileSync(join(distDir, page), "utf8");
-    if (!html.includes("data-astroc4-fence")) failures.push(`${page}: missing data-astroc4-fence (marker did not render)`);
+    if (RENDERED_DIAGRAMS.includes(page) && !html.includes("data-astroc4-fence")) {
+      failures.push(`${page}: missing data-astroc4-fence (marker did not render)`);
+    }
+    if (MERMAID_FENCES.includes(page) && !html.includes('class="pele')) {
+      failures.push(`${page}: missing Pele-rendered mermaid svg`);
+    }
     if (html.includes("language-mermaid")) failures.push(`${page}: language-mermaid fallback still present`);
   }
   const architecturePages = pages.filter((path) => path in ARCHITECTURE_VIEWS);

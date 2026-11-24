@@ -91,7 +91,7 @@ demo:
     cd examples/demo && bun run build
     cd examples/demo && bun run preview
 
-# Check the demo site: its export is current and valid, its PM files lint clean, and every page builds with content (part of package-test).
+# Check the demo site: its export is current and valid, its PM files lint clean, every page builds with content, and two builds give byte-identical HTML (part of package-test).
 [group('Docs')]
 demo-check:
     bun skills/pm-export/scripts/export.ts check --root examples/demo --pm-root planning/
@@ -101,3 +101,4 @@ demo-check:
     cd examples/demo && bun install --frozen-lockfile
     cd examples/demo && bun run build
     bun scripts/check-demo.ts
+    cd packages/pm-docs-site && node scripts/check-reproducible.ts ../../examples/demo

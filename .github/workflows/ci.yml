@@ -146,6 +146,9 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: bun scripts/check-demo.ts
 
+      - name: Demo build is reproducible
+        run: node scripts/check-reproducible.ts ../../examples/demo
+
   # Mirrors `just version-check` (the lefthook pre-push hook): a skills change
   # ships in a release, so it must raise the rules version and package.json
   # past the version on main; anything else (docs, CI, scripts, package

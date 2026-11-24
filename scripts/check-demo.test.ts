@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 
 import { afterEach, describe, expect, it } from "bun:test";
 
-import { ALLOWED, ARCHITECTURE_VIEWS, checkDemo, PLACEHOLDERS, RENDERED_DIAGRAMS } from "./check-demo.ts";
+import { ALLOWED, ARCHITECTURE_VIEWS, checkDemo, MERMAID_FENCES, PLACEHOLDERS, RENDERED_DIAGRAMS } from "./check-demo.ts";
 
 const dirs: string[] = [];
 
@@ -122,25 +122,51 @@ describe("checkDemo", () => {
     for (const entry of ALLOWED) expect(entry.reason.trim(), entry.text).not.toBe("");
   });
 
-  it("passes a diagrams page whose marker rendered the astroc4 fence", () => {
+  it("passes a diagrams page whose marker rendered the astroc4 fence and whose mermaid fence rendered through pele", () => {
     const dir = dist({
-      "docs/guide/diagrams/index.html": '<section class="not-content likec4-md-fence" data-astroc4-fence data-view-id="overview.overview"></section>',
+      "docs/guide/diagrams/index.html":
+        '<section class="not-content likec4-md-fence" data-astroc4-fence data-view-id="overview.overview"></section><svg class="pele pele-sequence"></svg>',
     });
 
     expect(checkDemo(dir, ["docs/guide/diagrams/index.html"])).toEqual([]);
   });
 
-  it("reports a diagrams page that kept the mermaid fallback instead of the astroc4 fence", () => {
+  it("reports a diagrams page that kept the mermaid fallback instead of the astroc4 fence, and no pele svg either", () => {
     const dir = dist({ "docs/guide/diagrams/index.html": '<pre><code class="language-mermaid">flowchart LR</code></pre>' });
 
     expect(checkDemo(dir, ["docs/guide/diagrams/index.html"])).toEqual([
       "docs/guide/diagrams/index.html: missing data-astroc4-fence (marker did not render)",
+      "docs/guide/diagrams/index.html: missing Pele-rendered mermaid svg",
       "docs/guide/diagrams/index.html: language-mermaid fallback still present",
     ]);
   });
 
   it("names every page whose marker must render", () => {
     expect(RENDERED_DIAGRAMS).toContain("docs/guide/diagrams/index.html");
+  });
+
+  it("reports a missing pele svg even when the astroc4 fence rendered", () => {
+    const dir = dist({
+      "docs/guide/diagrams/index.html":
+        '<section class="not-content likec4-md-fence" data-astroc4-fence data-view-id="overview.overview"></section><pre><code class="language-mermaid">sequenceDiagram</code></pre>',
+    });
+
+    expect(checkDemo(dir, ["docs/guide/diagrams/index.html"])).toEqual([
+      "docs/guide/diagrams/index.html: missing Pele-rendered mermaid svg",
+      "docs/guide/diagrams/index.html: language-mermaid fallback still present",
+    ]);
+  });
+
+  it("reports a missing astroc4 fence even when the pele svg rendered", () => {
+    const dir = dist({ "docs/guide/diagrams/index.html": '<svg class="pele pele-sequence"></svg>' });
+
+    expect(checkDemo(dir, ["docs/guide/diagrams/index.html"])).toEqual([
+      "docs/guide/diagrams/index.html: missing data-astroc4-fence (marker did not render)",
+    ]);
+  });
+
+  it("names every page whose mermaid fence must render", () => {
+    expect(MERMAID_FENCES).toContain("docs/guide/diagrams/index.html");
   });
 
   /** A minimal astro-island as astroc4's LikeC4View.astro emits it for a project view. */
