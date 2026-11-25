@@ -33,10 +33,12 @@
 ### Task 1: Rendered section entries in the loader
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/src/loaders/adrs.ts`
 - Modify: `packages/pm-docs-site/src/content.config.ts`
 
 **Interfaces:**
+
 - Produces: `adrSectionsLoader(): Loader` in `src/loaders/adrs.ts`, a collection `adr-sections` in `content.config.ts`. Entry id `` `${adr.id.toLowerCase()}/${key}` `` (`adr-003/context`), data `{ adr: string; section: AdrSection }`, `filePath` the ADR file relative to the site root with `/` separators, `rendered` from `renderMarkdown(markdown, { fileURL: pathToFileURL(adrFile) })`, `assetImports: rendered.metadata?.imagePaths`.
 - Produces: `adrFile(planningPath: string, adrPath: string): string` (absolute), exported from `src/loaders/adrs.ts`.
 - `adrsLoader()` also passes `{ fileURL }` to `renderMarkdown`, so `html` and the section entries render alike.
@@ -49,11 +51,13 @@
 ### Task 2: ADR page renders sections through Astro
 
 **Files:**
+
 - Create: `packages/pm-docs-site/src/components/LinkedHtml.astro`
 - Modify: `packages/pm-docs-site/src/routes/plan/decisions/[id].astro`
 - Test: `packages/pm-docs-site/test/integration.test.ts` (beside "an ADR section with a mermaid fence builds to svg")
 
 **Interfaces:**
+
 - Consumes: the `adr-sections` collection from Task 1.
 - Produces: `LinkedHtml.astro`, props `{ known: Set<string> }` (the type `siteRefs()` returns for `known`), prints `linkHtml(await Astro.slots.render('default'), known).html` with `set:html`.
 
@@ -61,33 +65,34 @@
 
 ```ts
 it('an ADR section with a relative image builds to a resolved img', () => {
-	// ADR-003 context += '\n\nR-013 ![a](x.png)\n'; write a 1x1 PNG to join(dir, 'decisions', 'x.png')
-	// build; read dist/plan/decisions/adr-003/index.html
-	expect(result.code, result.stderr).toBe(0);
-	expect(html).not.toContain('__ASTRO_IMAGE_');
-	const src = html.match(/<img[^>]*alt="a"[^>]*src="([^"]+)"|<img[^>]*src="([^"]+)"[^>]*alt="a"/);
-	expect(src).not.toBeNull();
-	expect(existsSync(join(dir, 'site', 'dist', (src![1] ?? src![2]).replace(/^\//, '')))).toBe(true);
-	expect(html).toContain('href="/plan/features/r-013/"');
+ // ADR-003 context += '\n\nR-013 ![a](x.png)\n'; write a 1x1 PNG to join(dir, 'decisions', 'x.png')
+ // build; read dist/plan/decisions/adr-003/index.html
+ expect(result.code, result.stderr).toBe(0);
+ expect(html).not.toContain('__ASTRO_IMAGE_');
+ const src = html.match(/<img[^>]*alt="a"[^>]*src="([^"]+)"|<img[^>]*src="([^"]+)"[^>]*alt="a"/);
+ expect(src).not.toBeNull();
+ expect(existsSync(join(dir, 'site', 'dist', (src![1] ?? src![2]).replace(/^\//, '')))).toBe(true);
+ expect(html).toContain('href="/plan/features/r-013/"');
 }, BUILD);
 
 it('an ADR section with a missing relative image fails the build', () => {
-	// ADR-003 context += '\n\n![a](missing.png)\n'; no file written
-	expect(result.code).not.toBe(0);
-	expect(result.stdout + result.stderr).toContain('missing.png');
+ // ADR-003 context += '\n\n![a](missing.png)\n'; no file written
+ expect(result.code).not.toBe(0);
+ expect(result.stdout + result.stderr).toContain('missing.png');
 }, BUILD);
 ```
 
 Write the PNG from a base64 1x1 literal with `Buffer.from(..., 'base64')`. The fixture builds a page for R-013 (`links.test.ts` asserts the same href form for R-012).
 
 - [ ] **Step 2:** Run `cd packages/pm-docs-site; bun test test/integration.test.ts -t "relative image"`. Expected: the first FAILS (`__ASTRO_IMAGE_` present), the second FAILS (build succeeds).
-- [ ] **Step 3:** Create `LinkedHtml.astro`. In `[id].astro`, read the section entries with `getEntry('adr-sections', \`${adr.id.toLowerCase()}/${key}\`)`, `const { Content } = await render(entry)`, and render `<LinkedHtml known={known}><Content /></LinkedHtml>` in place of the `set:html` fragment. Keep `None recorded.` for `''` and skip `null` as today. Update the file's header comment.
+- [ ] **Step 3:** Create `LinkedHtml.astro`. In `[id].astro`, read the section entries with `getEntry('adr-sections', \`${adr.id.toLowerCase()}/${key}\`)`,`const { Content } = await render(entry)`, and render`<LinkedHtml known={known}><Content /></LinkedHtml>` in place of the `set:html` fragment. Keep `None recorded.` for `''` and skip `null` as today. Update the file's header comment.
 - [ ] **Step 4:** Run `cd packages/pm-docs-site; bun test test/integration.test.ts test/links.test.ts`. Expected: PASS, including the ADR-003 remote image and Mermaid cases.
 - [ ] **Step 5:** Commit: `fix(pm-docs-site): resolve relative images in ADR sections (R-050)`.
 
 ### Task 3: Dev server, docs, and full verification
 
 **Files:**
+
 - Modify (only if Step 1 shows a 403): `packages/pm-docs-site/lib/index.ts` (add `dirname(config.planning)/decisions` to `vite.server.fs.allow`)
 - Modify: `packages/pm-docs-site/README.md` (the Decisions view: relative images resolve from `<PM root>/decisions/`; a missing file fails the build)
 - Modify: `planning/decisions/ADR-012-the-site-reads-image-files-beside-an-adr.md` only through `pm-adr` if the decision changes (it should not)
