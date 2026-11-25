@@ -2,7 +2,7 @@ import { docsSchema, i18nSchema } from '@astrojs/starlight/schema';
 import { defineCollection } from 'astro:content';
 import config from 'virtual:pm-docs-site/config';
 
-import { adrsLoader } from './loaders/adrs';
+import { adrSectionsLoader, adrsLoader } from './loaders/adrs';
 import { repoDocsLoader } from './loaders/repo-docs';
 
 // Starlight reads a `docs` and an `i18n` collection. Astro registers a
@@ -29,4 +29,6 @@ export const collections = {
 	// planning.json's ADRs with their sections rendered (src/loaders/adrs.ts). Read
 	// only when the export has ADRs, so an empty collection is never looked up.
 	adrs: defineCollection({ loader: adrsLoader() }),
+	// The same sections as rendered entries, so Astro resolves their relative images (ADR-012).
+	'adr-sections': defineCollection({ loader: adrSectionsLoader() }),
 };
