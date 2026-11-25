@@ -11,7 +11,7 @@ import LinkedText from '../../../components/LinkedText.astro';
 import RefLink from '../../../components/RefLink.astro';
 import { linkHtml } from '../../../lib/link-html';
 import { loadPlanning } from '../../../lib/planning';
-import { siteRefs } from '../../../lib/references';
+import { siteRefs } from '../../../lib/site-refs';
 import { ADR_SECTIONS, type RenderedAdr } from '../../../loaders/adrs';
 import '../../../styles/components.css';
 
@@ -25,7 +25,7 @@ export async function getStaticPaths() {
 }
 
 const { adr } = Astro.props as { adr: RenderedAdr };
-const { known } = siteRefs();
+const { known } = await siteRefs();
 const status = adr.status ?? 'unknown';
 const refs: { label: string; ref: string | null }[] = [
 	{ label: 'Item', ref: adr.item },
@@ -84,7 +84,7 @@ const refs: { label: string; ref: string | null }[] = [
 		ADR_SECTIONS.filter(({ key }) => adr.html[key] !== null).map(({ key, label }) => (
 			<section>
 				<h2>{label}</h2>
-				{adr.html[key] === '' ? <p>None recorded.</p> : <Fragment set:html={linkHtml(adr.html[key]!, known)} />}
+				{adr.html[key] === '' ? <p>None recorded.</p> : <Fragment set:html={linkHtml(adr.html[key]!, known).html} />}
 			</section>
 		))
 	}

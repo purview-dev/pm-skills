@@ -2,7 +2,8 @@
 // One item, milestone, risk or brief as a link to its page, named with its
 // title, or as plain text when that page is not built. An unknown key prints
 // the fallback the caller gives (an entry title, `No milestone`), else the key.
-import { refText, siteRefs } from '../lib/references';
+import { refText } from '../lib/references';
+import { siteRefs } from '../lib/site-refs';
 
 interface Props {
 	/** An ID (`R-012`, `M1`, `RK-002`), `none` for the No-milestone page, or a brief path. */
@@ -14,7 +15,7 @@ interface Props {
 }
 
 const { ref, label = 'full', fallback } = Astro.props;
-const target = ref ? siteRefs().known.get(ref) : undefined;
+const target = ref ? (await siteRefs()).known.get(ref) : undefined;
 const text = refText(target, ref, label, fallback);
 ---
 

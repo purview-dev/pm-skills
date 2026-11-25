@@ -19,12 +19,12 @@ import StatusTimelineFeed from '../../components/lib/StatusTimelineFeed.astro';
 import PlanInteractions from '../../components/PlanInteractions.astro';
 import RefLink from '../../components/RefLink.astro';
 import { loadPlanning, roadmapGroups } from '../../lib/planning';
-import { siteRefs } from '../../lib/references';
+import { siteRefs } from '../../lib/site-refs';
 import { timelineMilestones } from '../../lib/timeline';
 import '../../styles/components.css';
 import '../../styles/timeline.css';
 
-const { known } = siteRefs();
+const { known } = await siteRefs();
 const planning = loadPlanning();
 const milestones = timelineMilestones(planning, known);
 const groups = roadmapGroups(planning).map((group) => ({

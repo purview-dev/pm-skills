@@ -5,7 +5,7 @@
 - Kind: feature
 - Affects: skills/pm-export, packages/pm-docs-site
 - Context: R-013 design
-- Discuss: no
+- Discuss: yes
 - Related: R-013
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 - Reviewed: never

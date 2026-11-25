@@ -4,12 +4,14 @@ import { join } from 'node:path';
 
 import {
 	ADR_STATUSES,
+	DECISIONS_STATUSES,
 	adrSearchText,
 	DEFAULT_DECISIONS_STATE,
 	decisionsQuery,
 	groupDecisions,
 	matchesDecision,
 	parseDecisionsQuery,
+	toggleStatus,
 	type DecisionsState,
 } from '../src/lib/decisions';
 import type { Adr } from '../src/lib/planning-types';
@@ -98,5 +100,47 @@ describe('groupDecisions', () => {
 
 	it('puts everything in one group for none', () => {
 		expect(groupDecisions(adrs, 'none')).toEqual([{ key: 'all', label: 'All decisions', adrs }]);
+	});
+});
+
+describe('edge states', () => {
+	it('status none: every chip off round-trips as ?status=none', () => {
+		const state: DecisionsState = { ...DEFAULT_DECISIONS_STATE, status: [] };
+
+		expect(decisionsQuery(state)).toBe('?status=none');
+		expect(parseDecisionsQuery('?status=none', categories).status).toEqual([]);
+	});
+
+	it('no status: an ADR with a null status is unknown and follows its chip', () => {
+		const adr = { ...byId('ADR-002'), status: null };
+
+		expect(matchesDecision(adr, DEFAULT_DECISIONS_STATE)).toBe(true);
+		expect(matchesDecision(adr, { ...DEFAULT_DECISIONS_STATE, status: ['accepted'] })).toBe(false);
+		expect(parseDecisionsQuery('?status=unknown', categories).status).toEqual(['unknown']);
+	});
+
+	it('toggleStatus: turning off the last visible chip leaves no status, so the URL is ?status=none', () => {
+		const visible = DECISIONS_STATUSES.filter((status) => status !== 'unknown');
+		let state: DecisionsState = DEFAULT_DECISIONS_STATE;
+
+		for (const status of ['proposed', 'accepted', 'deprecated'] as const) state = { ...state, status: toggleStatus(state.status, status, visible) };
+		expect(state.status).toEqual([]);
+		expect(decisionsQuery(state)).toBe('?status=none');
+		expect(toggleStatus([], 'accepted', visible)).toEqual(['accepted']);
+	});
+
+	it('a hidden chip never reaches the URL', () => {
+		const visible = DECISIONS_STATUSES.filter((status) => status !== 'unknown');
+
+		expect(decisionsQuery(DEFAULT_DECISIONS_STATE, visible)).toBe('');
+		expect(decisionsQuery({ ...DEFAULT_DECISIONS_STATE, status: [...DEFAULT_DECISIONS_STATE.status, 'superseded'] }, visible)).toBe('?status=proposed%2Caccepted%2Cdeprecated%2Csuperseded');
+		expect(decisionsQuery({ ...DEFAULT_DECISIONS_STATE, status: ['unknown'] }, visible)).toBe('?status=none');
+	});
+
+	it('one category: the category parameter is dropped', () => {
+
+
+		expect(parseDecisionsQuery('?category=data', ['data']).category).toEqual([]);
+		expect(parseDecisionsQuery('?category=data', []).category).toEqual([]);
 	});
 });

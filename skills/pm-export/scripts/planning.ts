@@ -47,6 +47,23 @@ interface Section {
 /** HTML comments hold the templates' examples, never state. */
 export const stripComments = (text: string) => text.replace(/\r\n/g, "\n").replace(/<!--[\s\S]*?-->/g, "");
 
+/** A fenced code block: an opening fence of 3+ backticks or tildes, up to its closing fence or the end of the text. */
+const FENCE = /^ {0,3}(`{3,}|~{3,})[^\n]*\n[\s\S]*?(?:^ {0,3}\1[`~]*[ \t]*(?:\n|$)|(?![\s\S]))/gm;
+
+/** Like stripComments, but an HTML comment inside a code span or fenced block is kept: ADR sections export verbatim (ADR-002). */
+export function stripCommentsOutsideCode(text: string): string {
+  const clean = text.replace(/\r\n/g, "\n");
+  // A code span never crosses a blank line (CommonMark), so a stray backtick cannot shield a later comment.
+  const prose = (part: string) => part.replace(/(`+)(?:(?!\n[ \t]*\n)[\s\S])*?\1|<!--[\s\S]*?-->/g, (match) => (match.startsWith("<!--") ? "" : match));
+  let out = "";
+  let at = 0;
+  for (const fence of clean.matchAll(FENCE)) {
+    out += prose(clean.slice(at, fence.index)) + fence[0];
+    at = fence.index + fence[0].length;
+  }
+  return out + prose(clean.slice(at));
+}
+
 /** Split on headings of exactly `level` `#`s. The text before the first is `""`. */
 export function sections(text: string, level: number): Section[] {
   const marker = "#".repeat(level) + " ";
@@ -157,21 +174,28 @@ const sectionText = (parts: Section[], name: string): string | null => {
   return part ? part.body.replace(/^\s*\n/, "").replace(/\s+$/, "") : null;
 };
 
-/** One ADR file as an export object; `null` for a file that is not `ADR-NNN-<slug>.md`. */
-export function parseAdr(file: string, text: string, pmRoot: string): Adr | null {
+/**
+ * One ADR file as an export object; `null` for a file that is not `ADR-NNN-<slug>.md`.
+ * The ID is the file name's, so a heading naming another ID never duplicates one
+ * (it is reported through `assume`; pm-lint's `adr/id` flags it). Sections keep
+ * HTML comments inside code.
+ */
+export function parseAdr(file: string, text: string, pmRoot: string, assume?: (text: string) => void): Adr | null {
   const named = ADR_FILE.exec(file);
   if (!named) return null;
   const clean = stripComments(text);
   const heading = /^# (.+)$/m.exec(clean)?.[1]?.trim() ?? "";
   const headed = /^(ADR-\d{3,})\s+(.*)$/.exec(heading);
-  const parts = sections(clean, 2);
-  const f = fields(parts[0]!.body);
+  const id = named[1]!;
+  if (headed && headed[1] !== id) assume?.(`${pmRoot}decisions/${file} is headed ${headed[1]}; exported as ${id}.`);
+  const f = fields(sections(clean, 2)[0]!.body);
+  const parts = sections(stripCommentsOutsideCode(text), 2);
   const rawStatus = (value(f.get("status")) ?? "").toLowerCase();
   const successor = /^superseded by\s+(ADR-\d{3,})/i.exec(rawStatus);
   const status = successor ? "superseded" : (ADR_STATUSES.find((known) => known === rawStatus) ?? null);
   const adrId = (key: string) => /^ADR-\d{3,}$/i.exec(optional(f.get(key)) ?? "")?.[0]?.toUpperCase() ?? null;
   return {
-    id: headed?.[1] ?? named[1]!,
+    id,
     path: `${pmRoot}decisions/${file}`,
     title: (headed?.[2] ?? heading).trim(),
     status,
@@ -608,14 +632,18 @@ export function build(options: BuildOptions): BuildResult {
     ].sort((a, b) => b.date.localeCompare(a.date)),
   };
 
-  // inbox/ and briefs/: one entry per file, README.md excluded, by file name.
-  const folder = (name: string) => {
+  // inbox/, briefs/, and decisions/: one entry per file, README.md excluded, by file name.
+  // Decisions are read raw: parseAdr keeps the comments inside code (ADR-002).
+  const folder = (name: string, raw = false) => {
     const dir = join(pmDir, name);
     return existsSync(dir)
       ? readdirSync(dir)
           .filter((file) => file.endsWith(".md") && file.toLowerCase() !== "readme.md")
           .sort()
-          .map((file) => ({ file, text: stripComments(readFileSync(join(dir, file), "utf8")) }))
+          .map((file) => {
+            const text = readFileSync(join(dir, file), "utf8");
+            return { file, text: raw ? text : stripComments(text) };
+          })
       : [];
   };
   const title = (text: string) => /^# (.+)$/m.exec(text)?.[1]?.trim() ?? "";
@@ -666,7 +694,7 @@ export function build(options: BuildOptions): BuildResult {
   });
 
   // decisions/: every ADR-NNN-<slug>.md, whole, by ID number.
-  const adrs = sortAdrs(folder("decisions").flatMap(({ file, text }) => parseAdr(file, text, pmRoot) ?? []));
+  const adrs = sortAdrs(folder("decisions", true).flatMap(({ file, text }) => parseAdr(file, text, pmRoot, assume) ?? []));
 
   // RISKS.md
   const riskSections = sections(read("RISKS.md"), 2);

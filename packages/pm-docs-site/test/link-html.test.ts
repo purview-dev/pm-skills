@@ -12,29 +12,49 @@ const known = targets(planning, all);
 
 describe('linkHtml', () => {
 	it('links IDs in text', () => {
-		expect(linkHtml('<p>See R-012 and ADR-002.</p>', known)).toBe(
+		expect(linkHtml('<p>See R-012 and ADR-002.</p>', known).html).toBe(
 			'<p>See <a href="/plan/features/r-012/">R-012</a> and <a href="/plan/decisions/adr-002/">ADR-002</a>.</p>',
 		);
 	});
 
 	it('leaves existing links alone', () => {
-		expect(linkHtml('<p><a href="/x">R-012</a> and <a href="/y">ADR-002</a></p>', known)).toBe('<p><a href="/x">R-012</a> and <a href="/y">ADR-002</a></p>');
+		expect(linkHtml('<p><a href="/x">R-012</a> and <a href="/y">ADR-002</a></p>', known).html).toBe('<p><a href="/x">R-012</a> and <a href="/y">ADR-002</a></p>');
 	});
 
 	it('links IDs inside code too, as LinkedText does (the link test requires every known ID to be a link)', () => {
-		expect(linkHtml('<p><code>R-012</code></p>', known)).toBe('<p><code><a href="/plan/features/r-012/">R-012</a></code></p>');
-		expect(linkHtml('<pre><code>ADR-002\n</code></pre>', known)).toBe('<pre><code><a href="/plan/decisions/adr-002/">ADR-002</a>\n</code></pre>');
+		expect(linkHtml('<p><code>R-012</code></p>', known).html).toBe('<p><code><a href="/plan/features/r-012/">R-012</a></code></p>');
+		expect(linkHtml('<pre><code>ADR-002\n</code></pre>', known).html).toBe('<pre><code><a href="/plan/decisions/adr-002/">ADR-002</a>\n</code></pre>');
 	});
 
 	it('links again after a closed link', () => {
-		expect(linkHtml('<p><a href="/x">x</a> R-012</p>', known)).toBe('<p><a href="/x">x</a> <a href="/plan/features/r-012/">R-012</a></p>');
+		expect(linkHtml('<p><a href="/x">x</a> R-012</p>', known).html).toBe('<p><a href="/x">x</a> <a href="/plan/features/r-012/">R-012</a></p>');
 	});
 
 	it('keeps entities and attributes untouched', () => {
-		expect(linkHtml('<p title="R-012">&lt;R-012&gt;</p>', known)).toBe('<p title="R-012">&lt;<a href="/plan/features/r-012/">R-012</a>&gt;</p>');
+		expect(linkHtml('<p title="R-012">&lt;R-012&gt;</p>', known).html).toBe('<p title="R-012">&lt;<a href="/plan/features/r-012/">R-012</a>&gt;</p>');
 	});
 
 	it('leaves an unknown ID as text', () => {
-		expect(linkHtml('<p>R-099</p>', known)).toBe('<p>R-099</p>');
+		expect(linkHtml('<p>R-099</p>', known).html).toBe('<p>R-099</p>');
+	});
+
+	it('attribute with >: never splits the tag', () => {
+		const out = linkHtml('<p><img src="x.png" alt="a > R-012"> R-012</p>', known);
+
+		expect(out.html).toBe('<p><img src="x.png" alt="a > R-012"> <a href="/plan/features/r-012/">R-012</a></p>');
+		expect([...out.keys]).toEqual(['R-012']);
+	});
+
+	it('script and style: text inside is never linked', () => {
+		const out = linkHtml('<script>R-012</script><style>/* ADR-002 */</style><p>x</p>', known);
+
+		expect(out.html).toBe('<script>R-012</script><style>/* ADR-002 */</style><p>x</p>');
+		expect(out.keys.size).toBe(0);
+	});
+
+	it('keys: every linked key, none from inside links or unknown IDs', () => {
+		const out = linkHtml('<p><em>R-012</em> <a href="/x">ADR-002</a> R-099</p>', known);
+
+		expect([...out.keys]).toEqual(['R-012']);
 	});
 });

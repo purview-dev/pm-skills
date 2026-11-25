@@ -5,9 +5,10 @@
 import { useEffect, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 
-import { DEFAULT_DECISIONS_STATE, decisionsQuery, parseDecisionsQuery, type DecisionsState } from '../../lib/decisions';
+import { DEFAULT_DECISIONS_STATE, decisionsQuery, parseDecisionsQuery, type DecisionsState, type DecisionsStatus } from '../../lib/decisions';
 
-export function useDecisionsUrlState(categories: string[]): [DecisionsState, Dispatch<SetStateAction<DecisionsState>>] {
+/** `visible`: the status chips the page shows; only they are written to the URL. */
+export function useDecisionsUrlState(categories: string[], visible: readonly DecisionsStatus[]): [DecisionsState, Dispatch<SetStateAction<DecisionsState>>] {
 	const [state, setState] = useState<DecisionsState>(DEFAULT_DECISIONS_STATE);
 	const [applied, setApplied] = useState(false);
 
@@ -20,7 +21,7 @@ export function useDecisionsUrlState(categories: string[]): [DecisionsState, Dis
 	useEffect(() => {
 		if (!applied) return;
 
-		const url = location.pathname + decisionsQuery(state) + location.hash;
+		const url = location.pathname + decisionsQuery(state, visible) + location.hash;
 
 		if (url !== location.pathname + location.search + location.hash) history.replaceState(null, '', url);
 	}, [state, applied]);

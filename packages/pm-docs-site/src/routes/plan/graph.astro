@@ -19,11 +19,11 @@ import { dependencyRows, graphData } from '../../lib/graph';
 import type { Ref } from '../../lib/graph';
 import { graphLayouts } from '../../lib/graph-layout';
 import { loadPlanning } from '../../lib/planning';
-import { siteRefs } from '../../lib/references';
+import { siteRefs } from '../../lib/site-refs';
 import '../../styles/components.css';
 import '../../styles/graph.css';
 
-const { known } = siteRefs();
+const { known } = await siteRefs();
 const planning = loadPlanning();
 const data = graphData(planning, known);
 const layouts = graphLayouts(data, planning);

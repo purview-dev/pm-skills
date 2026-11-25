@@ -8,11 +8,12 @@ import LinkedText from '../../components/LinkedText.astro';
 import TaskKanbanCard from '../../components/lib/TaskKanbanCard.astro';
 import RefLink from '../../components/RefLink.astro';
 import { docsHref, initials, loadPlanning, planProgress, sizeToPriority } from '../../lib/planning';
-import { siteRefs } from '../../lib/references';
+import { siteRefs } from '../../lib/site-refs';
 import '../../styles/components.css';
 
 const planning = loadPlanning();
 const { now, plan } = planning;
+const refs = await siteRefs();
 const priority = ({ low: 'low', medium: 'med', high: 'high' } as const)[sizeToPriority(now.item?.size ?? null)];
 
 const paths = [
@@ -70,7 +71,7 @@ const checkpoint = now.checkpoint
 							return (
 								<li>
 									{entry.label}:{' '}
-									{siteRefs().known.get(entry.path)?.href ? <RefLink ref={entry.path} label="id" /> : href ? <a href={href}>{entry.path}</a> : <code>{entry.path}</code>}
+									{refs.known.get(entry.path)?.href ? <RefLink ref={entry.path} label="id" /> : href ? <a href={href}>{entry.path}</a> : <code>{entry.path}</code>}
 								</li>
 							);
 						})}

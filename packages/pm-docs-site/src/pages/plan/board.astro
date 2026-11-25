@@ -13,12 +13,12 @@ import ItemDialog from '../../components/ItemDialog.astro';
 import PlanInteractions from '../../components/PlanInteractions.astro';
 import { boardCards } from '../../lib/board-data';
 import { loadPlanning } from '../../lib/planning';
-import { siteRefs } from '../../lib/references';
+import { siteRefs } from '../../lib/site-refs';
 import '../../styles/components.css';
 import '../../styles/kanban.css';
 
 const planning = loadPlanning();
-const { known } = siteRefs();
+const { known } = await siteRefs();
 const cards = boardCards(planning, known);
 const milestones = planning.strategy.milestones.map(({ id, name }) => ({ id, name }));
 // One popup template per item with a page, even when the same item is on two cards.

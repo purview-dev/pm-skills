@@ -3,11 +3,9 @@
 // each target. Links and `Linked from` lists both come from here, so they
 // cannot disagree. All from planning.json.
 
-import config from 'virtual:pm-docs-site/config';
-
 import type { ViewName } from '../../lib/types.ts';
 import { graphData } from './graph';
-import { adrHref, adrsOf, briefAnchor, briefOf, featureHref, features, loadPlanning, milestoneHref, milestoneSummaries, roadmapGroups, type Feature } from './planning';
+import { adrHref, adrsOf, briefAnchor, briefOf, featureHref, features, milestoneHref, milestoneSummaries, roadmapGroups, type Feature } from './planning';
 import type { Planning } from './planning-types';
 import { refPattern } from './ref-boundary';
 
@@ -151,9 +149,11 @@ export interface Backlink {
 /**
  * For every target, the pages that link to it. Each source page below must
  * render exactly these links (through RefLink and LinkedText); the link test
- * checks that every rendered link appears in its target's list.
+ * checks that every rendered link appears in its target's list. An ADR page's
+ * sections are rendered HTML, so `adrKeys` (siteRefs: the keys linkHtml linked
+ * in each ADR's HTML) replaces the raw-Markdown pass over them (ADR-011).
  */
-export function references(planning: Planning, views: Views): Map<string, Backlink[]> {
+export function references(planning: Planning, views: Views, adrKeys?: Map<string, Set<string>>): Map<string, Backlink[]> {
 	const known = targets(planning, views);
 	const back = new Map<string, Backlink[]>([...known.keys()].map((key) => [key, []]));
 	const all = features(planning);
@@ -246,7 +246,11 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 			own.link(adr.item, 'decision');
 			own.link(adr.supersedes, 'supersedes');
 			own.link(adr.supersededBy, 'superseded by');
-			for (const text of [adr.source, adr.context, adr.decision, adr.alternatives, adr.consequences]) own.prose(text);
+			const keys = adrKeys?.get(adr.id);
+
+			own.prose(adr.source);
+			if (keys) for (const key of keys) own.link(key, 'mentions');
+			else for (const text of [adr.context, adr.decision, adr.alternatives, adr.consequences]) own.prose(text);
 		}
 	}
 
@@ -403,17 +407,4 @@ export function references(planning: Planning, views: Views): Map<string, Backli
 	}
 
 	return back;
-}
-
-let cache: { known: Map<string, Target>; back: Map<string, Backlink[]> } | null = null;
-
-/** The site's targets and backlinks, computed once per build from the integration's options. */
-export function siteRefs(): { known: Map<string, Target>; back: Map<string, Backlink[]> } {
-	if (!cache) {
-		const planning = loadPlanning();
-
-		cache = { known: targets(planning, config.views), back: references(planning, config.views) };
-	}
-
-	return cache;
 }

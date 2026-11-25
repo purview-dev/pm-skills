@@ -10,8 +10,8 @@ made along the way.
 
 ## Current focus
 
-- Milestone: M1 Reproducible docs site
-- Why now: every item in Next serves it, and the brief `planning/briefs/2026-11-17-docs-site-package.md` records copied templates, unpinned packages, and rules bumps for template changes as current costs.
+- Milestone: M4 Recorded technical decisions
+- Why now: ADR support must be complete (user, 2026-11-25); 6 of its 11 items are done, its 5 open items fill Next, and the forecast is about 0.6 weeks at 7.75 items per week.
 
 ## Milestones
 
@@ -36,7 +36,14 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 ### M4 Recorded technical decisions
 
 - Serves: V5
-- Exit criteria: a report in `planning/research/` shows, in a scratch repository with `package.json`, `tsconfig.json`, `AGENTS.md`, and `docs/adr/`, that `pm-init` writes `ENGINEERING.md` citing all three files and `ADR directory: docs/adr/`, that the design handoff names the ADRs and principles that apply, and that `pm-checkpoint` (`done`) refuses to close on a failing command check.
+- Exit criteria: a report in `planning/research/` shows, in a scratch repository with `package.json`, `tsconfig.json`, `AGENTS.md`, and `docs/adr/`, that `pm-init` writes `ENGINEERING.md` citing all three files and `pm-adr import docs/adr/` brings its ADRs into `planning/decisions/`, that the design handoff names the ADRs and principles that apply, and that `pm-checkpoint` (`done`) refuses to close on a failing command check; and every ADR section, including a relative image, renders on its docs-site page.
+- Target: none
+- Status: active
+
+### M5 Docs-site package 1.0.0
+
+- Serves: V4
+- Exit criteria: `npm view @purview-dev/pm-docs-site version` returns `1.0.0`, the package has a page per brief and per inbox file and a research reports view, its README holds complete user instructions for every view, and `just package-test` and `just docs-check` pass.
 - Target: none
 - Status: planned
 
@@ -66,6 +73,10 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
   Evidence: `skills/pm-docs-site/SKILL.md` scaffold step 5 and upgrade step 4 install the latest packages; about 40 template files are copied into each site.
   We will know when: two builds from the same `planning.json` and lockfile give byte-identical HTML, and a package upgrade changes only `package.json` and `bun.lock`.
   Status: open
+- B2: We believe recording technology, principles, and ADRs, and naming the ones that apply in every design handoff, will stop agents contradicting earlier technical decisions, for maintainers of repositories that use pm-skills.
+  Evidence: `planning/briefs/2026-11-22-where-do-adrs-fit.md` and `planning/briefs/2026-11-20-technology-and-engineering-principles.md` record agents contradicting earlier decisions because nothing records or points at them.
+  We will know when: the M4 rehearsal report in `planning/research/` shows the design handoff naming the ADRs and principles that apply and `pm-checkpoint` (`done`) refusing a failing command check.
+  Status: open
 
 ## Assumptions and risks
 
@@ -75,10 +86,14 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 -->
 
 - A1: An Astro integration installed from a package can inject every plan page, so a consumer needs no page files. Test: R-008 Docs-site package: skeleton at parity renders every current page from the package.
-  Status: untested
+  Status: holds (2026-11-25)
 - A2: A public `@purview-dev` npm scope and a publish workflow cost GBP 0 per month. Test: R-014 Create the npm @purview-dev scope and token.
-  Status: untested
+  Status: holds (2026-11-25)
 - A3: Integration options and Starlight component overrides cover the customisation this repository's `docs-site/` needs. Test: R-013 Docs-site package: publish and migrate moves `docs-site/` onto the package with no copied files.
+  Status: holds (2026-11-25)
+- A4: `pm-engineering` can infer the technology and principles from `package.json`, `tsconfig.json`, and `AGENTS.md`, with a cited source for each entry. Test: R-035 pm-engineering infer from an existing repository.
+  Status: untested
+- A5: A design stage that is handed the applicable ADRs and principles follows them. Test: R-036 Plan citation and done check's rehearsal report in `planning/research/`.
   Status: untested
 
 ## Not doing
@@ -90,6 +105,7 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 - New views or modules in `skills/pm-docs-site/templates/`. Why: R-013 Docs-site package: publish and migrate replaces the copied templates; only fixes land there meanwhile. Revisit: never.
 - Hosting the docs site (GitHub Pages or any deploy). Why: the site is a local view of the plan, and M1 is about reproducible builds. Revisit: after M1 is done.
 - Writing PM state from the site (drag and drop, edit actions). Why: PM state changes only through the pm-* skills; the site reads `planning.json` only. Revisit: never.
+- GitHub issue and Project sync (`planning/inbox/2026-11-22-1739-github-issue-project-sync.md`, brief `planning/briefs/2026-11-22-github-issue-project-sync.md`). Why: M4 and M5 come first. Revisit: after M5 Docs-site package 1.0.0 is done.
 
 ## Decisions
 
@@ -99,6 +115,13 @@ Newest first. Nothing in this file changes without a line here.
 - <YYYY-MM-DD> <decision>. Why: <reason>. Rejected: <alternatives>.
 -->
 
+- 2026-11-25 Re-planned roadmap. Why: focus moved to M4 and M5 was added; Next stays R-050, R-037, R-055, R-035, R-036 (all M4), R-042, R-052, and R-053 join M5, and Later is grouped M5, M2, M3, then Unassigned. Rejected: leaving Later ungrouped.
+- 2026-11-25 Not doing: GitHub issue and Project sync until M5 Docs-site package 1.0.0 is done. Why: M4 and M5 come first. Rejected: moving the docs-site hosting revisit to after M5; deferring R-046 to R-049 agent context tidy until M4 is done.
+- 2026-11-25 Bet B2 and assumptions A4 and A5 added for M4; A1 to A3 hold. Why: R-008, R-014, and R-013 are done and tested them; B1 stays open because byte-identical builds are not yet measured. Rejected: leaving A1 to A3 untested.
+- 2026-11-25 Current focus M4 Recorded technical decisions, which must leave ADR support complete; R-050 ADR relative images render unresolved joins M4, and its exit criteria add that every ADR section, including a relative image, renders on its docs-site page. Why: the user asked for ADR support to be complete; M4's items already fill Next. Rejected: focus on M5 Docs-site package 1.0.0; focus on M2 Verified install and upgrade; R-050 staying in M5.
+- 2026-11-25 M1 Reproducible docs site re-checked as done. Why: `docs-site/` holds only its four files, `npm view @purview-dev/pm-docs-site version` returns `0.1.0-pre.4`, and `just docs-check` passes (132 pages). Rejected: none.
+- 2026-11-25 Milestone M5 Docs-site package 1.0.0 added, serving V4, ordered M4, M5, M2, M3. Why: the user decided on 2026-11-23 that the package is not stable until it holds every view with complete instructions, and R-050, R-042, R-052, and R-053 had no milestone. Rejected: verification first (M4, M2, M3, M5); no new milestone.
+- 2026-11-25 M4 exit criterion names `pm-adr import docs/adr/` instead of `ADR directory: docs/adr/`. Why: ADR-001 ADRs live in the PM root replaced the setting, and no skill writes it. Rejected: dropping the ADR part; keeping the stale wording.
 - 2026-11-24 M1 Reproducible docs site complete. Why: R-013 moved docs-site/ to package.json, astro.config.ts, bun.lock, and .gitignore on @purview-dev/pm-docs-site, just docs-check passes, and npm view @purview-dev/pm-docs-site version returns a version (0.1.0-pre.4 publishes on merge). Rejected: none.
 
 - 2026-11-22 R-033 ADR directory setting and design handoff moved to the top of Next, ahead of the M1 items. Why: the user asked for the ADRs next. Rejected: keeping it behind R-025 and R-013.
