@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'bun:test';
@@ -189,5 +190,13 @@ describe('references from rendered ADR HTML (ADR-011)', () => {
 		expect(fromAdr(references(copy, all))).toBe(true);
 		expect(fromAdr(references(copy, all, new Map([[adr.id, new Set<string>()]])))).toBe(false);
 		expect(fromAdr(references(copy, all, new Map([[adr.id, new Set([item])]])))).toBe(true);
+	});
+});
+
+describe('source hygiene', () => {
+	it('src/lib/references.ts holds no control characters', () => {
+		const text = readFileSync(fileURLToPath(new URL('../src/lib/references.ts', import.meta.url)), 'utf8');
+
+		expect(text).not.toMatch(/[\x00-\x08\x0b\x0c\x0e-\x1f]/);
 	});
 });

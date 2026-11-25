@@ -4,12 +4,14 @@ import { join } from 'node:path';
 
 import {
 	ADR_STATUSES,
+	DECISIONS_STATUSES,
 	adrSearchText,
 	DEFAULT_DECISIONS_STATE,
 	decisionsQuery,
 	groupDecisions,
 	matchesDecision,
 	parseDecisionsQuery,
+	toggleStatus,
 	type DecisionsState,
 } from '../src/lib/decisions';
 import type { Adr } from '../src/lib/planning-types';
@@ -117,7 +119,18 @@ describe('edge states', () => {
 		expect(parseDecisionsQuery('?status=unknown', categories).status).toEqual(['unknown']);
 	});
 
+	it('toggleStatus: turning off the last visible chip leaves no status, so the URL is ?status=none', () => {
+		const visible = DECISIONS_STATUSES.filter((status) => status !== 'unknown');
+		let state: DecisionsState = DEFAULT_DECISIONS_STATE;
+
+		for (const status of ['proposed', 'accepted', 'deprecated'] as const) state = { ...state, status: toggleStatus(state.status, status, visible) };
+		expect(state.status).toEqual([]);
+		expect(decisionsQuery(state)).toBe('?status=none');
+		expect(toggleStatus([], 'accepted', visible)).toEqual(['accepted']);
+	});
+
 	it('one category: the category parameter is dropped', () => {
+
 		expect(parseDecisionsQuery('?category=data', ['data']).category).toEqual([]);
 		expect(parseDecisionsQuery('?category=data', []).category).toEqual([]);
 	});

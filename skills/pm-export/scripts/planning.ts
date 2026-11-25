@@ -53,7 +53,8 @@ const FENCE = /^ {0,3}(`{3,}|~{3,})[^\n]*\n[\s\S]*?(?:^ {0,3}\1[`~]*[ \t]*(?:\n|
 /** Like stripComments, but an HTML comment inside a code span or fenced block is kept: ADR sections export verbatim (ADR-002). */
 export function stripCommentsOutsideCode(text: string): string {
   const clean = text.replace(/\r\n/g, "\n");
-  const prose = (part: string) => part.replace(/(`+)[\s\S]*?\1|<!--[\s\S]*?-->/g, (match) => (match.startsWith("<!--") ? "" : match));
+  // A code span never crosses a blank line (CommonMark), so a stray backtick cannot shield a later comment.
+  const prose = (part: string) => part.replace(/(`+)(?:(?!\n[ \t]*\n)[\s\S])*?\1|<!--[\s\S]*?-->/g, (match) => (match.startsWith("<!--") ? "" : match));
   let out = "";
   let at = 0;
   for (const fence of clean.matchAll(FENCE)) {

@@ -51,6 +51,17 @@ export function parseDecisionsQuery(search: string, categories: string[]): Decis
 	};
 }
 
+/**
+ * Press or release one status chip. When no visible chip stays on, the result
+ * is empty, so a hidden chip (`unknown` on a site without null-status ADRs)
+ * never keeps a status alive and the URL reads `status=none`.
+ */
+export function toggleStatus(status: DecisionsStatus[], chip: DecisionsStatus, visible: readonly DecisionsStatus[]): DecisionsStatus[] {
+	const next = status.includes(chip) ? status.filter((entry) => entry !== chip) : [...status, chip];
+
+	return visible.some((entry) => next.includes(entry)) ? next : [];
+}
+
 /** The query string for a state, keys in the order q, status, category, group; `''` for the default; every chip off is `status=none`. */
 export function decisionsQuery(state: DecisionsState): string {
 	const pairs: [string, string][] = [];

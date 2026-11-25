@@ -150,7 +150,7 @@ export interface Backlink {
  * For every target, the pages that link to it. Each source page below must
  * render exactly these links (through RefLink and LinkedText); the link test
  * checks that every rendered link appears in its target's list. An ADR page's
- * sections are rendered HTML, so drKeys (siteRefs: the keys linkHtml linked
+ * sections are rendered HTML, so `adrKeys` (siteRefs: the keys linkHtml linked
  * in each ADR's HTML) replaces the raw-Markdown pass over them (ADR-011).
  */
 export function references(planning: Planning, views: Views, adrKeys?: Map<string, Set<string>>): Map<string, Backlink[]> {

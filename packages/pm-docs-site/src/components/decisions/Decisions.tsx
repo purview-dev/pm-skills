@@ -3,7 +3,7 @@
 // status. Rows that do not match are hidden, never left out, so the page's
 // links stay the same in every state. The state lives in the URL
 // (useDecisionsUrlState).
-import { DECISIONS_STATUSES, DEFAULT_DECISIONS_STATE, decisionsQuery, groupDecisions, matchesDecision, type DecisionsGroup } from '../../lib/decisions';
+import { DECISIONS_STATUSES, DEFAULT_DECISIONS_STATE, decisionsQuery, groupDecisions, matchesDecision, toggleStatus, type DecisionsGroup } from '../../lib/decisions';
 import type { AdrStatus } from '../../lib/planning-types';
 import { useDecisionsUrlState } from './useDecisionsUrlState';
 
@@ -74,7 +74,7 @@ export default function Decisions({ rows, categories, hasUnknown }: Props) {
 							type="button"
 							className="decisions-chip"
 							aria-pressed={state.status.includes(status)}
-							onClick={() => setState({ ...state, status: toggle(state.status, status) })}
+							onClick={() => setState({ ...state, status: toggleStatus(state.status, status, chips) })}
 						>
 							{status}
 						</button>

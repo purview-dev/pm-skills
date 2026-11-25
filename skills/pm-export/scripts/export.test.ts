@@ -123,6 +123,10 @@ it("stripCommentsOutsideCode: inline code and fences keep comments", () => {
     expect(stripCommentsOutsideCode("a `<!-- x -->` b <!-- y --> c")).toBe("a `<!-- x -->` b  c");
   });
 
+  it("stripCommentsOutsideCode: a stray backtick never spans a blank line", () => {
+    expect(stripCommentsOutsideCode("Press the ` key.\n\n<!-- hidden note -->\n\nUse `x`.")).toBe("Press the ` key.\n\n\n\nUse `x`.");
+  });
+
   it("stripCommentsOutsideCode: fence and comment", () => {
     const text = "<!-- a\nb -->\n```md\n<!-- pm-skills:start -->\n```\n";
     expect(stripCommentsOutsideCode(text)).toBe("\n```md\n<!-- pm-skills:start -->\n```\n");
