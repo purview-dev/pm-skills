@@ -14,17 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-034 Engineering file and pm-engineering skill
-
-- Serves: V5
-- Milestone: M4
-- Owner: agent
-- Done when: `pm-engineering add` writes a linted entry to `planning/ENGINEERING.md` (`## Technology` and `## Principles`, each entry citing its `Source`), and the skill is listed in the README, managed-section, `pm-setup`, and `pm-help` tables with `just validate` and `just test` passing.
-- Size: M
-- Depends on: none
-- Status: ready
-- Brief: planning/briefs/2026-11-20-technology-and-engineering-principles.md
-
 ### R-041 ADR skill follow-ups
 
 - Serves: V5

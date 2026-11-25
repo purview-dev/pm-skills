@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-24T20:46:34+00:00",
+  "generatedAt": "2026-11-24T23:58:42+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-013-docs-site-package",
-    "head": "d7b8cae3d68f70e8ac0ca00965fc58dfb8fca796"
+    "branch": "feat/r-034-engineering-file-and-pm-engineering-skill",
+    "head": "80a94583e00982a8a60057a6649ea117a9b10f0f"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -237,34 +237,10 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-034",
-        "title": "Engineering file and pm-engineering skill",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V5"
-        ],
-        "milestone": "M4",
-        "owner": "agent",
-        "doneWhen": "`pm-engineering add` writes a linted entry to `planning/ENGINEERING.md` (`## Technology` and `## Principles`, each entry citing its `Source`), and the skill is listed in the README, managed-section, `pm-setup`, and `pm-help` tables with `just validate` and `just test` passing.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
-        "note": null,
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-041",
         "title": "ADR skill follow-ups",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V5"
@@ -288,7 +264,7 @@
         "id": "R-040",
         "title": "ADR link and export edge cases",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4",
@@ -316,7 +292,7 @@
         "title": "pm-engineering infer from an existing repository",
         "section": "later",
         "position": 1,
-        "label": "waiting",
+        "label": "later",
         "serves": [
           "V5"
         ],
@@ -342,7 +318,7 @@
         "title": "Plan citation and done check",
         "section": "later",
         "position": 2,
-        "label": "waiting",
+        "label": "later",
         "serves": [
           "V5"
         ],
@@ -369,7 +345,7 @@
         "title": "Engineering export and docs-site view",
         "section": "later",
         "position": 3,
-        "label": "waiting",
+        "label": "later",
         "serves": [
           "V5"
         ],
@@ -669,13 +645,6 @@
       "now": [],
       "next": [
         {
-          "id": "R-034",
-          "title": "Engineering file and pm-engineering skill",
-          "owner": "agent",
-          "size": "M",
-          "detail": "ready"
-        },
-        {
           "id": "R-041",
           "title": "ADR skill follow-ups",
           "owner": "agent",
@@ -693,6 +662,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-24",
+          "id": "R-034",
+          "title": "Engineering file and pm-engineering skill",
+          "milestone": "M4",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-24-engineering-file-and-pm-engineering-skill.md",
+          "result": "branch feat/r-034-engineering-file-and-pm-engineering-skill"
+        },
         {
           "date": "2026-11-24",
           "id": "R-013",
@@ -948,6 +926,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-24",
+        "kind": "done",
+        "id": "R-034",
+        "title": "Engineering file and pm-engineering skill",
+        "milestone": "M4",
+        "owner": "agent",
+        "result": "branch feat/r-034-engineering-file-and-pm-engineering-skill"
+      },
       {
         "date": "2026-11-24",
         "kind": "done",
@@ -1276,6 +1263,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-24",
+        "id": "R-034",
+        "title": "Engineering file and pm-engineering skill",
+        "milestone": "M4",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-24-engineering-file-and-pm-engineering-skill.md",
+        "result": "branch feat/r-034-engineering-file-and-pm-engineering-skill"
+      },
       {
         "date": "2026-11-24",
         "id": "R-013",
@@ -1769,6 +1765,36 @@
       "brief": null,
       "reviewed": "never",
       "idea": "During R-013, `bun test scripts/` gave 198 pass and 5 fail while builds and browser tests ran at the same time, and the same suite gave 244 pass and 0 fail on an idle machine. The failing tests were seen in `skills/pm-lint` and `skills/pm-next/scripts/sync.test.ts`, which spawn git subprocesses; they time out or race under load, so a pre-push `just lint-check` can fail without a code change."
+    },
+    {
+      "file": "planning/inbox/2026-11-24-2309-current-focus-names-a-done-milestone.md",
+      "title": "Current focus names a done milestone",
+      "captured": "2026-11-24 23:09",
+      "source": "agent (pm-next, R-034 design)",
+      "kind": "question",
+      "severity": null,
+      "affects": "planning/STRATEGY.md",
+      "context": "R-034 design",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "`STRATEGY.md` Current focus is M1 Reproducible docs site, which is `Status: done (2026-11-24)`, while every item in Next serves M4 Recorded technical decisions. Set a new focus with pm-strategy."
+    },
+    {
+      "file": "planning/inbox/2026-11-24-2345-engineering-lint-and-skill-minors.md",
+      "title": "Engineering lint and skill review minors",
+      "captured": "2026-11-24 23:45",
+      "source": "agent (R-034 execute, final review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "R-034",
+      "context": "R-034 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "R-034 final-review minors, deferred:\n\n1. `fixStructure` cannot sort Principles while one heading has no EP ID (comparator returns 0, not transitive); `skills/pm-lint/scripts/structure.ts`.\n2. `rules.md` lists the 8-word principle title under the error `engineering/principle`, but the code emits the warning `title/length`, whose description names only inbox files and risks (`rules.ts`, `rules.md`).\n3. `rules.ts` and `rules.md` wording differs for `engineering/technology`, `engineering/principle`, and `engineering/removed`; the drift test compares IDs only.\n4. A Technology heading shaped `### EP-001 Foo` is keyed as `Foo`, giving a false duplicate with `### Foo`.\n5. `Decision: None` (capital N) is an error; other files accept `none` in any case.\n6. `localeCompare` without a locale makes `engineering/order` depend on the host locale for non-ASCII names.\n7. The `writes ENGINEERING.md on a fresh install` test proves only that the template exists, not `pm-init`'s file table row.\n8. The Challenge protocol's \"applies in\" list in the managed section omits `pm-engineering` (add).\n9. `pm-engineering` step 1 follows `superseded by` one step only; a superseded successor is recommended unchecked."
     }
   ],
   "briefs": [
@@ -1803,11 +1829,11 @@
     },
     {
       "path": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
-      "id": "R-034",
+      "id": "R-035",
       "title": "Technology and engineering principles sections",
-      "status": "on roadmap (R-034, R-035, R-036, R-037)",
+      "status": "on roadmap (R-035, R-036, R-037)",
       "origin": "planning/inbox/2026-11-20-1528-technology-and-engineering-principles.md",
-      "updated": "2026-11-22",
+      "updated": "2026-11-24",
       "decision": "2026-11-20 Keep it parked. Reason: SCOPE CHANGE to v1; no `V` line or milestone covers it and M1 Reproducible docs site is the current focus. Next: `pm-strategy` adds a `V` line and a milestone after M1, then the four slices go to Later under it.",
       "problem": "A solo developer's technology choices, adopted packages, and engineering principles are decided once and then lost: nothing in PM state records what was adopted and why (answer 2026-11-20).",
       "doneWhen": "`pm-init` in a scratch repository with a `package.json` and an `AGENTS.md` writes `planning/ENGINEERING.md` with `## Technology` and `## Principles`, each entry citing its `Source`, and `pm-lint check` passes on it.",
@@ -2005,16 +2031,32 @@
       "decision": "Estimate tokens as `ceil(characters / 4)` on LF-normalised text, labelled `estimated tokens`, and compare the relative change per session type, not absolute numbers.",
       "alternatives": "- An exact tokenizer package: breaks the dependency-free scripts, and none matches current Claude models.\n- The token-counting API: needs a key and the network.\n- Do nothing: growth stays unmeasured.",
       "consequences": "- Absolute numbers may be off by 20% or more; relative drops are measured consistently.\n- No dependency, works offline, costs GBP 0."
+    },
+    {
+      "id": "ADR-009",
+      "path": "planning/decisions/ADR-009-engineering-file-records-current-state.md",
+      "title": "Engineering file records state, ADRs reasons",
+      "status": "accepted",
+      "supersededBy": null,
+      "date": "2026-11-24",
+      "category": "architecture",
+      "supersedes": null,
+      "item": "R-034",
+      "source": null,
+      "context": "A repository's adopted technology and engineering principles are not recorded in PM state, so agents build items that break them (brief `planning/briefs/2026-11-20-technology-and-engineering-principles.md`). Since ADR-001, technical decisions (technology, library, pattern) live in ADRs, so a second record of why a technology was adopted would drift from its ADR. Spec: `docs/superpowers/specs/2026-11-24-engineering-file-and-pm-engineering-skill-design.md`.",
+      "decision": "`<PM root>/ENGINEERING.md`, owned only by `pm-engineering`, records the current state: the technology in use (`### <Name>` blocks) and the principles work must follow (`### EP-NNN <Title>` blocks, IDs never reused). Each entry carries a one-line `Reason` and a `Decision: ADR-NNN | none` field; the full why and its alternatives stay in the ADR. A removed entry leaves one line under `## Removed`.",
+      "alternatives": "- Entries carry their own full reasons, no ADR link: simpler, but duplicates the ADRs and drifts from them.\n- Principles only, technology in ADRs alone: an ADR records a decision, not what is in use now, and the Done when of R-034 needs `## Technology`.\n- Do nothing: choices stay in `AGENTS.md` and agent memory, unread by any stage.",
+      "consequences": "- One place answers \"what do we use and what must we follow\"; ADRs keep answering \"why\".\n- Entries without an ADR (`Decision: none`) are allowed, so older choices can be recorded without writing an ADR first.\n- `pm-lint` checks that a `Decision` names an existing ADR."
     }
   ],
   "counts": {
-    "next": 3,
+    "next": 2,
     "later": 14,
     "nextMax": 5,
-    "openInbox": 11,
+    "openInbox": 13,
     "discuss": 0,
     "shapingBriefs": 0,
-    "done": 28,
+    "done": 29,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -2026,7 +2068,6 @@
     "reviewDue": true,
     "lastReview": "2026-11-22",
     "claimable": [
-      "R-034",
       "R-041",
       "R-040"
     ],

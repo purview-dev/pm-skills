@@ -4,6 +4,7 @@
 
 ## Done
 
+- 2026-11-24 R-034 Engineering file and pm-engineering skill. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-24-engineering-file-and-pm-engineering-skill.md. Result: branch feat/r-034-engineering-file-and-pm-engineering-skill.
 - 2026-11-24 R-013 Docs-site package: publish and migrate. Milestone: M1. Owner: both. Plan: docs/superpowers/plans/2026-11-24-docs-site-package-publish-and-migrate.md. Result: branch feat/r-013-docs-site-package.
 - 2026-11-24 R-043 Per-session context report. Milestone: none. Owner: agent. Plan: docs/superpowers/plans/2026-11-24-per-session-context-report.md. Result: branch feat/r-043-per-session-context-report.
 - 2026-11-24 R-045 Docs-site package: architecture view. Milestone: M1. Owner: agent. Plan: docs/superpowers/plans/2026-11-23-docs-site-package-architecture-view.md. Result: branch feat/r-013-docs-site-package.

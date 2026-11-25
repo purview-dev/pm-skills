@@ -41,6 +41,7 @@ section of the agent instructions file (`AGENTS.md` or `CLAUDE.md`).
    | `LOG.md` | `<PM root>/LOG.md` |
    | `STACK.md` | `<PM root>/STACK.md` |
    | `RISKS.md` | `<PM root>/RISKS.md` |
+   | `ENGINEERING.md` | `<PM root>/ENGINEERING.md` |
    | `inbox-README.md` | `<PM root>/inbox/README.md` |
    | `briefs-README.md` | `<PM root>/briefs/README.md` |
    | `research-README.md` | `<PM root>/research/README.md` |
@@ -145,7 +146,7 @@ section of the agent instructions file (`AGENTS.md` or `CLAUDE.md`).
 ```markdown
 ## Set up
 
-- Created: `<PM root>/config.md`, `VISION.md`, `STRATEGY.md`, `NOW.md`, `ROADMAP.md`, `LOG.md`, `STACK.md`, `RISKS.md`, `inbox/`, `briefs/`, `research/`<, `decisions/`: when the repository has no substantial code>
+- Created: `<PM root>/config.md`, `VISION.md`, `STRATEGY.md`, `NOW.md`, `ROADMAP.md`, `LOG.md`, `STACK.md`, `RISKS.md`, `ENGINEERING.md`, `inbox/`, `briefs/`, `research/`<, `decisions/`: when the repository has no substantial code>
 - Vision: <n> v1 outcomes, <n> out-of-scope items, <n> challenges raised
 - Roadmap: <n> in Next (<n> for you), <n> in Later
 - Last review: never

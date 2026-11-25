@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, spyOn } from "bun:test";
-import { cpSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -62,6 +62,10 @@ function initRoot(): string {
 describe("clean PM state", () => {
   it("passes for a fresh pm-init install", async () => {
     expect(await lint({ root: initRoot(), pmRoot: "planning/" })).toEqual([]);
+  });
+
+  it("writes ENGINEERING.md on a fresh install", () => {
+    expect(existsSync(join(initRoot(), "planning", "ENGINEERING.md"))).toBe(true);
   });
 
   it("passes for the fixture project, with the export built and validated", async () => {
@@ -280,6 +284,92 @@ describe("ADR rules", () => {
       "decisions/ADR-002-b.md": adr("ADR-002", "B", { Supersedes: "ADR-001" }),
     });
     expect((await rulesOf(root)).filter((r) => r.startsWith("adr/"))).toEqual([]);
+  });
+});
+
+const tech = (name: string, f: Partial<Record<string, string>> = {}) =>
+  `### ${name}\n\n` +
+  ["Kind", "Version", "Reason", "Decision", "Source", "Added"]
+    .filter((k) => f[k] !== "OMIT")
+    .map((k) => `- ${k}: ${f[k] ?? { Kind: "runtime", Version: "1.3", Reason: "Fast scripts", Decision: "ADR-002", Source: "package.json", Added: "2026-11-24" }[k]}`)
+    .join("\n") + "\n";
+const principle = (id: string, title: string, f: Partial<Record<string, string>> = {}) =>
+  `### ${id ? `${id} ` : ""}${title}\n\n` +
+  ["Rule", "Applies to", "Check", "Decision", "Source", "Added"]
+    .map((k) => `- ${k}: ${f[k] ?? { Rule: "Scripts are TypeScript.", "Applies to": "scripts/**", Check: "`bun test`", Decision: "none", Source: "AGENTS.md Repository conventions", Added: "2026-11-24" }[k]}`)
+    .join("\n") + "\n";
+const engineering = (technology: string[], principles: string[], removed: string[] = []) =>
+  `# Engineering\n\n## Technology\n\n${technology.map((t) => t + "\n").join("")}## Principles\n\n${principles.map((p) => p + "\n").join("")}## Removed\n${removed.length ? "\n" + removed.join("\n") + "\n" : ""}`;
+const engFindings = async (text: string) =>
+  (await lint({ root: repo({ "ENGINEERING.md": () => text }), pmRoot: "planning/", noExport: true })).filter((f) => f.file.endsWith("ENGINEERING.md"));
+const engRules = async (text: string) => (await engFindings(text)).map((f) => f.rule);
+const validEngineering = () =>
+  engineering(
+    [tech("Bun"), tech("Zod", { Kind: "library", Decision: "none" })],
+    [principle("EP-001", "TypeScript for every script"), principle("EP-002", "Reviewed docs", { Check: "review" })],
+    ["- 2026-11-24 Jest. Reason: replaced by bun test."],
+  );
+
+describe("engineering rules", () => {
+  it("accepts a valid file", async () => {
+    expect(await engFindings(validEngineering())).toEqual([]);
+  });
+  it("accepts a CRLF file", async () => {
+    expect(await engFindings(validEngineering().replaceAll("\n", "\r\n"))).toEqual([]);
+  });
+  it("accepts the empty sections", async () => {
+    expect(await engFindings(engineering([], []))).toEqual([]);
+  });
+  it("checks sections", async () => {
+    expect(await engRules("# Engineering\n\n## Principles\n\n## Technology\n")).toContain("engineering/sections");
+  });
+  it("checks a duplicate technology name, ignoring case", async () => {
+    expect(await engRules(engineering([tech("Bun"), tech("bun")], []))).toContain("engineering/technology");
+  });
+  it("checks missing technology fields", async () => {
+    expect(await engRules(engineering([tech("Bun", { Reason: "OMIT" })], []))).toContain("engineering/technology");
+  });
+  it("checks technology field order", async () => {
+    const text = engineering([tech("Bun").replace("- Kind: runtime\n- Version: 1.3", "- Version: 1.3\n- Kind: runtime")], []);
+    expect(await engRules(text)).toContain("engineering/technology");
+  });
+  it("checks principle headings and titles", async () => {
+    expect(await engRules(engineering([], [principle("", "Use TypeScript")]))).toContain("engineering/principle");
+    expect(await engRules(engineering([], [principle("EP-1", "Use TypeScript")]))).toContain("engineering/principle");
+    expect(await engRules(engineering([], [principle("EP-001", "one two three four five six seven eight nine")]))).toContain("title/length");
+  });
+  it("checks values", async () => {
+    for (const text of [
+      engineering([], [principle("EP-001", "A", { Check: "bun test" })]),
+      engineering([tech("Bun", { Decision: "ADR-009" })], []),
+      engineering([tech("Bun", { Decision: "ADR-002, ADR-001" })], []),
+      engineering([tech("Bun", { Source: "" })], []),
+      engineering([tech("Bun", { Added: "today" })], []),
+    ]) expect(await engRules(text)).toContain("engineering/values");
+  });
+  it("warns on a superseded decision", async () => {
+    const findings = await engFindings(engineering([tech("Bun", { Decision: "ADR-001" })], []));
+    expect(findings.map((f) => [f.rule, f.severity])).toEqual([["engineering/decision-current", "warning"]]);
+  });
+  it("checks principle IDs across Principles and Removed", async () => {
+    const text = engineering([], [principle("EP-001", "A")], ["- 2026-11-20 EP-001 Old rule. Reason: dropped."]);
+    expect(await engRules(text)).toContain("engineering/id-unique");
+  });
+  it("checks removed lines", async () => {
+    expect(await engRules(engineering([], [], ["- Jest removed"]))).toContain("engineering/removed");
+  });
+  it("checks and fixes order", async () => {
+    const text = engineering(
+      [tech("Zod"), tech("Bun")],
+      [principle("EP-002", "B"), principle("EP-001", "A")],
+      ["- 2026-11-01 Jest. Reason: old.", "- 2026-11-20 Mocha. Reason: older."],
+    );
+    expect(await engRules(text)).toContain("engineering/order");
+    const fixed = fixStructure("ENGINEERING.md", text);
+    expect(await engRules(fixed)).not.toContain("engineering/order");
+    expect(fixed.indexOf("### Bun")).toBeLessThan(fixed.indexOf("### Zod"));
+    expect(fixed.indexOf("### EP-001")).toBeLessThan(fixed.indexOf("### EP-002"));
+    expect(fixed.indexOf("Mocha")).toBeLessThan(fixed.indexOf("Jest"));
   });
 });
 

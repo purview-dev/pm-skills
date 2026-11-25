@@ -104,6 +104,16 @@ export const RULES: Rule[] = [
   rule("risks/id-unique", "error", false, "A risk ID appears once across Open, Closed, and Removed."),
   rule("risks/removed", "error", false, "A removed risk is `- YYYY-MM-DD RK-NNN <title>. Reason: <reason>.`"),
 
+  // ENGINEERING.md
+  rule("engineering/sections", "error", false, "ENGINEERING.md has `## Technology`, `## Principles`, and `## Removed`, in that order."),
+  rule("engineering/technology", "error", false, "A technology is `### <Name>` with Kind, Version, Reason, Decision, Source, and Added, in that order; its name is unique in the section."),
+  rule("engineering/principle", "error", false, "A principle is `### EP-NNN <Title>` with Rule, Applies to, Check, Decision, Source, and Added, in that order."),
+  rule("engineering/values", "error", false, "Check is a backticked command or `review`; Decision is none or an existing ADR ID; Source is not empty; Added is YYYY-MM-DD."),
+  rule("engineering/decision-current", "warning", false, "A `Decision` ADR is not superseded or deprecated."),
+  rule("engineering/id-unique", "error", false, "A principle ID appears once across Principles and Removed."),
+  rule("engineering/order", "error", true, "Technology is alphabetical, Principles by ID, Removed newest first."),
+  rule("engineering/removed", "error", false, "A removed entry is `- YYYY-MM-DD <Name or EP-NNN title>. Reason: <reason>.`"),
+
   // decisions/ADR-*.md
   rule("adr/header", "error", false, "An ADR starts `# ADR-NNN <Title>` with Status, Date, Category, Supersedes, Item, and Source, in order, with allowed values."),
   rule("adr/sections", "error", false, "An ADR has `## Context`, `## Decision`, `## Alternatives`, and `## Consequences`, in order."),

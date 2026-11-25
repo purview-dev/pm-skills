@@ -311,6 +311,7 @@ repository root.
 | `pm-bug` | Capture a bug with the facts needed to fix it: symptom, expected and actual, reproduction, severity, and evidence | Any time (capture only during a workflow), user asks |
 | `pm-risk` | Capture, add, update, re-rate, close, or remove one risk in the risk register, with its RAG status; turn a mitigation into a roadmap item | Any time (capture and view only during a workflow), user asks |
 | `pm-adr` | Record, supersede, accept, deprecate, view, check, or import architecture decision records in the decisions folder | Any time (new, supersede, accept, view, and check during a workflow), user asks |
+| `pm-engineering` | Show, add, change, or remove one technology or principle in the engineering file | User asks (view only during a workflow) |
 | `pm-shape` | Discuss, challenge, and flesh out one idea; decide park, roadmap, build, or drop | No active workflow, user asks |
 | `pm-discover` | Analyse the existing product, its history and usage, or answer a product question | No active workflow, user asks |
 | `pm-strategy` | Set vision, milestones, bets, and decisions; generate or re-plan the roadmap | User asks, or another PM skill recommends it |
@@ -379,7 +380,8 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   discussion uses, each with the words needed to decide it: a milestone's
   name, whether it is the focus, and the items in it; a roadmap item's
   title, owner, size, status, and section position (`Next 3`, `Later, M2`);
-  a risk's title, RAG, and status; an ADR's title and status; a `V` line,
+  a risk's title, RAG, and status; an ADR's title and status; a
+  principle's title, `Check`, and `Applies to`; a `V` line,
   bet, or inbox file's one-line text. It lists every member of a range, not
   its ends: `M1 to M4` lists M1, M2, M3, and M4, and `R-005 to R-010` lists
   every item between them in roadmap order. A position (`before R-010`,
@@ -391,14 +393,16 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   the user never has to look a bare ID up. In a list, board, roadmap, or
   status it is `<ID> <title>`; in a question, choice, or change line it is
   `<ID> <title> (owner, size, status)`, `RK-NNN <title> (<RAG>)` for a
-  risk, or `ADR-NNN <title> (<status>)` for an ADR. Every skill prints one
+  risk, `ADR-NNN <title> (<status>)` for an ADR, or `EP-NNN <title>` for a
+  principle; a technology is named by its name. Every skill prints one
   wherever its output names an ID. A bare ID appears only in a literal
   command the user types (`pm-item done R-009`), a file line such as
   `LOG.md`, or a commit message.
 - **Optional files:** `STRATEGY.md`, `briefs/`, and `research/` in the PM
   root may be missing in projects initialised before version 4, and
   `RISKS.md` in projects initialised before version 12. `decisions/` may be
-  missing in projects initialised before version 21. Skills that read them
+  missing in projects initialised before version 21, and so may
+  `ENGINEERING.md`. Skills that read them
   treat a missing file as empty. Skills that write them create them.
 - **Inbox file:** one idea per file at
   `<PM root>/inbox/<YYYY-MM-DD-HHMM>-<slug>.md`, written by `pm-park` and
@@ -538,6 +542,41 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
 - **Decision split:** product decisions (whether and what) go in
   `STRATEGY.md` `## Decisions` and briefs; technical decisions in ADRs; one
   item's detail in its spec, which names the ADR IDs it writes or follows.
+- **Engineering file:** `<PM root>/ENGINEERING.md`, an **Optional file**
+  (a missing file is empty), written only by `pm-engineering`. It records
+  the current state: the technology in use and the principles work must
+  follow. The reason beyond one line lives in the ADR its `Decision` names.
+  Three sections, in order: `## Technology` (alphabetical), `## Principles`
+  (by ID), and `## Removed` (newest first, one line per removed entry):
+
+  ```markdown
+  ### <Name>
+
+  - Kind: runtime | framework | library | tool | service
+  - Version: <version or range | none>
+  - Reason: <one line>
+  - Decision: <ADR-NNN | none>
+  - Source: <file and heading, URL, or user (<YYYY-MM-DD>)>
+  - Added: <YYYY-MM-DD>
+
+  ### EP-001 <Title, max 8 words>
+
+  - Rule: <one or two sentences>
+  - Applies to: <comma-separated globs | all>
+  - Check: `<command>` | review
+  - Decision: <ADR-NNN | none>
+  - Source: <file and heading, URL, or user (<YYYY-MM-DD>)>
+  - Added: <YYYY-MM-DD>
+  ```
+
+  A removed entry is `- <YYYY-MM-DD> <Name | EP-NNN title>. Reason:
+  <reason>.` under `## Removed`. `Kind` is free text; the list is the
+  suggested set. `Source` is never empty. A `Decision` names an ADR that is
+  not superseded or deprecated.
+- **Principle IDs:** `EP-NNN` (at least 3 digits), separate from the other
+  IDs. A new ID is the highest `EP` number in `## Principles` and
+  `## Removed`, plus 1. IDs are never reused. A technology has no ID; its
+  name is unique in `## Technology`.
 - **Read before deciding:** any session, inside the lifecycle or not, reads
   the accepted ADR titles in the decisions folder before a technical
   decision, follows them, or supersedes one through `pm-adr`.
@@ -807,7 +846,8 @@ might apply"). That rule does **not** apply to `pm-*` skills, except
    explain mode, without reading PM state; `pm-rejoin` may run in `locate`
    mode; `pm-export` may run in `check` or `query` mode, `pm-lint` in
    `check`, `rules`, or `hook` mode, `pm-docs-site` in `check` mode, and
-   `pm-adr` in `view` or `check` mode; and
+   `pm-adr` in `view` or `check` mode, and `pm-engineering` in `view`
+   mode; and
    `pm-status`, `pm-board`, `pm-roadmap`, `pm-up-next`, and `pm-risk`
    (`view`) may render their view when the user explicitly asks for it. None of them may add, move, insert, close,
    or reorder anything during a workflow. In every case the step in
@@ -1357,6 +1397,13 @@ site is four files: `package.json`, `astro.config.ts`, `bun.lock`, and
 templates, including one with the architecture module, onto the package.
 Mermaid fences in the docs and ADR pages render as diagrams. Run
 `pm-docs-site check` for an installed site. No setting is added.
+
+Version 21 also adds `pm-engineering` and the **Engineering file**
+(`<PM root>/ENGINEERING.md`, optional): the technology in use and the
+principles work must follow, each pointing to the ADR that holds its
+reason. `pm-init` creates the file on a fresh install; on an older install
+a missing file is empty, and `pm-engineering` creates it on the first
+write. `pm-lint` checks it. No setting is added.
 
 ## Asking the user (mandatory)
 
