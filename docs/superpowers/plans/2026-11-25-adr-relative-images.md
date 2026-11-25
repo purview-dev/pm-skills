@@ -85,7 +85,7 @@ it('an ADR section with a missing relative image fails the build', () => {
 Write the PNG from a base64 1x1 literal with `Buffer.from(..., 'base64')`. The fixture builds a page for R-013 (`links.test.ts` asserts the same href form for R-012).
 
 - [ ] **Step 2:** Run `cd packages/pm-docs-site; bun test test/integration.test.ts -t "relative image"`. Expected: the first FAILS (`__ASTRO_IMAGE_` present), the second FAILS (build succeeds).
-- [ ] **Step 3:** Create `LinkedHtml.astro`. In `[id].astro`, read the section entries with `getEntry('adr-sections', \`${adr.id.toLowerCase()}/${key}\`)`,`const { Content } = await render(entry)`, and render`<LinkedHtml known={known}><Content /></LinkedHtml>` in place of the `set:html` fragment. Keep `None recorded.` for `''` and skip `null` as today. Update the file's header comment.
+- [ ] **Step 3:** Create `LinkedHtml.astro`. In `[id].astro`, read each section entry with ``getEntry('adr-sections', `${adr.id.toLowerCase()}/${key}`)``, then `const { Content } = await render(entry)`, and render `<LinkedHtml known={known}><Content /></LinkedHtml>` in place of the `set:html` fragment. Keep `None recorded.` for `''` and skip `null` as today. Update the file's header comment.
 - [ ] **Step 4:** Run `cd packages/pm-docs-site; bun test test/integration.test.ts test/links.test.ts`. Expected: PASS, including the ADR-003 remote image and Mermaid cases.
 - [ ] **Step 5:** Commit: `fix(pm-docs-site): resolve relative images in ADR sections (R-050)`.
 
