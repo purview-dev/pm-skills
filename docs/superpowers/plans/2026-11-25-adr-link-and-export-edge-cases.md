@@ -33,29 +33,31 @@
 ### Task 1: `linkHtml` returns keys and splits tags safely
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/src/lib/link-html.ts`
 - Modify: `packages/pm-docs-site/src/routes/plan/decisions/[id].astro:87` (use `.html`)
 - Test: `packages/pm-docs-site/test/link-html.test.ts`
 
 **Interfaces:**
+
 - Produces: `export interface LinkedHtml { html: string; keys: Set<string> }` and `export function linkHtml(html: string, known: Map<string, Target>): LinkedHtml`.
 
 - [ ] **Step 1: Update the existing tests to read `.html`, and add the failing tests**
 
 ```ts
 it('attribute with >: never splits the tag', () => {
-	const out = linkHtml('<p><img src="x.png" alt="a > R-012"> R-012</p>', known);
-	expect(out.html).toBe('<p><img src="x.png" alt="a > R-012"> <a href="/plan/features/r-012/">R-012</a></p>');
-	expect([...out.keys]).toEqual(['R-012']);
+ const out = linkHtml('<p><img src="x.png" alt="a > R-012"> R-012</p>', known);
+ expect(out.html).toBe('<p><img src="x.png" alt="a > R-012"> <a href="/plan/features/r-012/">R-012</a></p>');
+ expect([...out.keys]).toEqual(['R-012']);
 });
 it('script and style: text inside is never linked', () => {
-	const out = linkHtml('<script>R-012</script><style>/* ADR-002 */</style><p>x</p>', known);
-	expect(out.html).toBe('<script>R-012</script><style>/* ADR-002 */</style><p>x</p>');
-	expect(out.keys.size).toBe(0);
+ const out = linkHtml('<script>R-012</script><style>/* ADR-002 */</style><p>x</p>', known);
+ expect(out.html).toBe('<script>R-012</script><style>/* ADR-002 */</style><p>x</p>');
+ expect(out.keys.size).toBe(0);
 });
 it('keys: every linked key, none from inside links or unknown IDs', () => {
-	const out = linkHtml('<p><em>R-012</em> <a href="/x">ADR-002</a> R-099</p>', known);
-	expect([...out.keys]).toEqual(['R-012']);
+ const out = linkHtml('<p><em>R-012</em> <a href="/x">ADR-002</a> R-099</p>', known);
+ expect([...out.keys]).toEqual(['R-012']);
 });
 ```
 
@@ -67,12 +69,14 @@ it('keys: every linked key, none from inside links or unknown IDs', () => {
 ### Task 2: References from rendered ADR HTML; async `siteRefs()`
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/src/lib/references.ts` (remove `siteRefs`, its cache, and the `virtual:pm-docs-site/config` import; add the `adrKeys` parameter)
 - Create: `packages/pm-docs-site/src/lib/site-refs.ts`
 - Modify (`siteRefs()` to `await siteRefs()`, import from `site-refs`): `src/components/LinkedFrom.astro`, `src/components/LinkedText.astro`, `src/components/RefLink.astro`, `src/pages/plan/board.astro`, `src/pages/plan/log.astro`, `src/pages/plan/roadmap.astro`, `src/routes/plan/decisions.astro`, `src/routes/plan/decisions/[id].astro`, `src/routes/plan/graph.astro`, `src/routes/plan/now.astro`
 - Test: `packages/pm-docs-site/test/references.test.ts`
 
 **Interfaces:**
+
 - Consumes: `linkHtml(...).keys` (Task 1); `RenderedAdr` and `ADR_SECTIONS` from `src/loaders/adrs.ts`.
 - Produces: `references(planning: Planning, views: Views, adrKeys?: Map<string, Set<string>>): Map<string, Backlink[]>`; `export function siteRefs(): Promise<{ known: Map<string, Target>; back: Map<string, Backlink[]> }>` in `site-refs.ts`.
 
@@ -80,15 +84,15 @@ it('keys: every linked key, none from inside links or unknown IDs', () => {
 
 ```ts
 it('ADR keys replace the raw-Markdown pass for an ADR page', () => {
-	const copy = structuredClone(planning);
-	const adr = copy.adrs[0]!;
-	const item = features(copy)[0]!.id;
-	const fromAdr = (back: Map<string, Backlink[]>) => back.get(item)!.some((entry) => entry.href === adrHref(adr.id) && entry.relation === 'mentions');
+ const copy = structuredClone(planning);
+ const adr = copy.adrs[0]!;
+ const item = features(copy)[0]!.id;
+ const fromAdr = (back: Map<string, Backlink[]>) => back.get(item)!.some((entry) => entry.href === adrHref(adr.id) && entry.relation === 'mentions');
 
-	adr.context = `See ${item}.`;
-	expect(fromAdr(references(copy, all))).toBe(true); // raw pass, no keys given
-	expect(fromAdr(references(copy, all, new Map([[adr.id, new Set<string>()]])))).toBe(false);
-	expect(fromAdr(references(copy, all, new Map([[adr.id, new Set([item])]])))).toBe(true);
+ adr.context = `See ${item}.`;
+ expect(fromAdr(references(copy, all))).toBe(true); // raw pass, no keys given
+ expect(fromAdr(references(copy, all, new Map([[adr.id, new Set<string>()]])))).toBe(false);
+ expect(fromAdr(references(copy, all, new Map([[adr.id, new Set([item])]])))).toBe(true);
 });
 ```
 
@@ -102,10 +106,12 @@ it('ADR keys replace the raw-Markdown pass for an ADR page', () => {
 ### Task 3: Built-site link test for the three Markdown constructs
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/test/fixtures/planning.json` (ADR-003's `context`)
 - Test: `packages/pm-docs-site/test/links.test.ts`
 
 **Interfaces:**
+
 - Consumes: Tasks 1 and 2.
 
 - [ ] **Step 1: Extend the fixture.** Append to ADR-003's `context` the paragraph `` Also _R-012_, [R-012](https://x), and ![a > R-012](x.png). `` Keep every other field. If the build fails resolving `x.png` as a local image, use `https://x/x.png` and note it in the commit body (the Done when check is about `alt`, not the path). Confirm `R-012` is an item in the fixture; otherwise use an item ID the fixture has and keep the same three constructs.
@@ -113,14 +119,15 @@ it('ADR keys replace the raw-Markdown pass for an ADR page', () => {
 
 ```ts
 it('ADR-003 keeps the image alt and links emphasis, never the link text or alt', () => {
-	const html = readFileSync(join(dist, 'plan/decisions/adr-003/index.html'), 'utf8');
-	expect(html).toContain('alt="a > R-012"');
-	expect(html).toMatch(/<em><a href="\/plan\/features\/r-012\/">R-012<\/a><\/em>/);
-	expect(html).toMatch(/<a href="https:\/\/x\/?">R-012<\/a>/);
+ const html = readFileSync(join(dist, 'plan/decisions/adr-003/index.html'), 'utf8');
+ expect(html).toContain('alt="a > R-012"');
+ expect(html).toMatch(/<em><a href="\/plan\/features\/r-012\/">R-012<\/a><\/em>/);
+ expect(html).toMatch(/<a href="https:\/\/x\/?">R-012<\/a>/);
 });
 ```
 
 The existing "every link is in its target's Linked from" and "every known ID is a link" checks then cover the Linked from side.
+
 - [ ] **Step 3: Run** `cd packages/pm-docs-site && bun test test/links.test.ts` — Expected: PASS once Tasks 1 and 2 are in; if it fails, the failure names the mismatch to fix in Task 1 or 2's code.
 - [ ] **Step 4: Run** `cd ../.. && just validate` — Expected: the fixture still validates against the schema.
 - [ ] **Step 5: Commit** `test(pm-docs-site): pin adr link and linked-from agreement (R-040)`.
@@ -128,34 +135,37 @@ The existing "every link is in its target's Linked from" and "every known ID is 
 ### Task 4: Decisions view edge states
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/src/lib/decisions.ts`
 - Modify: `packages/pm-docs-site/src/components/decisions/Decisions.tsx`
 - Modify: `packages/pm-docs-site/src/routes/plan/decisions.astro`
 - Test: `packages/pm-docs-site/test/decisions.test.ts`, `packages/pm-docs-site/test/links.test.ts` (built page)
 
 **Interfaces:**
+
 - Produces: `export type DecisionsStatus = AdrStatus | 'unknown'`; `export const DECISIONS_STATUSES: readonly DecisionsStatus[] = [...ADR_STATUSES, 'unknown']`; `DecisionsState.status: DecisionsStatus[]`; `DEFAULT_DECISIONS_STATE.status = ['proposed', 'accepted', 'deprecated', 'unknown']`; `Decisions` gets prop `hasUnknown: boolean`.
 
 - [ ] **Step 1: Write the failing tests** in `decisions.test.ts`:
 
 ```ts
 it('status none: every chip off round-trips as ?status=none', () => {
-	const state = { ...DEFAULT_DECISIONS_STATE, status: [] };
-	expect(decisionsQuery(state)).toBe('?status=none');
-	expect(parseDecisionsQuery('?status=none', categories).status).toEqual([]);
+ const state = { ...DEFAULT_DECISIONS_STATE, status: [] };
+ expect(decisionsQuery(state)).toBe('?status=none');
+ expect(parseDecisionsQuery('?status=none', categories).status).toEqual([]);
 });
 it('no status: an ADR with a null status is unknown and follows its chip', () => {
-	const adr = { ...byId('ADR-002'), status: null };
-	expect(matchesDecision(adr, DEFAULT_DECISIONS_STATE)).toBe(true);
-	expect(matchesDecision(adr, { ...DEFAULT_DECISIONS_STATE, status: ['accepted'] })).toBe(false);
+ const adr = { ...byId('ADR-002'), status: null };
+ expect(matchesDecision(adr, DEFAULT_DECISIONS_STATE)).toBe(true);
+ expect(matchesDecision(adr, { ...DEFAULT_DECISIONS_STATE, status: ['accepted'] })).toBe(false);
 });
 it('one category: the category parameter is dropped', () => {
-	expect(parseDecisionsQuery('?category=data', ['data']).category).toEqual([]);
-	expect(parseDecisionsQuery('?category=data', []).category).toEqual([]);
+ expect(parseDecisionsQuery('?category=data', ['data']).category).toEqual([]);
+ expect(parseDecisionsQuery('?category=data', []).category).toEqual([]);
 });
 ```
 
 Keep the existing `?status=` test: an empty value still falls back to the default. Update tests that assert the old default list.
+
 - [ ] **Step 2: Run** `bun test test/decisions.test.ts` — Expected: FAIL.
 - [ ] **Step 3: Implement `decisions.ts`.** `parseDecisionsQuery`: `status=none` gives `[]`; fewer than 2 categories gives `category: []`. `decisionsQuery`: an empty status list writes `status=none`. `matchesDecision`: compare `adr.status ?? 'unknown'`. `groupDecisions` status keys use `DECISIONS_STATUSES` (already ends in `unknown`).
 - [ ] **Step 4: Implement the island and page.** `Decisions.tsx` maps `DECISIONS_STATUSES`, rendering the `unknown` chip only when `hasUnknown`. `decisions.astro` passes `hasUnknown={planning.adrs.some((adr) => adr.status === null)}` and adds, after the island: `<noscript><style>.decisions [hidden] { display: revert !important; }</style></noscript>`.
@@ -166,11 +176,13 @@ Keep the existing `?status=` test: an empty value still falls back to the defaul
 ### Task 5: Export keeps comments in code and uses the file-name ID
 
 **Files:**
+
 - Modify: `skills/pm-export/scripts/planning.ts:47-48,161-189,669`
 - Modify: `skills/pm-export/SKILL.md` (ADR field map: the two rules)
 - Test: `skills/pm-export/scripts/export.test.ts`
 
 **Interfaces:**
+
 - Produces: `export const stripCommentsOutsideCode = (text: string) => string`; `parseAdr(file: string, text: string, pmRoot: string, assume?: (text: string) => void): Adr | null`.
 
 - [ ] **Step 1: Write the failing tests:**
@@ -206,6 +218,7 @@ it("parseAdr: a mismatched heading exports under the file-name ID", () => {
 ### Task 6: Versions and full verification
 
 **Files:**
+
 - Modify: `package.json` (via `just bump prerelease`), `packages/pm-docs-site/package.json`
 
 - [ ] **Step 1: Run** `just bump prerelease` — Expected: `package.json` is `21.0.0-pre.11`; the marker stays `version=21`.
