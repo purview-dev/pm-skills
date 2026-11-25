@@ -1,6 +1,6 @@
 # R-040 ADR link and export edge cases Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Make ADR page links agree with Linked from entries, keep comments inside code through the export, export a mismatched ADR heading under its file-name ID, and pin the Decisions view's edge states with tests.
 
@@ -42,7 +42,7 @@
 
 - Produces: `export interface LinkedHtml { html: string; keys: Set<string> }` and `export function linkHtml(html: string, known: Map<string, Target>): LinkedHtml`.
 
-- [ ] **Step 1: Update the existing tests to read `.html`, and add the failing tests**
+- [x] **Step 1: Update the existing tests to read `.html`, and add the failing tests**
 
 ```ts
 it('attribute with >: never splits the tag', () => {
@@ -61,10 +61,10 @@ it('keys: every linked key, none from inside links or unknown IDs', () => {
 });
 ```
 
-- [ ] **Step 2: Run** `cd packages/pm-docs-site && bun test test/link-html.test.ts` — Expected: FAIL (`out.html` undefined).
-- [ ] **Step 3: Implement.** Split with the Global Constraints tag pattern (wrapped in a capture group), `SKIP = new Set(['a', 'script', 'style'])`, add `run.target.key` to `keys` for each linked run. Update the header comment. In `[id].astro`, use `linkHtml(...).html`.
-- [ ] **Step 4: Run** `bun test test/link-html.test.ts` — Expected: PASS.
-- [ ] **Step 5: Commit** `fix(pm-docs-site): link html tags safely and return linked keys (R-040)`.
+- [x] **Step 2: Run** `cd packages/pm-docs-site && bun test test/link-html.test.ts` — Expected: FAIL (`out.html` undefined).
+- [x] **Step 3: Implement.** Split with the Global Constraints tag pattern (wrapped in a capture group), `SKIP = new Set(['a', 'script', 'style'])`, add `run.target.key` to `keys` for each linked run. Update the header comment. In `[id].astro`, use `linkHtml(...).html`.
+- [x] **Step 4: Run** `bun test test/link-html.test.ts` — Expected: PASS.
+- [x] **Step 5: Commit** `fix(pm-docs-site): link html tags safely and return linked keys (R-040)`.
 
 ### Task 2: References from rendered ADR HTML; async `siteRefs()`
 
@@ -80,7 +80,7 @@ it('keys: every linked key, none from inside links or unknown IDs', () => {
 - Consumes: `linkHtml(...).keys` (Task 1); `RenderedAdr` and `ADR_SECTIONS` from `src/loaders/adrs.ts`.
 - Produces: `references(planning: Planning, views: Views, adrKeys?: Map<string, Set<string>>): Map<string, Backlink[]>`; `export function siteRefs(): Promise<{ known: Map<string, Target>; back: Map<string, Backlink[]> }>` in `site-refs.ts`.
 
-- [ ] **Step 1: Write the failing test** in `references.test.ts`:
+- [x] **Step 1: Write the failing test** in `references.test.ts`:
 
 ```ts
 it('ADR keys replace the raw-Markdown pass for an ADR page', () => {
@@ -96,12 +96,12 @@ it('ADR keys replace the raw-Markdown pass for an ADR page', () => {
 });
 ```
 
-- [ ] **Step 2: Run** `bun test test/references.test.ts` — Expected: FAIL.
-- [ ] **Step 3: Implement `references`.** In the ADR loop: when `adrKeys` has `adr.id`, call `own.link(key, 'mentions')` for each key and `own.prose(adr.source)`; otherwise keep today's `prose()` over `source` and the four sections.
-- [ ] **Step 4: Implement `site-refs.ts`.** Cached promise. Load planning; `known = targets(...)`. Only when `planning.adrs.length > 0 && config.views.decisions` (**no ADRs** case): `await getCollection('adrs')`, and for each entry collect the union of `linkHtml(html, known).keys` over its non-null, non-empty sections into `adrKeys`. Return `{ known, back: references(planning, config.views, adrKeys) }`. Move the existing `siteRefs` comment here.
-- [ ] **Step 5: Update the 10 callers** to `const { ... } = await siteRefs();` from `../lib/site-refs` (relative path per file).
-- [ ] **Step 6: Run** `bun test` in `packages/pm-docs-site` — Expected: PASS (unit tests; the build tests run in Task 3).
-- [ ] **Step 7: Commit** `fix(pm-docs-site): build adr references from rendered html (R-040)`.
+- [x] **Step 2: Run** `bun test test/references.test.ts` — Expected: FAIL.
+- [x] **Step 3: Implement `references`.** In the ADR loop: when `adrKeys` has `adr.id`, call `own.link(key, 'mentions')` for each key and `own.prose(adr.source)`; otherwise keep today's `prose()` over `source` and the four sections.
+- [x] **Step 4: Implement `site-refs.ts`.** Cached promise. Load planning; `known = targets(...)`. Only when `planning.adrs.length > 0 && config.views.decisions` (**no ADRs** case): `await getCollection('adrs')`, and for each entry collect the union of `linkHtml(html, known).keys` over its non-null, non-empty sections into `adrKeys`. Return `{ known, back: references(planning, config.views, adrKeys) }`. Move the existing `siteRefs` comment here.
+- [x] **Step 5: Update the 10 callers** to `const { ... } = await siteRefs();` from `../lib/site-refs` (relative path per file).
+- [x] **Step 6: Run** `bun test` in `packages/pm-docs-site` — Expected: PASS (unit tests; the build tests run in Task 3).
+- [x] **Step 7: Commit** `fix(pm-docs-site): build adr references from rendered html (R-040)`.
 
 ### Task 3: Built-site link test for the three Markdown constructs
 
@@ -114,8 +114,8 @@ it('ADR keys replace the raw-Markdown pass for an ADR page', () => {
 
 - Consumes: Tasks 1 and 2.
 
-- [ ] **Step 1: Extend the fixture.** Append to ADR-003's `context` the paragraph `` Also _R-012_, [R-012](https://x), and ![a > R-012](x.png). `` Keep every other field. If the build fails resolving `x.png` as a local image, use `https://x/x.png` and note it in the commit body (the Done when check is about `alt`, not the path). Confirm `R-012` is an item in the fixture; otherwise use an item ID the fixture has and keep the same three constructs.
-- [ ] **Step 2: Add the failing test** to `links.test.ts`:
+- [x] **Step 1: Extend the fixture.** Append to ADR-003's `context` the paragraph `` Also _R-012_, [R-012](https://x), and ![a > R-012](x.png). `` Keep every other field. If the build fails resolving `x.png` as a local image, use `https://x/x.png` and note it in the commit body (the Done when check is about `alt`, not the path). Confirm `R-012` is an item in the fixture; otherwise use an item ID the fixture has and keep the same three constructs.
+- [x] **Step 2: Add the failing test** to `links.test.ts`:
 
 ```ts
 it('ADR-003 keeps the image alt and links emphasis, never the link text or alt', () => {
@@ -128,9 +128,9 @@ it('ADR-003 keeps the image alt and links emphasis, never the link text or alt',
 
 The existing "every link is in its target's Linked from" and "every known ID is a link" checks then cover the Linked from side.
 
-- [ ] **Step 3: Run** `cd packages/pm-docs-site && bun test test/links.test.ts` — Expected: PASS once Tasks 1 and 2 are in; if it fails, the failure names the mismatch to fix in Task 1 or 2's code.
-- [ ] **Step 4: Run** `cd ../.. && just validate` — Expected: the fixture still validates against the schema.
-- [ ] **Step 5: Commit** `test(pm-docs-site): pin adr link and linked-from agreement (R-040)`.
+- [x] **Step 3: Run** `cd packages/pm-docs-site && bun test test/links.test.ts` — Expected: PASS once Tasks 1 and 2 are in; if it fails, the failure names the mismatch to fix in Task 1 or 2's code.
+- [x] **Step 4: Run** `cd ../.. && just validate` — Expected: the fixture still validates against the schema.
+- [x] **Step 5: Commit** `test(pm-docs-site): pin adr link and linked-from agreement (R-040)`.
 
 ### Task 4: Decisions view edge states
 
@@ -145,7 +145,7 @@ The existing "every link is in its target's Linked from" and "every known ID is 
 
 - Produces: `export type DecisionsStatus = AdrStatus | 'unknown'`; `export const DECISIONS_STATUSES: readonly DecisionsStatus[] = [...ADR_STATUSES, 'unknown']`; `DecisionsState.status: DecisionsStatus[]`; `DEFAULT_DECISIONS_STATE.status = ['proposed', 'accepted', 'deprecated', 'unknown']`; `Decisions` gets prop `hasUnknown: boolean`.
 
-- [ ] **Step 1: Write the failing tests** in `decisions.test.ts`:
+- [x] **Step 1: Write the failing tests** in `decisions.test.ts`:
 
 ```ts
 it('status none: every chip off round-trips as ?status=none', () => {
@@ -166,12 +166,12 @@ it('one category: the category parameter is dropped', () => {
 
 Keep the existing `?status=` test: an empty value still falls back to the default. Update tests that assert the old default list.
 
-- [ ] **Step 2: Run** `bun test test/decisions.test.ts` — Expected: FAIL.
-- [ ] **Step 3: Implement `decisions.ts`.** `parseDecisionsQuery`: `status=none` gives `[]`; fewer than 2 categories gives `category: []`. `decisionsQuery`: an empty status list writes `status=none`. `matchesDecision`: compare `adr.status ?? 'unknown'`. `groupDecisions` status keys use `DECISIONS_STATUSES` (already ends in `unknown`).
-- [ ] **Step 4: Implement the island and page.** `Decisions.tsx` maps `DECISIONS_STATUSES`, rendering the `unknown` chip only when `hasUnknown`. `decisions.astro` passes `hasUnknown={planning.adrs.some((adr) => adr.status === null)}` and adds, after the island: `<noscript><style>.decisions [hidden] { display: revert !important; }</style></noscript>`.
-- [ ] **Step 5: Add the built-page test** to `links.test.ts`: `plan/decisions/index.html` contains `<noscript><style>.decisions [hidden]`.
-- [ ] **Step 6: Run** `bun test test/decisions.test.ts test/links.test.ts` and `bun run check` in `packages/pm-docs-site` — Expected: PASS, no type errors.
-- [ ] **Step 7: Commit** `fix(pm-docs-site): pin decisions view edge states (R-040)`.
+- [x] **Step 2: Run** `bun test test/decisions.test.ts` — Expected: FAIL.
+- [x] **Step 3: Implement `decisions.ts`.** `parseDecisionsQuery`: `status=none` gives `[]`; fewer than 2 categories gives `category: []`. `decisionsQuery`: an empty status list writes `status=none`. `matchesDecision`: compare `adr.status ?? 'unknown'`. `groupDecisions` status keys use `DECISIONS_STATUSES` (already ends in `unknown`).
+- [x] **Step 4: Implement the island and page.** `Decisions.tsx` maps `DECISIONS_STATUSES`, rendering the `unknown` chip only when `hasUnknown`. `decisions.astro` passes `hasUnknown={planning.adrs.some((adr) => adr.status === null)}` and adds, after the island: `<noscript><style>.decisions [hidden] { display: revert !important; }</style></noscript>`.
+- [x] **Step 5: Add the built-page test** to `links.test.ts`: `plan/decisions/index.html` contains `<noscript><style>.decisions [hidden]`.
+- [x] **Step 6: Run** `bun test test/decisions.test.ts test/links.test.ts` and `bun run check` in `packages/pm-docs-site` — Expected: PASS, no type errors.
+- [x] **Step 7: Commit** `fix(pm-docs-site): pin decisions view edge states (R-040)`.
 
 ### Task 5: Export keeps comments in code and uses the file-name ID
 
@@ -185,7 +185,7 @@ Keep the existing `?status=` test: an empty value still falls back to the defaul
 
 - Produces: `export const stripCommentsOutsideCode = (text: string) => string`; `parseAdr(file: string, text: string, pmRoot: string, assume?: (text: string) => void): Adr | null`.
 
-- [ ] **Step 1: Write the failing tests:**
+- [x] **Step 1: Write the failing tests:**
 
 ```ts
 it("stripCommentsOutsideCode: inline code and fences keep comments", () => {
@@ -208,12 +208,12 @@ it("parseAdr: a mismatched heading exports under the file-name ID", () => {
 });
 ```
 
-- [ ] **Step 2: Run** `bun test skills/pm-export/scripts/export.test.ts` — Expected: FAIL.
-- [ ] **Step 3: Implement `stripCommentsOutsideCode`.** Normalise `\r\n`; split into fenced blocks (a line opening with 3+ backticks or tildes, up to the matching closing fence or end of text) and the rest; in the rest, replace with `` /(`+)[\s\S]*?\1|<!--[\s\S]*?-->/g ``, keeping the code-span matches and dropping the comments.
-- [ ] **Step 4: Implement `parseAdr`.** Header fields and heading from `stripComments(text)`; sections from `sections(stripCommentsOutsideCode(text), 2)`. `id` is `named[1]`; when `headed?.[1]` differs, call `assume?.(...)` with the exact text above. In `build` (line 669), pass `assume`.
-- [ ] **Step 5: Update `skills/pm-export/SKILL.md`** ADR field map: `id` is the file name's `ADR-NNN` (a differing heading is an assumption); sections keep HTML comments inside code.
-- [ ] **Step 6: Run** `just test` — Expected: PASS (export tests, fixture repo, lint tests).
-- [ ] **Step 7: Commit** `fix(pm-export): keep code comments and file-name ids in adrs (R-040)`.
+- [x] **Step 2: Run** `bun test skills/pm-export/scripts/export.test.ts` — Expected: FAIL.
+- [x] **Step 3: Implement `stripCommentsOutsideCode`.** Normalise `\r\n`; split into fenced blocks (a line opening with 3+ backticks or tildes, up to the matching closing fence or end of text) and the rest; in the rest, replace with `` /(`+)[\s\S]*?\1|<!--[\s\S]*?-->/g ``, keeping the code-span matches and dropping the comments.
+- [x] **Step 4: Implement `parseAdr`.** Header fields and heading from `stripComments(text)`; sections from `sections(stripCommentsOutsideCode(text), 2)`. `id` is `named[1]`; when `headed?.[1]` differs, call `assume?.(...)` with the exact text above. In `build` (line 669), pass `assume`.
+- [x] **Step 5: Update `skills/pm-export/SKILL.md`** ADR field map: `id` is the file name's `ADR-NNN` (a differing heading is an assumption); sections keep HTML comments inside code.
+- [x] **Step 6: Run** `just test` — Expected: PASS (export tests, fixture repo, lint tests).
+- [x] **Step 7: Commit** `fix(pm-export): keep code comments and file-name ids in adrs (R-040)`.
 
 ### Task 6: Versions and full verification
 
@@ -221,9 +221,9 @@ it("parseAdr: a mismatched heading exports under the file-name ID", () => {
 
 - Modify: `package.json` (via `just bump prerelease`), `packages/pm-docs-site/package.json`
 
-- [ ] **Step 1: Run** `just bump prerelease` — Expected: `package.json` is `21.0.0-pre.11`; the marker stays `version=21`.
-- [ ] **Step 2: Set** `packages/pm-docs-site/package.json` `version` to `0.1.0-pre.5`.
-- [ ] **Step 3: Run** `just validate` — Expected: PASS; fix any pinned-version line it names in the package docs.
-- [ ] **Step 4: Run** `just version-check` — Expected: PASS.
-- [ ] **Step 5: Run** `just test`, `just package-test`, `just lint-check`, `just docs-check` — Expected: each exits 0.
-- [ ] **Step 6: Commit** `chore(release): bump to 21.0.0-pre.11 and pm-docs-site 0.1.0-pre.5 (R-040)`.
+- [x] **Step 1: Run** `just bump prerelease` — Expected: `package.json` is `21.0.0-pre.11`; the marker stays `version=21`.
+- [x] **Step 2: Set** `packages/pm-docs-site/package.json` `version` to `0.1.0-pre.5`.
+- [x] **Step 3: Run** `just validate` — Expected: PASS; fix any pinned-version line it names in the package docs.
+- [x] **Step 4: Run** `just version-check` — Expected: PASS.
+- [x] **Step 5: Run** `just test`, `just package-test`, `just lint-check`, `just docs-check` — Expected: each exits 0.
+- [x] **Step 6: Commit** `chore(release): bump to 21.0.0-pre.11 and pm-docs-site 0.1.0-pre.5 (R-040)`.
