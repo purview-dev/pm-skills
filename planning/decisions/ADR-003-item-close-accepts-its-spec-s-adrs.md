@@ -1,6 +1,6 @@
 # ADR-003 Item close accepts its spec's ADRs
 
-- Status: accepted
+- Status: superseded by ADR-010
 - Date: 2026-11-22
 - Category: architecture
 - Supersedes: none
