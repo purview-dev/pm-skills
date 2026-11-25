@@ -179,4 +179,18 @@ describe('ADR pages', () => {
 		expect(page).not.toMatch(/<h2[^>]*>Consequences<\/h2>/);
 		expect(page).toMatch(/<h2[^>]*>Context<\/h2>\s*<p>None recorded\.<\/p>/);
 	});
+
+	it('ADR-003 keeps the image alt and links emphasis, never the link text or alt', () => {
+		const page = html('plan/decisions/adr-003/index.html');
+
+		expect(page).toMatch(/alt="a (>|&gt;) R-012"/);
+		expect(page).toMatch(/<em><a href="\/plan\/features\/r-012\/"[^>]*>R-012<\/a><\/em>/);
+		expect(page).toMatch(/<a href="https:\/\/x\/?"[^>]*>R-012<\/a>/);
+	});
+});
+
+describe('the Decisions page', () => {
+	it('shows every row without JavaScript', () => {
+		expect(html('plan/decisions/index.html')).toContain('<noscript><style>.decisions [hidden]');
+	});
 });
