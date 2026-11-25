@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-25T08:32:34+00:00",
+  "generatedAt": "2026-11-25T09:16:08+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-040-adr-link-export-edge-cases",
-    "head": "6d3610f9284345b03984af3acd0e4e6fce6ec3e2"
+    "head": "ee13c2ae83f8b13866768c2c5c67131c94ca11ee"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -234,11 +234,11 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-040-adr-link-export-edge-cases",
     "brief": null,
     "milestone": "M4",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-25-adr-link-and-export-edge-cases-design.md",
     "plan": null,
     "started": "2026-11-25",
     "doneWhen": [
@@ -615,7 +615,7 @@
           "title": "ADR link and export edge cases",
           "owner": "agent",
           "size": "S",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [],
@@ -2065,6 +2065,22 @@
       "decision": "`pm-checkpoint` (`done`) never stops for a mid-workflow capture. An uncommitted capture (an inbox file, a decisions-folder file, or `RISKS.md`) in the item's worktree is swept into the Completion record commit; one in the main worktree when that is another worktree is named in a `Note` for the next PM commit on the PM branch. A spec-named ADR is looked for on the item's branch first, then in the main worktree's decisions folder; when it is found only in the main worktree and is `proposed` with `Item: <this ID>`, `done` applies `pm-adr accept` there, in place, only after the Completion record commit succeeds, and names it in the `Note`. Only a named ADR found in neither place keeps `done` in `pause`. Other uncommitted PM state (`NOW.md`, `ROADMAP.md`, `LOG.md`, `STRATEGY.md`, a brief) still stops it.",
       "alternatives": "- Do nothing: `done` keeps stopping on the separate-worktree layout and on every mid-workflow capture.\n- Sweep or move at done: move the item's ADRs from the main worktree into the item's worktree before accepting them, so the accepted status rides the pull request as ADR-003 requires. Rejected: `done` would delete uncommitted files in the main worktree.\n- Captures follow the active item: `pm-park`, `pm-risk`, and `pm-adr` write in the active item's worktree. Rejected: supersedes ADR-001 and hides captures from other sessions until the merge.\n- Chosen: name them, never stop, the smallest change to five skills' interplay. Strongest argument against: in the separate-worktree layout the accepted status lands on the PM branch in a later PM commit, not inside the item's pull request, and the spec on the branch names an ADR the branch does not carry.",
       "consequences": "- ADR-001 is unchanged: captures and ADRs are still written in the main worktree.\n- In the separate-worktree layout, the accepted ADR and the captures reach the PM branch through its next PM commit, not through the item's merge.\n- `pm-adr`'s Guard names both places `accept` may write when `pm-checkpoint` (`done`) applies it."
+    },
+    {
+      "id": "ADR-011",
+      "path": "planning/decisions/ADR-011-adr-page-references-come-from-rendered-html.md",
+      "title": "ADR page references come from rendered HTML",
+      "status": "proposed",
+      "supersededBy": null,
+      "date": "2026-11-25",
+      "category": "architecture",
+      "supersedes": null,
+      "item": "R-040",
+      "source": null,
+      "context": "The docs site links the IDs in an ADR page's rendered HTML with\n`linkHtml`, but builds that page's Linked from entries from the raw\nMarkdown in `planning.json` (`references()` through `linkify`). The two\ntexts differ, so `_R-012_` gives a link with no Linked from entry, and\n`[R-012](url)` or image alt text gives a Linked from entry with no link.",
+      "decision": "`linkHtml` returns the keys it linked as well as the HTML. `siteRefs()`\nbecomes async: it reads the `adrs` content collection once, and\n`references()` takes those keys for each ADR page in place of the\nraw-Markdown prose pass over the four sections. Every caller awaits\n`siteRefs()`.",
+      "alternatives": "| Approach | Trade-off | Outcome |\n| --- | --- | --- |\n| References from the rendered HTML, `siteRefs()` async | Links and Linked from entries share one source; ten callers change | Chosen |\n| Strip Markdown syntax before `linkify` | Synchronous and one file, but a regex imitation of rendering that drifts again on autolinks, inline HTML, or footnotes | Rejected |\n| Render Markdown inside `references()` with its own parser | A new dependency, against ADR-002 | Rejected |\n| Do nothing | Links and Linked from entries keep disagreeing on emphasis, links, and images | Rejected |",
+      "consequences": "- An ADR page's links and its targets' Linked from entries come from the\n  same HTML, so they cannot disagree.\n- Ten callers change from `siteRefs()` to `await siteRefs()`; the cache\n  holds a promise.\n- Follows ADR-002 ADR sections export as Markdown text and ADR-005 Docs\n  sites consume the pm-docs-site package."
     }
   ],
   "counts": {
@@ -2086,6 +2102,6 @@
     "reviewDue": true,
     "lastReview": "2026-11-22",
     "claimable": [],
-    "drift": true
+    "drift": false
   }
 }
