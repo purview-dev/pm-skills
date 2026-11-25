@@ -84,7 +84,7 @@ const refs: { label: string; ref: string | null }[] = [
 		ADR_SECTIONS.filter(({ key }) => adr.html[key] !== null).map(({ key, label }) => (
 			<section>
 				<h2>{label}</h2>
-				{adr.html[key] === '' ? <p>None recorded.</p> : <Fragment set:html={linkHtml(adr.html[key]!, known)} />}
+				{adr.html[key] === '' ? <p>None recorded.</p> : <Fragment set:html={linkHtml(adr.html[key]!, known).html} />}
 			</section>
 		))
 	}
