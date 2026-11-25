@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-25T00:44:54+00:00",
+  "generatedAt": "2026-11-25T00:48:35+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-041-adr-skill-follow-ups",
-    "head": "4c34ebd34324cd1139f8a5d49d27b3bfad283323"
+    "head": "8c523916efed7f31de827574986111fde9a12bba"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -233,12 +233,12 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-041-adr-skill-follow-ups",
     "brief": null,
     "milestone": "M4",
     "spec": "docs/superpowers/specs/2026-11-25-adr-skill-follow-ups-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-25-adr-skill-follow-ups.md",
     "started": "2026-11-25",
     "doneWhen": [
       "`pm-discover` and `pm-revise` write the `Supersedes` Notes line with its `<YYYY-MM-DD>` prefix.",
@@ -250,7 +250,117 @@
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-25-adr-skill-follow-ups.md",
+    "checked": 0,
+    "total": 18,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "Dated Supersedes notes and legend reuse (problems 1 and 4)",
+        "checked": 0,
+        "total": 4,
+        "steps": [
+          {
+            "text": "**Step 1: Confirm the old wording is present**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Edit**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Verify**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "`pm-purview` check mode stops before deciding (problem 2)",
+        "checked": 0,
+        "total": 3,
+        "steps": [
+          {
+            "text": "**Step 1: Edit**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Verify**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "`pm-checkpoint` done finds main-worktree ADRs and names captures (problems 3 and 5, ADR-010)",
+        "checked": 0,
+        "total": 6,
+        "steps": [
+          {
+            "text": "**Step 1: Edit `pm-checkpoint` step 5, \"The spec's ADRs\"**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Edit \"Choose the commit worktree\"**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Edit \"Accept the item's ADRs\"**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Edit `pm-adr` Guard**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Verify**",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "Managed rules, version, and full check",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Edit the reference**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Copy into `AGENTS.md`**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Bump**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Full check**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -641,7 +751,7 @@
           "title": "ADR skill follow-ups",
           "owner": "agent",
           "size": "S",
-          "detail": "plan"
+          "detail": "execute, 0/18 plan steps"
         }
       ],
       "next": [
