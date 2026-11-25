@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-25T12:42:44+00:00",
+  "generatedAt": "2026-11-25T13:20:07+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "main",
-    "head": "4279a8fb8891d81f16913c69edd3f7ee9b7f5bb7"
+    "branch": "feat/r-050-adr-relative-images-render-unresolved",
+    "head": "5cf2b54377d26bfaf76acbbc9e0fc1c27f827823"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -297,51 +297,39 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
+    "status": "active",
+    "item": {
+      "id": "R-050",
+      "title": "ADR relative images render unresolved",
+      "serves": [
+        "V4",
+        "V5"
+      ],
+      "owner": "agent",
+      "size": "S",
+      "dependsOn": [],
+      "revisits": null
+    },
+    "stage": "design",
+    "session": "feat/r-050-adr-relative-images-render-unresolved",
     "brief": null,
-    "milestone": null,
+    "milestone": "M4",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-25",
+    "doneWhen": [
+      "An ADR section with `![a](x.png)` builds to an ADR page whose `img` has a resolved `src`, a test in `packages/pm-docs-site/test/` covers it, and `just package-test` passes."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-050",
-        "title": "ADR relative images render unresolved",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4",
-          "V5"
-        ],
-        "milestone": "M4",
-        "owner": "agent",
-        "doneWhen": "an ADR section with `![a](x.png)` builds to an ADR page whose `img` has a resolved `src`, a test in `packages/pm-docs-site/test/` covers it, and `just package-test` passes.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "From the 2026-11-25 review (bug, minor; inbox 2026-11-25-0931, R-040 execute). An ADR section with a relative image (`![a](x.png)`) renders as `<img __ASTRO_IMAGE_=\"{...}\">` on the ADR page: the loader's renderMarkdown leaves an image placeholder that only Astro's render() resolves, and the page prints the HTML with set:html, so the image never shows. Remote image URLs render as plain img tags. Reproduction: add `![a](x.png)` to an ADR section, build the docs site, and open the ADR page: the img tag has no src, every time (evidence: R-040 links.test.ts build output). Files: `packages/pm-docs-site/src/loaders/adrs.ts`, `packages/pm-docs-site/src/routes/plan/decisions/[id].astro`.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-037",
         "title": "Engineering export and docs-site view",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V5"
@@ -368,7 +356,7 @@
         "id": "R-055",
         "title": "Engineering lint and skill review minors",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V5"
@@ -394,7 +382,7 @@
         "id": "R-035",
         "title": "pm-engineering infer from an existing repository",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V5"
@@ -420,7 +408,7 @@
         "id": "R-036",
         "title": "Plan citation and done check",
         "section": "next",
-        "position": 5,
+        "position": 4,
         "label": "next",
         "serves": [
           "V5"
@@ -818,15 +806,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-050",
           "title": "ADR relative images render unresolved",
           "owner": "agent",
           "size": "S",
-          "detail": "ready"
-        },
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-037",
           "title": "Engineering export and docs-site view",
@@ -2230,7 +2219,7 @@
     }
   ],
   "counts": {
-    "next": 5,
+    "next": 4,
     "later": 15,
     "nextMax": 5,
     "openInbox": 4,
@@ -2248,7 +2237,6 @@
     "reviewDue": false,
     "lastReview": "2026-11-25",
     "claimable": [
-      "R-050",
       "R-037",
       "R-055",
       "R-035",
