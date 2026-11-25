@@ -3,7 +3,8 @@
 // server-rendered React island (src/components/decisions/Decisions.tsx) that
 // searches, filters by status and category, and groups them. Every ADR is in
 // the HTML; the filters only hide rows, so the default view (superseded hidden)
-// still links every ADR page.
+// still links every ADR page. Without JavaScript a noscript style shows every
+// row, superseded included.
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 
 import Decisions, { type DecisionRow } from '../../components/decisions/Decisions';
@@ -45,7 +46,8 @@ const categories = [...new Set(planning.adrs.map((adr) => adr.category).filter((
 			<p class="plan-empty">No ADRs yet. Record one with pm-adr new.</p>
 		) : (
 			<div data-pagefind-ignore>
-				<Decisions client:load rows={rows} categories={categories} />
+				<Decisions client:load rows={rows} categories={categories} hasUnknown={planning.adrs.some((adr) => adr.status === null)} />
+				<noscript><style is:inline>.decisions [hidden] { display: revert !important; }</style></noscript>
 			</div>
 		)
 	}

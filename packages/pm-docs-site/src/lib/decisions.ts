@@ -7,45 +7,57 @@ import type { Adr, AdrStatus } from './planning-types';
 /** Every status, in lifecycle order; also the order of status groups. */
 export const ADR_STATUSES: readonly AdrStatus[] = ['proposed', 'accepted', 'deprecated', 'superseded'];
 
+/** A status chip: an ADR status, or `unknown` for an ADR whose status is null. */
+export type DecisionsStatus = AdrStatus | 'unknown';
+
+/** Every chip, in lifecycle order, `unknown` last. */
+export const DECISIONS_STATUSES: readonly DecisionsStatus[] = [...ADR_STATUSES, 'unknown'];
+
 export type DecisionsGroup = 'category' | 'status' | 'none';
 
 export interface DecisionsState {
 	q: string;
-	status: AdrStatus[];
+	status: DecisionsStatus[];
 	/** Empty means every category. */
 	category: string[];
 	group: DecisionsGroup;
 }
 
 /** Superseded ADRs are hidden until their chip is pressed. */
-export const DEFAULT_DECISIONS_STATE: DecisionsState = { q: '', status: ['proposed', 'accepted', 'deprecated'], category: [], group: 'category' };
+export const DEFAULT_DECISIONS_STATE: DecisionsState = { q: '', status: ['proposed', 'accepted', 'deprecated', 'unknown'], category: [], group: 'category' };
 
 const GROUPS: readonly DecisionsGroup[] = ['category', 'status', 'none'];
 
 const sameList = (a: readonly string[], b: readonly string[]) => a.length === b.length && a.every((value, i) => value === b[i]);
 
-/** Parse a query string (with or without `?`); unknown values are dropped and an empty status list falls back to the default. */
+/**
+ * Parse a query string (with or without `?`). Unknown values are dropped;
+ * `status=none` is the empty list (every chip off), and a status that is empty or
+ * has no known value falls back to the default. With fewer than two categories
+ * there is no category chip, so the category parameter is dropped.
+ */
 export function parseDecisionsQuery(search: string, categories: string[]): DecisionsState {
 	const params = new URLSearchParams(search.startsWith('?') ? search.slice(1) : search);
 	const listed = (key: string) => (params.get(key) ?? '').split(',').filter((value) => value !== '');
-	const status = ADR_STATUSES.filter((value) => listed('status').includes(value));
+	const none = params.get('status') === 'none';
+	const status = DECISIONS_STATUSES.filter((value) => listed('status').includes(value));
 	const group = params.get('group');
 
 	return {
 		q: params.get('q') ?? '',
-		status: status.length ? status : [...DEFAULT_DECISIONS_STATE.status],
-		category: [...categories].sort().filter((value) => listed('category').includes(value)),
+		status: none ? [] : status.length ? status : [...DEFAULT_DECISIONS_STATE.status],
+		category: categories.length < 2 ? [] : [...categories].sort().filter((value) => listed('category').includes(value)),
 		group: group !== null && (GROUPS as string[]).includes(group) ? (group as DecisionsGroup) : DEFAULT_DECISIONS_STATE.group,
 	};
 }
 
-/** The query string for a state, keys in the order q, status, category, group; `''` for the default. */
+/** The query string for a state, keys in the order q, status, category, group; `''` for the default; every chip off is `status=none`. */
 export function decisionsQuery(state: DecisionsState): string {
 	const pairs: [string, string][] = [];
-	const status = ADR_STATUSES.filter((value) => state.status.includes(value));
+	const status = DECISIONS_STATUSES.filter((value) => state.status.includes(value));
 
 	if (state.q !== '') pairs.push(['q', state.q]);
-	if (!sameList(status, DEFAULT_DECISIONS_STATE.status)) pairs.push(['status', status.join(',')]);
+	if (!sameList(status, DEFAULT_DECISIONS_STATE.status)) pairs.push(['status', status.length ? status.join(',') : 'none']);
 	if (state.category.length) pairs.push(['category', [...state.category].sort().join(',')]);
 	if (state.group !== DEFAULT_DECISIONS_STATE.group) pairs.push(['group', state.group]);
 
@@ -65,7 +77,7 @@ export function adrSearchText(adr: Adr): string {
 
 /** Its status and category are selected, and every word of the search appears in its text (adrSearchText, unless given). */
 export function matchesDecision(adr: Pick<Adr, 'status' | 'category'>, state: DecisionsState, text: string = adrSearchText(adr as Adr)): boolean {
-	if (adr.status && !state.status.includes(adr.status)) return false;
+	if (!state.status.includes(adr.status ?? 'unknown')) return false;
 	if (state.category.length && !state.category.includes(adr.category ?? '')) return false;
 
 	return state.q
@@ -91,7 +103,7 @@ export function groupDecisions<T extends Pick<Adr, 'id' | 'status' | 'category'>
 	const keyOf = (adr: T) => (group === 'status' ? (adr.status ?? 'unknown') : (adr.category ?? 'uncategorised'));
 	const keys =
 		group === 'status'
-			? [...ADR_STATUSES, 'unknown']
+			? [...DECISIONS_STATUSES]
 			: [...new Set(adrs.map(keyOf))].sort();
 
 	return keys

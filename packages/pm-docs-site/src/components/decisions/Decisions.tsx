@@ -3,7 +3,7 @@
 // status. Rows that do not match are hidden, never left out, so the page's
 // links stay the same in every state. The state lives in the URL
 // (useDecisionsUrlState).
-import { ADR_STATUSES, DEFAULT_DECISIONS_STATE, decisionsQuery, groupDecisions, matchesDecision, type DecisionsGroup } from '../../lib/decisions';
+import { DECISIONS_STATUSES, DEFAULT_DECISIONS_STATE, decisionsQuery, groupDecisions, matchesDecision, type DecisionsGroup } from '../../lib/decisions';
 import type { AdrStatus } from '../../lib/planning-types';
 import { useDecisionsUrlState } from './useDecisionsUrlState';
 
@@ -29,6 +29,8 @@ export interface DecisionRow {
 interface Props {
 	rows: DecisionRow[];
 	categories: string[];
+	/** Some ADR has no status, so the `unknown` chip is shown. */
+	hasUnknown: boolean;
 }
 
 const GROUPS: { value: DecisionsGroup; label: string }[] = [
@@ -49,8 +51,10 @@ function Ref({ named }: { named: NamedRef }) {
 
 const toggle = <T,>(list: T[], value: T) => (list.includes(value) ? list.filter((entry) => entry !== value) : [...list, value]);
 
-export default function Decisions({ rows, categories }: Props) {
+export default function Decisions({ rows, categories, hasUnknown }: Props) {
 	const [state, setState] = useDecisionsUrlState(categories);
+	const chips = DECISIONS_STATUSES.filter((status) => hasUnknown || status !== 'unknown');
+	const selected = chips.filter((status) => state.status.includes(status));
 	const matches = (row: DecisionRow) => matchesDecision(row, state, row.text);
 	const groups = groupDecisions(rows, state.group);
 	const shown = rows.filter(matches).length;
@@ -64,7 +68,7 @@ export default function Decisions({ rows, categories }: Props) {
 					<input type="search" value={state.q} onChange={(event) => setState({ ...state, q: event.currentTarget.value })} />
 				</label>
 				<div role="group" aria-label="Status" className="decisions-chips">
-					{ADR_STATUSES.map((status) => (
+					{chips.map((status) => (
 						<button
 							key={status}
 							type="button"
@@ -153,7 +157,7 @@ export default function Decisions({ rows, categories }: Props) {
 				<p className="decisions-empty">
 					No decisions match
 					{state.q ? ` "${state.q}"` : ''}
-					{` with status ${state.status.length ? state.status.join(', ') : 'none'}`}
+					{` with status ${selected.length ? selected.join(', ') : 'none'}`}
 					{state.category.length ? ` in ${state.category.join(', ')}` : ''}.
 				</p>
 			)}

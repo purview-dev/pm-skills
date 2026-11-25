@@ -100,3 +100,25 @@ describe('groupDecisions', () => {
 		expect(groupDecisions(adrs, 'none')).toEqual([{ key: 'all', label: 'All decisions', adrs }]);
 	});
 });
+
+describe('edge states', () => {
+	it('status none: every chip off round-trips as ?status=none', () => {
+		const state: DecisionsState = { ...DEFAULT_DECISIONS_STATE, status: [] };
+
+		expect(decisionsQuery(state)).toBe('?status=none');
+		expect(parseDecisionsQuery('?status=none', categories).status).toEqual([]);
+	});
+
+	it('no status: an ADR with a null status is unknown and follows its chip', () => {
+		const adr = { ...byId('ADR-002'), status: null };
+
+		expect(matchesDecision(adr, DEFAULT_DECISIONS_STATE)).toBe(true);
+		expect(matchesDecision(adr, { ...DEFAULT_DECISIONS_STATE, status: ['accepted'] })).toBe(false);
+		expect(parseDecisionsQuery('?status=unknown', categories).status).toEqual(['unknown']);
+	});
+
+	it('one category: the category parameter is dropped', () => {
+		expect(parseDecisionsQuery('?category=data', ['data']).category).toEqual([]);
+		expect(parseDecisionsQuery('?category=data', []).category).toEqual([]);
+	});
+});
