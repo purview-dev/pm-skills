@@ -223,7 +223,10 @@ Remaining objects:
   lower-cased; `supersedes`, `item`, and `source` are `null` for `none`.
   The four sections are the Markdown under each heading, verbatim without
   its surrounding blank lines: `""` when empty, `null` when the heading is
-  missing.
+  missing. HTML comments are dropped outside code and kept inside an inline
+  code span or a fenced block. `id` is the file name's `ADR-NNN`; a heading
+  that names another ID is an assumption (`<path> is headed <ID>; exported
+  as <file ID>.`), and `pm-lint`'s `adr/id` reports it.
 - `counts.blockers` is the items in Next and Later whose `Status` is
   `blocked`; `counts.openInbox` follows **Open inbox count**;
   `counts.shapingBriefs` is the briefs whose `Status` starts `shaping`.

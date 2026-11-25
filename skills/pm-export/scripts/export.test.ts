@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { at, findId, firstDifference, main } from "./export.ts";
-import { type Adr, build, bullets, parseAdr, SCHEMA_PATH, serialise, sortAdrs, stripComments, value } from "./planning.ts";
+import { type Adr, build, bullets, parseAdr, SCHEMA_PATH, serialise, sortAdrs, stripComments, stripCommentsOutsideCode, value } from "./planning.ts";
 import { validate } from "./schema.ts";
 
 // A synthetic repository, never this project's own PM state: the tests must not change when the plan does.
@@ -119,6 +119,28 @@ describe("build", () => {
     expect(adr.decision).toBe("Yes.");
   });
 
+it("stripCommentsOutsideCode: inline code and fences keep comments", () => {
+    expect(stripCommentsOutsideCode("a `<!-- x -->` b <!-- y --> c")).toBe("a `<!-- x -->` b  c");
+  });
+
+  it("stripCommentsOutsideCode: fence and comment", () => {
+    const text = "<!-- a\nb -->\n```md\n<!-- pm-skills:start -->\n```\n";
+    expect(stripCommentsOutsideCode(text)).toBe("\n```md\n<!-- pm-skills:start -->\n```\n");
+  });
+
+  it("parseAdr: a section keeps a comment inside a code span", () => {
+    const adr = parseAdr("ADR-005-x.md", "# ADR-005 X\n\n- Status: proposed\n\n## Context\n\nShow `<!-- x -->` here. <!-- hidden -->\n", "planning/")!;
+    expect(adr.context).toBe("Show `<!-- x -->` here.");
+  });
+
+  it("parseAdr: a mismatched heading exports under the file-name ID", () => {
+    const seen: string[] = [];
+    const adr = parseAdr("ADR-004-x.md", "# ADR-003 X\n\n- Status: proposed\n", "planning/", (text) => seen.push(text))!;
+    expect(adr.id).toBe("ADR-004");
+    expect(adr.title).toBe("X");
+    expect(seen).toEqual(["planning/decisions/ADR-004-x.md is headed ADR-003; exported as ADR-004."]);
+  });
+
   it("sortAdrs orders by ID number", () => {
     const ids = sortAdrs([{ id: "ADR-010" }, { id: "ADR-002" }] as Adr[]).map((a) => a.id);
     expect(ids).toEqual(["ADR-002", "ADR-010"]);
@@ -170,6 +192,24 @@ describe("build", () => {
     expect(build({ root: FIXTURE, ...fixed, today: "2026-11-20" }).document.checks.reviewDue).toBe(true);
     expect(build({ root: FIXTURE, ...fixed, branch: "feat/r-012-self-serve-signup" }).document.checks.drift).toBe(false);
     expect(build({ root: FIXTURE, ...fixed, branch: "feat/r-007-other-session" }).document.checks.drift).toBe(true);
+  });
+
+  it("build: an ADR keeps a comment in code, and a mismatched heading exports under its file name", () => {
+    const dir = mkdtempSync(join(tmpdir(), "pm-export-adr-"));
+    cpSync(FIXTURE, dir, { recursive: true });
+    writeFileSync(
+      join(dir, "planning", "decisions", "ADR-004-x.md"),
+      "# ADR-003 X\n\n- Status: proposed\n- Date: 2026-11-25\n- Category: data\n- Supersedes: none\n- Item: none\n- Source: none\n\n## Context\n\nShow `<!-- x -->` here.\n\n## Decision\n\nNone recorded.\n\n## Alternatives\n\nNone recorded.\n\n## Consequences\n\nNone recorded.\n",
+    );
+    try {
+      const { document, assumptions: adrAssumptions } = build({ root: dir, ...fixed });
+      const adr = document.adrs.find((entry: Adr) => entry.path.endsWith("ADR-004-x.md"));
+      expect(adr).toMatchObject({ id: "ADR-004", title: "X", context: "Show `<!-- x -->` here." });
+      expect(adrAssumptions).toContain("planning/decisions/ADR-004-x.md is headed ADR-003; exported as ADR-004.");
+      expect(validate(document, schema)).toEqual([]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 
   it("exports a rules 19 NOW.md without the item fields as nulls, with assumptions", () => {
