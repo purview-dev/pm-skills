@@ -11,22 +11,30 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: idle
-- Item:
-- Session:
-- Stage:
+- Status: active
+- Item: R-041 ADR skill follow-ups
+- Session: feat/r-041-adr-skill-follow-ups
+- Stage: design
 - Brief:
-- Milestone:
-- Serves:
-- Owner:
-- Size:
-- Depends on:
+- Milestone: M4
+- Serves: V5
+- Owner: agent
+- Size: S
+- Depends on: none
 - Revisits:
+- Note: From the 2026-11-22 review; R-039 final-review minors (inbox 2026-11-22-1632), a rules bump. (1) `pm-discover` and `pm-revise` write `Supersedes ADR-NNN <title> in design.` under an inbox file's `## Notes` without the `<YYYY-MM-DD>` prefix. (2) `pm-purview` in `check` mode, run inside `pm-shape` or `pm-discover`, is not stopped before step 6, whose ADR write contradicts "This skill never runs `pm-adr`" in those skills. (3) `pm-checkpoint` (`done`) looks for the item's ADRs on its branch; a design stage run in a separate worktree writes them in the main worktree (`pm-adr` Guard), so `done` stops with "has no file". (4) `pm-shape` and `pm-review` print `## For this question` for an ADR even when `## For this discussion` lists it. (5) An ADR or inbox file written mid-workflow is uncommitted at `done`, whose guard stops on uncommitted PM state in the item's worktree (predates R-039; applies to `pm-park` too). Spec: `docs/superpowers/specs/2026-11-22-adrs-across-the-pm-skills-design.md`.
 - Spec:
 - Plan:
-- Started:
+- Started: 2026-11-25
 
 ## Done when
+
+- `pm-discover` and `pm-revise` write the `Supersedes` Notes line with its `<YYYY-MM-DD>` prefix.
+- `pm-purview` step 6 excludes `check` mode.
+- `pm-checkpoint` (`done`) finds an item's ADRs written in the main worktree.
+- `pm-shape` and `pm-review` reuse a `## For this discussion` legend for an ADR.
+- `pm-checkpoint` (`done`) commits or names captures written mid-workflow instead of stopping.
+- `just lint-check` passes.
 
 ## Checkpoint
 

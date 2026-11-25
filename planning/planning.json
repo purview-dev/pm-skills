@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-24T23:58:42+00:00",
+  "generatedAt": "2026-11-25T00:33:12+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-034-engineering-file-and-pm-engineering-skill",
-    "head": "80a94583e00982a8a60057a6649ea117a9b10f0f"
+    "branch": "feat/r-041-adr-skill-follow-ups",
+    "head": "808338536faab55a7eaf1dc5a6b54de8cb880a99"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -221,50 +221,43 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
+    "status": "active",
+    "item": {
+      "id": "R-041",
+      "title": "ADR skill follow-ups",
+      "serves": [
+        "V5"
+      ],
+      "owner": "agent",
+      "size": "S",
+      "dependsOn": [],
+      "revisits": null
+    },
+    "stage": "design",
+    "session": "feat/r-041-adr-skill-follow-ups",
     "brief": null,
-    "milestone": null,
+    "milestone": "M4",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-25",
+    "doneWhen": [
+      "`pm-discover` and `pm-revise` write the `Supersedes` Notes line with its `<YYYY-MM-DD>` prefix.",
+      "`pm-purview` step 6 excludes `check` mode.",
+      "`pm-checkpoint` (`done`) finds an item's ADRs written in the main worktree.",
+      "`pm-shape` and `pm-review` reuse a `## For this discussion` legend for an ADR.",
+      "`pm-checkpoint` (`done`) commits or names captures written mid-workflow instead of stopping.",
+      "`just lint-check` passes."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-041",
-        "title": "ADR skill follow-ups",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V5"
-        ],
-        "milestone": "M4",
-        "owner": "agent",
-        "doneWhen": "`pm-discover` and `pm-revise` write the `Supersedes` Notes line with its `<YYYY-MM-DD>` prefix; `pm-purview` step 6 excludes `check` mode; `pm-checkpoint` (`done`) finds an item's ADRs written in the main worktree; `pm-shape` and `pm-review` reuse a `## For this discussion` legend for an ADR; `pm-checkpoint` (`done`) commits or names captures written mid-workflow instead of stopping; `just lint-check` passes.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "From the 2026-11-22 review; R-039 final-review minors (inbox 2026-11-22-1632), a rules bump. (1) `pm-discover` and `pm-revise` write `Supersedes ADR-NNN <title> in design.` under an inbox file's `## Notes` without the `<YYYY-MM-DD>` prefix. (2) `pm-purview` in `check` mode, run inside `pm-shape` or `pm-discover`, is not stopped before step 6, whose ADR write contradicts \"This skill never runs `pm-adr`\" in those skills. (3) `pm-checkpoint` (`done`) looks for the item's ADRs on its branch; a design stage run in a separate worktree writes them in the main worktree (`pm-adr` Guard), so `done` stops with \"has no file\". (4) `pm-shape` and `pm-review` print `## For this question` for an ADR even when `## For this discussion` lists it. (5) An ADR or inbox file written mid-workflow is uncommitted at `done`, whose guard stops on uncommitted PM state in the item's worktree (predates R-039; applies to `pm-park` too). Spec: `docs/superpowers/specs/2026-11-22-adrs-across-the-pm-skills-design.md`.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-040",
         "title": "ADR link and export edge cases",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4",
@@ -642,15 +635,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-041",
           "title": "ADR skill follow-ups",
           "owner": "agent",
           "size": "S",
-          "detail": "ready"
-        },
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-040",
           "title": "ADR link and export edge cases",
@@ -2050,7 +2044,7 @@
     }
   ],
   "counts": {
-    "next": 2,
+    "next": 1,
     "later": 14,
     "nextMax": 5,
     "openInbox": 13,
@@ -2068,7 +2062,6 @@
     "reviewDue": true,
     "lastReview": "2026-11-22",
     "claimable": [
-      "R-041",
       "R-040"
     ],
     "drift": true
