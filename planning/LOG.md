@@ -4,6 +4,7 @@
 
 ## Done
 
+- 2026-11-25 R-050 ADR relative images render unresolved. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-25-adr-relative-images.md. Result: branch feat/r-050-adr-relative-images-render-unresolved.
 - 2026-11-25 R-040 ADR link and export edge cases. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-25-adr-link-and-export-edge-cases.md. Result: branch feat/r-040-adr-link-export-edge-cases.
 - 2026-11-25 R-041 ADR skill follow-ups. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-25-adr-skill-follow-ups.md. Result: branch feat/r-041-adr-skill-follow-ups.
 - 2026-11-24 R-034 Engineering file and pm-engineering skill. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-24-engineering-file-and-pm-engineering-skill.md. Result: branch feat/r-034-engineering-file-and-pm-engineering-skill.

@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-25T12:42:44+00:00",
+  "generatedAt": "2026-11-25T14:17:39+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "main",
-    "head": "4279a8fb8891d81f16913c69edd3f7ee9b7f5bb7"
+    "branch": "feat/r-050-adr-relative-images-render-unresolved",
+    "head": "7198b5480986045db0195804adaa7407e627932e"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -313,35 +313,10 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-050",
-        "title": "ADR relative images render unresolved",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4",
-          "V5"
-        ],
-        "milestone": "M4",
-        "owner": "agent",
-        "doneWhen": "an ADR section with `![a](x.png)` builds to an ADR page whose `img` has a resolved `src`, a test in `packages/pm-docs-site/test/` covers it, and `just package-test` passes.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "From the 2026-11-25 review (bug, minor; inbox 2026-11-25-0931, R-040 execute). An ADR section with a relative image (`![a](x.png)`) renders as `<img __ASTRO_IMAGE_=\"{...}\">` on the ADR page: the loader's renderMarkdown leaves an image placeholder that only Astro's render() resolves, and the page prints the HTML with set:html, so the image never shows. Remote image URLs render as plain img tags. Reproduction: add `![a](x.png)` to an ADR section, build the docs site, and open the ADR page: the img tag has no src, every time (evidence: R-040 links.test.ts build output). Files: `packages/pm-docs-site/src/loaders/adrs.ts`, `packages/pm-docs-site/src/routes/plan/decisions/[id].astro`.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-037",
         "title": "Engineering export and docs-site view",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V5"
@@ -368,7 +343,7 @@
         "id": "R-055",
         "title": "Engineering lint and skill review minors",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V5"
@@ -394,7 +369,7 @@
         "id": "R-035",
         "title": "pm-engineering infer from an existing repository",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V5"
@@ -420,7 +395,7 @@
         "id": "R-036",
         "title": "Plan citation and done check",
         "section": "next",
-        "position": 5,
+        "position": 4,
         "label": "next",
         "serves": [
           "V5"
@@ -821,13 +796,6 @@
       "now": [],
       "next": [
         {
-          "id": "R-050",
-          "title": "ADR relative images render unresolved",
-          "owner": "agent",
-          "size": "S",
-          "detail": "ready"
-        },
-        {
           "id": "R-037",
           "title": "Engineering export and docs-site view",
           "owner": "agent",
@@ -859,6 +827,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-25",
+          "id": "R-050",
+          "title": "ADR relative images render unresolved",
+          "milestone": "M4",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-25-adr-relative-images.md",
+          "result": "branch feat/r-050-adr-relative-images-render-unresolved"
+        },
         {
           "date": "2026-11-25",
           "id": "R-040",
@@ -1141,6 +1118,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-25",
+        "kind": "done",
+        "id": "R-050",
+        "title": "ADR relative images render unresolved",
+        "milestone": "M4",
+        "owner": "agent",
+        "result": "branch feat/r-050-adr-relative-images-render-unresolved"
+      },
       {
         "date": "2026-11-25",
         "kind": "done",
@@ -1523,6 +1509,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-25",
+        "id": "R-050",
+        "title": "ADR relative images render unresolved",
+        "milestone": "M4",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-25-adr-relative-images.md",
+        "result": "branch feat/r-050-adr-relative-images-render-unresolved"
+      },
       {
         "date": "2026-11-25",
         "id": "R-040",
@@ -1943,6 +1938,21 @@
       "brief": null,
       "reviewed": "2026-11-25",
       "idea": "Two consecutive `just lint-check` runs on a prose-only branch failed in `package-test`, each on a different test that passes alone: `cli.test.ts` \"still reads a site whose config is astro.config.mjs\" timed out after 180000ms (4.27s alone), and `graph.browser.ts:296` \"usable at 320px\" found `.plan-graph__toolbar` hidden within 5000ms (482ms alone)."
+    },
+    {
+      "file": "planning/inbox/2026-11-25-1417-adr-image-review-minors.md",
+      "title": "ADR image review minors from R-050",
+      "captured": "2026-11-25 14:17",
+      "source": "agent (R-050 execute, final review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site/src/loaders/adrs.ts, packages/pm-docs-site/test/integration.test.ts",
+      "context": "R-050 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Two minors deferred from R-050's final review. (1) No test pins a remote ADR image staying a plain img with its src; a consumer who sets Astro `image.domains` would get it optimised and its src rewritten. Append `![r](https://example.com/r.png)` to the existing relative-image test and assert `src=\"https://example.com/r.png\"`. (2) Every non-empty ADR section is rendered twice per build (the `adrs` html and the `adr-sections` entry), Mermaid included; share one memoised render per section."
     }
   ],
   "briefs": [
@@ -2227,16 +2237,32 @@
       "decision": "`linkHtml` returns the keys it linked as well as the HTML. `siteRefs()`\nbecomes async: it reads the `adrs` content collection once, and\n`references()` takes those keys for each ADR page in place of the\nraw-Markdown prose pass over the four sections. Every caller awaits\n`siteRefs()`.",
       "alternatives": "| Approach | Trade-off | Outcome |\n| --- | --- | --- |\n| References from the rendered HTML, `siteRefs()` async | Links and Linked from entries share one source; ten callers change | Chosen |\n| Strip Markdown syntax before `linkify` | Synchronous and one file, but a regex imitation of rendering that drifts again on autolinks, inline HTML, or footnotes | Rejected |\n| Render Markdown inside `references()` with its own parser | A new dependency, against ADR-002 | Rejected |\n| Do nothing | Links and Linked from entries keep disagreeing on emphasis, links, and images | Rejected |",
       "consequences": "- An ADR page's links and its targets' Linked from entries come from the\n  same HTML, so they cannot disagree.\n- Ten callers change from `siteRefs()` to `await siteRefs()`; the cache\n  holds a promise.\n- Follows ADR-002 ADR sections export as Markdown text and ADR-005 Docs\n  sites consume the pm-docs-site package."
+    },
+    {
+      "id": "ADR-012",
+      "path": "planning/decisions/ADR-012-the-site-reads-image-files-beside-an-adr.md",
+      "title": "The site reads image files beside an ADR",
+      "status": "accepted",
+      "supersededBy": null,
+      "date": "2026-11-25",
+      "category": "architecture",
+      "supersedes": null,
+      "item": "R-050",
+      "source": null,
+      "context": "An ADR section with a relative image (`![a](x.png)`) renders on its docs-site\npage as an unresolved `__ASTRO_IMAGE_` placeholder: the loader's\n`renderMarkdown` leaves it for Astro's `render()`, and the page prints the HTML\nwith `set:html`. The image file sits beside the ADR in `<PM root>/decisions/`,\nand `planning.json` carries text only.",
+      "decision": "The docs site may read the image files that an ADR section references from\n`<PM root>/decisions/`, found as `decisions/<basename of adr.path>` beside the\nconfigured `planning.json`, through Astro's image pipeline: an `adr-sections`\ncontent collection of rendered entries with `filePath` and `assetImports`,\nrendered with `render()` and linked with `linkHtml`. Every PM record is still\nread only from `planning.json`. A missing image file fails the build.",
+      "alternatives": "| Approach | Trade-off | Outcome |\n| --- | --- | --- |\n| Astro's image pipeline through rendered entries | Hashed, sized images and Astro's missing-file error; more moving parts, and dev may need the folder allowed | Chosen |\n| Rewrite the placeholder to a copied file served by a static route | Page pipeline untouched; no optimisation; own missing-file and `../` handling | Rejected |\n| Do nothing, or render the alt text only | Keeps the site export-only; fails R-050's Done when | Rejected |",
+      "consequences": "- Relative images in ADR sections build to hashed, sized files.\n- ADR-002 ADR sections export as Markdown text still holds for text; the site\n  reads image files only, never a PM record, outside `planning.json`.\n- Follows ADR-002 ADR sections export as Markdown text and ADR-011 ADR page\n  references come from rendered HTML.\n- Spec: `docs/superpowers/specs/2026-11-25-adr-relative-images-design.md`."
     }
   ],
   "counts": {
-    "next": 5,
+    "next": 4,
     "later": 15,
     "nextMax": 5,
-    "openInbox": 4,
+    "openInbox": 5,
     "discuss": 3,
     "shapingBriefs": 0,
-    "done": 31,
+    "done": 32,
     "dropped": 7,
     "blockers": 0,
     "openRisks": 0,
@@ -2248,12 +2274,11 @@
     "reviewDue": false,
     "lastReview": "2026-11-25",
     "claimable": [
-      "R-050",
       "R-037",
       "R-055",
       "R-035",
       "R-036"
     ],
-    "drift": false
+    "drift": true
   }
 }

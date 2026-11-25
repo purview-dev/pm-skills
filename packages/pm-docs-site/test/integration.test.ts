@@ -320,24 +320,36 @@ describe('pm-docs-site:fs-allow', () => {
 	});
 });
 
+const BUILD = 180_000;
+// The fixture site's own options (test/fixtures/site/astro.config.ts), so the docs collection is on.
+const FIXTURE_SITE_OPTIONS = `{ title: 'Fixture plan', planning: '../planning.json', docs: { root: '../docs', sources: [{ label: 'Guide', base: '.', include: ['README.md', 'guide/*.md'], prefix: 'docs/' }] } }`;
+const scratches: string[] = [];
+
+afterAll(() => {
+	for (const dir of scratches) rmSync(dir, { recursive: true, force: true });
+});
+
+/** A scratch copy of the fixture site with its own options. */
+function scratchSite(prefix: string): string {
+	const dir = scratchFixture(prefix);
+
+	scratches.push(dir);
+	writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(FIXTURE_SITE_OPTIONS));
+
+	return dir;
+}
+
+/** Append Markdown to one ADR section in a scratch site's planning.json. */
+function appendToAdr(dir: string, id: string, section: 'context' | 'decision', markdown: string): void {
+	const planningPath = join(dir, 'planning.json');
+	const planning = JSON.parse(readFileSync(planningPath, 'utf8')) as { adrs: ({ id: string } & Record<string, string>)[] };
+	const adr = planning.adrs.find((entry) => entry.id === id)!;
+
+	adr[section] = `${adr[section]}\n\n${markdown}\n`;
+	writeFileSync(planningPath, JSON.stringify(planning));
+}
+
 describe('mermaid fences, built through the fixture site', () => {
-	const BUILD = 180_000;
-	// The fixture site's own options (test/fixtures/site/astro.config.ts), so the docs collection is on.
-	const FIXTURE_SITE_OPTIONS = `{ title: 'Fixture plan', planning: '../planning.json', docs: { root: '../docs', sources: [{ label: 'Guide', base: '.', include: ['README.md', 'guide/*.md'], prefix: 'docs/' }] } }`;
-	const scratches: string[] = [];
-
-	afterAll(() => {
-		for (const dir of scratches) rmSync(dir, { recursive: true, force: true });
-	});
-
-	function scratchSite(prefix: string): string {
-		const dir = scratchFixture(prefix);
-
-		scratches.push(dir);
-		writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(FIXTURE_SITE_OPTIONS));
-
-		return dir;
-	}
 
 	it(
 		'a repo-docs page with a mermaid fence builds to svg',
@@ -361,12 +373,8 @@ describe('mermaid fences, built through the fixture site', () => {
 		'an ADR section with a mermaid fence builds to svg',
 		() => {
 			const dir = scratchSite('mermaid-adr-');
-			const planningPath = join(dir, 'planning.json');
-			const planning = JSON.parse(readFileSync(planningPath, 'utf8')) as { adrs: { id: string; decision: string }[] };
-			const adr = planning.adrs.find((entry) => entry.id === 'ADR-003')!;
 
-			adr.decision = `${adr.decision}\n\n\`\`\`mermaid\nflowchart LR\n  A --> B\n\`\`\`\n`;
-			writeFileSync(planningPath, JSON.stringify(planning));
+			appendToAdr(dir, 'ADR-003', 'decision', '```mermaid\nflowchart LR\n  A --> B\n```');
 
 			const result = runCli(['build', join(dir, 'site')]);
 
@@ -390,6 +398,67 @@ describe('mermaid fences, built through the fixture site', () => {
 
 			expect(result.code).not.toBe(0);
 			expect(result.stderr).toContain('broken.md');
+		},
+		BUILD,
+	);
+});
+
+describe('ADR images, built through the fixture site', () => {
+	// A 1x1 transparent PNG.
+	const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', 'base64');
+
+	it(
+		'an ADR section with a relative image builds to a resolved img',
+		() => {
+			const dir = scratchSite('image-adr-');
+
+			appendToAdr(dir, 'ADR-003', 'context', 'R-013 ![a](x.png)');
+			// The ADR's file is decisions/<file> beside planning.json; only the image needs to exist.
+			mkdirSync(join(dir, 'decisions'));
+			writeFileSync(join(dir, 'decisions', 'x.png'), PNG);
+
+			const result = runCli(['build', join(dir, 'site')]);
+
+			expect(result.code, result.stderr).toBe(0);
+			const dist = join(dir, 'site', 'dist');
+			const html = readFileSync(join(dist, 'plan', 'decisions', 'adr-003', 'index.html'), 'utf8');
+			const img = html.match(/<img\b[^>]*\balt="a"[^>]*>/)?.[0] ?? '';
+			const src = img.match(/\bsrc="([^"]+)"/)?.[1] ?? '';
+
+			expect(html.includes('__ASTRO_IMAGE_')).toBe(false);
+			expect(src).not.toBe('');
+			expect(existsSync(join(dist, decodeURI(src).replace(/^\//, '')))).toBe(true);
+			expect(html).toContain('href="/plan/features/r-013/"');
+		},
+		BUILD,
+	);
+
+	it(
+		'an ADR section with a missing relative image fails the build',
+		() => {
+			const dir = scratchSite('image-missing-adr-');
+
+			appendToAdr(dir, 'ADR-003', 'context', '![a](missing.png)');
+
+			const result = runCli(['build', join(dir, 'site')]);
+
+			expect(result.code).not.toBe(0);
+			expect(result.stdout + result.stderr).toContain('missing.png');
+		},
+		BUILD,
+	);
+
+	it(
+		'a missing relative image does not fail the build when the Decisions view is off',
+		() => {
+			const dir = scratchSite('image-missing-off-');
+
+			writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'Fixture plan', planning: '../planning.json', views: ['now'] }`));
+			appendToAdr(dir, 'ADR-003', 'context', '![a](missing.png)');
+
+			const result = runCli(['build', join(dir, 'site')]);
+
+			expect(result.code, result.stderr).toBe(0);
 		},
 		BUILD,
 	);

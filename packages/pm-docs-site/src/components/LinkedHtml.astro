@@ -1,0 +1,12 @@
+---
+// Rendered HTML from the default slot (an ADR section's <Content />), with every
+// known ID linked to its page (ADR-011). The slot renders first, so Astro has
+// already resolved its images (ADR-012).
+import { linkHtml } from '../lib/link-html';
+import { siteRefs } from '../lib/site-refs';
+
+const html = await Astro.slots.render('default');
+const { known } = await siteRefs();
+---
+
+<Fragment set:html={linkHtml(html, known).html} />

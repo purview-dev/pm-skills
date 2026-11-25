@@ -177,8 +177,11 @@ chips (superseded is off by default), category chips, and `Group by`
 category, status, or none. The state is kept in the URL, so a filtered
 view can be shared; `Clear` returns to the default. Every ADR has its own
 page with its header fields and its Context, Decision, Alternatives, and
-Consequences rendered from Markdown, and search indexes it. A feature page
-lists the ADRs whose `Item` is that item.
+Consequences rendered from Markdown, and search indexes it. A relative
+image in a section (`![Flow](flow.png)`) resolves against the ADR's file in
+the `decisions/` folder beside `planning.json` and is built with Astro's
+image pipeline; a missing image file fails the build and names it. A
+feature page lists the ADRs whose `Item` is that item.
 
 ## Mermaid
 
