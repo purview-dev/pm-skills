@@ -7,7 +7,7 @@
 
 ## Intent
 
-Close the five minor findings from R-039's final review so ADR and capture writes are consistent across the PM skills. A skills change, so a rules change: the repository is on the unreleased `21.0.0-pre.9` line, so it stays on rules 21 with `just bump prerelease` (no `Version 22` upgrade note; extend the Version 21 notes only if a behaviour a consumer must act on changes, which none here does).
+Close the five minor findings from R-039's final review so ADR and capture writes are consistent across the PM skills. A skills change, so a rules change: the repository is on the unreleased `21.0.0-pre.9` line, so it stays on rules 21 with `just bump prerelease` (no `Version 22` upgrade note; one sentence is added to the Version 21 notes, goal 6).
 
 ## Goals
 
@@ -16,8 +16,9 @@ Close the five minor findings from R-039's final review so ADR and capture write
 3. **Legend reuse for an ADR.** `skills/pm-shape/SKILL.md` step 5 and `skills/pm-review/SKILL.md` (stale proposed ADRs) print the `## For this question` legend only when no `## For this discussion` legend in the same output already lists that ADR (Communication contract: a question reuses the discussion legend).
 4. **`done` finds ADRs in the main worktree** (ADR-010). `skills/pm-checkpoint/SKILL.md` step 5: for each `ADR-NNN` the spec names, look in the item's branch's decisions folder first, then in the main worktree's. Only an ID found in neither keeps `done` in `pause` (`ADR-NNN named in <spec> has no file.`). An ADR found only in the main worktree, `proposed`, with `Item: <this ID>`, is accepted there in place (`pm-adr accept` write steps) with the Note `Accepted ADR-NNN <title> in the main worktree; the next PM commit on <PM branch> carries it.`
 5. **`done` never stops for a capture** (ADR-010). In step 5's commit-worktree guard, a **capture** is an uncommitted inbox file, decisions-folder file, or `RISKS.md`. Captures in the item's worktree are swept into the Completion record commit (the existing *Leftovers are swept in* rule). Captures on the PM branch in another main worktree no longer stop it; they are named in the Note `<n> captures uncommitted on <PM branch>: <paths>. The next PM commit there carries them.` Any other uncommitted PM path (`NOW.md`, `ROADMAP.md`, `LOG.md`, `STRATEGY.md`, a brief) still stops it, as today.
-6. `skills/pm-adr/SKILL.md` Guard: `accept` applied by `pm-checkpoint` (`done`) writes in the worktree that holds the item's branch, or in the main worktree when the ADR is only there (ADR-010).
-7. `just lint-check` passes; `just bump prerelease` moves `package.json` to `21.0.0-pre.10`.
+6. The managed section's *Completion rides the branch* (`skills/pm-setup/references/AGENTS-section.md`, "Stop when the PM branch has **Uncommitted PM state** …") says the same as goal 5, and the installed copy at the end of `AGENTS.md` matches it; one sentence is appended to the Version 21 upgrade notes, because the rules text changed (still rules 21, unreleased line).
+7. `skills/pm-adr/SKILL.md` Guard: `accept` applied by `pm-checkpoint` (`done`) writes in the worktree that holds the item's branch, or in the main worktree when the ADR is only there (ADR-010).
+8. `just lint-check` passes; `just bump prerelease` moves `package.json` to `21.0.0-pre.10`.
 
 ## Non-goals
 
