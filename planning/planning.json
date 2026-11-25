@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-25T11:38:09+00:00",
+  "generatedAt": "2026-11-25T12:42:44+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "main",
-    "head": "f682bd6079f8114a63f121288d59012252353dd8"
+    "head": "4279a8fb8891d81f16913c69edd3f7ee9b7f5bb7"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -53,8 +53,8 @@
   },
   "strategy": {
     "focus": {
-      "milestone": "M1 Reproducible docs site",
-      "whyNow": "every item in Next serves it, and the brief `planning/briefs/2026-11-17-docs-site-package.md` records copied templates, unpinned packages, and rules bumps for template changes as current costs."
+      "milestone": "M4 Recorded technical decisions",
+      "whyNow": "ADR support must be complete (user, 2026-11-25); 6 of its 11 items are done, its 5 open items fill Next, and the forecast is about 0.6 weeks at 7.75 items per week."
     },
     "milestones": [
       {
@@ -73,7 +73,17 @@
         "serves": [
           "V5"
         ],
-        "exitCriteria": "a report in `planning/research/` shows, in a scratch repository with `package.json`, `tsconfig.json`, `AGENTS.md`, and `docs/adr/`, that `pm-init` writes `ENGINEERING.md` citing all three files and `ADR directory: docs/adr/`, that the design handoff names the ADRs and principles that apply, and that `pm-checkpoint` (`done`) refuses to close on a failing command check.",
+        "exitCriteria": "a report in `planning/research/` shows, in a scratch repository with `package.json`, `tsconfig.json`, `AGENTS.md`, and `docs/adr/`, that `pm-init` writes `ENGINEERING.md` citing all three files and `pm-adr import docs/adr/` brings its ADRs into `planning/decisions/`, that the design handoff names the ADRs and principles that apply, and that `pm-checkpoint` (`done`) refuses to close on a failing command check; and every ADR section, including a relative image, renders on its docs-site page.",
+        "target": null,
+        "status": "active"
+      },
+      {
+        "id": "M5",
+        "name": "Docs-site package 1.0.0",
+        "serves": [
+          "V4"
+        ],
+        "exitCriteria": "`npm view @purview-dev/pm-docs-site version` returns `1.0.0`, the package has a page per brief and per inbox file and a research reports view, its README holds complete user instructions for every view, and `just package-test` and `just docs-check` pass.",
         "target": null,
         "status": "planned"
       },
@@ -106,6 +116,13 @@
         "evidence": "`skills/pm-docs-site/SKILL.md` scaffold step 5 and upgrade step 4 install the latest packages; about 40 template files are copied into each site.",
         "signal": "two builds from the same `planning.json` and lockfile give byte-identical HTML, and a package upgrade changes only `package.json` and `bun.lock`.",
         "status": "open"
+      },
+      {
+        "id": "B2",
+        "statement": "We believe recording technology, principles, and ADRs, and naming the ones that apply in every design handoff, will stop agents contradicting earlier technical decisions, for maintainers of repositories that use pm-skills.",
+        "evidence": "`planning/briefs/2026-11-22-where-do-adrs-fit.md` and `planning/briefs/2026-11-20-technology-and-engineering-principles.md` record agents contradicting earlier decisions because nothing records or points at them.",
+        "signal": "the M4 rehearsal report in `planning/research/` shows the design handoff naming the ADRs and principles that apply and `pm-checkpoint` (`done`) refusing a failing command check.",
+        "status": "open"
       }
     ],
     "assumptions": [
@@ -113,18 +130,30 @@
         "id": "A1",
         "statement": "An Astro integration installed from a package can inject every plan page, so a consumer needs no page files.",
         "test": "R-008 Docs-site package: skeleton at parity renders every current page from the package.",
-        "status": "untested"
+        "status": "holds (2026-11-25)"
       },
       {
         "id": "A2",
         "statement": "A public `@purview-dev` npm scope and a publish workflow cost GBP 0 per month.",
         "test": "R-014 Create the npm @purview-dev scope and token.",
-        "status": "untested"
+        "status": "holds (2026-11-25)"
       },
       {
         "id": "A3",
         "statement": "Integration options and Starlight component overrides cover the customisation this repository's `docs-site/` needs.",
         "test": "R-013 Docs-site package: publish and migrate moves `docs-site/` onto the package with no copied files.",
+        "status": "holds (2026-11-25)"
+      },
+      {
+        "id": "A4",
+        "statement": "`pm-engineering` can infer the technology and principles from `package.json`, `tsconfig.json`, and `AGENTS.md`, with a cited source for each entry.",
+        "test": "R-035 pm-engineering infer from an existing repository.",
+        "status": "untested"
+      },
+      {
+        "id": "A5",
+        "statement": "A design stage that is handed the applicable ADRs and principles follows them.",
+        "test": "R-036 Plan citation and done check's rehearsal report in `planning/research/`.",
         "status": "untested"
       }
     ],
@@ -143,9 +172,56 @@
         "thing": "Writing PM state from the site (drag and drop, edit actions)",
         "why": "PM state changes only through the pm-* skills; the site reads `planning.json` only.",
         "revisit": "never."
+      },
+      {
+        "thing": "GitHub issue and Project sync (`planning/inbox/2026-11-22-1739-github-issue-project-sync.md`, brief `planning/briefs/2026-11-22-github-issue-project-sync.md`)",
+        "why": "M4 and M5 come first.",
+        "revisit": "after M5 Docs-site package 1.0.0 is done."
       }
     ],
     "decisions": [
+      {
+        "date": "2026-11-25",
+        "decision": "Re-planned roadmap.",
+        "why": "focus moved to M4 and M5 was added; Next stays R-050, R-037, R-055, R-035, R-036 (all M4), R-042, R-052, and R-053 join M5, and Later is grouped M5, M2, M3, then Unassigned.",
+        "rejected": "leaving Later ungrouped."
+      },
+      {
+        "date": "2026-11-25",
+        "decision": "Not doing: GitHub issue and Project sync until M5 Docs-site package 1.0.0 is done.",
+        "why": "M4 and M5 come first.",
+        "rejected": "moving the docs-site hosting revisit to after M5; deferring R-046 to R-049 agent context tidy until M4 is done."
+      },
+      {
+        "date": "2026-11-25",
+        "decision": "Bet B2 and assumptions A4 and A5 added for M4; A1 to A3 hold.",
+        "why": "R-008, R-014, and R-013 are done and tested them; B1 stays open because byte-identical builds are not yet measured.",
+        "rejected": "leaving A1 to A3 untested."
+      },
+      {
+        "date": "2026-11-25",
+        "decision": "Current focus M4 Recorded technical decisions, which must leave ADR support complete; R-050 ADR relative images render unresolved joins M4, and its exit criteria add that every ADR section, including a relative image, renders on its docs-site page.",
+        "why": "the user asked for ADR support to be complete; M4's items already fill Next.",
+        "rejected": "focus on M5 Docs-site package 1.0.0; focus on M2 Verified install and upgrade; R-050 staying in M5."
+      },
+      {
+        "date": "2026-11-25",
+        "decision": "M1 Reproducible docs site re-checked as done.",
+        "why": "`docs-site/` holds only its four files, `npm view @purview-dev/pm-docs-site version` returns `0.1.0-pre.4`, and `just docs-check` passes (132 pages).",
+        "rejected": "none."
+      },
+      {
+        "date": "2026-11-25",
+        "decision": "Milestone M5 Docs-site package 1.0.0 added, serving V4, ordered M4, M5, M2, M3.",
+        "why": "the user decided on 2026-11-23 that the package is not stable until it holds every view with complete instructions, and R-050, R-042, R-052, and R-053 had no milestone.",
+        "rejected": "verification first (M4, M2, M3, M5); no new milestone."
+      },
+      {
+        "date": "2026-11-25",
+        "decision": "M4 exit criterion names `pm-adr import docs/adr/` instead of `ADR directory: docs/adr/`.",
+        "why": "ADR-001 ADRs live in the PM root replaced the setting, and no skill writes it.",
+        "rejected": "dropping the ADR part; keeping the stale wording."
+      },
       {
         "date": "2026-11-24",
         "decision": "M1 Reproducible docs site complete.",
@@ -243,9 +319,10 @@
         "position": 1,
         "label": "next",
         "serves": [
-          "V4"
+          "V4",
+          "V5"
         ],
-        "milestone": null,
+        "milestone": "M4",
         "owner": "agent",
         "doneWhen": "an ADR section with `![a](x.png)` builds to an ADR page whose `img` has a resolved `src`, a test in `packages/pm-docs-site/test/` covers it, and `just package-test` passes.",
         "size": "S",
@@ -369,10 +446,84 @@
     ],
     "later": [
       {
+        "id": "R-042",
+        "title": "Docs-site package: deferred review minors",
+        "section": "later",
+        "position": 1,
+        "label": "later",
+        "serves": [
+          "V4"
+        ],
+        "milestone": "M5",
+        "owner": "agent",
+        "doneWhen": "each finding listed in this Note is fixed or has a one-line won't-fix reason in the item's plan, `.astro` client scripts are covered by the island import guard, `start()` in `src/scripts/plan.ts` registers its listeners once per document, and `just package-test` passes.",
+        "size": "M",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "From the 2026-11-22 review; review minors in `packages/pm-docs-site` (inbox 2026-11-18-1222, 2026-11-20-1844 x3). R-010 board: (1) the 3s reveal of a pending board also fires on a slow but successful hydration; document it in `components.css` and the `useBoardUrlState.ts` header, or tune it. (2) The pending mark is also set on `/plan/roadmap/?owner=...`; scope it to the Board page. (3) `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`. (4) The lane header is a plain `div`; use an `h3` or `role=\"heading\"`. (5) Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed. (6) The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page. (7) A collapsed column's vertical title stretches the shared header row. (8) `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab`; its header comment lists only some changes. (9) `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array. (10) `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id`; `tagHref` never asserted. (11) `integration.test.ts` asserts the integration names two ways. (12) `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`. (13) The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP. R-028: (14) `test/island-imports.test.ts` scans only `.ts` and `.tsx` under `src/components`, so an `.astro` client `<script>` that value-imports a server-only lib is not caught. (15) `start()` in `src/scripts/plan.ts` adds `pointerdown`, `pointerup`, and `click` listeners on `document` each run, so they stack under view transitions. (16) `test/browser/board.browser.ts` test \"a localStorage that throws leaves the Board usable\" pins Starlight theme-script error counts per `<starlight-theme-select>`; a Starlight upgrade fails it with no fault in the package; loosen it or report the unguarded `localStorage` read upstream. R-031 (inbox 2026-11-21-1205): (17) `relativeImports` in `test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports in comments, and misses template-literal dynamic imports (false failures only). (18) In `scripts/check-demo.ts`, a `plan-empty` element's text is cut off at a nested `plan-empty` element. (19) `src/pages/plan/log.astro` labels a known ID whose page is not built with the logged title, not the export's current title, and no test covers that view-off case. R-025 (2026-11-25 review, inbox 2026-11-22-1821): (20) `revisers()` order is not pinned by a test: every assertion in `test/planning.test.ts` (the revisers case) returns one item; give a second item `revisits: 'R-003'` in the populated case and assert both IDs in `features()` order. (21) `src/lib/references.ts` line 188 still checks `other.dependsOn.includes(feature.id) || other.revisits === feature.id` inline; it could reuse `dependents()` and `revisers()`. R-013 (2026-11-25 review, inbox 2026-11-24-2044): (22) `--port=4399` (the `=` form) is not parsed, so it becomes the site folder, and any unknown flag silently becomes a positional argument (`lib/cli-args.ts`). (23) `test/cli.test.ts` \"dev --port 4399 serves on 4399\" uses a fixed port, which can collide with another process. (24) `skills/pm-docs-site/SKILL.md` Guard checks `bun --version` but not Node 24, so an older Node fails only at verify, after files are written. (25) Two byte-identical Markdown sources on one page (for example two ADR sections with the same text and fence) get the same Pele IDs (`lib/mermaid.ts`). R-040 (2026-11-25 review, inbox 2026-11-25-1008): (26) linkHtml: a raw `<` inside a script or style body (`<script>if (a<b) x='R-012'</script>`) is read as a tag, so the script never closes and the rest of the ADR section is not linked; links and Linked from entries still agree. Fix: while script or style is open, scan to the matching close tag (`src/lib/link-html.ts`). (27) `test/link-html.test.ts`, `test/links.test.ts`, and `test/references.test.ts` lack a final newline, and `skills/pm-export/scripts/export.test.ts` has an `it(` at column 0 near line 122. (28) The Decisions noscript test checks a string only.",
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-052",
+        "title": "Docs-site package: brief and inbox pages",
+        "section": "later",
+        "position": 2,
+        "label": "later",
+        "serves": [
+          "V4"
+        ],
+        "milestone": "M5",
+        "owner": "agent",
+        "doneWhen": "the package builds one page per brief and one per inbox file, each with links and a Linked from list as item, risk, and ADR pages have, a test in `packages/pm-docs-site/test/` covers both, and `just package-test` and `just docs-check` pass.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+        "note": "From the 2026-11-25 review (inbox 2026-11-23-1525, user, R-013 design). The package must contain everything before 1.0.0. A page per brief and per inbox file, as items, risks, and ADRs already have, with links and Linked from (S). Sliced out of R-013 by the user's choice on 2026-11-23; 1.0.0 depends on it.",
+        "revisits": null,
+        "claimable": false
+      },
+      {
+        "id": "R-053",
+        "title": "Docs-site package: release 1.0.0",
+        "section": "later",
+        "position": 3,
+        "label": "waiting",
+        "serves": [
+          "V4"
+        ],
+        "milestone": "M5",
+        "owner": "both",
+        "doneWhen": "`npm view @purview-dev/pm-docs-site version` returns `1.0.0`, the `pm-docs-site-v1.0.0` tag exists, and the package README holds complete user instructions for every view.",
+        "size": "S",
+        "dependsOn": [
+          "R-052"
+        ],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+        "note": "From the 2026-11-25 review (inbox 2026-11-23-1525, user, R-013 design). Not stable until it contains everything, with complete instructions (user, 2026-11-23). Release `@purview-dev/pm-docs-site` 1.0.0 once R-013, R-045 Docs-site package: architecture view, and the brief and inbox pages, and research items are done (S, both). This replaces the brief's 2026-11-18 answer that R-013 releases 1.0.0; R-013 publishes 0.1.0-pre.4 instead. The research reports item is being shaped (inbox 2026-11-23-1525-docs-site-package-research.md); add its ID to `Depends on` when pm-shape creates it.",
+        "revisits": null,
+        "claimable": false
+      },
+      {
         "id": "R-006",
         "title": "Check pm-setup's skill counts in validate",
         "section": "later",
-        "position": 1,
+        "position": 4,
         "label": "later",
         "serves": [
           "V1"
@@ -396,7 +547,7 @@
         "id": "R-015",
         "title": "Rehearse a fresh install in a scratch repository",
         "section": "later",
-        "position": 2,
+        "position": 5,
         "label": "later",
         "serves": [
           "V1"
@@ -420,7 +571,7 @@
         "id": "R-016",
         "title": "Rehearse the lifecycle guards",
         "section": "later",
-        "position": 3,
+        "position": 6,
         "label": "later",
         "serves": [
           "V2",
@@ -445,7 +596,7 @@
         "id": "R-024",
         "title": "Self-contained aspire module test example",
         "section": "later",
-        "position": 4,
+        "position": 7,
         "label": "later",
         "serves": [
           "V4"
@@ -469,7 +620,7 @@
         "id": "R-030",
         "title": "Pre-push runs fast checks only",
         "section": "later",
-        "position": 5,
+        "position": 8,
         "label": "later",
         "serves": [
           "V4"
@@ -493,7 +644,7 @@
         "id": "R-032",
         "title": "pm-checkpoint and pm-lint Note follow-ups",
         "section": "later",
-        "position": 6,
+        "position": 9,
         "label": "later",
         "serves": [
           "V2"
@@ -514,34 +665,10 @@
         "claimable": false
       },
       {
-        "id": "R-042",
-        "title": "Docs-site package: deferred review minors",
-        "section": "later",
-        "position": 7,
-        "label": "later",
-        "serves": [
-          "V4"
-        ],
-        "milestone": null,
-        "owner": "agent",
-        "doneWhen": "each finding listed in this Note is fixed or has a one-line won't-fix reason in the item's plan, `.astro` client scripts are covered by the island import guard, `start()` in `src/scripts/plan.ts` registers its listeners once per document, and `just package-test` passes.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "From the 2026-11-22 review; review minors in `packages/pm-docs-site` (inbox 2026-11-18-1222, 2026-11-20-1844 x3). R-010 board: (1) the 3s reveal of a pending board also fires on a slow but successful hydration; document it in `components.css` and the `useBoardUrlState.ts` header, or tune it. (2) The pending mark is also set on `/plan/roadmap/?owner=...`; scope it to the Board page. (3) `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`. (4) The lane header is a plain `div`; use an `h3` or `role=\"heading\"`. (5) Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed. (6) The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page. (7) A collapsed column's vertical title stretches the shared header row. (8) `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab`; its header comment lists only some changes. (9) `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array. (10) `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id`; `tagHref` never asserted. (11) `integration.test.ts` asserts the integration names two ways. (12) `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`. (13) The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP. R-028: (14) `test/island-imports.test.ts` scans only `.ts` and `.tsx` under `src/components`, so an `.astro` client `<script>` that value-imports a server-only lib is not caught. (15) `start()` in `src/scripts/plan.ts` adds `pointerdown`, `pointerup`, and `click` listeners on `document` each run, so they stack under view transitions. (16) `test/browser/board.browser.ts` test \"a localStorage that throws leaves the Board usable\" pins Starlight theme-script error counts per `<starlight-theme-select>`; a Starlight upgrade fails it with no fault in the package; loosen it or report the unguarded `localStorage` read upstream. R-031 (inbox 2026-11-21-1205): (17) `relativeImports` in `test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports in comments, and misses template-literal dynamic imports (false failures only). (18) In `scripts/check-demo.ts`, a `plan-empty` element's text is cut off at a nested `plan-empty` element. (19) `src/pages/plan/log.astro` labels a known ID whose page is not built with the logged title, not the export's current title, and no test covers that view-off case. R-025 (2026-11-25 review, inbox 2026-11-22-1821): (20) `revisers()` order is not pinned by a test: every assertion in `test/planning.test.ts` (the revisers case) returns one item; give a second item `revisits: 'R-003'` in the populated case and assert both IDs in `features()` order. (21) `src/lib/references.ts` line 188 still checks `other.dependsOn.includes(feature.id) || other.revisits === feature.id` inline; it could reuse `dependents()` and `revisers()`. R-013 (2026-11-25 review, inbox 2026-11-24-2044): (22) `--port=4399` (the `=` form) is not parsed, so it becomes the site folder, and any unknown flag silently becomes a positional argument (`lib/cli-args.ts`). (23) `test/cli.test.ts` \"dev --port 4399 serves on 4399\" uses a fixed port, which can collide with another process. (24) `skills/pm-docs-site/SKILL.md` Guard checks `bun --version` but not Node 24, so an older Node fails only at verify, after files are written. (25) Two byte-identical Markdown sources on one page (for example two ADR sections with the same text and fence) get the same Pele IDs (`lib/mermaid.ts`). R-040 (2026-11-25 review, inbox 2026-11-25-1008): (26) linkHtml: a raw `<` inside a script or style body (`<script>if (a<b) x='R-012'</script>`) is read as a tag, so the script never closes and the rest of the ADR section is not linked; links and Linked from entries still agree. Fix: while script or style is open, scan to the matching close tag (`src/lib/link-html.ts`). (27) `test/link-html.test.ts`, `test/links.test.ts`, and `test/references.test.ts` lack a final newline, and `skills/pm-export/scripts/export.test.ts` has an `it(` at column 0 near line 122. (28) The Decisions noscript test checks a string only.",
-        "revisits": null,
-        "claimable": false
-      },
-      {
         "id": "R-046",
         "title": "Upgrade, format, and git rules move to references",
         "section": "later",
-        "position": 8,
+        "position": 10,
         "label": "later",
         "serves": [
           "V2"
@@ -567,7 +694,7 @@
         "id": "R-047",
         "title": "Core rules file and a 15 KB managed section",
         "section": "later",
-        "position": 9,
+        "position": 11,
         "label": "waiting",
         "serves": [
           "V2"
@@ -593,7 +720,7 @@
         "id": "R-048",
         "title": "Repository AGENTS.md top part into dedicated files",
         "section": "later",
-        "position": 10,
+        "position": 12,
         "label": "later",
         "serves": [
           "V2"
@@ -617,7 +744,7 @@
         "id": "R-049",
         "title": "Trim the largest SKILL.md files",
         "section": "later",
-        "position": 11,
+        "position": 13,
         "label": "waiting",
         "serves": [
           "V2"
@@ -643,7 +770,7 @@
         "id": "R-051",
         "title": "PM sync review minors",
         "section": "later",
-        "position": 12,
+        "position": 14,
         "label": "later",
         "serves": [
           "V2"
@@ -660,56 +787,6 @@
         },
         "brief": null,
         "note": "From the 2026-11-25 review (inbox 2026-11-22-1933, R-044 execute). Deferred minors from the R-044 final review. (1) `release` reports a pure fast-forward of the PM branch as \"Moved 0 PM commits\". (2) The carry commit does not consult `PM state commit: ask | never`, and a carry onto a PM branch that is not checked out leaves `planning.json` stale (reported in its line). (3) No test for a detached HEAD or `core.autocrlf=true`. (4) Remote names containing `/` are split wrongly in `options()`, and a PM branch that exists only on the remote makes `rev-list` throw (fails safe). (5) Existing behaviour, not R-044: PM commits made on a pending pull request's branch after its last push are never delivered if the pull request merges without another push.",
-        "revisits": null,
-        "claimable": false
-      },
-      {
-        "id": "R-052",
-        "title": "Docs-site package: brief and inbox pages",
-        "section": "later",
-        "position": 13,
-        "label": "later",
-        "serves": [
-          "V4"
-        ],
-        "milestone": null,
-        "owner": "agent",
-        "doneWhen": "the package builds one page per brief and one per inbox file, each with links and a Linked from list as item, risk, and ADR pages have, a test in `packages/pm-docs-site/test/` covers both, and `just package-test` and `just docs-check` pass.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-        "note": "From the 2026-11-25 review (inbox 2026-11-23-1525, user, R-013 design). The package must contain everything before 1.0.0. A page per brief and per inbox file, as items, risks, and ADRs already have, with links and Linked from (S). Sliced out of R-013 by the user's choice on 2026-11-23; 1.0.0 depends on it.",
-        "revisits": null,
-        "claimable": false
-      },
-      {
-        "id": "R-053",
-        "title": "Docs-site package: release 1.0.0",
-        "section": "later",
-        "position": 14,
-        "label": "waiting",
-        "serves": [
-          "V4"
-        ],
-        "milestone": null,
-        "owner": "both",
-        "doneWhen": "`npm view @purview-dev/pm-docs-site version` returns `1.0.0`, the `pm-docs-site-v1.0.0` tag exists, and the package README holds complete user instructions for every view.",
-        "size": "S",
-        "dependsOn": [
-          "R-052"
-        ],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-        "note": "From the 2026-11-25 review (inbox 2026-11-23-1525, user, R-013 design). Not stable until it contains everything, with complete instructions (user, 2026-11-23). Release `@purview-dev/pm-docs-site` 1.0.0 once R-013, R-045 Docs-site package: architecture view, and the brief and inbox pages, and research items are done (S, both). This replaces the brief's 2026-11-18 answer that R-013 releases 1.0.0; R-013 publishes 0.1.0-pre.4 instead. The research reports item is being shaped (inbox 2026-11-23-1525-docs-site-package-research.md); add its ID to `Depends on` when pm-shape creates it.",
         "revisits": null,
         "claimable": false
       },
