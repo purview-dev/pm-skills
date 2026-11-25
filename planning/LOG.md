@@ -4,6 +4,7 @@
 
 ## Done
 
+- 2026-11-25 R-055 Engineering lint and skill review minors. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-25-engineering-lint-review-minors.md. Result: branch feat/r-055-engineering-lint-and-skill-review-minors.
 - 2026-11-25 R-050 ADR relative images render unresolved. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-25-adr-relative-images.md. Result: branch feat/r-050-adr-relative-images-render-unresolved.
 - 2026-11-25 R-040 ADR link and export edge cases. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-25-adr-link-and-export-edge-cases.md. Result: branch feat/r-040-adr-link-export-edge-cases.
 - 2026-11-25 R-041 ADR skill follow-ups. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-25-adr-skill-follow-ups.md. Result: branch feat/r-041-adr-skill-follow-ups.
