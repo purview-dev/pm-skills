@@ -498,6 +498,15 @@ describe("rules.md", () => {
     }
   });
 
+  it("states every rule in the same words as rules.md", () => {
+    const doc = readFileSync(join(import.meta.dir, "..", "references", "rules.md"), "utf8");
+    for (const rule of RULES) {
+      const row = doc.split(/\r?\n/).find((line) => line.startsWith(`| \`${rule.id}\` |`));
+      const description = row?.split(" | ").slice(3).join(" | ").replace(/ \|$/, "");
+      expect({ id: rule.id, text: description }).toEqual({ id: rule.id, text: rule.summary });
+    }
+  });
+
   it("every rule the checks report is in the catalogue", () => {
     const ids = new Set(RULES.map((rule) => rule.id));
     const context = buildContext(new Map([["NOW.md", "# Now\n\n- Status: maybe\n"]]));
