@@ -28,9 +28,15 @@ Milestone: optional; the item's milestone while it is active
 
 ## Done when
 
-- `pm-next` and `pm-checkpoint` (`stage`) pass the principles and ADRs that apply to the plan handoff; `pm-checkpoint` (`done`) refuses to close on a failing command check and lists failed review checks as a `Note` and an inbox file, shown in a rehearsal report in `planning/research/` whose scratch repository has `docs/adr/` and in which `pm-adr import docs/adr/` brings its ADRs into `planning/decisions/`; `pm-purview` hands accepted packages to `pm-engineering add`.
+- `pm-next` and `pm-checkpoint` (`stage`) pass the principles and ADRs that apply to the plan handoff; `pm-checkpoint` (`done`) refuses to close on a failing command check and lists failed review checks as a `Note` and an inbox file, shown in a rehearsal report in `planning/research/` whose scratch repository has `docs/adr/` and in which `pm-adr import docs/adr/` brings its ADRs into `planning/decisions/`; an item `pm-purview` accepted records its package in `ENGINEERING.md` through `pm-engineering add`'s write steps when `pm-checkpoint` (`done`) closes it.
 
-## Checkpoint
+## Checkpoint 2026-11-25 21:39
+
+- Stopped at: spec written at `docs/superpowers/specs/2026-11-25-plan-citation-and-done-check-design.md`, builder check answered
+- Next action: user approves the spec, then the plan stage starts
+- Start with: superpowers:writing-plans
+- Decisions: approach A, prose only (user); Purview package recorded at item close, not at acceptance (user); rehearsal runs in a fresh agent session with this branch's skills installed in the scratch repository (user)
+- Context: Revision 2026-11-25: Done when's pm-purview clause reworded to the record-at-close design (ADR-014 Purview packages are recorded at item close, proposed).
 
 <!--
 Active example:

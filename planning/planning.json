@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-25T20:49:28+00:00",
+  "generatedAt": "2026-11-25T21:40:02+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-036-plan-citation-and-done-check",
-    "head": "f3122702336ce4021b90729859f9f65bb4e4b2af"
+    "head": "58adba449fcf0d4280e26ad2ef47158cb60b1536"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -349,9 +349,17 @@
     "plan": null,
     "started": "2026-11-25",
     "doneWhen": [
-      "`pm-next` and `pm-checkpoint` (`stage`) pass the principles and ADRs that apply to the plan handoff; `pm-checkpoint` (`done`) refuses to close on a failing command check and lists failed review checks as a `Note` and an inbox file, shown in a rehearsal report in `planning/research/` whose scratch repository has `docs/adr/` and in which `pm-adr import docs/adr/` brings its ADRs into `planning/decisions/`; `pm-purview` hands accepted packages to `pm-engineering add`."
+      "`pm-next` and `pm-checkpoint` (`stage`) pass the principles and ADRs that apply to the plan handoff; `pm-checkpoint` (`done`) refuses to close on a failing command check and lists failed review checks as a `Note` and an inbox file, shown in a rehearsal report in `planning/research/` whose scratch repository has `docs/adr/` and in which `pm-adr import docs/adr/` brings its ADRs into `planning/decisions/`; an item `pm-purview` accepted records its package in `ENGINEERING.md` through `pm-engineering add`'s write steps when `pm-checkpoint` (`done`) closes it."
     ],
-    "checkpoint": null
+    "checkpoint": {
+      "at": "2026-11-25 21:39",
+      "stoppedAt": "spec written at `docs/superpowers/specs/2026-11-25-plan-citation-and-done-check-design.md`, builder check answered",
+      "nextAction": "user approves the spec, then the plan stage starts",
+      "startWith": "superpowers:writing-plans",
+      "decisions": "approach A, prose only (user); Purview package recorded at item close, not at acceptance (user); rehearsal runs in a fresh agent session with this branch's skills installed in the scratch repository (user)",
+      "context": "Revision 2026-11-25: Done when's pm-purview clause reworded to the record-at-close design (ADR-014 Purview packages are recorded at item close, proposed).",
+      "openQuestion": null
+    }
   },
   "plan": null,
   "roadmap": {
@@ -2010,7 +2018,12 @@
       "decision": "2026-11-20 Keep it parked. Reason: SCOPE CHANGE to v1; no `V` line or milestone covers it and M1 Reproducible docs site is the current focus. Next: `pm-strategy` adds a `V` line and a milestone after M1, then the four slices go to Later under it.",
       "problem": "A solo developer's technology choices, adopted packages, and engineering principles are decided once and then lost: nothing in PM state records what was adopted and why (answer 2026-11-20).",
       "doneWhen": "`pm-init` in a scratch repository with a `package.json` and an `AGENTS.md` writes `planning/ENGINEERING.md` with `## Technology` and `## Principles`, each entry citing its `Source`, and `pm-lint check` passes on it.",
-      "revisions": []
+      "revisions": [
+        {
+          "date": "2026-11-25",
+          "text": "R-036's Done when said `pm-purview` hands accepted packages to `pm-engineering add` at acceptance, which would list a package before it is installed. Must now: an item `pm-purview` accepted records its package in `ENGINEERING.md` through `pm-engineering add`'s write steps when `pm-checkpoint` (`done`) closes it (ADR-014 Purview packages are recorded at item close, proposed). Mode: fix-in-place. Supersedes: none."
+        }
+      ]
     },
     {
       "path": "planning/briefs/2026-11-22-agent-context-tidy.md",
@@ -2268,6 +2281,38 @@
       "decision": "The docs site may read the image files that an ADR section references from\n`<PM root>/decisions/`, found as `decisions/<basename of adr.path>` beside the\nconfigured `planning.json`, through Astro's image pipeline: an `adr-sections`\ncontent collection of rendered entries with `filePath` and `assetImports`,\nrendered with `render()` and linked with `linkHtml`. Every PM record is still\nread only from `planning.json`. A missing image file fails the build.",
       "alternatives": "| Approach | Trade-off | Outcome |\n| --- | --- | --- |\n| Astro's image pipeline through rendered entries | Hashed, sized images and Astro's missing-file error; more moving parts, and dev may need the folder allowed | Chosen |\n| Rewrite the placeholder to a copied file served by a static route | Page pipeline untouched; no optimisation; own missing-file and `../` handling | Rejected |\n| Do nothing, or render the alt text only | Keeps the site export-only; fails R-050's Done when | Rejected |",
       "consequences": "- Relative images in ADR sections build to hashed, sized files.\n- ADR-002 ADR sections export as Markdown text still holds for text; the site\n  reads image files only, never a PM record, outside `planning.json`.\n- Follows ADR-002 ADR sections export as Markdown text and ADR-011 ADR page\n  references come from rendered HTML.\n- Spec: `docs/superpowers/specs/2026-11-25-adr-relative-images-design.md`."
+    },
+    {
+      "id": "ADR-013",
+      "path": "planning/decisions/ADR-013-principles-are-matched-and-checked-in-prose.md",
+      "title": "Principles are matched and checked in prose",
+      "status": "proposed",
+      "supersededBy": null,
+      "date": "2026-11-25",
+      "category": "architecture",
+      "supersedes": null,
+      "item": "R-036",
+      "source": null,
+      "context": "`ENGINEERING.md` (ADR-009) records principles with `Applies to` globs and `Check: <command> | review`, but no stage reads them. The plan stage needs the principles that apply to the spec's files, and the item close needs to check the changed files against them (brief `planning/briefs/2026-11-20-technology-and-engineering-principles.md`). Spec: `docs/superpowers/specs/2026-11-25-plan-citation-and-done-check-design.md`.",
+      "decision": "The skills match `Applies to` against paths and run the checks from their own text, with no script. **Every plan handoff** lists the ADRs the spec names and the principles whose `Applies to` is `all` or matches a path the spec names. `pm-checkpoint` (`done`) matches the principles against `git diff --name-only <PM base>...HEAD`, runs each matching command check before writing anything (a failure keeps it in `pause`), and reviews the `review` principles, writing each break as a `Note` and an inbox file without blocking.",
+      "alternatives": "- A `pm-engineering check` mode backed by a Bun script that matches and runs the checks: deterministic and tested, but a script, tests, and a mode to maintain. Recommended by the agent; not chosen by the user (2026-11-25).\n- A done-only script in `pm-checkpoint`: deterministic at close, while the plan handoff still matches by hand, so the two can disagree.\n- Do nothing: the principles stay unread by every stage.",
+      "consequences": "- Two runs can select different principles for the same files, because the agent matches globs by hand. A script can replace the matching later without changing the rules.\n- A failing command check blocks the close; a review finding never does.\n- No new code, tests, or `pm-lint` rules."
+    },
+    {
+      "id": "ADR-014",
+      "path": "planning/decisions/ADR-014-purview-packages-are-recorded-at-item-close.md",
+      "title": "Purview packages are recorded at item close",
+      "status": "proposed",
+      "supersededBy": null,
+      "date": "2026-11-25",
+      "category": "architecture",
+      "supersedes": null,
+      "item": "R-036",
+      "source": null,
+      "context": "`pm-purview` turns an accepted recommendation into a roadmap item and a proposed ADR, but the package is not installed until that item is built. `ENGINEERING.md` records the technology in use (ADR-009), and `pm-engineering add` asks for evidence that it is in use and cannot run during a workflow. Spec: `docs/superpowers/specs/2026-11-25-plan-citation-and-done-check-design.md`.",
+      "decision": "`pm-purview` writes `Purview package: <PackageId>.` in the accepted item's `Note` and nothing in `ENGINEERING.md`. When that item closes, `pm-checkpoint` (`done`) finds the package in the item branch's manifests and applies `pm-engineering` `add technology` write steps only, with `Source` the manifest path and `Decision` the item's ADR it has just accepted. `ENGINEERING.md` is read from the PM base and written in the item's worktree, so the entry rides the pull request.",
+      "alternatives": "- Record at acceptance in `pm-purview`: simplest, but lists a package before it is installed, and stays wrong when the item is dropped. Rejected by the user (2026-11-25).\n- `pm-purview` output tells the user to run `pm-engineering add` later: no automation, easily forgotten.",
+      "consequences": "- `ENGINEERING.md` lists only packages found in a manifest.\n- `pm-checkpoint` (`done`) gains a second write it applies on another skill's behalf, after `pm-adr accept` (ADR-010).\n- An uncommitted `ENGINEERING.md` stops `done` like `ROADMAP.md`; it is not a capture."
     }
   ],
   "counts": {

@@ -100,3 +100,7 @@ Proposed for every slice: Serves a new `V` line (to be written by `pm-strategy`)
 
 - 2026-11-20 Keep it parked. Reason: SCOPE CHANGE to v1; no `V` line or milestone covers it and M1 Reproducible docs site is the current focus. Next: `pm-strategy` adds a `V` line and a milestone after M1, then the four slices go to Later under it.
 - 2026-11-22 Added as R-034 and R-035 (Next) and R-036 and R-037 (Later), M4 Recorded technical decisions, serving V5, through pm-strategy.
+
+## Revisions
+
+- 2026-11-25 R-036's Done when said `pm-purview` hands accepted packages to `pm-engineering add` at acceptance, which would list a package before it is installed. Must now: an item `pm-purview` accepted records its package in `ENGINEERING.md` through `pm-engineering add`'s write steps when `pm-checkpoint` (`done`) closes it (ADR-014 Purview packages are recorded at item close, proposed). Mode: fix-in-place. Supersedes: none.
