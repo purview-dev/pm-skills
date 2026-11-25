@@ -371,6 +371,25 @@ describe("engineering rules", () => {
     expect(fixed.indexOf("### EP-001")).toBeLessThan(fixed.indexOf("### EP-002"));
     expect(fixed.indexOf("Mocha")).toBeLessThan(fixed.indexOf("Jest"));
   });
+  it("fixes principle order with an unnumbered heading present", () => {
+    const text = engineering([], [principle("EP-002", "B"), principle("", "Loose rule"), principle("EP-001", "A")]);
+    const fixed = fixStructure("ENGINEERING.md", text);
+    expect(fixed.indexOf("### EP-001")).toBeLessThan(fixed.indexOf("### EP-002"));
+    expect(fixed.indexOf("### EP-002")).toBeLessThan(fixed.indexOf("### Loose rule"));
+  });
+  it("keys a technology on its whole heading", async () => {
+    expect(await engRules(engineering([tech("Bun"), tech("EP-001 Bun")], []))).not.toContain("engineering/technology");
+  });
+  it("accepts Decision none in any case", async () => {
+    expect(await engRules(engineering([tech("Bun", { Decision: "None" }), tech("Zod", { Decision: "NONE" })], []))).not.toContain("engineering/values");
+  });
+  it("orders technology with English collation", async () => {
+    const text = engineering([tech("Zod"), tech("Émile")], []);
+    expect(await engRules(text)).toContain("engineering/order");
+    const fixed = fixStructure("ENGINEERING.md", text);
+    expect(fixed.indexOf("### Émile")).toBeLessThan(fixed.indexOf("### Zod"));
+    expect(await engRules(fixed)).not.toContain("engineering/order");
+  });
 });
 
 describe("item fields ride NOW.md and the stack", () => {
