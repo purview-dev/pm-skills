@@ -56,11 +56,16 @@ ADR, `ADR-NNN <title> (<status>)`. Add `Explain <ID>` to the question
 (Asking the user).
 
 1. **Decision check** (`add`, `change` of `Decision`): the ADR must exist in
-   the decisions folder. When its `Status` is `superseded by ADR-MMM`, ask
-   one choice question: `ADR-NNN <title> (<status>) is superseded by
-   ADR-MMM <title>. Use it instead?` with `Use ADR-MMM (recommended)` and
-   `Set Decision: none`. A `deprecated` ADR offers `Set Decision: none`
-   and `Record a new ADR with pm-adr new` (then stop). An unknown ID is
+   the decisions folder. When its `Status` is `superseded by ADR-MMM`,
+   follow `superseded by` from ADR to ADR until one that is not
+   superseded. Refuse when an ID repeats (`ADR-NNN: the superseded by
+   chain loops at ADR-KKK.`) or a link has no file (`ADR-KKK has no file
+   in <PM root>/decisions/.`). When the last ADR is accepted or proposed,
+   ask one choice question: `ADR-NNN <title> (<status>) is superseded; the
+   current decision is ADR-MMM <title> (<status>). Use it instead?` with
+   `Use ADR-MMM (recommended)` and `Set Decision: none`. A `deprecated`
+   ADR, given or at the end of the chain, offers `Set Decision: none` and
+   `Record a new ADR with pm-adr new` (then stop). An unknown ID is
    refused: `ADR-NNN has no file in <PM root>/decisions/.`
 2. **add technology:** search `## Technology` for the name, ignoring case;
    on a match, ask `<Name> is already recorded. Change it instead?` with
