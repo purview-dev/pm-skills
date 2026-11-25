@@ -1,18 +1,18 @@
 ---
 // One ADR from planning.json's `adrs`: its status, header fields, and its four
-// sections rendered from Markdown (src/loaders/adrs.ts), with the IDs in them
-// linked, and what links to it.
+// sections, each rendered by Astro from its `adr-sections` entry so relative
+// images resolve (src/loaders/adrs.ts, ADR-012), with the IDs in them linked,
+// and what links to it.
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry, render } from 'astro:content';
 
 import ExportStamp from '../../../components/ExportStamp.astro';
 import LinkedFrom from '../../../components/LinkedFrom.astro';
+import LinkedHtml from '../../../components/LinkedHtml.astro';
 import LinkedText from '../../../components/LinkedText.astro';
 import RefLink from '../../../components/RefLink.astro';
-import { linkHtml } from '../../../lib/link-html';
 import { loadPlanning } from '../../../lib/planning';
-import { siteRefs } from '../../../lib/site-refs';
-import { ADR_SECTIONS, type RenderedAdr } from '../../../loaders/adrs';
+import { ADR_SECTIONS, adrSectionId, type RenderedAdr } from '../../../loaders/adrs';
 import '../../../styles/components.css';
 
 export async function getStaticPaths() {
@@ -25,7 +25,14 @@ export async function getStaticPaths() {
 }
 
 const { adr } = Astro.props as { adr: RenderedAdr };
-const { known } = await siteRefs();
+// Each non-empty section's Content component; a missing section is null and an empty one ''.
+const sections = await Promise.all(
+	ADR_SECTIONS.filter(({ key }) => adr.html[key] !== null).map(async ({ key, label }) => {
+		const entry = adr.html[key] === '' ? undefined : await getEntry('adr-sections', adrSectionId(adr.id, key));
+
+		return { key, label, Content: entry ? (await render(entry)).Content : null };
+	}),
+);
 const status = adr.status ?? 'unknown';
 const refs: { label: string; ref: string | null }[] = [
 	{ label: 'Item', ref: adr.item },
@@ -81,10 +88,16 @@ const refs: { label: string; ref: string | null }[] = [
 	</dl>
 
 	{
-		ADR_SECTIONS.filter(({ key }) => adr.html[key] !== null).map(({ key, label }) => (
+		sections.map(({ label, Content }) => (
 			<section>
 				<h2>{label}</h2>
-				{adr.html[key] === '' ? <p>None recorded.</p> : <Fragment set:html={linkHtml(adr.html[key]!, known).html} />}
+				{Content ? (
+					<LinkedHtml>
+						<Content />
+					</LinkedHtml>
+				) : (
+					<p>None recorded.</p>
+				)}
 			</section>
 		))
 	}
