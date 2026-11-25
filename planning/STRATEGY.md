@@ -11,7 +11,7 @@ made along the way.
 ## Current focus
 
 - Milestone: M4 Recorded technical decisions
-- Why now: ADR support must be complete (user, 2026-11-25); 6 of its 11 items are done, its 5 open items fill Next, and the forecast is about 0.6 weeks at 7.75 items per week.
+- Why now: ADR support must be complete (user, 2026-11-25); 8 of its items are done, 2 were dropped, its 1 open item (R-036 Plan citation and done check) is in Next, and the forecast is about 0.1 weeks at 8.25 items per week.
 
 ## Milestones
 
@@ -36,7 +36,7 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 ### M4 Recorded technical decisions
 
 - Serves: V5
-- Exit criteria: a report in `planning/research/` shows, in a scratch repository with `package.json`, `tsconfig.json`, `AGENTS.md`, and `docs/adr/`, that `pm-init` writes `ENGINEERING.md` citing all three files and `pm-adr import docs/adr/` brings its ADRs into `planning/decisions/`, that the design handoff names the ADRs and principles that apply, and that `pm-checkpoint` (`done`) refuses to close on a failing command check; and every ADR section, including a relative image, renders on its docs-site page.
+- Exit criteria: a report in `planning/research/` shows, in a scratch repository with `docs/adr/`, that `pm-adr import docs/adr/` brings its ADRs into `planning/decisions/`, that the design handoff names the ADRs and principles that apply, and that `pm-checkpoint` (`done`) refuses to close on a failing command check; and every ADR section, including a relative image, renders on its docs-site page.
 - Target: none
 - Status: active
 
@@ -91,8 +91,6 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
   Status: holds (2026-11-25)
 - A3: Integration options and Starlight component overrides cover the customisation this repository's `docs-site/` needs. Test: R-013 Docs-site package: publish and migrate moves `docs-site/` onto the package with no copied files.
   Status: holds (2026-11-25)
-- A4: `pm-engineering` can infer the technology and principles from `package.json`, `tsconfig.json`, and `AGENTS.md`, with a cited source for each entry. Test: R-035 pm-engineering infer from an existing repository.
-  Status: untested
 - A5: A design stage that is handed the applicable ADRs and principles follows them. Test: R-036 Plan citation and done check's rehearsal report in `planning/research/`.
   Status: untested
 
@@ -106,6 +104,7 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 - Hosting the docs site (GitHub Pages or any deploy). Why: the site is a local view of the plan, and M1 is about reproducible builds. Revisit: after M1 is done.
 - Writing PM state from the site (drag and drop, edit actions). Why: PM state changes only through the pm-* skills; the site reads `planning.json` only. Revisit: never.
 - GitHub issue and Project sync (`planning/inbox/2026-11-22-1739-github-issue-project-sync.md`, brief `planning/briefs/2026-11-22-github-issue-project-sync.md`). Why: M4 and M5 come first. Revisit: after M5 Docs-site package 1.0.0 is done.
+- Inferring `ENGINEERING.md` from a repository (`pm-engineering infer`). Why: R-035 was dropped on 2026-11-25; `pm-engineering add` is enough for now. Revisit: when a consumer asks for it, or after M5 Docs-site package 1.0.0 is done.
 
 ## Decisions
 
@@ -115,6 +114,11 @@ Newest first. Nothing in this file changes without a line here.
 - <YYYY-MM-DD> <decision>. Why: <reason>. Rejected: <alternatives>.
 -->
 
+- 2026-11-25 Re-planned roadmap. Why: R-035 was dropped and M4 has one open item, so Next is R-036 (M4), then R-052, R-042, new R-056 Package tests stable under full lint-check, and R-053 (M5); R-036's Done when gains `pm-adr import docs/adr/` in its rehearsal to cover M4's exit criterion; the R-050 ADR image minors join R-042's Note; Later is M2, M3, then Unassigned. Rejected: R-057 Engineering lint review follow-ups as a new item (its inbox file stays parked); dropping any item.
+- 2026-11-25 M4 Recorded technical decisions exit criteria drop "`pm-init` writes `ENGINEERING.md` citing all three files"; the scratch repository needs only `docs/adr/`. Why: R-035 pm-engineering infer from an existing repository was dropped (not needed now), and nothing else builds inference. Rejected: replacing it with a `pm-engineering add` check; keeping it, which leaves M4 unable to close.
+- 2026-11-25 V5 first clause changed from "`pm-init` records an existing repository's technology and principles" to "`pm-engineering` records the technology and principles in use". Why: no item serves inference after R-035 was dropped. Rejected: keeping the clause with no item.
+- 2026-11-25 A4 (`pm-engineering` infers technology and principles from `package.json`, `tsconfig.json`, and `AGENTS.md`) removed. Why: its test, R-035, was dropped. Rejected: keeping it untested with no test.
+- 2026-11-25 Inferring `ENGINEERING.md` added to Not doing, revisit when a consumer asks or after M5. Why: R-035 dropped; `pm-engineering add` is enough for now. Rejected: no Not doing entry.
 - 2026-11-25 Re-planned roadmap. Why: focus moved to M4 and M5 was added; Next stays R-050, R-037, R-055, R-035, R-036 (all M4), R-042, R-052, and R-053 join M5, and Later is grouped M5, M2, M3, then Unassigned. Rejected: leaving Later ungrouped.
 - 2026-11-25 Not doing: GitHub issue and Project sync until M5 Docs-site package 1.0.0 is done. Why: M4 and M5 come first. Rejected: moving the docs-site hosting revisit to after M5; deferring R-046 to R-049 agent context tidy until M4 is done.
 - 2026-11-25 Bet B2 and assumptions A4 and A5 added for M4; A1 to A3 hold. Why: R-008, R-014, and R-013 are done and tested them; B1 stays open because byte-identical builds are not yet measured. Rejected: leaving A1 to A3 untested.
