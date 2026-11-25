@@ -14,17 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-035 pm-engineering infer from an existing repository
-
-- Serves: V5
-- Milestone: M4
-- Owner: agent
-- Done when: in a scratch repository with `package.json`, `tsconfig.json`, and `AGENTS.md`, `pm-engineering infer` writes an `ENGINEERING.md` citing all three; `pm-init` runs it for an existing repository and `pm-setup` offers it on upgrade.
-- Size: M
-- Depends on: R-034
-- Status: ready
-- Brief: planning/briefs/2026-11-20-technology-and-engineering-principles.md
-
 ### R-036 Plan citation and done check
 
 - Serves: V5

@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-25T16:06:05+00:00",
+  "generatedAt": "2026-11-25T16:55:25+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-055-engineering-lint-and-skill-review-minors",
-    "head": "dcfae53441bd12a25bb16da47f19be0c53599e81"
+    "branch": "main",
+    "head": "a9b38294edbe289d9af11418dc561af1cc2e8050"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -313,36 +313,10 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-035",
-        "title": "pm-engineering infer from an existing repository",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V5"
-        ],
-        "milestone": "M4",
-        "owner": "agent",
-        "doneWhen": "in a scratch repository with `package.json`, `tsconfig.json`, and `AGENTS.md`, `pm-engineering infer` writes an `ENGINEERING.md` citing all three; `pm-init` runs it for an existing repository and `pm-setup` offers it on upgrade.",
-        "size": "M",
-        "dependsOn": [
-          "R-034"
-        ],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
-        "note": null,
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-036",
         "title": "Plan citation and done check",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V5"
@@ -743,13 +717,6 @@
       "now": [],
       "next": [
         {
-          "id": "R-035",
-          "title": "pm-engineering infer from an existing repository",
-          "owner": "agent",
-          "size": "M",
-          "detail": "ready"
-        },
-        {
           "id": "R-036",
           "title": "Plan citation and done check",
           "owner": "agent",
@@ -1095,6 +1062,15 @@
         "milestone": "M4",
         "owner": "agent",
         "result": "branch feat/r-041-adr-skill-follow-ups"
+      },
+      {
+        "date": "2026-11-25",
+        "kind": "dropped",
+        "id": "R-035",
+        "title": "pm-engineering infer from an existing repository",
+        "milestone": null,
+        "owner": null,
+        "result": "Reason: not needed now; recording technology by hand with pm-engineering add is enough (user, during R-035 design)"
       },
       {
         "date": "2026-11-25",
@@ -1770,6 +1746,12 @@
     "dropped": [
       {
         "date": "2026-11-25",
+        "id": "R-035",
+        "title": "pm-engineering infer from an existing repository",
+        "reason": "not needed now; recording technology by hand with pm-engineering add is enough (user, during R-035 design)"
+      },
+      {
+        "date": "2026-11-25",
         "id": "R-037",
         "title": "Engineering export and docs-site view",
         "reason": "the user dropped it when pm-next offered it, including the Revisits fix in its Note"
@@ -2248,14 +2230,14 @@
     }
   ],
   "counts": {
-    "next": 2,
+    "next": 1,
     "later": 15,
     "nextMax": 5,
     "openInbox": 6,
     "discuss": 3,
     "shapingBriefs": 0,
     "done": 33,
-    "dropped": 8,
+    "dropped": 9,
     "blockers": 0,
     "openRisks": 0,
     "redRisks": 0,
@@ -2266,9 +2248,8 @@
     "reviewDue": false,
     "lastReview": "2026-11-25",
     "claimable": [
-      "R-035",
       "R-036"
     ],
-    "drift": true
+    "drift": false
   }
 }

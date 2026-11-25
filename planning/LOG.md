@@ -43,6 +43,7 @@
 
 ## Dropped
 
+- 2026-11-25 R-035 pm-engineering infer from an existing repository. Reason: not needed now; recording technology by hand with pm-engineering add is enough (user, during R-035 design).
 - 2026-11-25 R-037 Engineering export and docs-site view. Reason: the user dropped it when pm-next offered it, including the Revisits fix in its Note.
 - 2026-11-25 Current focus names a done milestone. Reason: the 2026-11-25 review recommends pm-strategy to set a new focus.
 - 2026-11-25 purview.dev adopts astroc4 markers. Reason: the work is in purview-dev/purview-dev (`src/src/lib/docs/diagrams.ts`), so it is tracked there, not in this repository.
