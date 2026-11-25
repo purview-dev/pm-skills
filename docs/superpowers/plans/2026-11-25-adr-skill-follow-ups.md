@@ -32,6 +32,7 @@
 ### Task 1: Dated Supersedes notes and legend reuse (problems 1 and 4)
 
 **Files:**
+
 - Modify: `skills/pm-discover/SKILL.md:86-90`
 - Modify: `skills/pm-revise/SKILL.md:156-160`
 - Modify: `skills/pm-shape/SKILL.md:86-91`
@@ -62,6 +63,7 @@ git commit -m "fix(pm-skills): dated supersedes notes and adr legend reuse (R-04
 ### Task 2: `pm-purview` check mode stops before deciding (problem 2)
 
 **Files:**
+
 - Modify: `skills/pm-purview/SKILL.md:34-35` (Guard) and `:101` (step 6 head)
 
 - [ ] **Step 1: Edit**
@@ -84,6 +86,7 @@ git commit -m "fix(pm-purview): check mode never decides or writes adrs (R-041)"
 ### Task 3: `pm-checkpoint` done finds main-worktree ADRs and names captures (problems 3 and 5, ADR-010)
 
 **Files:**
+
 - Modify: `skills/pm-checkpoint/SKILL.md:108-138` (step 5)
 - Modify: `skills/pm-adr/SKILL.md:38-41` (Guard)
 
@@ -118,6 +121,7 @@ git commit -m "fix(pm-checkpoint): done names captures and finds main-worktree a
 ### Task 4: Managed rules, version, and full check
 
 **Files:**
+
 - Modify: `skills/pm-setup/references/AGENTS-section.md:927-929` and the Version 21 upgrade notes
 - Modify: `AGENTS.md` (the installed managed section, between the markers)
 - Modify: `package.json` (via `just bump prerelease`)
