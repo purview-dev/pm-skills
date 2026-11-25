@@ -129,7 +129,16 @@ describe('edge states', () => {
 		expect(toggleStatus([], 'accepted', visible)).toEqual(['accepted']);
 	});
 
+	it('a hidden chip never reaches the URL', () => {
+		const visible = DECISIONS_STATUSES.filter((status) => status !== 'unknown');
+
+		expect(decisionsQuery(DEFAULT_DECISIONS_STATE, visible)).toBe('');
+		expect(decisionsQuery({ ...DEFAULT_DECISIONS_STATE, status: [...DEFAULT_DECISIONS_STATE.status, 'superseded'] }, visible)).toBe('?status=proposed%2Caccepted%2Cdeprecated%2Csuperseded');
+		expect(decisionsQuery({ ...DEFAULT_DECISIONS_STATE, status: ['unknown'] }, visible)).toBe('?status=none');
+	});
+
 	it('one category: the category parameter is dropped', () => {
+
 
 		expect(parseDecisionsQuery('?category=data', ['data']).category).toEqual([]);
 		expect(parseDecisionsQuery('?category=data', []).category).toEqual([]);

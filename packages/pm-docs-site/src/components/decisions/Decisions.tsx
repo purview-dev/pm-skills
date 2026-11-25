@@ -52,13 +52,13 @@ function Ref({ named }: { named: NamedRef }) {
 const toggle = <T,>(list: T[], value: T) => (list.includes(value) ? list.filter((entry) => entry !== value) : [...list, value]);
 
 export default function Decisions({ rows, categories, hasUnknown }: Props) {
-	const [state, setState] = useDecisionsUrlState(categories);
 	const chips = DECISIONS_STATUSES.filter((status) => hasUnknown || status !== 'unknown');
+	const [state, setState] = useDecisionsUrlState(categories, chips);
 	const selected = chips.filter((status) => state.status.includes(status));
 	const matches = (row: DecisionRow) => matchesDecision(row, state, row.text);
 	const groups = groupDecisions(rows, state.group);
 	const shown = rows.filter(matches).length;
-	const isDefault = decisionsQuery(state) === '';
+	const isDefault = decisionsQuery(state, chips) === '';
 
 	return (
 		<div className="decisions">

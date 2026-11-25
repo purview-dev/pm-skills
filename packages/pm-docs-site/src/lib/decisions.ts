@@ -62,13 +62,18 @@ export function toggleStatus(status: DecisionsStatus[], chip: DecisionsStatus, v
 	return visible.some((entry) => next.includes(entry)) ? next : [];
 }
 
-/** The query string for a state, keys in the order q, status, category, group; `''` for the default; every chip off is `status=none`. */
-export function decisionsQuery(state: DecisionsState): string {
+/**
+ * The query string for a state, keys in the order q, status, category, group;
+ * `''` for the default; every visible chip off is `status=none`. Only the
+ * `visible` chips are written, so a hidden `unknown` chip never reaches the URL.
+ */
+export function decisionsQuery(state: DecisionsState, visible: readonly DecisionsStatus[] = DECISIONS_STATUSES): string {
 	const pairs: [string, string][] = [];
-	const status = DECISIONS_STATUSES.filter((value) => state.status.includes(value));
+	const status = visible.filter((value) => state.status.includes(value));
+	const defaults = visible.filter((value) => DEFAULT_DECISIONS_STATE.status.includes(value));
 
 	if (state.q !== '') pairs.push(['q', state.q]);
-	if (!sameList(status, DEFAULT_DECISIONS_STATE.status)) pairs.push(['status', status.length ? status.join(',') : 'none']);
+	if (!sameList(status, defaults)) pairs.push(['status', status.length ? status.join(',') : 'none']);
 	if (state.category.length) pairs.push(['category', [...state.category].sort().join(',')]);
 	if (state.group !== DEFAULT_DECISIONS_STATE.group) pairs.push(['group', state.group]);
 
