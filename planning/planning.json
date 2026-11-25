@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-25T14:17:39+00:00",
+  "generatedAt": "2026-11-25T15:13:18+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-050-adr-relative-images-render-unresolved",
-    "head": "7198b5480986045db0195804adaa7407e627932e"
+    "branch": "main",
+    "head": "04b39bfa30b4a717f0ecd3c4c2eda6ca99a1c5a0"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -313,37 +313,10 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-037",
-        "title": "Engineering export and docs-site view",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V5"
-        ],
-        "milestone": "M4",
-        "owner": "agent",
-        "doneWhen": "`planning.json` carries the engineering record at `schemaVersion` 6, `pm-export check` passes, and an Engineering view passes `just docs-check`.",
-        "size": "S",
-        "dependsOn": [
-          "R-034",
-          "R-013"
-        ],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
-        "note": "From the 2026-11-25 review (inbox 2026-11-22-1809, R-025 design): done revisions lose their Revised by link. A feature page lists \"Revised by\" only while the revising item is open. `LOG.md` Done lines and the export's `log.done` entries carry no `Revisits`, so `features()` in `packages/pm-docs-site/src/lib/planning.ts` (line 284) gives done items `revisits: null`, and the link disappears once the revision closes. A fix adds `Revisits` to the Done line, the exporter, the schema (schemaVersion 6, which pairs with this item), the pm-lint rule, and the site.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-055",
         "title": "Engineering lint and skill review minors",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V5"
@@ -369,7 +342,7 @@
         "id": "R-035",
         "title": "pm-engineering infer from an existing repository",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V5"
@@ -395,7 +368,7 @@
         "id": "R-036",
         "title": "Plan citation and done check",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V5"
@@ -796,13 +769,6 @@
       "now": [],
       "next": [
         {
-          "id": "R-037",
-          "title": "Engineering export and docs-site view",
-          "owner": "agent",
-          "size": "S",
-          "detail": "ready"
-        },
-        {
           "id": "R-055",
           "title": "Engineering lint and skill review minors",
           "owner": "agent",
@@ -1144,6 +1110,15 @@
         "milestone": "M4",
         "owner": "agent",
         "result": "branch feat/r-041-adr-skill-follow-ups"
+      },
+      {
+        "date": "2026-11-25",
+        "kind": "dropped",
+        "id": "R-037",
+        "title": "Engineering export and docs-site view",
+        "milestone": null,
+        "owner": null,
+        "result": "Reason: the user dropped it when pm-next offered it, including the Revisits fix in its Note"
       },
       {
         "date": "2026-11-25",
@@ -1801,6 +1776,12 @@
     "dropped": [
       {
         "date": "2026-11-25",
+        "id": "R-037",
+        "title": "Engineering export and docs-site view",
+        "reason": "the user dropped it when pm-next offered it, including the Revisits fix in its Note"
+      },
+      {
+        "date": "2026-11-25",
         "id": null,
         "title": "Current focus names a done milestone",
         "reason": "the 2026-11-25 review recommends pm-strategy to set a new focus"
@@ -2256,14 +2237,14 @@
     }
   ],
   "counts": {
-    "next": 4,
+    "next": 3,
     "later": 15,
     "nextMax": 5,
     "openInbox": 5,
     "discuss": 3,
     "shapingBriefs": 0,
     "done": 32,
-    "dropped": 7,
+    "dropped": 8,
     "blockers": 0,
     "openRisks": 0,
     "redRisks": 0,
@@ -2274,11 +2255,10 @@
     "reviewDue": false,
     "lastReview": "2026-11-25",
     "claimable": [
-      "R-037",
       "R-055",
       "R-035",
       "R-036"
     ],
-    "drift": true
+    "drift": false
   }
 }

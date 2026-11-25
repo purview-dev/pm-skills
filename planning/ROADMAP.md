@@ -14,18 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-037 Engineering export and docs-site view
-
-- Serves: V5
-- Milestone: M4
-- Owner: agent
-- Done when: `planning.json` carries the engineering record at `schemaVersion` 6, `pm-export check` passes, and an Engineering view passes `just docs-check`.
-- Size: S
-- Depends on: R-034, R-013
-- Status: ready
-- Brief: planning/briefs/2026-11-20-technology-and-engineering-principles.md
-- Note: From the 2026-11-25 review (inbox 2026-11-22-1809, R-025 design): done revisions lose their Revised by link. A feature page lists "Revised by" only while the revising item is open. `LOG.md` Done lines and the export's `log.done` entries carry no `Revisits`, so `features()` in `packages/pm-docs-site/src/lib/planning.ts` (line 284) gives done items `revisits: null`, and the link disappears once the revision closes. A fix adds `Revisits` to the Done line, the exporter, the schema (schemaVersion 6, which pairs with this item), the pm-lint rule, and the site.
-
 ### R-055 Engineering lint and skill review minors
 
 - Serves: V5
