@@ -1,6 +1,6 @@
 # ADR-011 ADR page references come from rendered HTML
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-25
 - Category: architecture
 - Supersedes: none

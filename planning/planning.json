@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-25T09:24:38+00:00",
+  "generatedAt": "2026-11-25T10:09:14+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-040-adr-link-export-edge-cases",
-    "head": "c44e54eadc398d29822dcd381f6978b59332d271"
+    "head": "5574c4abb67f744ddf2567f254a5143b3e2bc817"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -221,238 +221,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-040",
-      "title": "ADR link and export edge cases",
-      "serves": [
-        "V4",
-        "V5"
-      ],
-      "owner": "agent",
-      "size": "S",
-      "dependsOn": [],
-      "revisits": null
-    },
-    "stage": "execute",
-    "session": "feat/r-040-adr-link-export-edge-cases",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
     "brief": null,
-    "milestone": "M4",
-    "spec": "docs/superpowers/specs/2026-11-25-adr-link-and-export-edge-cases-design.md",
-    "plan": "docs/superpowers/plans/2026-11-25-adr-link-and-export-edge-cases.md",
-    "started": "2026-11-25",
-    "doneWhen": [
-      "An ADR whose Context holds `_R-012_`, `[R-012](https://x)`, and `![a > R-012](x.png)` builds with matching links and Linked from entries and an intact alt attribute (`test/links.test.ts` passes).",
-      "An ADR section keeps a `` inside a code span through `pm-export write`.",
-      "A file `ADR-004-x.md` headed `# ADR-003` fails the export or exports as ADR-004.",
-      "The Decisions view's empty-status, no-status, single-category, and no-JavaScript states have tests that pin the chosen behaviour.",
-      "`just test` and `just package-test` pass."
-    ],
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-25-adr-link-and-export-edge-cases.md",
-    "checked": 0,
-    "total": 37,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "`linkHtml` returns keys and splits tags safely",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Update the existing tests to read `.html`, and add the failing tests**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `cd packages/pm-docs-site && bun test test/link-html.test.ts` — Expected: FAIL (`out.html` undefined).",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement.** Split with the Global Constraints tag pattern (wrapped in a capture group), `SKIP = new Set(['a', 'script', 'style'])`, add `run.target.key` to `keys` for each linked run. Update the header comment. In `[id].astro`, use `linkHtml(...).html`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run** `bun test test/link-html.test.ts` — Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit** `fix(pm-docs-site): link html tags safely and return linked keys (R-040)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 2,
-        "title": "References from rendered ADR HTML; async `siteRefs()`",
-        "checked": 0,
-        "total": 7,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing test** in `references.test.ts`:",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bun test test/references.test.ts` — Expected: FAIL.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement `references`.** In the ADR loop: when `adrKeys` has `adr.id`, call `own.link(key, 'mentions')` for each key and `own.prose(adr.source)`; otherwise keep today's `prose()` over `source` and the four sections.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Implement `site-refs.ts`.** Cached promise. Load planning; `known = targets(...)`. Only when `planning.adrs.length > 0 && config.views.decisions` (**no ADRs** case): `await getCollection('adrs')`, and for each entry collect the union of `linkHtml(html, known).keys` over its non-null, non-empty sections into `adrKeys`. Return `{ known, back: references(planning, config.views, adrKeys) }`. Move the existing `siteRefs` comment here.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Update the 10 callers** to `const { ... } = await siteRefs();` from `../lib/site-refs` (relative path per file).",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Run** `bun test` in `packages/pm-docs-site` — Expected: PASS (unit tests; the build tests run in Task 3).",
-            "checked": false
-          },
-          {
-            "text": "**Step 7: Commit** `fix(pm-docs-site): build adr references from rendered html (R-040)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 3,
-        "title": "Built-site link test for the three Markdown constructs",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Extend the fixture.** Append to ADR-003's `context` the paragraph `` Also _R-012_, [R-012](https://x), and ![a > R-012](x.png). `` Keep every other field. If the build fails resolving `x.png` as a local image, use `https://x/x.png` and note it in the commit body (the Done when check is about `alt`, not the path). Confirm `R-012` is an item in the fixture; otherwise use an item ID the fixture has and keep the same three constructs.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Add the failing test** to `links.test.ts`:",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Run** `cd packages/pm-docs-site && bun test test/links.test.ts` — Expected: PASS once Tasks 1 and 2 are in; if it fails, the failure names the mismatch to fix in Task 1 or 2's code.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run** `cd ../.. && just validate` — Expected: the fixture still validates against the schema.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit** `test(pm-docs-site): pin adr link and linked-from agreement (R-040)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 4,
-        "title": "Decisions view edge states",
-        "checked": 0,
-        "total": 7,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing tests** in `decisions.test.ts`:",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bun test test/decisions.test.ts` — Expected: FAIL.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement `decisions.ts`.** `parseDecisionsQuery`: `status=none` gives `[]`; fewer than 2 categories gives `category: []`. `decisionsQuery`: an empty status list writes `status=none`. `matchesDecision`: compare `adr.status ?? 'unknown'`. `groupDecisions` status keys use `DECISIONS_STATUSES` (already ends in `unknown`).",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Implement the island and page.** `Decisions.tsx` maps `DECISIONS_STATUSES`, rendering the `unknown` chip only when `hasUnknown`. `decisions.astro` passes `hasUnknown={planning.adrs.some((adr) => adr.status === null)}` and adds, after the island: `<noscript><style>.decisions [hidden] { display: revert !important; }</style></noscript>`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Add the built-page test** to `links.test.ts`: `plan/decisions/index.html` contains `<noscript><style>.decisions [hidden]`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Run** `bun test test/decisions.test.ts test/links.test.ts` and `bun run check` in `packages/pm-docs-site` — Expected: PASS, no type errors.",
-            "checked": false
-          },
-          {
-            "text": "**Step 7: Commit** `fix(pm-docs-site): pin decisions view edge states (R-040)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 5,
-        "title": "Export keeps comments in code and uses the file-name ID",
-        "checked": 0,
-        "total": 7,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing tests:**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bun test skills/pm-export/scripts/export.test.ts` — Expected: FAIL.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement `stripCommentsOutsideCode`.** Normalise `\\r\\n`; split into fenced blocks (a line opening with 3+ backticks or tildes, up to the matching closing fence or end of text) and the rest; in the rest, replace with `` /(`+)[\\s\\S]*?\\1|<!--[\\s\\S]*?-->/g ``, keeping the code-span matches and dropping the comments.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Implement `parseAdr`.** Header fields and heading from `stripComments(text)`; sections from `sections(stripCommentsOutsideCode(text), 2)`. `id` is `named[1]`; when `headed?.[1]` differs, call `assume?.(...)` with the exact text above. In `build` (line 669), pass `assume`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Update `skills/pm-export/SKILL.md`** ADR field map: `id` is the file name's `ADR-NNN` (a differing heading is an assumption); sections keep HTML comments inside code.",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Run** `just test` — Expected: PASS (export tests, fixture repo, lint tests).",
-            "checked": false
-          },
-          {
-            "text": "**Step 7: Commit** `fix(pm-export): keep code comments and file-name ids in adrs (R-040)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 6,
-        "title": "Versions and full verification",
-        "checked": 0,
-        "total": 6,
-        "steps": [
-          {
-            "text": "**Step 1: Run** `just bump prerelease` — Expected: `package.json` is `21.0.0-pre.11`; the marker stays `version=21`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Set** `packages/pm-docs-site/package.json` `version` to `0.1.0-pre.5`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Run** `just validate` — Expected: PASS; fix any pinned-version line it names in the package docs.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run** `just version-check` — Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Run** `just test`, `just package-test`, `just lint-check`, `just docs-check` — Expected: each exits 0.",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Commit** `chore(release): bump to 21.0.0-pre.11 and pm-docs-site 0.1.0-pre.5 (R-040)`.",
-            "checked": false
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [],
     "later": [
@@ -811,19 +592,20 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-040",
-          "title": "ADR link and export edge cases",
-          "owner": "agent",
-          "size": "S",
-          "detail": "execute, 0/37 plan steps"
-        }
-      ],
+      "now": [],
       "next": [],
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-25",
+          "id": "R-040",
+          "title": "ADR link and export edge cases",
+          "milestone": "M4",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-25-adr-link-and-export-edge-cases.md",
+          "result": "branch feat/r-040-adr-link-export-edge-cases"
+        },
         {
           "date": "2026-11-25",
           "id": "R-041",
@@ -1097,6 +879,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-25",
+        "kind": "done",
+        "id": "R-040",
+        "title": "ADR link and export edge cases",
+        "milestone": "M4",
+        "owner": "agent",
+        "result": "branch feat/r-040-adr-link-export-edge-cases"
+      },
       {
         "date": "2026-11-25",
         "kind": "done",
@@ -1443,6 +1234,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-25",
+        "id": "R-040",
+        "title": "ADR link and export edge cases",
+        "milestone": "M4",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-25-adr-link-and-export-edge-cases.md",
+        "result": "branch feat/r-040-adr-link-export-edge-cases"
+      },
       {
         "date": "2026-11-25",
         "id": "R-041",
@@ -1999,6 +1799,36 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Two consecutive `just lint-check` runs on a prose-only branch failed in `package-test`, each on a different test that passes alone: `cli.test.ts` \"still reads a site whose config is astro.config.mjs\" timed out after 180000ms (4.27s alone), and `graph.browser.ts:296` \"usable at 320px\" found `.plan-graph__toolbar` hidden within 5000ms (482ms alone)."
+    },
+    {
+      "file": "planning/inbox/2026-11-25-0931-adr-relative-images-unresolved.md",
+      "title": "ADR relative images render unresolved",
+      "captured": "2026-11-25 09:31",
+      "source": "agent (R-040 execute)",
+      "kind": "bug",
+      "severity": "minor",
+      "affects": "packages/pm-docs-site/src/routes/plan/decisions/[id].astro",
+      "context": "R-040 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "An ADR section with a relative image (`![a](x.png)`) renders as `<img __ASTRO_IMAGE_=\"{...}\">` on the ADR page: the loader's renderMarkdown leaves an image placeholder that only Astro's render() resolves, and the page prints the HTML with set:html, so the image never shows. Remote image URLs render as plain img tags."
+    },
+    {
+      "file": "planning/inbox/2026-11-25-1008-r-040-review-minors.md",
+      "title": "R-040 review minors: script bodies, test formatting",
+      "captured": "2026-11-25 10:08",
+      "source": "agent (R-040 execute)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "packages/pm-docs-site/src/lib/link-html.ts",
+      "context": "R-040 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Deferred minors from the R-040 whole-branch review. (1) linkHtml: a raw `<` inside a script or style body (`<script>if (a<b) x='R-012'</script>`) is read as a tag, so the script never closes and the rest of the ADR section is not linked; links and Linked from entries still agree. Fix: while script or style is open, scan to the matching close tag. (2) test/link-html.test.ts, test/links.test.ts, and test/references.test.ts lack a final newline, and skills/pm-export/scripts/export.test.ts has an `it(` at column 0 near line 122. (3) The Decisions noscript test checks a string only."
     }
   ],
   "briefs": [
@@ -2215,7 +2045,7 @@
       "supersedes": null,
       "item": "R-045",
       "source": null,
-      "context": "The wiki writes diagrams as pairs: a `` marker around a Mermaid fence. purview.dev renders the LikeC4 view; GitHub shows the Mermaid. The user wants LikeC4 everywhere on the docs site, with Mermaid as the fallback. The marker spec is purview.dev's `skills/purview-site-docs/references/diagrams.md`. Spec: `docs/superpowers/specs/2026-11-23-docs-site-package-architecture-view-design.md`.",
+      "context": "The wiki writes diagrams as pairs: a `<!-- purview:likec4 file=… view=… -->` marker around a Mermaid fence. purview.dev renders the LikeC4 view; GitHub shows the Mermaid. The user wants LikeC4 everywhere on the docs site, with Mermaid as the fallback. The marker spec is purview.dev's `skills/purview-site-docs/references/diagrams.md`. Spec: `docs/superpowers/specs/2026-11-23-docs-site-package-architecture-view-design.md`.",
       "decision": "`@purview-dev/astroc4` gains a `markers` option (default on), implemented inside its `likec4Fences` Sätteri plugin. Each marker block becomes the LikeC4 view it names; a block that cannot be drawn keeps its Mermaid with a warning and never fails the build. `markers.root` is the repository root, so a model may live anywhere in the repository. `@purview-dev/pm-docs-site`'s `architecture` option loads astroc4 as an optional peer dependency and passes its `docs.root` as `markers.root`.",
       "alternatives": "- A marker plugin inside `pm-docs-site`: no outside release, but purview.dev keeps a second implementation of the same marker.\n- Client-side rewriting: breaks build determinism and adds JavaScript.\n- Do nothing: the docs site shows only the Mermaid fallback.",
       "consequences": "- purview.dev and the docs site can share one implementation (purview.dev's move is a follow-up).\n- R-045 depends on an astroc4 prerelease (`1.0.0-prerelease.9`) that the user merges.\n- Markers work in `.md` only; MDX rejects HTML comments. ADR sections fall back to Mermaid because exported text has no page path."
@@ -2272,7 +2102,7 @@
       "id": "ADR-011",
       "path": "planning/decisions/ADR-011-adr-page-references-come-from-rendered-html.md",
       "title": "ADR page references come from rendered HTML",
-      "status": "proposed",
+      "status": "accepted",
       "supersededBy": null,
       "date": "2026-11-25",
       "category": "architecture",
@@ -2289,10 +2119,10 @@
     "next": 0,
     "later": 14,
     "nextMax": 5,
-    "openInbox": 14,
+    "openInbox": 16,
     "discuss": 0,
     "shapingBriefs": 0,
-    "done": 30,
+    "done": 31,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -2304,6 +2134,6 @@
     "reviewDue": true,
     "lastReview": "2026-11-22",
     "claimable": [],
-    "drift": false
+    "drift": true
   }
 }
