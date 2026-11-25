@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-040 ADR link and export edge cases
 - Session: feat/r-040-adr-link-export-edge-cases
-- Stage: plan
+- Stage: execute
 - Brief:
 - Milestone: M4
 - Serves: V4, V5
@@ -24,7 +24,7 @@ Milestone: optional; the item's milestone while it is active
 - Revisits:
 - Note: From the 2026-11-22 review; R-038 final-review findings (inbox 2026-11-22-1554, 1555, 1556). (1) Bug, minor: `references()` linkifies an ADR's raw Markdown while the ADR page links the rendered HTML, so `_R-012_` gives a link with no Linked from entry, and `[R-012](url)` or image alt text gives a Linked from entry with no link. `linkHtml` also splits tags on a `>` inside an attribute value, and links IDs inside raw script and style blocks. Fix: build the ADR page's references from the rendered HTML (or have `linkHtml` return the keys it linked), and use the tag pattern `<(?:"[^"]*"|'[^']*'|[^'">])*>`. Files: `packages/pm-docs-site/src/lib/link-html.ts`, `src/lib/references.ts`. (2) Bug, minor: the exporter strips HTML comments everywhere, so an ADR section showing `<!-- pm-skills:start -->` in code loses it, although ADR-002 promises sections verbatim; `parseAdr` takes the ID from the heading before the file name, so a mismatched heading duplicates an ID and the site overwrites one page. Fix: keep comments inside code in ADR sections, and prefer the file-name ID or fail on a duplicate. File: `skills/pm-export/scripts/planning.ts` (a rules bump). (3) Decisions view: turning every status chip off writes `?status=`, which reloads as the default; ADRs with no status ignore the status chips; with one category there is no category chip, so a shared `?category=x` filters invisibly until Clear; without JavaScript the superseded rows cannot be shown. Files: `packages/pm-docs-site/src/lib/decisions.ts`, `src/components/decisions/Decisions.tsx`. 2026-11-25: Started as is: the Current focus in STRATEGY.md names M1 Reproducible docs site, done since 2026-11-24, so the focus check is out of date rather than a conflict.
 - Spec: docs/superpowers/specs/2026-11-25-adr-link-and-export-edge-cases-design.md
-- Plan:
+- Plan: docs/superpowers/plans/2026-11-25-adr-link-and-export-edge-cases.md
 - Started: 2026-11-25
 
 ## Done when
