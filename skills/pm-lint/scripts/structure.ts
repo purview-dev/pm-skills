@@ -765,6 +765,8 @@ function checkRisks(doc: Doc, add: Add) {
 export interface EngineeringBlock {
   id: string;
   title: string;
+  /** The full heading text after `### `, which names a technology. */
+  name: string;
   heading: number;
   start: number;
   end: number;
@@ -782,12 +784,12 @@ export function engineeringBlocks(lines: Line[], section: Section): EngineeringB
     .map((block) => {
       const match = PRINCIPLE_ID.exec(block.heading!.text);
       const list = fields(lines, block);
-      return { id: match?.[1] ?? "", title: match?.[2] ?? block.heading!.text, heading: block.heading!.n, start: block.start, end: block.end, fields: fieldMap(list), list };
+      return { id: match?.[1] ?? "", title: match?.[2] ?? block.heading!.text, name: block.heading!.text, heading: block.heading!.n, start: block.start, end: block.end, fields: fieldMap(list), list };
     });
 }
 
 /** Lowercased technology names, compared for order and duplicates. */
-const techKey = (block: EngineeringBlock) => block.title.toLowerCase();
+const techKey = (block: EngineeringBlock) => block.name.toLowerCase();
 
 function checkEngineeringValues(block: EngineeringBlock, add: Add, context: Context) {
   const get = (key: string) => val(block.fields, key);
@@ -796,7 +798,7 @@ function checkEngineeringValues(block: EngineeringBlock, add: Add, context: Cont
   if (block.fields.has("check") && !/^`[^`]+`$|^review$/.test(get("Check"))) add(at("Check"), "engineering/values", `${name}: Check is a backticked command or review, not "${get("Check")}".`);
   if (block.fields.has("decision")) {
     const decision = get("Decision");
-    if (decision !== "none") {
+    if (!/^none$/i.test(decision)) {
       const adr = /^ADR-\d{3,}$/.test(decision) ? context.adrs.find((a) => a.id === decision) : undefined;
       if (!adr) add(at("Decision"), "engineering/values", `${name}: Decision is none or one ADR in the decisions folder, not "${decision}".`);
       else if (/^superseded\b/i.test(adr.status) || /^deprecated$/i.test(adr.status)) {
@@ -816,12 +818,12 @@ function checkEngineering(doc: Doc, add: Add, context: Context) {
     const seen = new Map<string, number>();
     for (const block of blocks) {
       const key = techKey(block);
-      if (seen.has(key)) add(block.heading, "engineering/technology", `${block.title} is also on line ${seen.get(key)}.`);
+      if (seen.has(key)) add(block.heading, "engineering/technology", `${block.name} is also on line ${seen.get(key)}.`);
       else seen.set(key, block.heading);
       checkBlockFields(block.list, KEYS.technology, add, block.heading, "engineering/technology");
       checkEngineeringValues(block, add, context);
     }
-    const bad = blocks.find((b, i) => i > 0 && techKey(b).localeCompare(techKey(blocks[i - 1]!)) < 0);
+    const bad = blocks.find((b, i) => i > 0 && techKey(b).localeCompare(techKey(blocks[i - 1]!), "en") < 0);
     if (bad) add(bad.heading, "engineering/order", "Technology is ordered alphabetically.");
   }
   const ids = new Map<string, number>();
@@ -1042,8 +1044,8 @@ export function fixStructure(rel: string, text: string): string {
     lines = parseLines(out.join("\n") + "\n");
     const h2 = sections(lines, 2);
     const targets = [
-      { section: findSection(h2, /^Technology/i), compare: (a: EngineeringBlock, b: EngineeringBlock) => techKey(a).localeCompare(techKey(b)) },
-      { section: findSection(h2, /^Principles/i), compare: (a: EngineeringBlock, b: EngineeringBlock) => (a.id && b.id ? idNumber(a.id) - idNumber(b.id) : 0) },
+      { section: findSection(h2, /^Technology/i), compare: (a: EngineeringBlock, b: EngineeringBlock) => techKey(a).localeCompare(techKey(b), "en") },
+      { section: findSection(h2, /^Principles/i), compare: (a: EngineeringBlock, b: EngineeringBlock) => Number(!a.id) - Number(!b.id) || (a.id && b.id ? idNumber(a.id) - idNumber(b.id) : 0) },
     ].filter((t): t is { section: Section; compare: (a: EngineeringBlock, b: EngineeringBlock) => number } => !!t.section).sort((a, b) => b.section.start - a.section.start);
     for (const { section, compare } of targets) {
       const blocks = engineeringBlocks(lines, section);

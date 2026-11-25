@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-25T14:17:39+00:00",
+  "generatedAt": "2026-11-25T16:06:05+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-050-adr-relative-images-render-unresolved",
-    "head": "7198b5480986045db0195804adaa7407e627932e"
+    "branch": "feat/r-055-engineering-lint-and-skill-review-minors",
+    "head": "dcfae53441bd12a25bb16da47f19be0c53599e81"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -313,63 +313,10 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-037",
-        "title": "Engineering export and docs-site view",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V5"
-        ],
-        "milestone": "M4",
-        "owner": "agent",
-        "doneWhen": "`planning.json` carries the engineering record at `schemaVersion` 6, `pm-export check` passes, and an Engineering view passes `just docs-check`.",
-        "size": "S",
-        "dependsOn": [
-          "R-034",
-          "R-013"
-        ],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
-        "note": "From the 2026-11-25 review (inbox 2026-11-22-1809, R-025 design): done revisions lose their Revised by link. A feature page lists \"Revised by\" only while the revising item is open. `LOG.md` Done lines and the export's `log.done` entries carry no `Revisits`, so `features()` in `packages/pm-docs-site/src/lib/planning.ts` (line 284) gives done items `revisits: null`, and the link disappears once the revision closes. A fix adds `Revisits` to the Done line, the exporter, the schema (schemaVersion 6, which pairs with this item), the pm-lint rule, and the site.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
-        "id": "R-055",
-        "title": "Engineering lint and skill review minors",
-        "section": "next",
-        "position": 2,
-        "label": "next",
-        "serves": [
-          "V5"
-        ],
-        "milestone": "M4",
-        "owner": "agent",
-        "doneWhen": "each of the nine findings in this Note is fixed or has a one-line won't-fix reason in the item's plan, the `lint.test.ts` drift test compares rule text as well as IDs, the Challenge protocol's \"applies in\" list names `pm-engineering`, and `just lint-check` passes.",
-        "size": "S",
-        "dependsOn": [
-          "R-034"
-        ],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
-        "note": "From the 2026-11-25 review (inbox 2026-11-24-2345, R-034 execute, final review). Item 8 is a managed-section change. (1) `fixStructure` cannot sort Principles while one heading has no EP ID (comparator returns 0, not transitive); `skills/pm-lint/scripts/structure.ts`. (2) `rules.md` lists the 8-word principle title under the error `engineering/principle`, but the code emits the warning `title/length`, whose description names only inbox files and risks (`rules.ts`, `rules.md`). (3) `rules.ts` and `rules.md` wording differs for `engineering/technology`, `engineering/principle`, and `engineering/removed`; the drift test compares IDs only. (4) A Technology heading shaped `### EP-001 Foo` is keyed as `Foo`, giving a false duplicate with `### Foo`. (5) `Decision: None` (capital N) is an error; other files accept `none` in any case. (6) `localeCompare` without a locale makes `engineering/order` depend on the host locale for non-ASCII names. (7) The `writes ENGINEERING.md on a fresh install` test proves only that the template exists, not `pm-init`'s file table row. (8) The Challenge protocol's \"applies in\" list in the managed section omits `pm-engineering` (add). (9) `pm-engineering` step 1 follows `superseded by` one step only; a superseded successor is recommended unchecked.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-035",
         "title": "pm-engineering infer from an existing repository",
         "section": "next",
-        "position": 3,
+        "position": 1,
         "label": "next",
         "serves": [
           "V5"
@@ -395,7 +342,7 @@
         "id": "R-036",
         "title": "Plan citation and done check",
         "section": "next",
-        "position": 4,
+        "position": 2,
         "label": "next",
         "serves": [
           "V5"
@@ -796,20 +743,6 @@
       "now": [],
       "next": [
         {
-          "id": "R-037",
-          "title": "Engineering export and docs-site view",
-          "owner": "agent",
-          "size": "S",
-          "detail": "ready"
-        },
-        {
-          "id": "R-055",
-          "title": "Engineering lint and skill review minors",
-          "owner": "agent",
-          "size": "S",
-          "detail": "ready"
-        },
-        {
           "id": "R-035",
           "title": "pm-engineering infer from an existing repository",
           "owner": "agent",
@@ -827,6 +760,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-25",
+          "id": "R-055",
+          "title": "Engineering lint and skill review minors",
+          "milestone": "M4",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-25-engineering-lint-review-minors.md",
+          "result": "branch feat/r-055-engineering-lint-and-skill-review-minors"
+        },
         {
           "date": "2026-11-25",
           "id": "R-050",
@@ -1121,6 +1063,15 @@
       {
         "date": "2026-11-25",
         "kind": "done",
+        "id": "R-055",
+        "title": "Engineering lint and skill review minors",
+        "milestone": "M4",
+        "owner": "agent",
+        "result": "branch feat/r-055-engineering-lint-and-skill-review-minors"
+      },
+      {
+        "date": "2026-11-25",
+        "kind": "done",
         "id": "R-050",
         "title": "ADR relative images render unresolved",
         "milestone": "M4",
@@ -1144,6 +1095,15 @@
         "milestone": "M4",
         "owner": "agent",
         "result": "branch feat/r-041-adr-skill-follow-ups"
+      },
+      {
+        "date": "2026-11-25",
+        "kind": "dropped",
+        "id": "R-037",
+        "title": "Engineering export and docs-site view",
+        "milestone": null,
+        "owner": null,
+        "result": "Reason: the user dropped it when pm-next offered it, including the Revisits fix in its Note"
       },
       {
         "date": "2026-11-25",
@@ -1511,6 +1471,15 @@
     "done": [
       {
         "date": "2026-11-25",
+        "id": "R-055",
+        "title": "Engineering lint and skill review minors",
+        "milestone": "M4",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-25-engineering-lint-review-minors.md",
+        "result": "branch feat/r-055-engineering-lint-and-skill-review-minors"
+      },
+      {
+        "date": "2026-11-25",
         "id": "R-050",
         "title": "ADR relative images render unresolved",
         "milestone": "M4",
@@ -1801,6 +1770,12 @@
     "dropped": [
       {
         "date": "2026-11-25",
+        "id": "R-037",
+        "title": "Engineering export and docs-site view",
+        "reason": "the user dropped it when pm-next offered it, including the Revisits fix in its Note"
+      },
+      {
+        "date": "2026-11-25",
         "id": null,
         "title": "Current focus names a done milestone",
         "reason": "the 2026-11-25 review recommends pm-strategy to set a new focus"
@@ -1953,6 +1928,23 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Two minors deferred from R-050's final review. (1) No test pins a remote ADR image staying a plain img with its src; a consumer who sets Astro `image.domains` would get it optimised and its src rewritten. Append `![r](https://example.com/r.png)` to the existing relative-image test and assert `src=\"https://example.com/r.png\"`. (2) Every non-empty ADR section is rendered twice per build (the `adrs` html and the `adr-sections` entry), Mermaid included; share one memoised render per section."
+    },
+    {
+      "file": "planning/inbox/2026-11-25-1605-engineering-lint-review-minors-follow-ups.md",
+      "title": "Engineering lint review minors follow-ups",
+      "captured": "2026-11-25 16:05",
+      "source": "agent (R-055 execute, final review)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "skills/pm-lint/scripts/structure.ts, skills/pm-lint/scripts/lint.test.ts, skills/pm-engineering/SKILL.md",
+      "context": "R-055 execute",
+      "discuss": "no",
+      "related": [
+        "R-055"
+      ],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Five minors the R-055 whole-branch review found and deferred. (1) `engineering/values` and `engineering/decision-current` messages name a technology headed `### EP-001 Bun` as `EP-001`, because `checkEngineeringValues` uses `block.id || block.title`; use `block.name` for Technology blocks. (2) The `engineering/removed` message says \"A removed entry is\", while the rule text now says \"A removed line is\". (3) The `pm-engineering` view recommends `change <entry> Decision <ADR-MMM>` with the immediate successor, not the end of the `superseded by` chain that step 1 now follows; a deprecated chain end has no ADR to suggest. (4) The \"orders technology with English collation\" test passes on an English-locale host without the `\"en\"` argument; add a case where code-point order and English collation differ. (5) `pm-engineering` step 4 (`change`) does not name the Challenge protocol checks that the managed section now says apply to it."
     }
   ],
   "briefs": [
@@ -1989,7 +1981,7 @@
       "path": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
       "id": "R-035",
       "title": "Technology and engineering principles sections",
-      "status": "on roadmap (R-035, R-036, R-037)",
+      "status": "on roadmap (R-035, R-036)",
       "origin": "planning/inbox/2026-11-20-1528-technology-and-engineering-principles.md",
       "updated": "2026-11-24",
       "decision": "2026-11-20 Keep it parked. Reason: SCOPE CHANGE to v1; no `V` line or milestone covers it and M1 Reproducible docs site is the current focus. Next: `pm-strategy` adds a `V` line and a milestone after M1, then the four slices go to Later under it.",
@@ -2256,14 +2248,14 @@
     }
   ],
   "counts": {
-    "next": 4,
+    "next": 2,
     "later": 15,
     "nextMax": 5,
-    "openInbox": 5,
+    "openInbox": 6,
     "discuss": 3,
     "shapingBriefs": 0,
-    "done": 32,
-    "dropped": 7,
+    "done": 33,
+    "dropped": 8,
     "blockers": 0,
     "openRisks": 0,
     "redRisks": 0,
@@ -2274,8 +2266,6 @@
     "reviewDue": false,
     "lastReview": "2026-11-25",
     "claimable": [
-      "R-037",
-      "R-055",
       "R-035",
       "R-036"
     ],

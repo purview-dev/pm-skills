@@ -14,30 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-037 Engineering export and docs-site view
-
-- Serves: V5
-- Milestone: M4
-- Owner: agent
-- Done when: `planning.json` carries the engineering record at `schemaVersion` 6, `pm-export check` passes, and an Engineering view passes `just docs-check`.
-- Size: S
-- Depends on: R-034, R-013
-- Status: ready
-- Brief: planning/briefs/2026-11-20-technology-and-engineering-principles.md
-- Note: From the 2026-11-25 review (inbox 2026-11-22-1809, R-025 design): done revisions lose their Revised by link. A feature page lists "Revised by" only while the revising item is open. `LOG.md` Done lines and the export's `log.done` entries carry no `Revisits`, so `features()` in `packages/pm-docs-site/src/lib/planning.ts` (line 284) gives done items `revisits: null`, and the link disappears once the revision closes. A fix adds `Revisits` to the Done line, the exporter, the schema (schemaVersion 6, which pairs with this item), the pm-lint rule, and the site.
-
-### R-055 Engineering lint and skill review minors
-
-- Serves: V5
-- Milestone: M4
-- Owner: agent
-- Done when: each of the nine findings in this Note is fixed or has a one-line won't-fix reason in the item's plan, the `lint.test.ts` drift test compares rule text as well as IDs, the Challenge protocol's "applies in" list names `pm-engineering`, and `just lint-check` passes.
-- Size: S
-- Depends on: R-034
-- Status: ready
-- Brief: planning/briefs/2026-11-20-technology-and-engineering-principles.md
-- Note: From the 2026-11-25 review (inbox 2026-11-24-2345, R-034 execute, final review). Item 8 is a managed-section change. (1) `fixStructure` cannot sort Principles while one heading has no EP ID (comparator returns 0, not transitive); `skills/pm-lint/scripts/structure.ts`. (2) `rules.md` lists the 8-word principle title under the error `engineering/principle`, but the code emits the warning `title/length`, whose description names only inbox files and risks (`rules.ts`, `rules.md`). (3) `rules.ts` and `rules.md` wording differs for `engineering/technology`, `engineering/principle`, and `engineering/removed`; the drift test compares IDs only. (4) A Technology heading shaped `### EP-001 Foo` is keyed as `Foo`, giving a false duplicate with `### Foo`. (5) `Decision: None` (capital N) is an error; other files accept `none` in any case. (6) `localeCompare` without a locale makes `engineering/order` depend on the host locale for non-ASCII names. (7) The `writes ENGINEERING.md on a fresh install` test proves only that the template exists, not `pm-init`'s file table row. (8) The Challenge protocol's "applies in" list in the managed section omits `pm-engineering` (add). (9) `pm-engineering` step 1 follows `superseded by` one step only; a superseded successor is recommended unchecked.
-
 ### R-035 pm-engineering infer from an existing repository
 
 - Serves: V5

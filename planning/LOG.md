@@ -4,6 +4,7 @@
 
 ## Done
 
+- 2026-11-25 R-055 Engineering lint and skill review minors. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-25-engineering-lint-review-minors.md. Result: branch feat/r-055-engineering-lint-and-skill-review-minors.
 - 2026-11-25 R-050 ADR relative images render unresolved. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-25-adr-relative-images.md. Result: branch feat/r-050-adr-relative-images-render-unresolved.
 - 2026-11-25 R-040 ADR link and export edge cases. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-25-adr-link-and-export-edge-cases.md. Result: branch feat/r-040-adr-link-export-edge-cases.
 - 2026-11-25 R-041 ADR skill follow-ups. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-25-adr-skill-follow-ups.md. Result: branch feat/r-041-adr-skill-follow-ups.
@@ -42,6 +43,7 @@
 
 ## Dropped
 
+- 2026-11-25 R-037 Engineering export and docs-site view. Reason: the user dropped it when pm-next offered it, including the Revisits fix in its Note.
 - 2026-11-25 Current focus names a done milestone. Reason: the 2026-11-25 review recommends pm-strategy to set a new focus.
 - 2026-11-25 purview.dev adopts astroc4 markers. Reason: the work is in purview-dev/purview-dev (`src/src/lib/docs/diagrams.ts`), so it is tracked there, not in this repository.
 - 2026-11-19 Name 1.0.0 in the publish item and the M1 exit criterion. Reason: decided on 2026-11-18 (STRATEGY.md Decisions) to keep "returns a version" in both.

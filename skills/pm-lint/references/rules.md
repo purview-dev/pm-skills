@@ -185,7 +185,7 @@ header, a stack entry, the pause file, and the `config.md` sections.
 | --- | --- | --- | --- |
 | `engineering/sections` | error | no | `ENGINEERING.md` has `## Technology`, `## Principles`, and `## Removed`, in that order. |
 | `engineering/technology` | error | no | A technology is `### <Name>` with Kind, Version, Reason, Decision, Source, and Added, in that order; its name is unique in the section (ignoring case). |
-| `engineering/principle` | error | no | A principle is `### EP-NNN <Title>` (title at most 8 words) with Rule, Applies to, Check, Decision, Source, and Added, in that order. |
+| `engineering/principle` | error | no | A principle is `### EP-NNN <Title>` with Rule, Applies to, Check, Decision, Source, and Added, in that order. |
 | `engineering/values` | error | no | Check is a backticked command or `review`; Decision is none or an existing ADR ID; Source is not empty; Added is YYYY-MM-DD. |
 | `engineering/decision-current` | warning | no | A `Decision` ADR is not superseded or deprecated (the fix is `pm-engineering change`). |
 | `engineering/id-unique` | error | no | A principle ID appears once across Principles and Removed. |
@@ -235,7 +235,7 @@ header, a stack entry, the pause file, and the `config.md` sections.
 
 | Rule | Severity | Fix | Requirement |
 | --- | --- | --- | --- |
-| `title/length` | warning | no | An inbox file's or a risk's title is at most 8 words. |
+| `title/length` | warning | no | An inbox file's, a risk's, or a principle's title is at most 8 words. |
 
 ### export
 

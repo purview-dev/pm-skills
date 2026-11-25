@@ -991,8 +991,8 @@ from the user and to the agent's own proposals. It applies in `pm-init`,
 `pm-item` (add and edit), `pm-board` and `pm-roadmap` (add),
 `pm-next` (before claiming), `pm-bug` (duplicate, severity, and impact),
 `pm-revise` (the scope of the rework), `pm-risk` (add, re-rating, and
-mitigate), and `pm-docs-site` (plan). It never applies to `pm-park` or
-`pm-risk` capture during a workflow.
+mitigate), `pm-engineering` (add and change), and `pm-docs-site` (plan).
+It never applies to `pm-park` or `pm-risk` capture during a workflow.
 
 1. **Problem:** what problem, for whom, and what evidence shows it exists
    (code, data, user reports, `LOG.md`). If there is none, say so.
