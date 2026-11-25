@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-25T13:29:39+00:00",
+  "generatedAt": "2026-11-25T13:42:26+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-050-adr-relative-images-render-unresolved",
-    "head": "c4e479ffe4c7083b4bdb9ff281777718b4492501"
+    "head": "29c75c8e3f171cb3f29c81c07068b83eb8b6f7b5"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -310,19 +310,105 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-050-adr-relative-images-render-unresolved",
     "brief": null,
     "milestone": "M4",
     "spec": "docs/superpowers/specs/2026-11-25-adr-relative-images-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-25-adr-relative-images.md",
     "started": "2026-11-25",
     "doneWhen": [
       "An ADR section with `![a](x.png)` builds to an ADR page whose `img` has a resolved `src`, a test in `packages/pm-docs-site/test/` covers it, and `just package-test` passes."
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-25-adr-relative-images.md",
+    "checked": 0,
+    "total": 14,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "Rendered section entries in the loader",
+        "checked": 0,
+        "total": 4,
+        "steps": [
+          {
+            "text": "**Step 1:** Implement `adrFile` as `join(dirname(planningPath), 'decisions', basename(adrPath))`, and `adrSectionsLoader` following `repoDocsLoader`'s `store.set` shape (`fileURLToPath(config.root)` for the site root). Skip a section whose Markdown is `null` or blank, as `html` does.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2:** Register `'adr-sections': defineCollection({ loader: adrSectionsLoader() })` in `content.config.ts`, with a one-line comment.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3:** Run `cd packages/pm-docs-site; bun test test/integration.test.ts test/links.test.ts`. Expected: PASS (nothing reads the new collection yet).",
+            "checked": false
+          },
+          {
+            "text": "**Step 4:** Commit: `feat(pm-docs-site): rendered ADR section entries (R-050)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "ADR page renders sections through Astro",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** in `integration.test.ts`, using `scratchSite` as the Mermaid case does:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2:** Run `cd packages/pm-docs-site; bun test test/integration.test.ts -t \"relative image\"`. Expected: the first FAILS (`__ASTRO_IMAGE_` present), the second FAILS (build succeeds).",
+            "checked": false
+          },
+          {
+            "text": "**Step 3:** Create `LinkedHtml.astro`. In `[id].astro`, read each section entry with ``getEntry('adr-sections', `${adr.id.toLowerCase()}/${key}`)``, then `const { Content } = await render(entry)`, and render `<LinkedHtml known={known}><Content /></LinkedHtml>` in place of the `set:html` fragment. Keep `None recorded.` for `''` and skip `null` as today. Update the file's header comment.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4:** Run `cd packages/pm-docs-site; bun test test/integration.test.ts test/links.test.ts`. Expected: PASS, including the ADR-003 remote image and Mermaid cases.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5:** Commit: `fix(pm-docs-site): resolve relative images in ADR sections (R-050)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "Dev server, docs, and full verification",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1:** In a scratch site from Task 2's setup, run `node packages/pm-docs-site/lib/cli.ts dev <scratch>/site --port <free port>` (as `test/cli.test.ts` does) and request the image URL from the ADR-003 page. Expected: 200. On 403, add the `fs.allow` entry and re-check.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2:** Add the README sentence.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3:** Run `just package-test`. Expected: PASS.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4:** Run `just docs-check` and `just lint-check`. Expected: PASS.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5:** Commit: `docs(pm-docs-site): ADR relative images (R-050)` (with the `lib/index.ts` change when made).",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -812,7 +898,7 @@
           "title": "ADR relative images render unresolved",
           "owner": "agent",
           "size": "S",
-          "detail": "plan"
+          "detail": "execute, 0/14 plan steps"
         }
       ],
       "next": [
