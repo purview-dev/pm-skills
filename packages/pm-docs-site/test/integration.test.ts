@@ -447,4 +447,19 @@ describe('ADR images, built through the fixture site', () => {
 		},
 		BUILD,
 	);
+
+	it(
+		'a missing relative image does not fail the build when the Decisions view is off',
+		() => {
+			const dir = scratchSite('image-missing-off-');
+
+			writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'Fixture plan', planning: '../planning.json', views: ['now'] }`));
+			appendToAdr(dir, 'ADR-003', 'context', '![a](missing.png)');
+
+			const result = runCli(['build', join(dir, 'site')]);
+
+			expect(result.code, result.stderr).toBe(0);
+		},
+		BUILD,
+	);
 });

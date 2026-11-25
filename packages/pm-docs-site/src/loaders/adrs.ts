@@ -75,6 +75,8 @@ export function adrSectionsLoader(): Loader {
 			const siteRoot = fileURLToPath(astro.root);
 
 			store.clear();
+			// No Decisions view, no ADR pages: import no image, so a missing one cannot fail the build.
+			if (!config.views.decisions) return;
 
 			for (const adr of loadPlanning().adrs) {
 				for (const { key, markdown, file } of sectionsOf(adr)) {
@@ -84,6 +86,7 @@ export function adrSectionsLoader(): Loader {
 					store.set({
 						id,
 						data: await parseData({ id, data: { adr: adr.id, section: key } satisfies AdrSectionData }),
+						// The ADR's expected file, which need not exist: it is only the importer relative images resolve against.
 						filePath: relative(siteRoot, file).split(sep).join('/'),
 						rendered,
 						// Astro imports these against filePath, so render() resolves each image placeholder.
