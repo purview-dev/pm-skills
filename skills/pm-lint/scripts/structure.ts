@@ -679,8 +679,6 @@ function checkLog(doc: Doc, add: Add, context: Context) {
 export interface RiskBlock {
   id: string;
   title: string;
-  /** The full heading text after `### `, which names a technology. */
-  name: string;
   heading: number;
   start: number;
   end: number;
@@ -694,7 +692,7 @@ export function riskBlocks(lines: Line[], section: Section): RiskBlock[] {
     .map((block) => {
       const match = /^(RK-\d{3,})\s+(.+)$/.exec(block.heading!.text);
       const list = fields(lines, block);
-      return { id: match?.[1] ?? "", title: match?.[2] ?? block.heading!.text, name: block.heading!.text, heading: block.heading!.n, start: block.start, end: block.end, fields: fieldMap(list), list };
+      return { id: match?.[1] ?? "", title: match?.[2] ?? block.heading!.text, heading: block.heading!.n, start: block.start, end: block.end, fields: fieldMap(list), list };
     });
 }
 
