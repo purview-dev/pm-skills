@@ -31,11 +31,13 @@
 ### Task 1: Rule text has one source
 
 **Files:**
+
 - Modify: `skills/pm-lint/scripts/rules.ts` (header comment, 52 summaries, `title/length`)
 - Modify: `skills/pm-lint/references/rules.md` (`engineering/principle`, `title/length` rows)
 - Test: `skills/pm-lint/scripts/lint.test.ts` (`describe("rules.md")`, ~line 490)
 
 **Interfaces:**
+
 - Produces: `RULES[i].summary` equals the description cell of that rule's row in `rules.md`, exactly.
 
 - [ ] **Step 1: Write the failing test** — add to `describe("rules.md")`:
@@ -57,7 +59,7 @@ Run: `bun test skills/pm-lint/scripts/lint.test.ts -t "same words"`
 Expected: FAIL on the first differing rule (`format/tabs`).
 
 - [ ] **Step 3: Fix the two engineering rows in `rules.md`**
-  - `engineering/principle`: remove ` (title at most 8 words)`.
+  - `engineering/principle`: remove `(title at most 8 words)`.
   - `title/length`: `An inbox file's, a risk's, or a principle's title is at most 8 words.`
 
 - [ ] **Step 4: Copy every `rules.md` description into its `rules.ts` summary** (52 rules differ, plus the two above). Escape only what a TypeScript string needs. Change the header comment to: `references/rules.md documents the same rules; each summary is that file's description, word for word, and the tests keep the two equal.`
@@ -77,11 +79,13 @@ git commit -m "fix(pm-lint): state each rule in the words of rules.md (R-055)"
 ### Task 2: Engineering check and fix edge cases (findings 1, 4, 5, 6)
 
 **Files:**
+
 - Modify: `skills/pm-lint/scripts/structure.ts:764-862` (`EngineeringBlock`, `engineeringBlocks`, `techKey`, `checkEngineeringValues`, `checkEngineering`), `:1040-1056` (engineering fix)
 - Test: `skills/pm-lint/scripts/lint.test.ts` (`describe("engineering rules")`, helpers `tech`, `principle`, `engineering`, `engRules`, `engFindings`, `fixStructure`)
 
 **Interfaces:**
-- Produces: new `EngineeringBlock` field `name: string` (the full heading text after `### `); `techKey(block) = block.name.toLowerCase()`.
+
+- Produces: new `EngineeringBlock` field `name: string` (the full heading text after `###`); `techKey(block) = block.name.toLowerCase()`.
 
 - [ ] **Step 1: Write the failing tests** in `describe("engineering rules")`:
 
@@ -137,6 +141,7 @@ git commit -m "fix(pm-lint): engineering order, heading key, and none case (R-05
 ### Task 3: Fresh-install test checks pm-init's file table (finding 7)
 
 **Files:**
+
 - Test: `skills/pm-lint/scripts/lint.test.ts:67-69`
 
 - [ ] **Step 1: Extend the test** `writes ENGINEERING.md on a fresh install`:
@@ -158,6 +163,7 @@ git commit -m "test(pm-lint): check pm-init's ENGINEERING.md row (R-055)"
 ### Task 4: Challenge protocol names pm-engineering (finding 8)
 
 **Files:**
+
 - Modify: `skills/pm-setup/references/AGENTS-section.md:706-712`
 - Modify: `AGENTS.md` (the same sentence in the managed section)
 - Modify: `package.json` (via `just bump prerelease`)
@@ -184,6 +190,7 @@ git commit -m "fix(pm-setup): challenge protocol applies in pm-engineering (R-05
 ### Task 5: pm-engineering follows the supersede chain (finding 9)
 
 **Files:**
+
 - Modify: `skills/pm-engineering/SKILL.md:58-64` (step 1)
 
 - [ ] **Step 1: Rewrite step 1's supersede sentence** to: follow `superseded by` from ADR to ADR until an ADR that is not superseded (stop and refuse with `ADR-NNN: the superseded by chain loops at ADR-KKK.` when an ID repeats, and `ADR-KKK has no file in <PM root>/decisions/.` when a link is missing). When the last ADR is accepted or proposed, ask `ADR-NNN <title> (<status>) is superseded; the current decision is ADR-MMM <title> (<status>). Use it instead?` with `Use ADR-MMM (recommended)` and `Set Decision: none`. When the last ADR is deprecated, offer the deprecated choices that follow.
