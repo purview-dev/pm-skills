@@ -6,7 +6,7 @@
 - Severity: major
 - Affects: Named reference, Reference legend, and Asking the user rules (skills/pm-setup/references/AGENTS-section.md)
 - Context: R-013 execute
-- Discuss: no
+- Discuss: yes
 - Related: none
 - Brief: none
 - Reviewed: never

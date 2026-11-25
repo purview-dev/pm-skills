@@ -9,7 +9,7 @@
 - Discuss: no
 - Related: none
 - Brief: none
-- Reviewed: never
+- Reviewed: 2026-11-25
 
 ## Idea
 

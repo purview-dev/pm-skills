@@ -41,6 +41,8 @@
 
 ## Dropped
 
+- 2026-11-25 Current focus names a done milestone. Reason: the 2026-11-25 review recommends pm-strategy to set a new focus.
+- 2026-11-25 purview.dev adopts astroc4 markers. Reason: the work is in purview-dev/purview-dev (`src/src/lib/docs/diagrams.ts`), so it is tracked there, not in this repository.
 - 2026-11-19 Name 1.0.0 in the publish item and the M1 exit criterion. Reason: decided on 2026-11-18 (STRATEGY.md Decisions) to keep "returns a version" in both.
 - 2026-11-17 R-003 Fix pm-export's ajv validation command. Reason: v19.0.0 replaced the ajv command in pm-export's guard with `bun scripts/export.ts validate`, which exits 0 on `planning/planning.json`.
 - 2026-11-17 R-007 Docs-site extension pages. Reason: the Now, Inbox, Briefs, and Strategy pages already exist in the pm-docs-site templates. Brief: planning/briefs/2026-11-17-docs-site-package.md.
@@ -52,6 +54,7 @@
 
 ## Reviews
 
+- 2026-11-25 Inbox 16 to 4. Added R-050 to R-055; 5 files merged into R-037 and R-042, 2 dropped, 3 to shape, 1 kept parked; current focus M1 is done, so pm-strategy sets the next; Next filled from Later with R-037, R-055, R-035, R-036.
 - 2026-11-22 Inbox 15 to 1. Added R-040, R-041, R-042; 11 files merged into R-013, R-032, R-040, and R-042, 1 to shape; R-013 Done when moved to schemaVersion 6; R-032 resized to M; Next filled from Later with R-041 and R-040.
 - 2026-11-20 Inbox 12 to 3. Added R-029, R-030, R-031, R-032; 7 files merged or collected, 1 to shape, 1 kept parked; R-013 now depends on R-029 and R-031; Next filled from Later with R-028, R-031, R-029, R-025, R-013.
 - 2026-11-19 Inbox 19 to 3. Added R-022, R-023, R-024, R-025, R-026; 9 files merged, 1 dropped, 2 to shape; R-019 promoted to Next for re-slicing; Next reordered.

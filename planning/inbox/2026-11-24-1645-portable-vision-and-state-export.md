@@ -5,7 +5,7 @@
 - Kind: feature
 - Affects: none
 - Context: R-013 execute
-- Discuss: no
+- Discuss: yes
 - Related: none
 - Brief: none
 - Reviewed: never
