@@ -14,17 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-036 Plan citation and done check
-
-- Serves: V5
-- Milestone: M4
-- Owner: agent
-- Done when: `pm-next` and `pm-checkpoint` (`stage`) pass the principles and ADRs that apply to the plan handoff; `pm-checkpoint` (`done`) refuses to close on a failing command check and lists failed review checks as a `Note` and an inbox file, shown in a rehearsal report in `planning/research/` whose scratch repository has `docs/adr/` and in which `pm-adr import docs/adr/` brings its ADRs into `planning/decisions/`; `pm-purview` hands accepted packages to `pm-engineering add`.
-- Size: M
-- Depends on: R-033, R-034
-- Status: ready
-- Brief: planning/briefs/2026-11-20-technology-and-engineering-principles.md
-
 ### R-052 Docs-site package: brief and inbox pages
 
 - Serves: V4

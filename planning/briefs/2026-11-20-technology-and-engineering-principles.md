@@ -1,6 +1,6 @@
 # Technology and engineering principles sections
 
-- Status: on roadmap (R-035, R-036)
+- Status: on roadmap (R-036), active
 - Origin: planning/inbox/2026-11-20-1528-technology-and-engineering-principles.md
 - Updated: 2026-11-24
 

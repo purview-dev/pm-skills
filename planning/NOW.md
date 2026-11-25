@@ -11,22 +11,24 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: idle
-- Item:
-- Session:
-- Stage:
-- Brief:
-- Milestone:
-- Serves:
-- Owner:
-- Size:
-- Depends on:
+- Status: active
+- Item: R-036 Plan citation and done check
+- Session: feat/r-036-plan-citation-and-done-check
+- Stage: design
+- Brief: planning/briefs/2026-11-20-technology-and-engineering-principles.md
+- Milestone: M4
+- Serves: V5
+- Owner: agent
+- Size: M
+- Depends on: R-033, R-034
 - Revisits:
 - Spec:
 - Plan:
-- Started:
+- Started: 2026-11-25
 
 ## Done when
+
+- `pm-next` and `pm-checkpoint` (`stage`) pass the principles and ADRs that apply to the plan handoff; `pm-checkpoint` (`done`) refuses to close on a failing command check and lists failed review checks as a `Note` and an inbox file, shown in a rehearsal report in `planning/research/` whose scratch repository has `docs/adr/` and in which `pm-adr import docs/adr/` brings its ADRs into `planning/decisions/`; `pm-purview` hands accepted packages to `pm-engineering add`.
 
 ## Checkpoint
 

@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-25T19:16:26+00:00",
+  "generatedAt": "2026-11-25T20:49:28+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "main",
-    "head": "6bd0542b3d86ee09710e09dea44cadd6648d0d17"
+    "branch": "feat/r-036-plan-citation-and-done-check",
+    "head": "f3122702336ce4021b90729859f9f65bb4e4b2af"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -326,53 +326,41 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
-    "brief": null,
-    "milestone": null,
+    "status": "active",
+    "item": {
+      "id": "R-036",
+      "title": "Plan citation and done check",
+      "serves": [
+        "V5"
+      ],
+      "owner": "agent",
+      "size": "M",
+      "dependsOn": [
+        "R-033",
+        "R-034"
+      ],
+      "revisits": null
+    },
+    "stage": "design",
+    "session": "feat/r-036-plan-citation-and-done-check",
+    "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
+    "milestone": "M4",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-25",
+    "doneWhen": [
+      "`pm-next` and `pm-checkpoint` (`stage`) pass the principles and ADRs that apply to the plan handoff; `pm-checkpoint` (`done`) refuses to close on a failing command check and lists failed review checks as a `Note` and an inbox file, shown in a rehearsal report in `planning/research/` whose scratch repository has `docs/adr/` and in which `pm-adr import docs/adr/` brings its ADRs into `planning/decisions/`; `pm-purview` hands accepted packages to `pm-engineering add`."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-036",
-        "title": "Plan citation and done check",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V5"
-        ],
-        "milestone": "M4",
-        "owner": "agent",
-        "doneWhen": "`pm-next` and `pm-checkpoint` (`stage`) pass the principles and ADRs that apply to the plan handoff; `pm-checkpoint` (`done`) refuses to close on a failing command check and lists failed review checks as a `Note` and an inbox file, shown in a rehearsal report in `planning/research/` whose scratch repository has `docs/adr/` and in which `pm-adr import docs/adr/` brings its ADRs into `planning/decisions/`; `pm-purview` hands accepted packages to `pm-engineering add`.",
-        "size": "M",
-        "dependsOn": [
-          "R-033",
-          "R-034"
-        ],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
-        "note": null,
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-052",
         "title": "Docs-site package: brief and inbox pages",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4"
@@ -396,7 +384,7 @@
         "id": "R-042",
         "title": "Docs-site package: deferred review minors",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -420,7 +408,7 @@
         "id": "R-056",
         "title": "Package tests stable under full lint-check",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -444,7 +432,7 @@
         "id": "R-053",
         "title": "Docs-site package: release 1.0.0",
         "section": "next",
-        "position": 5,
+        "position": 4,
         "label": "waiting",
         "serves": [
           "V4"
@@ -767,15 +755,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-036",
           "title": "Plan citation and done check",
           "owner": "agent",
           "size": "M",
-          "detail": "ready"
-        },
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-052",
           "title": "Docs-site package: brief and inbox pages",
@@ -2013,9 +2002,9 @@
     },
     {
       "path": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
-      "id": "R-035",
+      "id": "R-036",
       "title": "Technology and engineering principles sections",
-      "status": "on roadmap (R-035, R-036)",
+      "status": "on roadmap (R-036), active",
       "origin": "planning/inbox/2026-11-20-1528-technology-and-engineering-principles.md",
       "updated": "2026-11-24",
       "decision": "2026-11-20 Keep it parked. Reason: SCOPE CHANGE to v1; no `V` line or milestone covers it and M1 Reproducible docs site is the current focus. Next: `pm-strategy` adds a `V` line and a milestone after M1, then the four slices go to Later under it.",
@@ -2282,7 +2271,7 @@
     }
   ],
   "counts": {
-    "next": 5,
+    "next": 4,
     "later": 12,
     "nextMax": 5,
     "openInbox": 5,
@@ -2300,7 +2289,6 @@
     "reviewDue": false,
     "lastReview": "2026-11-25",
     "claimable": [
-      "R-036",
       "R-052",
       "R-042",
       "R-056"
