@@ -81,7 +81,9 @@ root is its `PM state directory` setting (default `planning/`).
    **Stale proposed ADRs.** When `<PM root>/decisions/` exists, list the
    ADRs with `Status: proposed` and a `Date` at least the review cadence
    (`config.md` Limits) before today, imported ADRs included. For each,
-   print the `## For this question` legend and ask: `ADR-NNN <title> has
+   print the `## For this question` legend, unless a `## For this
+   discussion` legend in this output already lists the ADR, and ask:
+   `ADR-NNN <title> has
    been proposed since <date>. What should happen to it?` with `Accept it
    (recommended)`, `Deprecate it`, `Keep it proposed`, and `Explain
    ADR-NNN`. Recommend `Keep it proposed (recommended)` instead when its

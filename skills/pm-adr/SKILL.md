@@ -38,7 +38,7 @@ likely modes as options.
 - Write in the main worktree, not the current feature worktree, except
   `accept` applied by `pm-checkpoint` (`done`), which writes in the
   worktree that holds the item's branch (rules: **Completion rides the
-  branch**).
+  branch**), or in the main worktree when the ADR is only there (ADR-010).
 - If `<PM root>/decisions/` is missing, create it before the first write.
   `view` and `check` write nothing and report that there are no ADRs.
 - **During an active workflow** (Non-interruption rule 1), only `new`,

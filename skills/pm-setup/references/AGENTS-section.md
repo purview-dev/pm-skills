@@ -924,9 +924,13 @@ The commit worktree:
   contents, then write and commit them in the worktree that holds the
   item's branch. This keeps the commit from reverting PM state the PM
   branch gained after the branch was cut.
-- Stop when the PM branch has **Uncommitted PM state**, or when the item's
-  worktree has uncommitted changes under the PM root. The record must start
-  from committed state.
+- Stop when the PM branch and its remote have diverged, or when either
+  worktree has an uncommitted PM path other than a capture: the record must
+  start from committed state. A capture (an uncommitted inbox file,
+  decisions-folder file, or `RISKS.md`) never stops it: in the item's
+  worktree it is swept into the record's commit, and in the main worktree,
+  when that is another worktree, it is named in a `Note` for the next PM
+  commit there.
 - A completion that did not ride its branch is **Merged-unclosed**:
   `pm-rejoin` closes it on the PM branch, with a `Note` that the next
   branch carries it when the PM branch is protected. Never a pull request
@@ -1121,6 +1125,12 @@ principles work must follow, each pointing to the ADR that holds its
 reason. `pm-init` creates the file on a fresh install; on an older install
 a missing file is empty, and `pm-engineering` creates it on the first
 write. `pm-lint` checks it. No setting is added.
+
+Version 21 also lets `pm-checkpoint` (`done`) close with captures in
+flight: an inbox file, risk, or ADR written mid-workflow is committed with
+the record or named in a `Note`, never a reason to stop, and an item's
+ADR that `pm-adr` wrote in the main worktree is found and accepted there.
+No setting is added.
 
 ## Asking the user (mandatory)
 

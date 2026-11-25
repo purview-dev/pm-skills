@@ -84,7 +84,9 @@ label).
    version (recommended)` and `Keep the full scope`. Write the answer and
    its reason before the next challenge.
    When the idea or the recommended option contradicts an accepted ADR,
-   print the `## For this question` legend and ask: `ADR-NNN <title>
+   print the `## For this question` legend, unless a `## For this
+   discussion` legend in this output already lists the ADR, and ask:
+   `ADR-NNN <title>
    (accepted) says <X>; this idea needs <Y>. How should we continue?` with
    `Change the idea (recommended)`, `Keep it; design supersedes ADR-NNN`,
    and `Explain ADR-NNN`. This skill never runs `pm-adr`: shaping decides

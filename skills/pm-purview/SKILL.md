@@ -33,6 +33,10 @@ snapshot of `https://purview.dev/llms.txt`.
   Stop. (When `pm-init` invokes this skill, the state exists.)
 - If a workflow is active, apply Non-interruption rule 4 and stop. In
   `check` mode from another PM skill, run inside that skill's step.
+- In `check` mode from another PM skill, steps 6 and 7 do not run: step 5
+  writes the report and the answer returns to the calling skill's step,
+  whose PM commit covers the report. It never adds roadmap items, writes
+  ADRs, or commits. A `check` the user runs continues to steps 6 and 7.
 - This skill never adds packages or edits code. Accepted recommendations
   become roadmap items, built later through `pm-next`.
 - **No .NET, no recommendation.** If the project has no C# or .NET code,
@@ -98,7 +102,9 @@ snapshot of `https://purview.dev/llms.txt`.
    `<PM root>/research/<YYYY-MM-DD>-purview-fit.md`: the profile, each
    recommendation (problem, evidence, benefit, cost, against, size, docs
    URL), and each project ruled out with a one-line reason.
-6. **Decide.** If nothing survived, say so and stop. Otherwise ask one
+6. **Decide.** In `check` mode from another PM skill, stop here and return
+   the step 5 result.
+   If nothing survived, say so and stop. Otherwise ask one
    multi-select question: `Which Purview recommendations should go on the
    roadmap?` with each recommendation as an option (project, benefit,
    size). Then ask: `Add them to Next or Later?` with `Later

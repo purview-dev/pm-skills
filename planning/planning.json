@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-24T23:58:42+00:00",
+  "generatedAt": "2026-11-25T07:23:16+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-034-engineering-file-and-pm-engineering-skill",
-    "head": "80a94583e00982a8a60057a6649ea117a9b10f0f"
+    "branch": "feat/r-041-adr-skill-follow-ups",
+    "head": "aa09c1fa623d7bf7b3d28323cceda46e7b37897d"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -237,34 +237,10 @@
   "roadmap": {
     "next": [
       {
-        "id": "R-041",
-        "title": "ADR skill follow-ups",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V5"
-        ],
-        "milestone": "M4",
-        "owner": "agent",
-        "doneWhen": "`pm-discover` and `pm-revise` write the `Supersedes` Notes line with its `<YYYY-MM-DD>` prefix; `pm-purview` step 6 excludes `check` mode; `pm-checkpoint` (`done`) finds an item's ADRs written in the main worktree; `pm-shape` and `pm-review` reuse a `## For this discussion` legend for an ADR; `pm-checkpoint` (`done`) commits or names captures written mid-workflow instead of stopping; `just lint-check` passes.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "From the 2026-11-22 review; R-039 final-review minors (inbox 2026-11-22-1632), a rules bump. (1) `pm-discover` and `pm-revise` write `Supersedes ADR-NNN <title> in design.` under an inbox file's `## Notes` without the `<YYYY-MM-DD>` prefix. (2) `pm-purview` in `check` mode, run inside `pm-shape` or `pm-discover`, is not stopped before step 6, whose ADR write contradicts \"This skill never runs `pm-adr`\" in those skills. (3) `pm-checkpoint` (`done`) looks for the item's ADRs on its branch; a design stage run in a separate worktree writes them in the main worktree (`pm-adr` Guard), so `done` stops with \"has no file\". (4) `pm-shape` and `pm-review` print `## For this question` for an ADR even when `## For this discussion` lists it. (5) An ADR or inbox file written mid-workflow is uncommitted at `done`, whose guard stops on uncommitted PM state in the item's worktree (predates R-039; applies to `pm-park` too). Spec: `docs/superpowers/specs/2026-11-22-adrs-across-the-pm-skills-design.md`.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-040",
         "title": "ADR link and export edge cases",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4",
@@ -645,13 +621,6 @@
       "now": [],
       "next": [
         {
-          "id": "R-041",
-          "title": "ADR skill follow-ups",
-          "owner": "agent",
-          "size": "S",
-          "detail": "ready"
-        },
-        {
           "id": "R-040",
           "title": "ADR link and export edge cases",
           "owner": "agent",
@@ -662,6 +631,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-25",
+          "id": "R-041",
+          "title": "ADR skill follow-ups",
+          "milestone": "M4",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-25-adr-skill-follow-ups.md",
+          "result": "branch feat/r-041-adr-skill-follow-ups"
+        },
         {
           "date": "2026-11-24",
           "id": "R-034",
@@ -926,6 +904,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-25",
+        "kind": "done",
+        "id": "R-041",
+        "title": "ADR skill follow-ups",
+        "milestone": "M4",
+        "owner": "agent",
+        "result": "branch feat/r-041-adr-skill-follow-ups"
+      },
       {
         "date": "2026-11-24",
         "kind": "done",
@@ -1263,6 +1250,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-25",
+        "id": "R-041",
+        "title": "ADR skill follow-ups",
+        "milestone": "M4",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-25-adr-skill-follow-ups.md",
+        "result": "branch feat/r-041-adr-skill-follow-ups"
+      },
       {
         "date": "2026-11-24",
         "id": "R-034",
@@ -1795,6 +1791,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "R-034 final-review minors, deferred:\n\n1. `fixStructure` cannot sort Principles while one heading has no EP ID (comparator returns 0, not transitive); `skills/pm-lint/scripts/structure.ts`.\n2. `rules.md` lists the 8-word principle title under the error `engineering/principle`, but the code emits the warning `title/length`, whose description names only inbox files and risks (`rules.ts`, `rules.md`).\n3. `rules.ts` and `rules.md` wording differs for `engineering/technology`, `engineering/principle`, and `engineering/removed`; the drift test compares IDs only.\n4. A Technology heading shaped `### EP-001 Foo` is keyed as `Foo`, giving a false duplicate with `### Foo`.\n5. `Decision: None` (capital N) is an error; other files accept `none` in any case.\n6. `localeCompare` without a locale makes `engineering/order` depend on the host locale for non-ASCII names.\n7. The `writes ENGINEERING.md on a fresh install` test proves only that the template exists, not `pm-init`'s file table row.\n8. The Challenge protocol's \"applies in\" list in the managed section omits `pm-engineering` (add).\n9. `pm-engineering` step 1 follows `superseded by` one step only; a superseded successor is recommended unchecked."
+    },
+    {
+      "file": "planning/inbox/2026-11-25-0717-package-tests-time-out-in-full-lint-check.md",
+      "title": "Package tests time out in full lint-check",
+      "captured": "2026-11-25 07:17",
+      "source": "agent (R-041 execute)",
+      "kind": "bug",
+      "severity": "minor",
+      "affects": "packages/pm-docs-site/test/cli.test.ts, packages/pm-docs-site/test/browser/graph.browser.ts",
+      "context": "R-041 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Two consecutive `just lint-check` runs on a prose-only branch failed in `package-test`, each on a different test that passes alone: `cli.test.ts` \"still reads a site whose config is astro.config.mjs\" timed out after 180000ms (4.27s alone), and `graph.browser.ts:296` \"usable at 320px\" found `.plan-graph__toolbar` hidden within 5000ms (482ms alone)."
     }
   ],
   "briefs": [
@@ -1940,8 +1951,8 @@
       "id": "ADR-003",
       "path": "planning/decisions/ADR-003-item-close-accepts-its-spec-s-adrs.md",
       "title": "Item close accepts its spec's ADRs",
-      "status": "accepted",
-      "supersededBy": null,
+      "status": "superseded",
+      "supersededBy": "ADR-010",
       "date": "2026-11-22",
       "category": "architecture",
       "supersedes": null,
@@ -2047,16 +2058,32 @@
       "decision": "`<PM root>/ENGINEERING.md`, owned only by `pm-engineering`, records the current state: the technology in use (`### <Name>` blocks) and the principles work must follow (`### EP-NNN <Title>` blocks, IDs never reused). Each entry carries a one-line `Reason` and a `Decision: ADR-NNN | none` field; the full why and its alternatives stay in the ADR. A removed entry leaves one line under `## Removed`.",
       "alternatives": "- Entries carry their own full reasons, no ADR link: simpler, but duplicates the ADRs and drifts from them.\n- Principles only, technology in ADRs alone: an ADR records a decision, not what is in use now, and the Done when of R-034 needs `## Technology`.\n- Do nothing: choices stay in `AGENTS.md` and agent memory, unread by any stage.",
       "consequences": "- One place answers \"what do we use and what must we follow\"; ADRs keep answering \"why\".\n- Entries without an ADR (`Decision: none`) are allowed, so older choices can be recorded without writing an ADR first.\n- `pm-lint` checks that a `Decision` names an existing ADR."
+    },
+    {
+      "id": "ADR-010",
+      "path": "planning/decisions/ADR-010-item-close-names-captures-accepts-adrs-in-place.md",
+      "title": "Item close names captures, accepts ADRs in place",
+      "status": "accepted",
+      "supersededBy": null,
+      "date": "2026-11-25",
+      "category": "architecture",
+      "supersedes": "ADR-003",
+      "item": "R-041",
+      "source": null,
+      "context": "ADR-003 has `pm-checkpoint` (`done`) accept the spec's proposed ADRs on the item's branch, inside the Completion record commit, and refuse to close when a named ADR has no file there. `pm-adr`, `pm-park`, and `pm-risk` write in the main worktree (ADR-001). When the item's branch is checked out in a separate worktree, the design stage's ADRs land on the PM branch, so `done` stops with \"has no file\"; and any capture written mid-workflow leaves uncommitted PM state that `done`'s guard stops on, in either worktree (R-041 problems 3 and 5).",
+      "decision": "`pm-checkpoint` (`done`) never stops for a mid-workflow capture. An uncommitted capture (an inbox file, a decisions-folder file, or `RISKS.md`) in the item's worktree is swept into the Completion record commit; one in the main worktree when that is another worktree is named in a `Note` for the next PM commit on the PM branch. A spec-named ADR is looked for on the item's branch first, then in the main worktree's decisions folder; when it is found only in the main worktree and is `proposed` with `Item: <this ID>`, `done` applies `pm-adr accept` there, in place, only after the Completion record commit succeeds, and names it in the `Note`. Only a named ADR found in neither place keeps `done` in `pause`. Other uncommitted PM state (`NOW.md`, `ROADMAP.md`, `LOG.md`, `STRATEGY.md`, a brief) still stops it.",
+      "alternatives": "- Do nothing: `done` keeps stopping on the separate-worktree layout and on every mid-workflow capture.\n- Sweep or move at done: move the item's ADRs from the main worktree into the item's worktree before accepting them, so the accepted status rides the pull request as ADR-003 requires. Rejected: `done` would delete uncommitted files in the main worktree.\n- Captures follow the active item: `pm-park`, `pm-risk`, and `pm-adr` write in the active item's worktree. Rejected: supersedes ADR-001 and hides captures from other sessions until the merge.\n- Chosen: name them, never stop, the smallest change to five skills' interplay. Strongest argument against: in the separate-worktree layout the accepted status lands on the PM branch in a later PM commit, not inside the item's pull request, and the spec on the branch names an ADR the branch does not carry.",
+      "consequences": "- ADR-001 is unchanged: captures and ADRs are still written in the main worktree.\n- In the separate-worktree layout, the accepted ADR and the captures reach the PM branch through its next PM commit, not through the item's merge.\n- `pm-adr`'s Guard names both places `accept` may write when `pm-checkpoint` (`done`) applies it."
     }
   ],
   "counts": {
-    "next": 2,
+    "next": 1,
     "later": 14,
     "nextMax": 5,
-    "openInbox": 13,
+    "openInbox": 14,
     "discuss": 0,
     "shapingBriefs": 0,
-    "done": 29,
+    "done": 30,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -2068,7 +2095,6 @@
     "reviewDue": true,
     "lastReview": "2026-11-22",
     "claimable": [
-      "R-041",
       "R-040"
     ],
     "drift": true

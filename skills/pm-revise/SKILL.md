@@ -156,8 +156,8 @@ only in the conversation, and never resume the interrupted step silently.
 8. **`park`.** Run `pm-park` with `Discuss: yes`, `Kind: improvement` (or
    `bug` when the user is reporting a defect), and `Related: <ID>`. For
    each ADR from step 2 the revision reverses, add
-   `Supersedes ADR-NNN <title> in design.` under the inbox file's
-   `## Notes`.
+   `- <YYYY-MM-DD> Supersedes ADR-NNN <title> in design.` (today's date)
+   under the inbox file's `## Notes`.
 9. **Commit** once, after the last PM file is written, unless step 5
    already committed: `docs(pm): revise <ID> <short reason>`.
 10. **Hand back.** Invoke the stage skill from the Handoffs table in
