@@ -66,6 +66,8 @@ describe("clean PM state", () => {
 
   it("writes ENGINEERING.md on a fresh install", () => {
     expect(existsSync(join(initRoot(), "planning", "ENGINEERING.md"))).toBe(true);
+    const init = readFileSync(join(import.meta.dir, "..", "..", "pm-init", "SKILL.md"), "utf8");
+    expect(init).toMatch(/^\s*\| `ENGINEERING\.md` \| `<PM root>\/ENGINEERING\.md` \|/m);
   });
 
   it("passes for the fixture project, with the export built and validated", async () => {
