@@ -43,10 +43,10 @@
 - Produces: `adrFile(planningPath: string, adrPath: string): string` (absolute), exported from `src/loaders/adrs.ts`.
 - `adrsLoader()` also passes `{ fileURL }` to `renderMarkdown`, so `html` and the section entries render alike.
 
-- [ ] **Step 1:** Implement `adrFile` as `join(dirname(planningPath), 'decisions', basename(adrPath))`, and `adrSectionsLoader` following `repoDocsLoader`'s `store.set` shape (`fileURLToPath(config.root)` for the site root). Skip a section whose Markdown is `null` or blank, as `html` does.
-- [ ] **Step 2:** Register `'adr-sections': defineCollection({ loader: adrSectionsLoader() })` in `content.config.ts`, with a one-line comment.
-- [ ] **Step 3:** Run `cd packages/pm-docs-site; bun test test/integration.test.ts test/links.test.ts`. Expected: PASS (nothing reads the new collection yet).
-- [ ] **Step 4:** Commit: `feat(pm-docs-site): rendered ADR section entries (R-050)`.
+- [x] **Step 1:** Implement `adrFile` as `join(dirname(planningPath), 'decisions', basename(adrPath))`, and `adrSectionsLoader` following `repoDocsLoader`'s `store.set` shape (`fileURLToPath(config.root)` for the site root). Skip a section whose Markdown is `null` or blank, as `html` does.
+- [x] **Step 2:** Register `'adr-sections': defineCollection({ loader: adrSectionsLoader() })` in `content.config.ts`, with a one-line comment.
+- [x] **Step 3:** Run `cd packages/pm-docs-site; bun test test/integration.test.ts test/links.test.ts`. Expected: PASS (nothing reads the new collection yet).
+- [x] **Step 4:** Commit: `feat(pm-docs-site): rendered ADR section entries (R-050)`.
 
 ### Task 2: ADR page renders sections through Astro
 
@@ -61,7 +61,7 @@
 - Consumes: the `adr-sections` collection from Task 1.
 - Produces: `LinkedHtml.astro`, props `{ known: Set<string> }` (the type `siteRefs()` returns for `known`), prints `linkHtml(await Astro.slots.render('default'), known).html` with `set:html`.
 
-- [ ] **Step 1: Write the failing tests** in `integration.test.ts`, using `scratchSite` as the Mermaid case does:
+- [x] **Step 1: Write the failing tests** in `integration.test.ts`, using `scratchSite` as the Mermaid case does:
 
 ```ts
 it('an ADR section with a relative image builds to a resolved img', () => {
@@ -84,10 +84,10 @@ it('an ADR section with a missing relative image fails the build', () => {
 
 Write the PNG from a base64 1x1 literal with `Buffer.from(..., 'base64')`. The fixture builds a page for R-013 (`links.test.ts` asserts the same href form for R-012).
 
-- [ ] **Step 2:** Run `cd packages/pm-docs-site; bun test test/integration.test.ts -t "relative image"`. Expected: the first FAILS (`__ASTRO_IMAGE_` present), the second FAILS (build succeeds).
-- [ ] **Step 3:** Create `LinkedHtml.astro`. In `[id].astro`, read each section entry with ``getEntry('adr-sections', `${adr.id.toLowerCase()}/${key}`)``, then `const { Content } = await render(entry)`, and render `<LinkedHtml known={known}><Content /></LinkedHtml>` in place of the `set:html` fragment. Keep `None recorded.` for `''` and skip `null` as today. Update the file's header comment.
-- [ ] **Step 4:** Run `cd packages/pm-docs-site; bun test test/integration.test.ts test/links.test.ts`. Expected: PASS, including the ADR-003 remote image and Mermaid cases.
-- [ ] **Step 5:** Commit: `fix(pm-docs-site): resolve relative images in ADR sections (R-050)`.
+- [x] **Step 2:** Run `cd packages/pm-docs-site; bun test test/integration.test.ts -t "relative image"`. Expected: the first FAILS (`__ASTRO_IMAGE_` present), the second FAILS (build succeeds).
+- [x] **Step 3:** Create `LinkedHtml.astro`. In `[id].astro`, read each section entry with ``getEntry('adr-sections', `${adr.id.toLowerCase()}/${key}`)``, then `const { Content } = await render(entry)`, and render `<LinkedHtml known={known}><Content /></LinkedHtml>` in place of the `set:html` fragment. Keep `None recorded.` for `''` and skip `null` as today. Update the file's header comment.
+- [x] **Step 4:** Run `cd packages/pm-docs-site; bun test test/integration.test.ts test/links.test.ts`. Expected: PASS, including the ADR-003 remote image and Mermaid cases.
+- [x] **Step 5:** Commit: `fix(pm-docs-site): resolve relative images in ADR sections (R-050)`.
 
 ### Task 3: Dev server, docs, and full verification
 
@@ -97,8 +97,8 @@ Write the PNG from a base64 1x1 literal with `Buffer.from(..., 'base64')`. The f
 - Modify: `packages/pm-docs-site/README.md` (the Decisions view: relative images resolve from `<PM root>/decisions/`; a missing file fails the build)
 - Modify: `planning/decisions/ADR-012-the-site-reads-image-files-beside-an-adr.md` only through `pm-adr` if the decision changes (it should not)
 
-- [ ] **Step 1:** In a scratch site from Task 2's setup, run `node packages/pm-docs-site/lib/cli.ts dev <scratch>/site --port <free port>` (as `test/cli.test.ts` does) and request the image URL from the ADR-003 page. Expected: 200. On 403, add the `fs.allow` entry and re-check.
-- [ ] **Step 2:** Add the README sentence.
-- [ ] **Step 3:** Run `just package-test`. Expected: PASS.
-- [ ] **Step 4:** Run `just docs-check` and `just lint-check`. Expected: PASS.
-- [ ] **Step 5:** Commit: `docs(pm-docs-site): ADR relative images (R-050)` (with the `lib/index.ts` change when made).
+- [x] **Step 1:** In a scratch site from Task 2's setup, run `node packages/pm-docs-site/lib/cli.ts dev <scratch>/site --port <free port>` (as `test/cli.test.ts` does) and request the image URL from the ADR-003 page. Expected: 200. On 403, add the `fs.allow` entry and re-check.
+- [x] **Step 2:** Add the README sentence.
+- [x] **Step 3:** Run `just package-test`. Expected: PASS.
+- [x] **Step 4:** Run `just docs-check` and `just lint-check`. Expected: PASS.
+- [x] **Step 5:** Commit: `docs(pm-docs-site): ADR relative images (R-050)` (with the `lib/index.ts` change when made).
