@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-25T15:36:46+00:00",
+  "generatedAt": "2026-11-25T15:38:21+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-055-engineering-lint-and-skill-review-minors",
-    "head": "fa950150cee08f534e2e5a0a8df9f7ddfa917dea"
+    "head": "48fa680c43d04d44669e09e334589c24264b2be9"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -311,19 +311,165 @@
       ],
       "revisits": null
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-055-engineering-lint-and-skill-review-minors",
     "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
     "milestone": "M4",
     "spec": "docs/superpowers/specs/2026-11-25-engineering-lint-review-minors-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-25-engineering-lint-review-minors.md",
     "started": "2026-11-25",
     "doneWhen": [
       "Each of the nine findings in the Note is fixed or has a one-line won't-fix reason in the item's plan, the `lint.test.ts` drift test compares rule text as well as IDs, the Challenge protocol's \"applies in\" list names `pm-engineering`, and `just lint-check` passes."
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-25-engineering-lint-review-minors.md",
+    "checked": 0,
+    "total": 23,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "Rule text has one source",
+        "checked": 0,
+        "total": 6,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing test** — add to `describe(\"rules.md\")`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run it and see it fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Fix the two engineering rows in `rules.md`**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Copy every `rules.md` description into its `rules.ts` summary** (52 rules differ, plus the two above). Escape only what a TypeScript string needs. Change the header comment to: `references/rules.md documents the same rules; each summary is that file's description, word for word, and the tests keep the two equal.`",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Run the tests**",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "Engineering check and fix edge cases (findings 1, 4, 5, 6)",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** in `describe(\"engineering rules\")`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run them and see them fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run the tests**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "Fresh-install test checks pm-init's file table (finding 7)",
+        "checked": 0,
+        "total": 3,
+        "steps": [
+          {
+            "text": "**Step 1: Extend the test** `writes ENGINEERING.md on a fresh install`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Prove it bites** — temporarily rename the row in `skills/pm-init/SKILL.md:44`, run `bun test skills/pm-lint/scripts/lint.test.ts -t \"fresh install\"`, expect FAIL, restore the row, expect PASS.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "Challenge protocol names pm-engineering (finding 8)",
+        "checked": 0,
+        "total": 4,
+        "steps": [
+          {
+            "text": "**Step 1: Edit the sentence** in both files: `...\\`pm-risk\\` (add, re-rating, and mitigate), \\`pm-engineering\\` (add and change), and \\`pm-docs-site\\` (plan).` Re-wrap the paragraph to the existing width; keep the two copies identical.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Bump**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Validate**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 5,
+        "title": "pm-engineering follows the supersede chain (finding 9)",
+        "checked": 0,
+        "total": 3,
+        "steps": [
+          {
+            "text": "**Step 1: Rewrite step 1's supersede sentence** to: follow `superseded by` from ADR to ADR until an ADR that is not superseded (stop and refuse with `ADR-NNN: the superseded by chain loops at ADR-KKK.` when an ID repeats, and `ADR-KKK has no file in <PM root>/decisions/.` when a link is missing). When the last ADR is accepted or proposed, ask `ADR-NNN <title> (<status>) is superseded; the current decision is ADR-MMM <title> (<status>). Use it instead?` with `Use ADR-MMM (recommended)` and `Set Decision: none`. When the last ADR is deprecated, offer the deprecated choices that follow.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Lint**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 6,
+        "title": "Verify Done when",
+        "checked": 0,
+        "total": 2,
+        "steps": [
+          {
+            "text": "**Step 1:** Run `just lint-check`. Expected: pass.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2:** Confirm each finding (1–9) maps to a commit above; none is won't-fix.",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -760,7 +906,7 @@
           "title": "Engineering lint and skill review minors",
           "owner": "agent",
           "size": "S",
-          "detail": "plan"
+          "detail": "execute, 0/23 plan steps"
         }
       ],
       "next": [
