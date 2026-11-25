@@ -107,19 +107,29 @@ and `Explain <ID>`.
    `pause` and name the open steps.
    **The spec's ADRs** (Shared definitions: ADR): read every `ADR-NNN` ID
    in the file named by `Spec` in `NOW.md`. With no `Spec`, or no IDs in
-   it, skip this check and write no ADR line. When an ID has no
-   `ADR-NNN-*.md` file in the decisions folder of the item's branch, stay
-   in `pause` and list `ADR-NNN named in <spec> has no file.` Otherwise:
+   it, skip this check and write no ADR line. Look for each ID's
+   `ADR-NNN-*.md` file in the decisions folder of the item's branch, then
+   in the main worktree's decisions folder, where `pm-adr` writes when the
+   item's branch is in another worktree (ADR-010). When an ID is in
+   neither, stay in `pause` and list `ADR-NNN named in <spec> has no
+   file.` Otherwise:
    - **Choose the commit worktree** (rules: **Completion rides the branch**).
      Fetch first: the record starts from the **PM base**. When the item's
      branch is the PM branch, run **Pull latest** and write it in place.
      Otherwise read `LOG.md`, `NOW.md`, `ROADMAP.md`, `STRATEGY.md`, and
      the brief from the **PM base** (`git show <PM base>:<PM
      root>/<file>`), apply the record to those contents, and write and
-     commit them in the worktree that holds the item's branch. Stop when
-     the PM branch has **Uncommitted PM state**, when the PM branch and its
-     remote have diverged, or when the item's worktree has uncommitted
-     changes under the PM root.
+     commit them in the worktree that holds the item's branch.
+   - **Captures never stop the close** (ADR-010). A capture is an
+     uncommitted inbox file, decisions-folder file, or `RISKS.md`, written
+     mid-workflow by `pm-park`, `pm-bug`, `pm-risk`, or `pm-adr`. Captures in
+     the item's worktree are swept into this commit. Captures in the main
+     worktree, when it is another worktree, stay there: add the Note `<n>
+     captures uncommitted on <PM branch>: <paths>. The next PM commit
+     there carries them.` Stop only when the PM branch and its remote have
+     diverged, or when either worktree has another uncommitted PM path
+     (`NOW.md`, `ROADMAP.md`, `LOG.md`, `STRATEGY.md`, a brief): the record
+     must start from committed state.
    - Append to `## Done` in `LOG.md`:
      `- <date> <ID> <Title>. Milestone: <the Milestone in NOW.md, or none>.
      Owner: <owner>. Plan: <path | none>. Result: branch <branch>.`
@@ -130,12 +140,14 @@ and `Explain <ID>`.
    - **Accept the item's ADRs:** for each ADR with `Status: proposed` and
      `Item: <this ID>` that the spec names, or whose `Supersedes` names an
      ADR the spec names (a `pm-revise` replacement), apply `pm-adr accept`: its
-     write steps only, changing only the `Status` line, in the worktree
-     that holds the item's branch (no `pm-adr` output or commit). The
-     decisions folder is not read from the **PM base**: the item's ADRs are
-     committed on its branch. Leave every other ADR as it is, including a
-     proposed ADR of another item that the spec only cites. Add the Note
-     `Accepted ADR-NNN <title>.` for each.
+     write steps only, changing only the `Status` line (no `pm-adr` output
+     or commit). An ADR on the item's branch is accepted in the worktree
+     that holds it, with the Note `Accepted ADR-NNN <title>.` An ADR found
+     only in the main worktree is accepted there, in place, with the Note
+     `Accepted ADR-NNN <title> in the main worktree; the next PM commit on
+     <PM branch> carries it.` The decisions folder is never read from the
+     **PM base**. Leave every other ADR as it is, including a proposed ADR
+     of another item that the spec only cites.
    - If this item is the last open item of its milestone (no other item
      with that `Milestone` in `NOW.md`, `## Next`, or `## Later`), ask one
      choice question: `All <M> <Name> items are done.
