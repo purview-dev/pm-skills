@@ -10,11 +10,11 @@ import Decisions, { type DecisionRow } from '../../components/decisions/Decision
 import ExportStamp from '../../components/ExportStamp.astro';
 import { adrSearchText } from '../../lib/decisions';
 import { adrHref, loadPlanning } from '../../lib/planning';
-import { siteRefs } from '../../lib/references';
+import { siteRefs } from '../../lib/site-refs';
 import '../../styles/components.css';
 
 const planning = loadPlanning();
-const { known } = siteRefs();
+const { known } = await siteRefs();
 const named = (ref: string | null) => {
 	if (!ref) return null;
 	const target = known.get(ref);

@@ -2,8 +2,8 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'bun:test';
 
-import { loadPlanning } from '../src/lib/planning';
-import { linkify, references, refText, RELATION_LABELS, targets } from '../src/lib/references';
+import { adrHref, features, loadPlanning } from '../src/lib/planning';
+import { linkify, references, refText, RELATION_LABELS, targets, type Backlink } from '../src/lib/references';
 
 const FIXTURE = fileURLToPath(new URL('./fixtures/planning.json', import.meta.url));
 const planning = loadPlanning(FIXTURE);
@@ -175,5 +175,19 @@ describe('ADR references', () => {
 		expect(RELATION_LABELS.decision).toBe('Decisions');
 		expect(RELATION_LABELS.supersedes).toBe('Supersedes');
 		expect(RELATION_LABELS['superseded by']).toBe('Superseded by');
+	});
+});
+
+describe('references from rendered ADR HTML (ADR-011)', () => {
+	it('ADR keys replace the raw-Markdown pass for an ADR page', () => {
+		const copy = structuredClone(planning);
+		const adr = copy.adrs[0]!;
+		const item = features(copy)[0]!.id;
+		const fromAdr = (back: Map<string, Backlink[]>) => back.get(item)!.some((entry) => entry.href === adrHref(adr.id) && entry.relation === 'mentions');
+
+		adr.context = `See ${item}.`;
+		expect(fromAdr(references(copy, all))).toBe(true);
+		expect(fromAdr(references(copy, all, new Map([[adr.id, new Set<string>()]])))).toBe(false);
+		expect(fromAdr(references(copy, all, new Map([[adr.id, new Set([item])]])))).toBe(true);
 	});
 });

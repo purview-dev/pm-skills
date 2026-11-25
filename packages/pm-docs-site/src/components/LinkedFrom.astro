@@ -1,13 +1,14 @@
 ---
 // The pages that link to one item, milestone or risk, grouped by how they
 // link. Derived from planning.json (references), so search ignores it.
-import { RELATION_LABELS, siteRefs, type Relation } from '../lib/references';
+import { RELATION_LABELS, type Relation } from '../lib/references';
+import { siteRefs } from '../lib/site-refs';
 
 interface Props {
 	ref: string;
 }
 
-const links = siteRefs().back.get(Astro.props.ref) ?? [];
+const links = (await siteRefs()).back.get(Astro.props.ref) ?? [];
 const groups = (Object.keys(RELATION_LABELS) as Relation[])
 	.map((relation) => ({ relation, links: links.filter((link) => link.relation === relation) }))
 	.filter((group) => group.links.length > 0);
