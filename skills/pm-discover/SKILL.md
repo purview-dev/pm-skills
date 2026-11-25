@@ -86,8 +86,8 @@ into?` with the options `Analyse the product for opportunities
    When a finding or opportunity contradicts an accepted ADR, state it as a
    challenge with evidence (`ADR-NNN <title> (accepted) says <X>; this
    needs <Y>`) under the opportunity, and an opportunity parked in step 7
-   carries `Supersedes ADR-NNN <title> in design.` under `## Notes` in its
-   inbox file. This skill never runs `pm-adr`.
+   carries `- <YYYY-MM-DD> Supersedes ADR-NNN <title> in design.` (today's
+   date) under `## Notes` in its inbox file. This skill never runs `pm-adr`.
 5. **Challenge the roadmap.** Compare the findings with `## Next`,
    `STRATEGY.md`, and the active item. List items in Next that no evidence
    supports, opportunities the evidence ranks above them, and `V` lines
