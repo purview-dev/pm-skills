@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-25T00:48:35+00:00",
+  "generatedAt": "2026-11-25T07:23:16+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-041-adr-skill-follow-ups",
-    "head": "8c523916efed7f31de827574986111fde9a12bba"
+    "head": "aa09c1fa623d7bf7b3d28323cceda46e7b37897d"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -221,146 +221,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-041",
-      "title": "ADR skill follow-ups",
-      "serves": [
-        "V5"
-      ],
-      "owner": "agent",
-      "size": "S",
-      "dependsOn": [],
-      "revisits": null
-    },
-    "stage": "execute",
-    "session": "feat/r-041-adr-skill-follow-ups",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
     "brief": null,
-    "milestone": "M4",
-    "spec": "docs/superpowers/specs/2026-11-25-adr-skill-follow-ups-design.md",
-    "plan": "docs/superpowers/plans/2026-11-25-adr-skill-follow-ups.md",
-    "started": "2026-11-25",
-    "doneWhen": [
-      "`pm-discover` and `pm-revise` write the `Supersedes` Notes line with its `<YYYY-MM-DD>` prefix.",
-      "`pm-purview` step 6 excludes `check` mode.",
-      "`pm-checkpoint` (`done`) finds an item's ADRs written in the main worktree.",
-      "`pm-shape` and `pm-review` reuse a `## For this discussion` legend for an ADR.",
-      "`pm-checkpoint` (`done`) commits or names captures written mid-workflow instead of stopping.",
-      "`just lint-check` passes."
-    ],
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-25-adr-skill-follow-ups.md",
-    "checked": 0,
-    "total": 18,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "Dated Supersedes notes and legend reuse (problems 1 and 4)",
-        "checked": 0,
-        "total": 4,
-        "steps": [
-          {
-            "text": "**Step 1: Confirm the old wording is present**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Edit**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Verify**",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 2,
-        "title": "`pm-purview` check mode stops before deciding (problem 2)",
-        "checked": 0,
-        "total": 3,
-        "steps": [
-          {
-            "text": "**Step 1: Edit**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Verify**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 3,
-        "title": "`pm-checkpoint` done finds main-worktree ADRs and names captures (problems 3 and 5, ADR-010)",
-        "checked": 0,
-        "total": 6,
-        "steps": [
-          {
-            "text": "**Step 1: Edit `pm-checkpoint` step 5, \"The spec's ADRs\"**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Edit \"Choose the commit worktree\"**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Edit \"Accept the item's ADRs\"**",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Edit `pm-adr` Guard**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Verify**",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 4,
-        "title": "Managed rules, version, and full check",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Edit the reference**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Copy into `AGENTS.md`**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Bump**",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Full check**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit**",
-            "checked": false
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [
       {
@@ -745,15 +618,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-041",
-          "title": "ADR skill follow-ups",
-          "owner": "agent",
-          "size": "S",
-          "detail": "execute, 0/18 plan steps"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-040",
@@ -766,6 +631,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-25",
+          "id": "R-041",
+          "title": "ADR skill follow-ups",
+          "milestone": "M4",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-25-adr-skill-follow-ups.md",
+          "result": "branch feat/r-041-adr-skill-follow-ups"
+        },
         {
           "date": "2026-11-24",
           "id": "R-034",
@@ -1030,6 +904,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-25",
+        "kind": "done",
+        "id": "R-041",
+        "title": "ADR skill follow-ups",
+        "milestone": "M4",
+        "owner": "agent",
+        "result": "branch feat/r-041-adr-skill-follow-ups"
+      },
       {
         "date": "2026-11-24",
         "kind": "done",
@@ -1367,6 +1250,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-25",
+        "id": "R-041",
+        "title": "ADR skill follow-ups",
+        "milestone": "M4",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-25-adr-skill-follow-ups.md",
+        "result": "branch feat/r-041-adr-skill-follow-ups"
+      },
       {
         "date": "2026-11-24",
         "id": "R-034",
@@ -1899,6 +1791,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "R-034 final-review minors, deferred:\n\n1. `fixStructure` cannot sort Principles while one heading has no EP ID (comparator returns 0, not transitive); `skills/pm-lint/scripts/structure.ts`.\n2. `rules.md` lists the 8-word principle title under the error `engineering/principle`, but the code emits the warning `title/length`, whose description names only inbox files and risks (`rules.ts`, `rules.md`).\n3. `rules.ts` and `rules.md` wording differs for `engineering/technology`, `engineering/principle`, and `engineering/removed`; the drift test compares IDs only.\n4. A Technology heading shaped `### EP-001 Foo` is keyed as `Foo`, giving a false duplicate with `### Foo`.\n5. `Decision: None` (capital N) is an error; other files accept `none` in any case.\n6. `localeCompare` without a locale makes `engineering/order` depend on the host locale for non-ASCII names.\n7. The `writes ENGINEERING.md on a fresh install` test proves only that the template exists, not `pm-init`'s file table row.\n8. The Challenge protocol's \"applies in\" list in the managed section omits `pm-engineering` (add).\n9. `pm-engineering` step 1 follows `superseded by` one step only; a superseded successor is recommended unchecked."
+    },
+    {
+      "file": "planning/inbox/2026-11-25-0717-package-tests-time-out-in-full-lint-check.md",
+      "title": "Package tests time out in full lint-check",
+      "captured": "2026-11-25 07:17",
+      "source": "agent (R-041 execute)",
+      "kind": "bug",
+      "severity": "minor",
+      "affects": "packages/pm-docs-site/test/cli.test.ts, packages/pm-docs-site/test/browser/graph.browser.ts",
+      "context": "R-041 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Two consecutive `just lint-check` runs on a prose-only branch failed in `package-test`, each on a different test that passes alone: `cli.test.ts` \"still reads a site whose config is astro.config.mjs\" timed out after 180000ms (4.27s alone), and `graph.browser.ts:296` \"usable at 320px\" found `.plan-graph__toolbar` hidden within 5000ms (482ms alone)."
     }
   ],
   "briefs": [
@@ -2156,7 +2063,7 @@
       "id": "ADR-010",
       "path": "planning/decisions/ADR-010-item-close-names-captures-accepts-adrs-in-place.md",
       "title": "Item close names captures, accepts ADRs in place",
-      "status": "proposed",
+      "status": "accepted",
       "supersededBy": null,
       "date": "2026-11-25",
       "category": "architecture",
@@ -2164,7 +2071,7 @@
       "item": "R-041",
       "source": null,
       "context": "ADR-003 has `pm-checkpoint` (`done`) accept the spec's proposed ADRs on the item's branch, inside the Completion record commit, and refuse to close when a named ADR has no file there. `pm-adr`, `pm-park`, and `pm-risk` write in the main worktree (ADR-001). When the item's branch is checked out in a separate worktree, the design stage's ADRs land on the PM branch, so `done` stops with \"has no file\"; and any capture written mid-workflow leaves uncommitted PM state that `done`'s guard stops on, in either worktree (R-041 problems 3 and 5).",
-      "decision": "`pm-checkpoint` (`done`) never stops for a mid-workflow capture. An uncommitted capture (an inbox file, a decisions-folder file, or `RISKS.md`) in the item's worktree is swept into the Completion record commit; one in the main worktree when that is another worktree is named in a `Note` for the next PM commit on the PM branch. A spec-named ADR is looked for on the item's branch first, then in the main worktree's decisions folder; when it is found only in the main worktree and is `proposed` with `Item: <this ID>`, `done` applies `pm-adr accept` there, in place, and names it in the `Note`. Only a named ADR found in neither place keeps `done` in `pause`. Other uncommitted PM state (`NOW.md`, `ROADMAP.md`, `LOG.md`, `STRATEGY.md`, a brief) still stops it.",
+      "decision": "`pm-checkpoint` (`done`) never stops for a mid-workflow capture. An uncommitted capture (an inbox file, a decisions-folder file, or `RISKS.md`) in the item's worktree is swept into the Completion record commit; one in the main worktree when that is another worktree is named in a `Note` for the next PM commit on the PM branch. A spec-named ADR is looked for on the item's branch first, then in the main worktree's decisions folder; when it is found only in the main worktree and is `proposed` with `Item: <this ID>`, `done` applies `pm-adr accept` there, in place, only after the Completion record commit succeeds, and names it in the `Note`. Only a named ADR found in neither place keeps `done` in `pause`. Other uncommitted PM state (`NOW.md`, `ROADMAP.md`, `LOG.md`, `STRATEGY.md`, a brief) still stops it.",
       "alternatives": "- Do nothing: `done` keeps stopping on the separate-worktree layout and on every mid-workflow capture.\n- Sweep or move at done: move the item's ADRs from the main worktree into the item's worktree before accepting them, so the accepted status rides the pull request as ADR-003 requires. Rejected: `done` would delete uncommitted files in the main worktree.\n- Captures follow the active item: `pm-park`, `pm-risk`, and `pm-adr` write in the active item's worktree. Rejected: supersedes ADR-001 and hides captures from other sessions until the merge.\n- Chosen: name them, never stop, the smallest change to five skills' interplay. Strongest argument against: in the separate-worktree layout the accepted status lands on the PM branch in a later PM commit, not inside the item's pull request, and the spec on the branch names an ADR the branch does not carry.",
       "consequences": "- ADR-001 is unchanged: captures and ADRs are still written in the main worktree.\n- In the separate-worktree layout, the accepted ADR and the captures reach the PM branch through its next PM commit, not through the item's merge.\n- `pm-adr`'s Guard names both places `accept` may write when `pm-checkpoint` (`done`) applies it."
     }
@@ -2173,10 +2080,10 @@
     "next": 1,
     "later": 14,
     "nextMax": 5,
-    "openInbox": 13,
+    "openInbox": 14,
     "discuss": 0,
     "shapingBriefs": 0,
-    "done": 29,
+    "done": 30,
     "dropped": 5,
     "blockers": 0,
     "openRisks": 0,
@@ -2190,6 +2097,6 @@
     "claimable": [
       "R-040"
     ],
-    "drift": false
+    "drift": true
   }
 }
