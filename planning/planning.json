@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-26T01:03:57+00:00",
+  "generatedAt": "2026-11-26T02:01:49+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-036-plan-citation-and-done-check",
-    "head": "ced5f0cdc238791b4f112f4900037f19ae18a5da"
+    "head": "df75a98ecf68ef1f8ed7fc9610d2453eae34e685"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -2158,6 +2158,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "Five minors the R-055 whole-branch review found and deferred. (1) `engineering/values` and `engineering/decision-current` messages name a technology headed `### EP-001 Bun` as `EP-001`, because `checkEngineeringValues` uses `block.id || block.title`; use `block.name` for Technology blocks. (2) The `engineering/removed` message says \"A removed entry is\", while the rule text now says \"A removed line is\". (3) The `pm-engineering` view recommends `change <entry> Decision <ADR-MMM>` with the immediate successor, not the end of the `superseded by` chain that step 1 now follows; a deprecated chain end has no ADR to suggest. (4) The \"orders technology with English collation\" test passes on an English-locale host without the `\"en\"` argument; add a case where code-point order and English collation differ. (5) `pm-engineering` step 4 (`change`) does not name the Challenge protocol checks that the managed section now says apply to it."
+    },
+    {
+      "file": "planning/inbox/2026-11-26-0200-pm-setup-adr-note-before-init.md",
+      "title": "pm-setup misses docs/adr Note before init",
+      "captured": "2026-11-26 02:00",
+      "source": "agent (R-036 execute)",
+      "kind": "bug",
+      "severity": "minor",
+      "affects": "pm-setup",
+      "context": "R-036 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "pm-setup Step 5 item 4 checks for an existing docs/adr/ folder only when `<PM root>/config.md` exists, so running pm-setup before pm-init (the usual order on a new install) never prints the Note that suggests `pm-adr import docs/adr/`."
     }
   ],
   "briefs": [
@@ -2501,7 +2516,7 @@
     "next": 4,
     "later": 12,
     "nextMax": 5,
-    "openInbox": 5,
+    "openInbox": 6,
     "discuss": 3,
     "shapingBriefs": 0,
     "done": 33,
