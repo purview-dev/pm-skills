@@ -73,6 +73,12 @@ if (!section.includes("- **Every plan handoff**")) {
   fail("AGENTS-section.md: missing **Every plan handoff**");
 }
 
+// done checks the item's changed files against the principles before writing the completion record (R-036).
+const checkpoint = read("skills", "pm-checkpoint", "SKILL.md");
+if (!checkpoint.includes("**Principles check**") || !checkpoint.includes("--diff-filter=d")) {
+  fail("skills/pm-checkpoint/SKILL.md: done has no **Principles check**");
+}
+
 for (const name of repo) {
   const fm = checkFrontmatter("skills", name);
   if (fm === null) continue;

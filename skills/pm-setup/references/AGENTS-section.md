@@ -86,9 +86,11 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   line in `LOG.md`, `NOW.md` set to idle, its removal from `ROADMAP.md`, the
   brief's `Status: done`, and its milestone's `Status: done (<date>)` when
   it is the last open item of that milestone. `pm-checkpoint` (`done`)
-  writes it for the active item; `pm-item` (`done`) for any other. It is
-  committed on the item's branch, inside the item's pull request, before CI
-  runs (rules: Committing PM state, **Completion rides the branch**).
+  writes it for the active item; `pm-item` (`done`) for any other.
+  `pm-checkpoint` (`done`) runs the principles check first and writes
+  nothing when a command check fails. It is committed on the item's
+  branch, inside the item's pull request, before CI runs (rules:
+  Committing PM state, **Completion rides the branch**).
 - **Unmerged completion:** a **Completion record** whose branch has not been
   merged. It is reversible: `pm-revise` (`fix-in-place`) removes the
   `## Done` line and restores `NOW.md` at `execute`, and the fix re-runs the

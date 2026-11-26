@@ -115,6 +115,24 @@ and `Explain <ID>`.
    is another worktree, in its decisions folder, where `pm-adr` writes
    (ADR-010). When an ID is in neither, stay in `pause` and list `ADR-NNN
    named in <spec> has no file.` Otherwise:
+   - **Principles check** (ADR-013): changed files are `git diff
+     --name-only --diff-filter=d <PM base>...HEAD` in the worktree that
+     holds the item's branch, excluding the PM root. Read `ENGINEERING.md`
+     from the **PM base**. A missing file, or no principle whose `Applies
+     to` is `all` or matches a changed file, is the Note `Principles: none
+     apply.` Otherwise, for each matching principle: a `Check: <command>`
+     runs in the item's worktree, in the shell the session uses; a
+     non-zero exit, including a command that cannot run, keeps `done` in
+     `pause` with nothing written, listing `EP-NNN <title>: <command>
+     failed (exit <n>).` with the last 20 lines of output — run every
+     matching command check before stopping, so every failure is listed at
+     once. A `Check: review` reads the diff of the matching files against
+     `Rule`; each break found is the Note `EP-NNN <title>: <file>
+     <finding>` and one inbox file by `pm-park` (`agent` mode, `Kind:
+     tech-debt`, `Affects: <ID>`, `Source: agent (<ID> done)`), and it
+     never blocks. Record the result as one Note: `Principles: <n> command
+     checks passed, <m> review findings.` A review finding's inbox file is
+     a capture (ADR-010), as **Check before writing** applies next.
    - **Check before writing** (ADR-010). A capture is an uncommitted inbox
      file, decisions-folder file, or `RISKS.md`, written mid-workflow by
      `pm-park`, `pm-bug`, `pm-risk`, or `pm-adr`. Captures never stop the
@@ -293,7 +311,7 @@ and `Explain <ID>`.
 
 ## Note
 
-- <commit result, changed files outside the PM root, assumptions, newly claimable items, the next stacked item>
+- <commit result, changed files outside the PM root, assumptions, newly claimable items, the next stacked item, the principles check result>
 ```
 
 Omit item 2 in every mode except `done`.
