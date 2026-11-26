@@ -11,22 +11,24 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: idle
-- Item:
-- Session:
-- Stage:
+- Status: active
+- Item: R-015 Rehearse a fresh install in a scratch repository
+- Session: feat/r-015-rehearse-a-fresh-install
+- Stage: design
 - Brief:
-- Milestone:
-- Serves:
-- Owner:
-- Size:
-- Depends on:
+- Milestone: M2
+- Serves: V1
+- Owner: agent
+- Size: S
+- Depends on: none
 - Revisits:
 - Spec:
 - Plan:
-- Started:
+- Started: 2026-11-26
 
 ## Done when
+
+- in an empty scratch repository, `npx skills add https://github.com/purview-dev/pm-skills -y` then `pm-setup` reports every pm-* and workflow skill installed, recorded in a report in `planning/research/`.
 
 ## Checkpoint
 

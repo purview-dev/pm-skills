@@ -14,16 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-015 Rehearse a fresh install in a scratch repository
-
-- Serves: V1
-- Milestone: M2
-- Owner: agent
-- Done when: in an empty scratch repository, `npx skills add https://github.com/purview-dev/pm-skills -y` then `pm-setup` reports every pm-* and workflow skill installed, recorded in a report in `planning/research/`.
-- Size: S
-- Depends on: none
-- Status: ready
-
 ### R-057 pm-setup suggests ADR import before init
 
 - Serves: V1

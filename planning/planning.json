@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-26T10:25:05+00:00",
+  "generatedAt": "2026-11-26T10:28:41+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "main",
-    "head": "b0098f93925465303287d21a1735fad68868717e"
+    "branch": "feat/r-015-rehearse-a-fresh-install",
+    "head": "be03d1e6511832f503d9cab56946464e6a2ac616"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -370,50 +370,38 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
+    "status": "active",
+    "item": {
+      "id": "R-015",
+      "title": "Rehearse a fresh install in a scratch repository",
+      "serves": [
+        "V1"
+      ],
+      "owner": "agent",
+      "size": "S",
+      "dependsOn": [],
+      "revisits": null
+    },
+    "stage": "design",
+    "session": "feat/r-015-rehearse-a-fresh-install",
     "brief": null,
-    "milestone": null,
+    "milestone": "M2",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-26",
+    "doneWhen": [
+      "in an empty scratch repository, `npx skills add https://github.com/purview-dev/pm-skills -y` then `pm-setup` reports every pm-* and workflow skill installed, recorded in a report in `planning/research/`."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-015",
-        "title": "Rehearse a fresh install in a scratch repository",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V1"
-        ],
-        "milestone": "M2",
-        "owner": "agent",
-        "doneWhen": "in an empty scratch repository, `npx skills add https://github.com/purview-dev/pm-skills -y` then `pm-setup` reports every pm-* and workflow skill installed, recorded in a report in `planning/research/`.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": null,
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-057",
         "title": "pm-setup suggests ADR import before init",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V1"
@@ -437,7 +425,7 @@
         "id": "R-006",
         "title": "Check pm-setup's skill counts in validate",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V1"
@@ -461,7 +449,7 @@
         "id": "R-052",
         "title": "Docs-site package: brief and inbox pages",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -485,7 +473,7 @@
         "id": "R-056",
         "title": "Package tests stable under full lint-check",
         "section": "next",
-        "position": 5,
+        "position": 4,
         "label": "next",
         "serves": [
           "V4"
@@ -808,15 +796,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-015",
           "title": "Rehearse a fresh install in a scratch repository",
           "owner": "agent",
           "size": "S",
-          "detail": "ready"
-        },
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-057",
           "title": "pm-setup suggests ADR import before init",
@@ -2399,7 +2388,7 @@
     }
   ],
   "counts": {
-    "next": 5,
+    "next": 4,
     "later": 12,
     "nextMax": 5,
     "openInbox": 3,
@@ -2417,7 +2406,6 @@
     "reviewDue": false,
     "lastReview": "2026-11-26",
     "claimable": [
-      "R-015",
       "R-057",
       "R-006",
       "R-052",
