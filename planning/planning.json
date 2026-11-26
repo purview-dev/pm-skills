@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-26T11:49:57+00:00",
+  "generatedAt": "2026-11-26T12:02:50+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-057-pm-setup-suggests-adr-import-before-init",
-    "head": "df7991850562c49aeb64858ed2bc1d7278f8feb1"
+    "head": "aab03b62083847e52650d3a679dddf89f879678a"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -375,28 +375,16 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-057",
-      "title": "pm-setup suggests ADR import before init",
-      "serves": [
-        "V1"
-      ],
-      "owner": "agent",
-      "size": "S",
-      "dependsOn": [],
-      "revisits": null
-    },
-    "stage": "design",
-    "session": "feat/r-057-pm-setup-suggests-adr-import-before-init",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
     "brief": null,
-    "milestone": "M2",
+    "milestone": null,
     "spec": null,
     "plan": null,
-    "started": "2026-11-26",
-    "doneWhen": [
-      "`pm-setup` run in a repository with `docs/adr/` and no `<PM root>/config.md` prints the Note that suggests `pm-adr import docs/adr/`, shown in a scratch-repository run, and `just validate` passes."
-    ],
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
   "plan": null,
@@ -777,15 +765,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-057",
-          "title": "pm-setup suggests ADR import before init",
-          "owner": "agent",
-          "size": "S",
-          "detail": "design"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-006",
@@ -819,6 +799,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-26",
+          "id": "R-057",
+          "title": "pm-setup suggests ADR import before init",
+          "milestone": "M2",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-26-pm-setup-adr-import-before-init.md",
+          "result": "branch feat/r-057-pm-setup-suggests-adr-import-before-init"
+        },
         {
           "date": "2026-11-26",
           "id": "R-036",
@@ -1128,6 +1117,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-26",
+        "kind": "done",
+        "id": "R-057",
+        "title": "pm-setup suggests ADR import before init",
+        "milestone": "M2",
+        "owner": "agent",
+        "result": "branch feat/r-057-pm-setup-suggests-adr-import-before-init"
+      },
       {
         "date": "2026-11-26",
         "kind": "done",
@@ -1582,6 +1580,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-26",
+        "id": "R-057",
+        "title": "pm-setup suggests ADR import before init",
+        "milestone": "M2",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-26-pm-setup-adr-import-before-init.md",
+        "result": "branch feat/r-057-pm-setup-suggests-adr-import-before-init"
+      },
       {
         "date": "2026-11-26",
         "id": "R-036",
@@ -2044,6 +2051,21 @@
       "brief": null,
       "reviewed": "2026-11-26",
       "idea": "Five minors the R-055 whole-branch review found and deferred. (1) `engineering/values` and `engineering/decision-current` messages name a technology headed `### EP-001 Bun` as `EP-001`, because `checkEngineeringValues` uses `block.id || block.title`; use `block.name` for Technology blocks. (2) The `engineering/removed` message says \"A removed entry is\", while the rule text now says \"A removed line is\". (3) The `pm-engineering` view recommends `change <entry> Decision <ADR-MMM>` with the immediate successor, not the end of the `superseded by` chain that step 1 now follows; a deprecated chain end has no ADR to suggest. (4) The \"orders technology with English collation\" test passes on an English-locale host without the `\"en\"` argument; add a case where code-point order and English collation differ. (5) `pm-engineering` step 4 (`change`) does not name the Challenge protocol checks that the managed section now says apply to it."
+    },
+    {
+      "file": "planning/inbox/2026-11-26-1130-pm-setup-current-install-skips-step-5.md",
+      "title": "pm-setup current install skips Step 5 checks",
+      "captured": "2026-11-26 11:30",
+      "source": "agent (R-057 execute)",
+      "kind": "question",
+      "severity": null,
+      "affects": "pm-setup",
+      "context": "R-057 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "pm-setup Step 4 stops after showing the plan when the install is already current, so Step 5 never runs; the read-only Step 5 checks (item 7, the outside ADR folder Note) then never surface on a current install. Decide whether read-only checks belong before the Step 4 stop."
     }
   ],
   "briefs": [
@@ -2387,10 +2409,10 @@
     "next": 4,
     "later": 11,
     "nextMax": 5,
-    "openInbox": 3,
+    "openInbox": 4,
     "discuss": 3,
     "shapingBriefs": 0,
-    "done": 34,
+    "done": 35,
     "dropped": 11,
     "blockers": 0,
     "openRisks": 0,
@@ -2407,6 +2429,6 @@
       "R-056",
       "R-042"
     ],
-    "drift": false
+    "drift": true
   }
 }
