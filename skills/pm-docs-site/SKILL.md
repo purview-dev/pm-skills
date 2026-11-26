@@ -25,9 +25,9 @@ snippets: `templates/aspire/MODULE.md`.
 
 ## Package
 
-Minimum package version: `0.1.0-pre.4`
+Minimum package version: `0.1.0-pre.7`
 
-This skill reads schemaVersion 5.
+This skill reads schemaVersion 6.
 
 The package's README (`node_modules/@purview-dev/pm-docs-site/README.md` in
 the site root) documents every option and the CLI. The skill installs the

@@ -1,6 +1,6 @@
 {
   "$schema": "./planning.schema.json",
-  "schemaVersion": 5,
+  "schemaVersion": 6,
   "generatedAt": "2026-11-08T14:22:05+00:00",
   "generator": {
     "skill": "pm-export",
@@ -350,7 +350,17 @@
       ],
       "brief": null,
       "reviewed": "never",
-      "idea": "Pausing a seat shows a zero total instead of the prorated amount."
+      "idea": "Pausing a seat shows a zero total instead of the prorated amount.",
+      "sections": [
+        {
+          "heading": "Idea",
+          "markdown": "Pausing a seat shows a zero total instead of the prorated amount."
+        },
+        {
+          "heading": "Reproduction",
+          "markdown": "1. Pause one seat.\n2. Open the invoice."
+        }
+      ]
     }
   ],
   "briefs": [
@@ -368,6 +378,32 @@
         {
           "date": "2026-11-06",
           "text": "Seat proration was missing. Must now: prorate the first period by day. Mode: fix-in-place. Supersedes: none."
+        }
+      ],
+      "sections": [
+        {
+          "heading": "Problem",
+          "markdown": "A tenant cannot see what they owe."
+        },
+        {
+          "heading": "Proposal",
+          "markdown": "Monthly invoices per seat.\n\n| Plan | Price |\n| --- | --- |\n| Seat | 10 |"
+        },
+        {
+          "heading": "Done when",
+          "markdown": "A tenant sees one invoice for the current period."
+        },
+        {
+          "heading": "Open questions",
+          "markdown": ""
+        },
+        {
+          "heading": "Decision",
+          "markdown": "Added to Next as R-007 on 2026-10-28."
+        },
+        {
+          "heading": "Revisions",
+          "markdown": "- 2026-11-06 Seat proration was missing. Must now: prorate the first period by day. Mode: fix-in-place. Supersedes: none."
         }
       ]
     }
