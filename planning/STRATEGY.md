@@ -10,8 +10,8 @@ made along the way.
 
 ## Current focus
 
-- Milestone: M4 Recorded technical decisions
-- Why now: ADR support must be complete (user, 2026-11-25); 8 of its items are done, 2 were dropped, its 1 open item (R-036 Plan citation and done check) is in Next, and the forecast is about 0.1 weeks at 8.25 items per week.
+- Milestone: M2 Verified install and upgrade
+- Why now: M4 is done (2026-11-26), and the user chose M2 over M5 on 2026-11-26; a consumer's fresh install (V1) has never been rehearsed end to end, which is the riskiest open assumption. Its 3 items (R-006, R-015, R-057) are S, so the forecast is about 0.4 weeks at 8.5 items per week.
 
 ## Milestones
 
@@ -52,7 +52,7 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 - Serves: V1
 - Exit criteria: in an empty scratch repository, `npx skills add https://github.com/purview-dev/pm-skills -y` then `pm-setup` reports every pm-* and workflow skill installed, and `just validate` fails when `pm-setup`'s skill count differs from the shipped skills.
 - Target: none
-- Status: planned
+- Status: active
 
 ### M3 Verified lifecycle guards
 
@@ -76,6 +76,10 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 - B2: We believe recording technology, principles, and ADRs, and naming the ones that apply in every design handoff, will stop agents contradicting earlier technical decisions, for maintainers of repositories that use pm-skills.
   Evidence: `planning/briefs/2026-11-22-where-do-adrs-fit.md` and `planning/briefs/2026-11-20-technology-and-engineering-principles.md` record agents contradicting earlier decisions because nothing records or points at them.
   We will know when: the M4 rehearsal report in `planning/research/` shows the design handoff naming the ADRs and principles that apply and `pm-checkpoint` (`done`) refusing a failing command check.
+  Status: won (2026-11-26)
+- B3: We believe rehearsing a fresh install in a scratch repository will catch install and setup defects before a consumer hits them, for new consumers of pm-skills.
+  Evidence: the R-036 rehearsal's setup alone found that `pm-setup` run before `pm-init` never suggests `pm-adr import` (R-057 pm-setup suggests ADR import before init).
+  We will know when: R-015 Rehearse a fresh install in a scratch repository reports every pm-* and workflow skill installed, and every defect it finds is on the roadmap.
   Status: open
 
 ## Assumptions and risks
@@ -91,7 +95,9 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
   Status: holds (2026-11-25)
 - A3: Integration options and Starlight component overrides cover the customisation this repository's `docs-site/` needs. Test: R-013 Docs-site package: publish and migrate moves `docs-site/` onto the package with no copied files.
   Status: holds (2026-11-25)
-- A5: A design stage that is handed the applicable ADRs and principles follows them. Test: R-036 Plan citation and done check's rehearsal report in `planning/research/`.
+- A5: A design stage that is handed the applicable ADRs and principles follows them. Test: the next item whose spec names ADRs has its plan written by a separate session from the handoff, and that plan cites them (the R-036 rehearsal plan cited every ID, but one agent wrote both the handoff and the plan).
+  Status: untested
+- A6: `npx skills add https://github.com/purview-dev/pm-skills -y` installs every shipped skill and none of the repository-local ones. Test: R-015 Rehearse a fresh install in a scratch repository's report.
   Status: untested
 
 ## Not doing
@@ -101,9 +107,8 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 -->
 
 - New views or modules in `skills/pm-docs-site/templates/`. Why: R-013 Docs-site package: publish and migrate replaces the copied templates; only fixes land there meanwhile. Revisit: never.
-- Hosting the docs site (GitHub Pages or any deploy). Why: the site is a local view of the plan, and M1 is about reproducible builds. Revisit: after M1 is done.
+- Hosting the docs site (GitHub Pages or any deploy). Why: the site is a local view of the plan, and M1 is about reproducible builds. Revisit: after M5 Docs-site package 1.0.0 is done.
 - Writing PM state from the site (drag and drop, edit actions). Why: PM state changes only through the pm-* skills; the site reads `planning.json` only. Revisit: never.
-- GitHub issue and Project sync (`planning/inbox/2026-11-22-1739-github-issue-project-sync.md`, brief `planning/briefs/2026-11-22-github-issue-project-sync.md`). Why: M4 and M5 come first. Revisit: after M5 Docs-site package 1.0.0 is done.
 - Inferring `ENGINEERING.md` from a repository (`pm-engineering infer`). Why: R-035 was dropped on 2026-11-25; `pm-engineering add` is enough for now. Revisit: when a consumer asks for it, or after M5 Docs-site package 1.0.0 is done.
 
 ## Decisions
@@ -114,6 +119,11 @@ Newest first. Nothing in this file changes without a line here.
 - <YYYY-MM-DD> <decision>. Why: <reason>. Rejected: <alternatives>.
 -->
 
+- 2026-11-26 Re-planned roadmap. Why: focus moved to M2 Verified install and upgrade, so Next is R-015, R-057, R-006 (M2, risk first), then R-052 and R-056 (M5); R-042 and R-053 move to the top of Later under M5; Later is M5, M3, then Unassigned. Rejected: keeping Next all M5; R-042 in Next ahead of R-056.
+- 2026-11-26 Not doing: GitHub issue and Project sync removed (dropped in the 2026-11-26 review); hosting the docs site stays deferred, revisit after M5 Docs-site package 1.0.0 is done. Why: M1's revisit condition is met and M5 is not done. Rejected: hosting now.
+- 2026-11-26 Bet B3 and assumption A6 added for M2; B2 won; A5 stays untested with an independent-session test. Why: the M4 rehearsal report meets B2's signal, but one agent wrote both A5's handoff and plan. Rejected: marking A5 holds.
+- 2026-11-26 Milestone order kept M5, M2, M3 with M2 as the focus. Why: the user chose it; M2 is a short detour of 3 S items before M5. Rejected: M2, M5, M3.
+- 2026-11-26 Current focus M2 Verified install and upgrade; M2 active. Why: M4 is done; the user chose M2, which tests the riskiest open assumption (an unrehearsed fresh install, V1). Rejected: focus on M5 Docs-site package 1.0.0.
 - 2026-11-26 M4 Recorded technical decisions complete. Why: `planning/research/2026-11-26-m4-rehearsal.md` shows `pm-adr import docs/adr/` bringing a scratch repository's ADRs into `planning/decisions/`, the plan handoff naming the ADRs and principles that apply, and `pm-checkpoint` (`done`) refusing a failing command check; R-050 ADR relative images render unresolved renders every ADR section, including a relative image. Rejected: none.
 - 2026-11-25 Re-planned roadmap. Why: R-035 was dropped and M4 has one open item, so Next is R-036 (M4), then R-052, R-042, new R-056 Package tests stable under full lint-check, and R-053 (M5); R-036's Done when gains `pm-adr import docs/adr/` in its rehearsal to cover M4's exit criterion; the R-050 ADR image minors join R-042's Note; Later is M2, M3, then Unassigned. Rejected: R-057 Engineering lint review follow-ups as a new item (its inbox file stays parked); dropping any item.
 - 2026-11-25 M4 Recorded technical decisions exit criteria drop "`pm-init` writes `ENGINEERING.md` citing all three files"; the scratch repository needs only `docs/adr/`. Why: R-035 pm-engineering infer from an existing repository was dropped (not needed now), and nothing else builds inference. Rejected: replacing it with a `pm-engineering add` check; keeping it, which leaves M4 unable to close.
