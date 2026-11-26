@@ -39,7 +39,7 @@
 
 - Produces: `linkHtml(html: string, known: Map<string, Target>): LinkedHtml`, signature unchanged.
 
-- [ ] **Step 1: Write the failing tests** in `describe('linkHtml')`:
+- [x] **Step 1: Write the failing tests** in `describe('linkHtml')`:
 
 ```ts
 it('copies a script body to its close tag, so a raw < never opens a tag', () => {
@@ -58,10 +58,10 @@ it('copies an unclosed script to the end', () => {
 });
 ```
 
-- [ ] **Step 2: Run** `bun test test/link-html.test.ts`. Expected: the three new tests FAIL.
-- [ ] **Step 3: Implement.** Replace the `split(TAG)` loop with a scan: on a `script` or `style` open tag (not self-closing), find the next `</script` or `</style` case-insensitively (`/<\/script\b[^>]*>/i`), append the body and close tag verbatim, and continue after it (or append the rest when none). `a` keeps the existing open-stack handling. Update the header comment.
-- [ ] **Step 4: Run** `bun test test/link-html.test.ts`. Expected: all PASS.
-- [ ] **Step 5: Commit**
+- [x] **Step 2: Run** `bun test test/link-html.test.ts`. Expected: the three new tests FAIL.
+- [x] **Step 3: Implement.** Replace the `split(TAG)` loop with a scan: on a `script` or `style` open tag (not self-closing), find the next `</script` or `</style` case-insensitively (`/<\/script\b[^>]*>/i`), append the body and close tag verbatim, and continue after it (or append the rest when none). `a` keeps the existing open-stack handling. Update the header comment.
+- [x] **Step 4: Run** `bun test test/link-html.test.ts`. Expected: all PASS.
+- [x] **Step 5: Commit**
 
 ```bash
 git add packages/pm-docs-site/src/lib/link-html.ts packages/pm-docs-site/test/link-html.test.ts
@@ -75,7 +75,7 @@ git commit -m "fix(pm-docs-site): copy script and style bodies whole in linkHtml
 - Modify: `test/links.test.ts:192-196`
 - Modify: `test/integration.test.ts:410-434`
 
-- [ ] **Step 1: Decisions list.** In "the Decisions page" test "shows every row without JavaScript", keep the noscript assertion and add, for every `planning.adrs` ID (the fixture: ADR-001 to ADR-004):
+- [x] **Step 1: Decisions list.** In "the Decisions page" test "shows every row without JavaScript", keep the noscript assertion and add, for every `planning.adrs` ID (the fixture: ADR-001 to ADR-004):
 
 ```ts
 for (const adr of planning.adrs) expect(page).toContain(`data-adr="${adr.id}"`);
@@ -83,15 +83,15 @@ for (const adr of planning.adrs) expect(page).toContain(`data-adr="${adr.id}"`);
 
 with `const page = html('plan/decisions/index.html');`.
 
-- [ ] **Step 2: Remote image.** In "an ADR section with a relative image builds to a resolved img", change the appended text to `'R-013 ![a](x.png) ![r](https://example.com/r.png)'` and add:
+- [x] **Step 2: Remote image.** In "an ADR section with a relative image builds to a resolved img", change the appended text to `'R-013 ![a](x.png) ![r](https://example.com/r.png)'` and add:
 
 ```ts
 const remote = html.match(/<img\b[^>]*\balt="r"[^>]*>/)?.[0] ?? '';
 expect(remote).toContain('src="https://example.com/r.png"');
 ```
 
-- [ ] **Step 3: Run** `bun test test/links.test.ts test/integration.test.ts -t "Decisions page|relative image builds"`. Expected: PASS (both pin current behaviour).
-- [ ] **Step 4: Commit**
+- [x] **Step 3: Run** `bun test test/links.test.ts test/integration.test.ts -t "Decisions page|relative image builds"`. Expected: PASS (both pin current behaviour).
+- [x] **Step 4: Commit**
 
 ```bash
 git add packages/pm-docs-site/test/links.test.ts packages/pm-docs-site/test/integration.test.ts
@@ -111,7 +111,7 @@ git commit -m "test(pm-docs-site): pin the decisions rows and remote adr images 
 
 - Produces: `adrsLoader()` stores `{ id, data: Adr }` (no `html`). `RenderedAdr` is removed; `[id].astro` and `site-refs.ts` use `Adr` from `../lib/planning-types`. `ADR_SECTIONS`, `adrSectionId`, `adrFile`, `AdrSectionData`, `adrSectionsLoader` unchanged.
 
-- [ ] **Step 1: Write the failing test** in `test/adrs-loader.test.ts`, following `test/repo-docs.test.ts`'s stub context (`test/setup.ts` already points the config at the fixture, Decisions view on):
+- [x] **Step 1: Write the failing test** in `test/adrs-loader.test.ts`, following `test/repo-docs.test.ts`'s stub context (`test/setup.ts` already points the config at the fixture, Decisions view on):
 
 ```ts
 it('the adrs loader renders nothing; adr-sections renders each non-empty section once', async () => {
@@ -131,13 +131,13 @@ it('the adrs loader renders nothing; adr-sections renders each non-empty section
 
 Imports: `FIXTURES` from `./helpers`, `loadPlanning` from `../src/lib/planning`, and `ADR_SECTIONS`, `adrsLoader`, `adrSectionsLoader` from `../src/loaders/adrs`.
 
-- [ ] **Step 2: Run** `bun test test/adrs-loader.test.ts`. Expected: FAIL (`adrsLoader` calls `renderMarkdown`).
-- [ ] **Step 3: Loader.** In `src/loaders/adrs.ts`, `adrsLoader` stores `parseData({ id, data: adr })`; drop `RenderedAdr` and the `renderMarkdown` use; update the header comment to cite ADR-015.
-- [ ] **Step 4: Page.** In `[id].astro`, type `adr` as `Adr`; a section with `adr[key] === null` is left out, one with `adr[key].trim() === ''` gets `Content: null` (`None recorded.`), otherwise `getEntry('adr-sections', adrSectionId(adr.id, key))` as now.
-- [ ] **Step 5: siteRefs.** In `src/lib/site-refs.ts`, under the same guard, loop `await getCollection('adr-sections')`: for each entry with `entry.rendered?.html`, add `linkHtml(entry.rendered.html, known).keys` to the set for `(entry.data as AdrSectionData).adr` (create the set per ADR ID; set an empty set for every `planning.adrs` ID first, so an ADR with no sections still has an entry, as before). Update the header comment: ADR-015.
-- [ ] **Step 6: Run** `bun test test/adrs-loader.test.ts test/link-html.test.ts test/links.test.ts`. Expected: all PASS, including the ADR-003 and ADR-004 page tests (links and Linked from still agree).
-- [ ] **Step 7: Type-check** `bun run check` in `packages/pm-docs-site`. Expected: 0 errors.
-- [ ] **Step 8: Commit**
+- [x] **Step 2: Run** `bun test test/adrs-loader.test.ts`. Expected: FAIL (`adrsLoader` calls `renderMarkdown`).
+- [x] **Step 3: Loader.** In `src/loaders/adrs.ts`, `adrsLoader` stores `parseData({ id, data: adr })`; drop `RenderedAdr` and the `renderMarkdown` use; update the header comment to cite ADR-015.
+- [x] **Step 4: Page.** In `[id].astro`, type `adr` as `Adr`; a section with `adr[key] === null` is left out, one with `adr[key].trim() === ''` gets `Content: null` (`None recorded.`), otherwise `getEntry('adr-sections', adrSectionId(adr.id, key))` as now.
+- [x] **Step 5: siteRefs.** In `src/lib/site-refs.ts`, under the same guard, loop `await getCollection('adr-sections')`: for each entry with `entry.rendered?.html`, add `linkHtml(entry.rendered.html, known).keys` to the set for `(entry.data as AdrSectionData).adr` (create the set per ADR ID; set an empty set for every `planning.adrs` ID first, so an ADR with no sections still has an entry, as before). Update the header comment: ADR-015.
+- [x] **Step 6: Run** `bun test test/adrs-loader.test.ts test/link-html.test.ts test/links.test.ts`. Expected: all PASS, including the ADR-003 and ADR-004 page tests (links and Linked from still agree).
+- [x] **Step 7: Type-check** `bun run check` in `packages/pm-docs-site`. Expected: 0 errors.
+- [x] **Step 8: Commit**
 
 ```bash
 git add packages/pm-docs-site/src/loaders/adrs.ts packages/pm-docs-site/src/lib/site-refs.ts "packages/pm-docs-site/src/routes/plan/decisions/[id].astro" packages/pm-docs-site/test/adrs-loader.test.ts
@@ -151,13 +151,13 @@ git commit -m "perf(pm-docs-site): render each adr section once (R-058, ADR-015)
 - Modify: `package.json:3` (`"version": "0.1.0-pre.6"`)
 - Modify: `README.md:34` (the pinned dependency to `0.1.0-pre.6`)
 
-- [ ] **Step 1: Bump** both lines to `0.1.0-pre.6`. Run `bun install` in `docs-site/` only if `just docs-check` reports a lockfile mismatch.
-- [ ] **Step 2: Validate** from the repository root: `just validate`. Expected: exit 0 (pinned versions, minimum package version, schema versions).
-- [ ] **Step 3: Version check:** `just version-check`. Expected: exit 0 (package version moves forward and is untagged).
-- [ ] **Step 4: Package tests:** `just package-test`. Expected: exit 0.
-- [ ] **Step 5: Docs site:** `just docs-check`. Expected: exit 0.
-- [ ] **Step 6: Full lint:** `just lint-check`. Expected: exit 0.
-- [ ] **Step 7: Commit**
+- [x] **Step 1: Bump** both lines to `0.1.0-pre.6`. Run `bun install` in `docs-site/` only if `just docs-check` reports a lockfile mismatch.
+- [x] **Step 2: Validate** from the repository root: `just validate`. Expected: exit 0 (pinned versions, minimum package version, schema versions).
+- [x] **Step 3: Version check:** `just version-check`. Expected: exit 0 (package version moves forward and is untagged).
+- [x] **Step 4: Package tests:** `just package-test`. Expected: exit 0.
+- [x] **Step 5: Docs site:** `just docs-check`. Expected: exit 0.
+- [x] **Step 6: Full lint:** `just lint-check`. Expected: exit 0.
+- [x] **Step 7: Commit**
 
 ```bash
 git add packages/pm-docs-site/package.json packages/pm-docs-site/README.md
