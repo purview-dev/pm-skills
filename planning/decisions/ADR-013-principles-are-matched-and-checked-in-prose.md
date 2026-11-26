@@ -1,6 +1,6 @@
 # ADR-013 Principles are matched and checked in prose
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-25
 - Category: architecture
 - Supersedes: none

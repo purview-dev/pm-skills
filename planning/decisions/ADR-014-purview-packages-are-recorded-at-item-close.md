@@ -1,6 +1,6 @@
 # ADR-014 Purview packages are recorded at item close
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-25
 - Category: architecture
 - Supersedes: none

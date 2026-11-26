@@ -38,7 +38,7 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 - Serves: V5
 - Exit criteria: a report in `planning/research/` shows, in a scratch repository with `docs/adr/`, that `pm-adr import docs/adr/` brings its ADRs into `planning/decisions/`, that the design handoff names the ADRs and principles that apply, and that `pm-checkpoint` (`done`) refuses to close on a failing command check; and every ADR section, including a relative image, renders on its docs-site page.
 - Target: none
-- Status: active
+- Status: done (2026-11-26)
 
 ### M5 Docs-site package 1.0.0
 
@@ -114,6 +114,7 @@ Newest first. Nothing in this file changes without a line here.
 - <YYYY-MM-DD> <decision>. Why: <reason>. Rejected: <alternatives>.
 -->
 
+- 2026-11-26 M4 Recorded technical decisions complete. Why: `planning/research/2026-11-26-m4-rehearsal.md` shows `pm-adr import docs/adr/` bringing a scratch repository's ADRs into `planning/decisions/`, the plan handoff naming the ADRs and principles that apply, and `pm-checkpoint` (`done`) refusing a failing command check; R-050 ADR relative images render unresolved renders every ADR section, including a relative image. Rejected: none.
 - 2026-11-25 Re-planned roadmap. Why: R-035 was dropped and M4 has one open item, so Next is R-036 (M4), then R-052, R-042, new R-056 Package tests stable under full lint-check, and R-053 (M5); R-036's Done when gains `pm-adr import docs/adr/` in its rehearsal to cover M4's exit criterion; the R-050 ADR image minors join R-042's Note; Later is M2, M3, then Unassigned. Rejected: R-057 Engineering lint review follow-ups as a new item (its inbox file stays parked); dropping any item.
 - 2026-11-25 M4 Recorded technical decisions exit criteria drop "`pm-init` writes `ENGINEERING.md` citing all three files"; the scratch repository needs only `docs/adr/`. Why: R-035 pm-engineering infer from an existing repository was dropped (not needed now), and nothing else builds inference. Rejected: replacing it with a `pm-engineering add` check; keeping it, which leaves M4 unable to close.
 - 2026-11-25 V5 first clause changed from "`pm-init` records an existing repository's technology and principles" to "`pm-engineering` records the technology and principles in use". Why: no item serves inference after R-035 was dropped. Rejected: keeping the clause with no item.
