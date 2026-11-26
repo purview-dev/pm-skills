@@ -7,7 +7,7 @@ import ExportStamp from '../../components/ExportStamp.astro';
 import KanbanItemCard from '../../components/lib/KanbanItemCard.astro';
 import LinkedText from '../../components/LinkedText.astro';
 import RefLink from '../../components/RefLink.astro';
-import { loadPlanning, severityToPriority, sourceInitials } from '../../lib/planning';
+import { inboxHref, loadPlanning, severityToPriority, sourceInitials } from '../../lib/planning';
 import '../../styles/components.css';
 
 const planning = loadPlanning();
@@ -43,6 +43,11 @@ const groups = [
 								commentsCount={0}
 								attachmentsCount={0}
 							/>
+							<p class="plan-meta">
+								<a href={inboxHref(entry.file)} title={entry.title}>
+									Open
+								</a>
+							</p>
 							{entry.affects && entry.affects !== 'none' && (
 								<p class="plan-meta">
 									Affects: <LinkedText text={entry.affects} />

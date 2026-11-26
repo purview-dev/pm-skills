@@ -1,0 +1,76 @@
+---
+// One brief from planning.json's `briefs`, whole: its status, origin, and
+// file, then every section in file order, each rendered by Astro from its
+// `brief-sections` entry so tables, lists, Mermaid, and relative images show as
+// written (src/loaders/records.ts, ADR-016, ADR-017), with the IDs in them
+// linked, and what links to it.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { getEntry, render } from 'astro:content';
+
+import ExportStamp from '../../../components/ExportStamp.astro';
+import LinkedFrom from '../../../components/LinkedFrom.astro';
+import LinkedText from '../../../components/LinkedText.astro';
+import RecordSections from '../../../components/RecordSections.astro';
+import RefLink from '../../../components/RefLink.astro';
+import { briefAnchor, loadPlanning } from '../../../lib/planning';
+import type { Brief } from '../../../lib/planning-types';
+import '../../../styles/components.css';
+
+export function getStaticPaths() {
+	return loadPlanning().briefs.map((brief) => ({ params: { slug: briefAnchor(brief.path) }, props: { brief } }));
+}
+
+const { brief } = Astro.props as { brief: Brief };
+const slug = briefAnchor(brief.path);
+const sections = await Promise.all(
+	brief.sections.map(async ({ heading, markdown }, index) => {
+		const entry = markdown.trim() === '' ? undefined : await getEntry('brief-sections', `${slug}/${index}`);
+
+		return { heading, Content: entry ? (await render(entry)).Content : null };
+	}),
+);
+const facts = [
+	{ label: 'Status', text: brief.status },
+	{ label: 'Origin', text: brief.origin },
+	{ label: 'Updated', text: brief.updated },
+].filter((fact) => fact.text);
+---
+
+<StarlightPage
+	frontmatter={{ title: brief.id ? `${brief.id} ${brief.title}` : brief.title, description: `Brief${brief.status ? `, ${brief.status}` : ''}.`, tableOfContents: false }}
+>
+	<ExportStamp kind="Brief" />
+
+	<p><a href="/plan/briefs/">All briefs</a></p>
+
+	<dl class="plan-facts">
+		{
+			brief.id && (
+				<div>
+					<dt>Item</dt>
+					<dd>
+						<RefLink ref={brief.id} />
+					</dd>
+				</div>
+			)
+		}
+		{
+			facts.map((fact) => (
+				<div>
+					<dt>{fact.label}</dt>
+					<dd>
+						<LinkedText text={fact.text} />
+					</dd>
+				</div>
+			))
+		}
+		<div>
+			<dt>File</dt>
+			<dd><RefLink ref={brief.path} label="id" /></dd>
+		</div>
+	</dl>
+
+	<RecordSections sections={sections} />
+
+	<LinkedFrom ref={brief.path} />
+</StarlightPage>

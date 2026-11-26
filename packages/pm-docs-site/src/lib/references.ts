@@ -380,9 +380,8 @@ export function references(planning: Planning, views: Views, adrKeys?: Map<strin
 		for (const entry of planning.inbox) {
 			const own = source(inboxHref(entry.file), entry.title);
 
-			own.prose(entry.title);
 			own.prose(entry.affects, 'affects');
-			own.prose(entry.context);
+			for (const text of [entry.captured, entry.source, entry.context, entry.reviewed]) own.prose(text);
 			for (const id of entry.related) own.link(id, 'related');
 			own.link(entry.brief, 'brief');
 			sectionLinks(own, entry.file, entry.sections);
@@ -403,8 +402,7 @@ export function references(planning: Planning, views: Views, adrKeys?: Map<strin
 			const own = source(briefHref(brief.path), brief.title);
 
 			own.link(brief.id, 'listed');
-			own.prose(brief.status);
-			own.prose(brief.origin);
+			for (const text of [brief.status, brief.origin, brief.updated]) own.prose(text);
 			sectionLinks(own, brief.path, brief.sections);
 		}
 	}

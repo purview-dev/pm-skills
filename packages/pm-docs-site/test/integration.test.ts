@@ -117,12 +117,14 @@ describe('pmDocsSite', () => {
 
 		expect(routes.map((route) => route.pattern).sort()).toEqual([
 			'/plan/briefs',
+			'/plan/briefs/[slug]',
 			'/plan/decisions',
 			'/plan/decisions/[id]',
 			'/plan/features',
 			'/plan/features/[id]',
 			'/plan/graph',
 			'/plan/inbox',
+			'/plan/inbox/[slug]',
 			'/plan/milestones',
 			'/plan/milestones/[milestone]',
 			'/plan/now',
@@ -463,6 +465,77 @@ describe('ADR images, built through the fixture site', () => {
 			const result = runCli(['build', join(dir, 'site')]);
 
 			expect(result.code, result.stderr).toBe(0);
+		},
+		BUILD,
+	);
+});
+
+/** Append Markdown to one brief or inbox section, by heading, in a scratch site's planning.json. */
+function appendToRecord(dir: string, kind: 'briefs' | 'inbox', key: string, heading: string, markdown: string): void {
+	const planningPath = join(dir, 'planning.json');
+	const planning = JSON.parse(readFileSync(planningPath, 'utf8')) as Record<'briefs' | 'inbox', ({ path?: string; file?: string; sections: { heading: string; markdown: string }[] })[]>;
+	const record = planning[kind].find((entry) => (entry.path ?? entry.file) === key)!;
+	const section = record.sections.find((entry) => entry.heading === heading)!;
+
+	section.markdown = `${section.markdown}\n\n${markdown}`;
+	writeFileSync(planningPath, JSON.stringify(planning));
+}
+
+describe('brief images, built through the fixture site (ADR-017)', () => {
+	const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', 'base64');
+	const BRIEF = 'planning/briefs/2026-11-09-invoice-export.md';
+
+	it(
+		'a brief section with a relative image builds to a resolved img',
+		() => {
+			const dir = scratchSite('image-brief-');
+
+			appendToRecord(dir, 'briefs', BRIEF, 'Proposal', '![a](x.png)');
+			// The brief's file is briefs/<file> beside planning.json; only the image needs to exist.
+			mkdirSync(join(dir, 'briefs'));
+			writeFileSync(join(dir, 'briefs', 'x.png'), PNG);
+
+			const result = runCli(['build', join(dir, 'site')]);
+
+			expect(result.code, result.stderr).toBe(0);
+			const dist = join(dir, 'site', 'dist');
+			const html = readFileSync(join(dist, 'plan', 'briefs', '2026-11-09-invoice-export', 'index.html'), 'utf8');
+			const src = html.match(/<img\b[^>]*\balt="a"[^>]*>/)?.[0]?.match(/\bsrc="([^"]+)"/)?.[1] ?? '';
+
+			expect(html.includes('__ASTRO_IMAGE_')).toBe(false);
+			expect(src).not.toBe('');
+			expect(existsSync(join(dist, decodeURI(src).replace(/^\//, '')))).toBe(true);
+		},
+		BUILD,
+	);
+
+	it(
+		'a brief section with a missing relative image fails the build',
+		() => {
+			const dir = scratchSite('image-missing-brief-');
+
+			appendToRecord(dir, 'briefs', BRIEF, 'Proposal', '![a](missing.png)');
+
+			const result = runCli(['build', join(dir, 'site')]);
+
+			expect(result.code).not.toBe(0);
+			expect(result.stdout + result.stderr).toContain('missing.png');
+		},
+		BUILD,
+	);
+
+	it(
+		'a missing brief image does not fail the build when the Briefs view is off',
+		() => {
+			const dir = scratchSite('image-missing-brief-off-');
+
+			writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'Fixture plan', planning: '../planning.json', views: ['now'] }`));
+			appendToRecord(dir, 'briefs', BRIEF, 'Proposal', '![a](missing.png)');
+
+			const result = runCli(['build', join(dir, 'site')]);
+
+			expect(result.code, result.stderr).toBe(0);
+			expect(existsSync(join(dir, 'site', 'dist', 'plan', 'briefs'))).toBe(false);
 		},
 		BUILD,
 	);

@@ -4,6 +4,8 @@ docs/guide/setup/index.html
 docs/readme/index.html
 index.html
 plan/board/index.html
+plan/briefs/2026-11-07-referrals/index.html
+plan/briefs/2026-11-09-invoice-export/index.html
 plan/briefs/index.html
 plan/decisions/adr-001/index.html
 plan/decisions/adr-002/index.html
@@ -26,6 +28,8 @@ plan/features/r-024/index.html
 plan/features/r-025/index.html
 plan/features/r-026/index.html
 plan/graph/index.html
+plan/inbox/2026-11-08-1010-csv-encoding/index.html
+plan/inbox/2026-11-09-0900-yearly-export/index.html
 plan/inbox/index.html
 plan/log/index.html
 plan/milestones/index.html

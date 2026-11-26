@@ -38,8 +38,14 @@ const VIEW_ROUTES: Record<ViewName, [pattern: string, file: string][]> = {
 		['/plan/features', 'plan/features/index.astro'],
 		['/plan/features/[id]', 'plan/features/[id].astro'],
 	],
-	inbox: [['/plan/inbox', 'plan/inbox.astro']],
-	briefs: [['/plan/briefs', 'plan/briefs.astro']],
+	inbox: [
+		['/plan/inbox', 'plan/inbox.astro'],
+		['/plan/inbox/[slug]', 'plan/inbox/[slug].astro'],
+	],
+	briefs: [
+		['/plan/briefs', 'plan/briefs.astro'],
+		['/plan/briefs/[slug]', 'plan/briefs/[slug].astro'],
+	],
 	strategy: [['/plan/strategy', 'plan/strategy.astro']],
 	decisions: [
 		['/plan/decisions', 'plan/decisions.astro'],

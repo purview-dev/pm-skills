@@ -1,0 +1,27 @@
+---
+// A brief's or inbox file's sections in file order: each heading, then its
+// rendered Content with the IDs in it linked, or `None recorded.` when the
+// section is blank (ADR-016, ADR-017).
+import LinkedHtml from './LinkedHtml.astro';
+
+interface Props {
+	sections: { heading: string; Content: ((props: Record<string, unknown>) => unknown) | null }[];
+}
+
+const { sections } = Astro.props;
+---
+
+{
+	sections.map(({ heading, Content }) => (
+		<section>
+			<h2>{heading}</h2>
+			{Content ? (
+				<LinkedHtml>
+					<Content />
+				</LinkedHtml>
+			) : (
+				<p>None recorded.</p>
+			)}
+		</section>
+	))
+}
