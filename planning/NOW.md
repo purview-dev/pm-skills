@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-056 Package tests stable under full lint-check
 - Session: feat/r-056-package-tests-stable-under-full-lint-check
-- Stage: design
+- Stage: plan
 - Brief:
 - Milestone: M5
 - Serves: V4
@@ -23,7 +23,7 @@ Milestone: optional; the item's milestone while it is active
 - Depends on: none
 - Revisits:
 - Note: From the 2026-11-25 strategy re-plan (bug, inbox 2026-11-25-0717, severity minor, from R-041 execute). Two consecutive `just lint-check` runs on a prose-only branch failed in `package-test`, each on a different test that passes alone: `cli.test.ts` timed out after 180000ms (4.27s alone), and `graph.browser.ts:296` found `.plan-graph__toolbar` hidden within 5000ms (482ms alone). Reproduction: run `just lint-check` twice on Windows; one package test fails per run under load. 2026-11-26: started as is outside the current focus (M2 Verified install and upgrade), because M2 has no open items since R-015 was dropped.
-- Spec:
+- Spec: docs/superpowers/specs/2026-11-26-package-tests-stable-under-load-design.md
 - Plan:
 - Started: 2026-11-26
 

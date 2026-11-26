@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 6,
-  "generatedAt": "2026-11-26T20:55:04+00:00",
+  "generatedAt": "2026-11-26T22:14:01+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-056-package-tests-stable-under-full-lint-check",
-    "head": "47265d9481fba228a29426edce1431cefaf9d005"
+    "head": "4214bcf68f6e51eaafe27902da10eb6c9336f849"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -393,11 +393,11 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-056-package-tests-stable-under-full-lint-check",
     "brief": null,
     "milestone": "M5",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-26-package-tests-stable-under-load-design.md",
     "plan": null,
     "started": "2026-11-26",
     "doneWhen": [
@@ -717,7 +717,7 @@
           "title": "Package tests stable under full lint-check",
           "owner": "agent",
           "size": "S",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
@@ -2960,6 +2960,6 @@
     "claimable": [
       "R-042"
     ],
-    "drift": true
+    "drift": false
   }
 }
