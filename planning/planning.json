@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-26T12:30:50+00:00",
+  "generatedAt": "2026-11-26T13:02:57+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "main",
-    "head": "3e7fbdb6597a018ea4e1ed6f68e9c052507b7d93"
+    "branch": "feat/r-058-adr-pages-fix-and-release",
+    "head": "dba88fd6baad06ab6e458e73bca9ad997b9750ce"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -375,50 +375,38 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
+    "status": "active",
+    "item": {
+      "id": "R-058",
+      "title": "ADR pages: fix and release",
+      "serves": [
+        "V4"
+      ],
+      "owner": "agent",
+      "size": "S",
+      "dependsOn": [],
+      "revisits": null
+    },
+    "stage": "design",
+    "session": "feat/r-058-adr-pages-fix-and-release",
     "brief": null,
-    "milestone": null,
+    "milestone": "M5",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-26",
+    "doneWhen": [
+      "`src/lib/link-html.ts` scans a script or style body to its close tag so the rest of the ADR section is linked, with a `test/link-html.test.ts` case; the Decisions noscript test asserts the rendered list; a test pins a remote ADR image as a plain `img` with its `src`; each ADR section renders once per build, shown by a test; `packages/pm-docs-site/package.json` is `0.1.0-pre.6`; and `just package-test` and `just docs-check` pass."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-058",
-        "title": "ADR pages: fix and release",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M5",
-        "owner": "agent",
-        "doneWhen": "`src/lib/link-html.ts` scans a script or style body to its close tag so the rest of the ADR section is linked, with a `test/link-html.test.ts` case; the Decisions noscript test asserts the rendered list; a test pins a remote ADR image as a plain `img` with its `src`; each ADR section renders once per build, shown by a test; `packages/pm-docs-site/package.json` is `0.1.0-pre.6`; and `just package-test` and `just docs-check` pass.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "Split from R-042 Docs-site package: deferred review minors on 2026-11-26 (user: one piece of work; the ADR site must get out). From R-040 (2026-11-25 review, inbox 2026-11-25-1008): (26) linkHtml: a raw `<` inside a script or style body (`<script>if (a<b) x='R-012'</script>`) is read as a tag, so the script never closes and the rest of the ADR section is not linked; links and Linked from entries still agree. Fix: while script or style is open, scan to the matching close tag (`src/lib/link-html.ts`). (28) The Decisions noscript test checks a string only. From R-050 (2026-11-25 strategy re-plan, inbox 2026-11-25-1417): (29) No test pins a remote ADR image staying a plain img with its src; a consumer who sets Astro `image.domains` would get it optimised and its src rewritten. Append `![r](https://example.com/r.png)` to the relative-image test in `test/integration.test.ts` and assert `src=\"https://example.com/r.png\"`. (30) Every non-empty ADR section is rendered twice per build (the `adrs` html and the `adr-sections` entry in `src/loaders/adrs.ts`), Mermaid included; share one memoised render per section.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-006",
         "title": "Check pm-setup's skill counts in validate",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V1"
@@ -442,7 +430,7 @@
         "id": "R-052",
         "title": "Docs-site package: brief and inbox pages",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -466,7 +454,7 @@
         "id": "R-056",
         "title": "Package tests stable under full lint-check",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -490,7 +478,7 @@
         "id": "R-042",
         "title": "Docs-site package: deferred review minors",
         "section": "next",
-        "position": 5,
+        "position": 4,
         "label": "next",
         "serves": [
           "V4"
@@ -789,15 +777,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-058",
           "title": "ADR pages: fix and release",
           "owner": "agent",
           "size": "S",
-          "detail": "ready"
-        },
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-006",
           "title": "Check pm-setup's skill counts in validate",
@@ -2437,7 +2426,7 @@
     }
   ],
   "counts": {
-    "next": 5,
+    "next": 4,
     "later": 11,
     "nextMax": 5,
     "openInbox": 4,
@@ -2455,7 +2444,6 @@
     "reviewDue": false,
     "lastReview": "2026-11-26",
     "claimable": [
-      "R-058",
       "R-006",
       "R-052",
       "R-056",

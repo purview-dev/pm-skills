@@ -14,17 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-058 ADR pages: fix and release
-
-- Serves: V4
-- Milestone: M5
-- Owner: agent
-- Done when: `src/lib/link-html.ts` scans a script or style body to its close tag so the rest of the ADR section is linked, with a `test/link-html.test.ts` case; the Decisions noscript test asserts the rendered list; a test pins a remote ADR image as a plain `img` with its `src`; each ADR section renders once per build, shown by a test; `packages/pm-docs-site/package.json` is `0.1.0-pre.6`; and `just package-test` and `just docs-check` pass.
-- Size: S
-- Depends on: none
-- Status: ready
-- Note: Split from R-042 Docs-site package: deferred review minors on 2026-11-26 (user: one piece of work; the ADR site must get out). From R-040 (2026-11-25 review, inbox 2026-11-25-1008): (26) linkHtml: a raw `<` inside a script or style body (`<script>if (a<b) x='R-012'</script>`) is read as a tag, so the script never closes and the rest of the ADR section is not linked; links and Linked from entries still agree. Fix: while script or style is open, scan to the matching close tag (`src/lib/link-html.ts`). (28) The Decisions noscript test checks a string only. From R-050 (2026-11-25 strategy re-plan, inbox 2026-11-25-1417): (29) No test pins a remote ADR image staying a plain img with its src; a consumer who sets Astro `image.domains` would get it optimised and its src rewritten. Append `![r](https://example.com/r.png)` to the relative-image test in `test/integration.test.ts` and assert `src="https://example.com/r.png"`. (30) Every non-empty ADR section is rendered twice per build (the `adrs` html and the `adr-sections` entry in `src/loaders/adrs.ts`), Mermaid included; share one memoised render per section.
-
 ### R-006 Check pm-setup's skill counts in validate
 
 - Serves: V1
