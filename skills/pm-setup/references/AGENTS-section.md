@@ -84,8 +84,10 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   `Depends on` ID appears in `## Done` in `LOG.md`.
 - **Completion record:** the PM writes that close an item: its `## Done`
   line in `LOG.md`, `NOW.md` set to idle, its removal from `ROADMAP.md`, the
-  brief's `Status: done`, and its milestone's `Status: done (<date>)` when
-  it is the last open item of that milestone. `pm-checkpoint` (`done`)
+  brief's `Status: done`, its milestone's `Status: done (<date>)` when it is
+  the last open item of that milestone, and, for a `Note` naming a Purview
+  package found in a manifest, its technology entry in `ENGINEERING.md`
+  (ADR-014). `pm-checkpoint` (`done`)
   writes it for the active item; `pm-item` (`done`) for any other.
   `pm-checkpoint` (`done`) runs the principles check first and writes
   nothing when a command check fails. It is committed on the item's
@@ -939,9 +941,9 @@ The commit worktree:
 - The record starts from the **PM base** (Shared definitions), so it
   fetches first. When the item's branch is the PM branch, write the record
   in place. Otherwise (the normal case) read `LOG.md`, `NOW.md`,
-  `ROADMAP.md`, `STRATEGY.md`, and the brief from the **PM base**
-  (`git show <PM base>:<PM root>/<file>`), apply the record to those
-  contents, then write and commit them in the worktree that holds the
+  `ROADMAP.md`, `STRATEGY.md`, `ENGINEERING.md`, and the brief from the
+  **PM base** (`git show <PM base>:<PM root>/<file>`), apply the record to
+  those contents, then write and commit them in the worktree that holds the
   item's branch. This keeps the commit from reverting PM state the PM
   branch gained after the branch was cut.
 - Stop when the PM branch and its remote have diverged, or when either

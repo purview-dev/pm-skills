@@ -42,6 +42,9 @@ likely modes as options.
   and only when the user asks for it. `add`, `change`, and `remove` apply
   Non-interruption rule 4 and stop. A library chosen during design is
   recorded with `pm-adr new`; it reaches this file after the workflow.
+  `pm-checkpoint` (`done`) applies the `add technology` write steps for a
+  Purview package found in a manifest (ADR-014), as `pm-adr` names
+  `accept`.
 - If a named entry is not in the file, reply `<name or EP-NNN> not found.`
   and list the technology names and the principles as `EP-NNN <title>`.
   Stop.

@@ -138,19 +138,20 @@ and `Explain <ID>`.
      `pm-park`, `pm-bug`, `pm-risk`, or `pm-adr`. Captures never stop the
      close. Stop, with nothing written, only when the PM branch and its
      remote have diverged, or when either worktree has another uncommitted
-     PM path (`NOW.md`, `ROADMAP.md`, `LOG.md`, `STRATEGY.md`, a brief):
-     the record must start from committed state. Captures in the item's
-     worktree are swept into this commit. Captures in the main worktree,
-     when it is another worktree, stay there: add the Note `<n> captures
+     PM path (`NOW.md`, `ROADMAP.md`, `LOG.md`, `STRATEGY.md`,
+     `ENGINEERING.md`, a brief): the record must start from committed
+     state. Captures in the item's worktree are swept into this commit.
+     Captures in the main worktree, when it is another worktree, stay
+     there: add the Note `<n> captures
      uncommitted on <main worktree's branch>: <paths>. The next PM commit
      there carries them.`
    - **Choose the commit worktree** (rules: **Completion rides the branch**).
      Fetch first: the record starts from the **PM base**. When the item's
      branch is the PM branch, run **Pull latest** and write it in place.
-     Otherwise read `LOG.md`, `NOW.md`, `ROADMAP.md`, `STRATEGY.md`, and
-     the brief from the **PM base** (`git show <PM base>:<PM
-     root>/<file>`), apply the record to those contents, and write and
-     commit them in the worktree that holds the item's branch.
+     Otherwise read `LOG.md`, `NOW.md`, `ROADMAP.md`, `STRATEGY.md`,
+     `ENGINEERING.md`, and the brief from the **PM base** (`git show <PM
+     base>:<PM root>/<file>`), apply the record to those contents, and
+     write and commit them in the worktree that holds the item's branch.
    - Append to `## Done` in `LOG.md`:
      `- <date> <ID> <Title>. Milestone: <the Milestone in NOW.md, or none>.
      Owner: <owner>. Plan: <path | none>. Result: branch <branch>.`
@@ -171,6 +172,22 @@ and `Explain <ID>`.
      worktree; the next PM commit on <main worktree's branch> carries it.`
      The decisions folder is never read from the **PM base**. Leave every other ADR as it is, including a proposed ADR
      of another item that the spec only cites.
+   - **Record the Purview package** (ADR-014): when the `Note` in `NOW.md`
+     holds `Purview package: <PackageId>`, search the item branch's
+     manifests (`*.csproj`, `Directory.Packages.props`,
+     `Directory.Build.props`, `global.json` for an SDK) for it. Not found:
+     write nothing to `ENGINEERING.md` and add the Note `Purview package
+     <PackageId> is not in a manifest; not recorded.` Found: apply
+     `pm-engineering` `add technology` write steps only (no question,
+     output, or commit): `Kind: library` (`tool` for an SDK found in
+     `global.json`), `Version` from the `PackageReference` or the central
+     `PackageVersion` in `Directory.Packages.props`, `Reason` the first
+     sentence of `## Decision` in the ADR whose `Item` is this ID and that
+     names the package (accepted or still proposed), else `Adopted through
+     <ID> <title> (pm-purview).`, `Decision` that ADR, or `none` when there
+     is none, `Source` the manifest path, `Added` today. An existing
+     `### <Name>` entry of that name gets only its `Version` changed. Add
+     the Note `Recorded <PackageId> <version> in ENGINEERING.md.`
    - If this item is the last open item of its milestone (no other item
      with that `Milestone` in `NOW.md`, `## Next`, or `## Later`), ask one
      choice question: `All <M> <Name> items are done.

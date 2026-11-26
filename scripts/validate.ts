@@ -79,6 +79,14 @@ if (!checkpoint.includes("**Principles check**") || !checkpoint.includes("--diff
   fail("skills/pm-checkpoint/SKILL.md: done has no **Principles check**");
 }
 
+// A Purview package accepted through pm-purview is recorded in ENGINEERING.md when its item closes (R-036, ADR-014).
+if (!read("skills", "pm-purview", "SKILL.md").includes("Purview package: <PackageId>.")) {
+  fail("skills/pm-purview/SKILL.md: accepted item's Note has no Purview package marker");
+}
+if (!checkpoint.includes("**Record the Purview package**")) {
+  fail("skills/pm-checkpoint/SKILL.md: done has no **Record the Purview package** sub-step");
+}
+
 for (const name of repo) {
   const fm = checkFrontmatter("skills", name);
   if (fm === null) continue;
