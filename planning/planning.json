@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-26T00:35:09+00:00",
+  "generatedAt": "2026-11-26T01:03:57+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-036-plan-citation-and-done-check",
-    "head": "659a2ee37f04edbe081b0337725ddfdb1e49712b"
+    "head": "ced5f0cdc238791b4f112f4900037f19ae18a5da"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -341,12 +341,12 @@
       ],
       "revisits": null
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-036-plan-citation-and-done-check",
     "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
     "milestone": "M4",
     "spec": "docs/superpowers/specs/2026-11-25-plan-citation-and-done-check-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-26-plan-citation-and-done-check.md",
     "started": "2026-11-25",
     "doneWhen": [
       "`pm-next` and `pm-checkpoint` (`stage`) pass the principles and ADRs that apply to the plan handoff; `pm-checkpoint` (`done`) refuses to close on a failing command check and lists failed review checks as a `Note` and an inbox file, shown in a rehearsal report in `planning/research/` whose scratch repository has `docs/adr/` and in which `pm-adr import docs/adr/` brings its ADRs into `planning/decisions/`; an item `pm-purview` accepted records its package in `ENGINEERING.md` through `pm-engineering add`'s write steps when `pm-checkpoint` (`done`) closes it."
@@ -361,7 +361,189 @@
       "openQuestion": null
     }
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-26-plan-citation-and-done-check.md",
+    "checked": 0,
+    "total": 34,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "Every plan handoff",
+        "checked": 0,
+        "total": 7,
+        "steps": [
+          {
+            "text": "**Step 1: Add the failing guard.** In `scripts/validate.ts`, after the design loop, add the same loop over `[\"pm-next\", \"pm-checkpoint\", \"pm-revise\", \"pm-rejoin\", \"pm-resume\"]` requiring `**Every plan handoff**`, failing with `skills/${name}/SKILL.md: a plan re-entry does not cite **Every plan handoff**`. Also fail when `AGENTS-section.md` lacks `- **Every plan handoff**`. Comment: `// Every way into plan passes the principles and ADRs (R-036).`",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run `just validate`.** Expected: FAIL with six `Every plan handoff` lines.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Write the definition** in `AGENTS-section.md` after **Every design handoff**, as the spec's Design section 1 states it: the entry points, the ADRs the spec names (named references with status, or `none`), the principles whose `Applies to` is `all` or matches a path or glob the spec names (a missing `ENGINEERING.md` is `none`; a spec naming no paths gets only `all` principles, and says so), the format above, and the instruction to the plan stage. Cite ADR-013.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Cite it at each call site**, one sentence each, mirroring the existing design sentence beside it: `pm-checkpoint` step 3 (when the next stage is `plan`) and step 8 (restored `Stage` is `plan`); `pm-next` Paused checkpoint paragraph (stage `plan`); `pm-resume` step 6 (next action starts the `plan` skill: add the `ADRs:` and `Principles:` bullets, read-only); `pm-rejoin` step 7; `pm-revise` step 10 (`rewind` to plan).",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Reinstall the section** into `AGENTS.md` (replace between the markers with the reference minus `version=`).",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Run `just validate` and `bunx markdownlint-cli2 AGENTS.md skills/**/SKILL.md skills/pm-setup/references/AGENTS-section.md`.** Expected: PASS, 0 errors.",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "Principles check at done",
+        "checked": 0,
+        "total": 6,
+        "steps": [
+          {
+            "text": "**Step 1: Add the failing guard:** `skills/pm-checkpoint/SKILL.md` must contain `**Principles check**` and `--diff-filter=d`; fail with `skills/pm-checkpoint/SKILL.md: done has no **Principles check**`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run `just validate`.** Expected: FAIL on that line.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Write the sub-step** per spec Design section 2: changed files from `git diff --name-only --diff-filter=d <PM base>...HEAD` in the item's worktree, outside the PM root; `ENGINEERING.md` from the **PM base**; run every matching command check in the item's worktree, in the shell the session uses, before stopping; a non-zero exit, including a command that cannot run, keeps `done` in `pause` with nothing written; review checks never block; review findings are captures (ADR-010). Add the summary Note to the output template's Note list.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Update the Completion record definition** in `AGENTS-section.md` with one clause: `pm-checkpoint` (`done`) runs the principles check first and writes nothing when a command check fails. Reinstall into `AGENTS.md`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Run `just validate` and markdownlint on the changed files.** Expected: PASS.",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Commit** `feat(pm-checkpoint): check principles before the completion record (R-036)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "Purview packages recorded at close",
+        "checked": 0,
+        "total": 8,
+        "steps": [
+          {
+            "text": "**Step 1: Add the failing guard:** `skills/pm-purview/SKILL.md` contains `Purview package: <PackageId>.` and `skills/pm-checkpoint/SKILL.md` contains `**Record the Purview package**`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run `just validate`.** Expected: FAIL on both.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: `pm-purview` step 6:** the item `Note:` starts with `Purview package: <PackageId>.`, then the docs URL and report path. State that nothing is written to `ENGINEERING.md` here (ADR-014).",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: `pm-checkpoint` done sub-step** per spec Design section 3: manifests searched are `*.csproj`, `Directory.Packages.props`, `Directory.Build.props`, `global.json` on the item's branch; `Version` from the `PackageReference` or the central `PackageVersion`; field values exactly as the spec lists, including the `Reason` fallback `Adopted through <ID> <title> (pm-purview).`; an existing `### <Name>` entry gets only `Version` changed; it applies `pm-engineering` `add technology` write steps only (no question, output, or commit). Add `ENGINEERING.md` to the files read from the **PM base** and to the uncommitted PM paths that stop `done`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: `pm-engineering` Guard:** after \"only `view` runs\", add that `pm-checkpoint` (`done`) applies the `add technology` write steps for a Purview package (ADR-014), as `pm-adr` names `accept`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Managed section:** add `ENGINEERING.md` (a Purview package entry) to the **Completion record** list and to the **Completion rides the branch** read list. Reinstall into `AGENTS.md`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Run `just validate` and markdownlint.** Expected: PASS.",
+            "checked": false
+          },
+          {
+            "text": "**Step 8: Commit** `feat(pm-checkpoint,pm-purview): record purview packages at item close (R-036)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "Upgrade note, help, and version",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Upgrade note:** `Version 21 also passes the ADRs the spec names and the principles that apply to its files to every plan handoff, has pm-checkpoint (done) run the principles' command checks before it closes an item (a failure blocks; a review finding is a Note and an inbox file), and records a package pm-purview accepted in ENGINEERING.md when its item closes. No setting is added.` Reinstall into `AGENTS.md`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: pm-help row** for `pm-checkpoint`: add `ENGINEERING.md` to its files column.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Run `just bump prerelease`.** Expected: `package.json` is `21.0.0-pre.13`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run `just lint-check` and `just version-check`.** Expected: PASS.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit** `chore(release): 21.0.0-pre.13 plan citation and done check (R-036)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 5,
+        "title": "Rehearsal in a fresh session",
+        "checked": 0,
+        "total": 8,
+        "steps": [
+          {
+            "text": "**Step 1: Scratch repo.** `git init`; `package.json`; `App.csproj` with `<PackageReference Include=\"Purview.Telemetry.SourceGenerator\" />` and `Directory.Packages.props` holding its `PackageVersion` (Review Focus 4); `docs/adr/0001-use-bun.md`, `docs/adr/0002-typescript-only.md` (MADR); `src/index.ts`. Install this branch's skills with links as `just setup-skills` makes (or `bunx skills add <this repo> -y`). Commit.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Init and import.** Run `pm-init`, then `pm-adr import docs/adr/`. Expected: two ADR files in `planning/decisions/`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Plan handoff.** First, with no `ENGINEERING.md`, `pm-checkpoint stage` after a design prints `Principles: none` (Review Focus 3). Then `pm-engineering add principle`: EP-001 `No JavaScript in src`, `Applies to: src/**`, `Check:` a command that exits non-zero when `src/` has a `.js` file; EP-002 `Errors carry context`, `Applies to: src/**`, `Check: review`. Claim an item, write a spec naming `src/index.ts` and an imported ADR, run `pm-checkpoint stage`. Expected: handoff lists EP-001, EP-002, and the ADR. Run the real `superpowers:writing-plans`; record whether its tasks cite the IDs (assumption A5).",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Done check.** Add `src/a.js`, a change in `src/index.ts` that throws a bare `Error()`, and delete one other `src/` file. `pm-checkpoint done`: expected refusal naming EP-001, and `git status` shows no PM write. Remove `src/a.js`; `done` closes with Note `EP-002 Errors carry context: src/index.ts ...`, an inbox file with `Kind: tech-debt`, and no line about the deleted file (Review Focus 1). Record also a run with a check command that is not installed: expected refusal (Review Focus 2).",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Purview record.** An item whose `Note` starts `Purview package: Purview.Telemetry.SourceGenerator.`, a proposed ADR with `Item` that ID, closed with `done`. Expected: `ENGINEERING.md` gains `### Purview.Telemetry.SourceGenerator` with `Version` from `Directory.Packages.props`, `Source` that path, `Decision` the ADR; `pm-lint check` clean.",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Write the report** with one section per step (commands, output excerpts, pass or fail), the A5 finding, and the scratch repo's location; run `just pm-lint`. Expected: clean.",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Fix and re-run** any step that failed, by editing the skill text in the owning task's files, then re-run that step in a fresh session. Record each re-run in the report.",
+            "checked": false
+          },
+          {
+            "text": "**Step 8: Commit** the report as a PM path through the normal PM commit, or with `git add planning/research/2026-11-26-m4-rehearsal.md` and `docs(pm): m4 rehearsal report (R-036)`; then `just lint-check`. Expected: PASS.",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -769,7 +951,7 @@
           "title": "Plan citation and done check",
           "owner": "agent",
           "size": "M",
-          "detail": "plan"
+          "detail": "execute, 0/34 plan steps"
         }
       ],
       "next": [

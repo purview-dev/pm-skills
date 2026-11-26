@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-036 Plan citation and done check
 - Session: feat/r-036-plan-citation-and-done-check
-- Stage: plan
+- Stage: execute
 - Brief: planning/briefs/2026-11-20-technology-and-engineering-principles.md
 - Milestone: M4
 - Serves: V5
@@ -23,7 +23,7 @@ Milestone: optional; the item's milestone while it is active
 - Depends on: R-033, R-034
 - Revisits:
 - Spec: docs/superpowers/specs/2026-11-25-plan-citation-and-done-check-design.md
-- Plan:
+- Plan: docs/superpowers/plans/2026-11-26-plan-citation-and-done-check.md
 - Started: 2026-11-25
 
 ## Done when
