@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { HYDRATED } from './hydration.ts';
+
 // The fixture (test/fixtures/planning.json): M1 First release, M2 Billing
 // (focus), M3 Self-serve upgrades, M4 Partner billing. Open items, with their
 // milestone: R-012 now (none, the active item), R-013 next (M2), R-014 next
@@ -15,7 +17,7 @@ const EDGE_IDS = ['R-010>R-013:depends:0', 'R-021>R-013:depends:0', 'R-013>R-014
 
 /** Waits for the Graph island to hydrate: the toolbar shows once the URL state is applied. */
 async function hydrated(page: Page): Promise<void> {
-	await expect(page.locator('.plan-graph__toolbar')).toBeVisible();
+	await expect(page.locator('.plan-graph__toolbar')).toBeVisible({ timeout: HYDRATED });
 }
 
 /** Opens the Graph page and waits for the island to hydrate. */

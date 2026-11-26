@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { HYDRATED } from './hydration.ts';
+
 import { COLUMNS as BOARD_COLUMNS } from '../../src/lib/board';
 
 const STORAGE_KEY = 'pm-docs-site:board:collapsed';
@@ -64,7 +66,7 @@ test('ungrouped, each column header joins its cards cell', async ({ page }) => {
 
 /** Waits for the Board island to hydrate: the filter bar shows once it has. */
 async function hydrated(page: Page): Promise<void> {
-	await expect(page.locator('.plan-board__filters')).toBeVisible();
+	await expect(page.locator('.plan-board__filters')).toBeVisible({ timeout: HYDRATED });
 }
 
 /** Opens the board and waits for the island to hydrate. */
