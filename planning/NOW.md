@@ -11,22 +11,25 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: idle
-- Item:
-- Session:
-- Stage:
+- Status: active
+- Item: R-006 Check pm-setup's skill counts in validate
+- Session: feat/r-006-check-pm-setup-skill-counts
+- Stage: design
 - Brief:
-- Milestone:
-- Serves:
-- Owner:
-- Size:
-- Depends on:
+- Milestone: M2
+- Serves: V1
+- Owner: agent
+- Size: S
+- Depends on: none
 - Revisits:
+- Note: 2026-11-26: the Done when's `22` is stale; `pm-setup` now says `26 of 26` while 27 `pm-*` skills ship (`release` is repository-only), so the check compares the count `pm-setup` writes with the shipped `pm-*` skills, whatever the number.
 - Spec:
 - Plan:
-- Started:
+- Started: 2026-11-26
 
 ## Done when
+
+- `just validate` fails when the `<n> of 22` counts in `pm-setup` differ from the number of shipped skills.
 
 ## Checkpoint
 
