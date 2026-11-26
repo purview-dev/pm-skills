@@ -5,12 +5,7 @@ import { afterAll, describe, expect, it } from 'bun:test';
 
 import { INSTALL_COMMAND } from '../lib/astroc4.ts';
 import { parse } from '../lib/cli-args.ts';
-import { CLI, expectedPages, FIXTURES, htmlPages, PACKAGE, runCli, SCRATCH, scratchFixture, siteConfig } from './helpers';
-
-const BUILD = 180_000;
-// A check runs the CLI in a Node subprocess and builds nothing, but the start-up
-// can pass bun's 5000ms default under load on Windows.
-const CHECK = 60_000;
+import { BUILD, CHECK, CLI, expectedPages, FIXTURES, htmlPages, PACKAGE, runCli, SCRATCH, scratchFixture, siteConfig } from './helpers';
 const FIXTURE_SITE = join(FIXTURES, 'site');
 
 afterAll(() => {

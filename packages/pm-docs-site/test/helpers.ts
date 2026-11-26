@@ -7,10 +7,36 @@ export const FIXTURES = join(PACKAGE, 'test', 'fixtures');
 export const CLI = join(PACKAGE, 'lib', 'cli.ts');
 
 /** Run the CLI under Node, as a consumer would. */
-export function runCli(args: string[], cwd: string = PACKAGE): { code: number; stdout: string; stderr: string } {
-	const result = Bun.spawnSync(['node', CLI, ...args], { cwd, stdout: 'pipe', stderr: 'pipe' });
+export function runCli(
+	args: string[],
+	cwd: string = PACKAGE,
+	options: { timeout?: number } = {},
+): { code: number; stdout: string; stderr: string; timedOut: boolean } {
+	const timeout = options.timeout ?? childTimeout(args);
+	const result = Bun.spawnSync(['node', CLI, ...args], { cwd, stdout: 'pipe', stderr: 'pipe', timeout, killSignal: 'SIGKILL' });
+	const timedOut = result.exitedDueToTimeout === true;
+	const stderr = result.stderr.toString();
 
-	return { code: result.exitCode, stdout: result.stdout.toString(), stderr: result.stderr.toString() };
+	return {
+		code: result.exitCode ?? -1,
+		stdout: result.stdout.toString(),
+		stderr: timedOut ? `runCli: timed out after ${timeout}ms: node lib/cli.ts ${args.join(' ')}\n${stderr}` : stderr,
+		timedOut,
+	};
+}
+
+/** The bun test timeout of a test that builds a site. */
+export const BUILD = 180_000;
+// A check runs the CLI in a Node subprocess and builds nothing, but the start-up
+// can pass bun's 5000ms default under load on Windows.
+export const CHECK = 60_000;
+
+/**
+ * runCli's child time limit: 10s under the test timeout its command runs in, so
+ * a hung child is killed and reports its output before bun kills the test (R-056).
+ */
+export function childTimeout(args: string[]): number {
+	return (args[0] === 'build' ? BUILD : CHECK) - 10_000;
 }
 
 /** Every `.html` file under a build folder, `/`-separated and sorted. */
