@@ -13,7 +13,7 @@
 
 ## Decision
 
-`pm-purview` writes `Purview package: <PackageId>.` in the accepted item's `Note` and nothing in `ENGINEERING.md`. When that item closes, `pm-checkpoint` (`done`) finds the package in the item branch's manifests and applies `pm-engineering` `add technology` write steps only, with `Source` the manifest path and `Decision` the item's ADR it has just accepted. `ENGINEERING.md` is read from the PM base and written in the item's worktree, so the entry rides the pull request.
+`pm-purview` writes `Purview package: <PackageId>.` in the accepted item's `Note`, only when the recommendation is one package, and nothing in `ENGINEERING.md`. When that item closes, `pm-checkpoint` (`done`) finds the package in the item branch's manifests and applies `pm-engineering` `add technology` write steps only, with `Source` the manifest that holds the `PackageReference` (or `global.json` for an SDK) and `Decision` the item's ADR that names the package, accepted or still proposed: an ADR that lives only in the main worktree is accepted there only after the close commit succeeds. `pm-item` (`done`) and `pm-rejoin` (merged-unclosed) write no entry; they add a Note to run `pm-engineering add technology <PackageId>`. `ENGINEERING.md` is read from the PM base and written in the item's worktree, so the entry rides the pull request.
 
 ## Alternatives
 

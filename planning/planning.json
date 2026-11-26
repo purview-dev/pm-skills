@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-26T02:01:49+00:00",
+  "generatedAt": "2026-11-26T02:20:09+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-036-plan-citation-and-done-check",
-    "head": "df75a98ecf68ef1f8ed7fc9610d2453eae34e685"
+    "head": "a57c5b8959264ea3dd401b68134169b5dc49d2b4"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -2173,6 +2173,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "pm-setup Step 5 item 4 checks for an existing docs/adr/ folder only when `<PM root>/config.md` exists, so running pm-setup before pm-init (the usual order on a new install) never prints the Note that suggests `pm-adr import docs/adr/`."
+    },
+    {
+      "file": "planning/inbox/2026-11-26-0300-checkpoint-switch-fails-on-item-branch.md",
+      "title": "pm-checkpoint switch commit fails on item branch",
+      "captured": "2026-11-26 03:00",
+      "source": "agent (R-036 execute)",
+      "kind": "bug",
+      "severity": "minor",
+      "affects": "pm-checkpoint",
+      "context": "R-036 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "`pm-checkpoint switch` run on an item branch writes NOW.md and ROADMAP.md, then the PM commit's recommended option `Switch to main and commit` fails: `git switch` refuses because NOW.md and ROADMAP.md differ between the item branch and main."
     }
   ],
   "briefs": [
@@ -2507,7 +2522,7 @@
       "item": "R-036",
       "source": null,
       "context": "`pm-purview` turns an accepted recommendation into a roadmap item and a proposed ADR, but the package is not installed until that item is built. `ENGINEERING.md` records the technology in use (ADR-009), and `pm-engineering add` asks for evidence that it is in use and cannot run during a workflow. Spec: `docs/superpowers/specs/2026-11-25-plan-citation-and-done-check-design.md`.",
-      "decision": "`pm-purview` writes `Purview package: <PackageId>.` in the accepted item's `Note` and nothing in `ENGINEERING.md`. When that item closes, `pm-checkpoint` (`done`) finds the package in the item branch's manifests and applies `pm-engineering` `add technology` write steps only, with `Source` the manifest path and `Decision` the item's ADR it has just accepted. `ENGINEERING.md` is read from the PM base and written in the item's worktree, so the entry rides the pull request.",
+      "decision": "`pm-purview` writes `Purview package: <PackageId>.` in the accepted item's `Note`, only when the recommendation is one package, and nothing in `ENGINEERING.md`. When that item closes, `pm-checkpoint` (`done`) finds the package in the item branch's manifests and applies `pm-engineering` `add technology` write steps only, with `Source` the manifest that holds the `PackageReference` (or `global.json` for an SDK) and `Decision` the item's ADR that names the package, accepted or still proposed: an ADR that lives only in the main worktree is accepted there only after the close commit succeeds. `pm-item` (`done`) and `pm-rejoin` (merged-unclosed) write no entry; they add a Note to run `pm-engineering add technology <PackageId>`. `ENGINEERING.md` is read from the PM base and written in the item's worktree, so the entry rides the pull request.",
       "alternatives": "- Record at acceptance in `pm-purview`: simplest, but lists a package before it is installed, and stays wrong when the item is dropped. Rejected by the user (2026-11-25).\n- `pm-purview` output tells the user to run `pm-engineering add` later: no automation, easily forgotten.",
       "consequences": "- `ENGINEERING.md` lists only packages found in a manifest.\n- `pm-checkpoint` (`done`) gains a second write it applies on another skill's behalf, after `pm-adr accept` (ADR-010).\n- An uncommitted `ENGINEERING.md` stops `done` like `ROADMAP.md`; it is not a capture."
     }
@@ -2516,7 +2531,7 @@
     "next": 4,
     "later": 12,
     "nextMax": 5,
-    "openInbox": 6,
+    "openInbox": 7,
     "discuss": 3,
     "shapingBriefs": 0,
     "done": 33,
