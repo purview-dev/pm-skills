@@ -28,12 +28,14 @@
 ### Task 1: Skill count check
 
 **Files:**
+
 - Create: `scripts/skill-counts.ts`
 - Create: `scripts/skill-counts.test.ts`
 - Modify: `scripts/validate.ts` (after the shipped-skill loop, line 57)
 - Modify: `AGENTS.md` (the `Validate only` bullet in *Build, test, and lint*)
 
 **Interfaces:**
+
 - Produces: `export function skillCountDrift(file: string, text: string, expected: number): string[]`
 
 - [ ] **Step 1: Write the failing tests** in `scripts/skill-counts.test.ts` (`describe("pm-setup skill counts")`):
