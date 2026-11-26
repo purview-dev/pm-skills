@@ -1,17 +1,24 @@
-// pm-setup states the size of its inventory as "<n> of 26" and "<26 of 26"; "<n> of <total>" (workflow
-// skills) has no digits and is not matched. The inventory names every
-// shipped skill except pm-setup itself, so each number must equal the shipped skills minus pm-setup.
+// pm-setup states the size of its inventory on two lines: the plan's "- Skills: <n> of 26 installed" and
+// the output's "- Skills: <26 of 26 installed". The inventory names every shipped skill except pm-setup
+// itself, so each number must equal the shipped skills minus pm-setup. Each line is matched by its own
+// wording, so rewording either one fails instead of switching its check off.
+const countLines = [
+  { label: "- Skills: <n> of <N> installed", pattern: /^- Skills: <n> of (\d+) installed/ },
+  { label: "- Skills: <<N> of <N> installed", pattern: /^- Skills: <(\d+) of (\d+) installed/ },
+];
+
 export function skillCountDrift(file: string, text: string, expected: number): string[] {
+  const lines = text.split("\n");
   const errors: string[] = [];
-  let found = false;
-  text.split("\n").forEach((line, index) => {
-    for (const match of line.matchAll(/(\d+|<n>) of (\d+)/g)) {
-      found = true;
-      for (const count of [match[1], match[2]]) {
-        if (count !== "<n>" && Number(count) !== expected) errors.push(`${file}:${index + 1}: skill count ${count}, expected ${expected}`);
-      }
+  for (const { label, pattern } of countLines) {
+    const index = lines.findIndex((line) => pattern.test(line));
+    if (index === -1) {
+      errors.push(`${file}: no "${label}" line found`);
+      continue;
     }
-  });
-  if (!found) return [`${file}: no "<N> of <N>" skill count found`];
+    for (const count of pattern.exec(lines[index])!.slice(1)) {
+      if (Number(count) !== expected) errors.push(`${file}:${index + 1}: skill count ${count}, expected ${expected}`);
+    }
+  }
   return errors;
 }
