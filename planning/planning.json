@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-26T14:56:19+00:00",
+  "generatedAt": "2026-11-26T15:03:19+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-006-check-pm-setup-skill-counts",
-    "head": "8dfe86e83c78dc1a595f1dc9ae1732aeee4309b2"
+    "head": "a7490b384c81fcb72b982ba86a03654e1907a278"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -387,11 +387,11 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-006-check-pm-setup-skill-counts",
     "brief": null,
     "milestone": "M2",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-26-r-006-pm-setup-skill-counts-design.md",
     "plan": null,
     "started": "2026-11-26",
     "doneWhen": [
@@ -759,7 +759,7 @@
           "title": "Check pm-setup's skill counts in validate",
           "owner": "agent",
           "size": "S",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
@@ -2492,6 +2492,6 @@
       "R-056",
       "R-042"
     ],
-    "drift": true
+    "drift": false
   }
 }
