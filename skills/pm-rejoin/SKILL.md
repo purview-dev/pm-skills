@@ -153,7 +153,9 @@ ambiguous, ask which one is true.
 7. **Hand off.** Invoke the skill for `Stage` from the Handoffs table in
    `config.md`, passing the item title, `Serves`, `Done when`, the brief
    path, and the checkpoint's `Next action`. When `Stage` is `design`, also
-   pass the ADR instruction (Shared definitions: **Every design handoff**).
+   pass the ADR instruction (Shared definitions: **Every design handoff**);
+   when it is `plan`, pass the principles and ADRs instead (Shared
+   definitions: **Every plan handoff**).
    If that stage has no skill in
    the table, say so and ask the user to edit `config.md`; never name a
    development skill that is not in that table.

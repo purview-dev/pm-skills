@@ -154,7 +154,8 @@ written to the branch the session is leaving.
 If the item has a `Paused checkpoint`, copy it under `## Checkpoint` and set
 `Stage` to the stage recorded there. Then invoke that stage's skill instead
 of design. When that stage is `design`, pass step 10's ADR instruction with
-it.
+it. When it is `plan`, pass the principles and ADRs instead (Shared
+definitions: **Every plan handoff**).
 
 ## Output
 

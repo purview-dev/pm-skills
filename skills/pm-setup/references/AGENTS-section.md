@@ -304,6 +304,24 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   proposing approaches, to record each architecture decision the spec
   makes with `pm-adr new` or `supersede`, and to name the ADR IDs in the
   spec.
+- **Every plan handoff** (`pm-checkpoint` `stage` into plan, `pm-next`
+  resuming a `Paused checkpoint` at `plan`, and a resume, `pop`, `rewind`,
+  or `rejoin` into plan) lists, in this format:
+
+  ```markdown
+  - ADRs: <ADR-NNN <title> (<status>), ... | none>
+  - Principles: <EP-NNN <title>: <Rule> (Check: <command | review>); ... | none>
+  - Cite the EP and ADR IDs in the tasks they constrain; put each command check in the plan's verification steps.
+  ```
+
+  `ADRs` is every `ADR-NNN` the spec names, as named references with their
+  status, or `none`. `Principles` is every principle in `ENGINEERING.md`
+  whose `Applies to` is `all` or matches a path or glob the spec names, as
+  `EP-NNN <title>: <Rule> (Check: <command | review>)`, or `none`; a
+  missing `ENGINEERING.md` is `none`. A path the spec names is any
+  repository-relative path or glob it gives, backticked or in a file
+  table; a glob matches when any named path falls under it. A spec naming
+  no paths gets only `all` principles, and the list says so (ADR-013).
 - **RAG:** a risk's red, amber, or green status. It is derived from
   Likelihood and Impact, scored `low` 1, `medium` 2, `high` 3, by their
   product: 6 or more is `red`, 3 or 4 is `amber`, 2 or less is `green`. An

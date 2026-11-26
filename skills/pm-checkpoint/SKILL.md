@@ -78,7 +78,9 @@ and `Explain <ID>`.
    (design, plan, execute, finish). Fill `Spec` or `Plan` with the file the
    finished skill wrote. Do not write a checkpoint block. Commit the PM
    state (step 9), then invoke the next handoff skill with that file path,
-   not the conversation that produced it (rules: Context budget). In the
+   not the conversation that produced it (rules: Context budget). When the
+   next stage is `plan`, the handoff also passes the principles and ADRs
+   (Shared definitions: **Every plan handoff**). In the
    output, show the commit as a Note, not under "Do this next".
 4. **pause:** replace `## Checkpoint` with this block, using real values:
 
@@ -258,7 +260,9 @@ and `Explain <ID>`.
    the Handoffs table in `config.md`, passing the checkpoint's
    `Next action`; when the stack still has entries, name the next one as a
    Note. When the restored `Stage` is `design`, the handoff also passes the
-   ADR instruction (Shared definitions: **Every design handoff**).
+   ADR instruction (Shared definitions: **Every design handoff**); when it
+   is `plan`, the handoff also passes the principles and ADRs (Shared
+   definitions: **Every plan handoff**).
 9. **Commit** the PM state (rules: Committing PM state) in every mode,
    after the last PM file is written. In `done`, the commit worktree is the
    worktree that holds the item's branch and the message is
