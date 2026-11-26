@@ -1,6 +1,6 @@
 # ADR-016 Briefs and inbox files export ordered sections
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-26
 - Category: data
 - Supersedes: none

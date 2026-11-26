@@ -1,6 +1,6 @@
 # ADR-017 The site reads image files beside briefs and inbox files
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-26
 - Category: architecture
 - Supersedes: none
