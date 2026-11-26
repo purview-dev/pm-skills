@@ -5,14 +5,12 @@
 // file in the decisions folder beside planning.json (ADR-012), and siteRefs()
 // reads the same HTML for Linked from (ADR-015).
 
-import { basename, dirname, join, relative, sep } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-
 import type { Loader } from 'astro/loaders';
 import config from 'virtual:pm-docs-site/config';
 
 import { loadPlanning } from '../lib/planning';
 import type { Adr } from '../lib/planning-types';
+import { recordFile, renderSection } from './sections';
 
 export const ADR_SECTIONS = [
 	{ key: 'context', label: 'Context' },
@@ -28,7 +26,7 @@ export type AdrSectionData = { adr: string; section: AdrSection };
 
 /** The ADR's file: `<PM root>/decisions/<file>`, beside `<PM root>/planning.json`. */
 export function adrFile(planningPath: string, adrPath: string): string {
-	return join(dirname(planningPath), 'decisions', basename(adrPath));
+	return recordFile(planningPath, 'decisions', adrPath);
 }
 
 /** The `adr-sections` entry id for one section. */
@@ -66,8 +64,8 @@ export function adrsLoader(): Loader {
 export function adrSectionsLoader(): Loader {
 	return {
 		name: 'adr-sections',
-		async load({ config: astro, store, parseData, renderMarkdown }) {
-			const siteRoot = fileURLToPath(astro.root);
+		async load(context) {
+			const { store, parseData } = context;
 
 			store.clear();
 			// No Decisions view, no ADR pages: import no image, so a missing one cannot fail the build.
@@ -76,16 +74,11 @@ export function adrSectionsLoader(): Loader {
 			for (const adr of loadPlanning().adrs) {
 				for (const { key, markdown, file } of sectionsOf(adr)) {
 					const id = adrSectionId(adr.id, key);
-					const rendered = await renderMarkdown(markdown, { fileURL: pathToFileURL(file) });
 
 					store.set({
 						id,
 						data: await parseData({ id, data: { adr: adr.id, section: key } satisfies AdrSectionData }),
-						// The ADR's expected file, which need not exist: it is only the importer relative images resolve against.
-						filePath: relative(siteRoot, file).split(sep).join('/'),
-						rendered,
-						// Astro imports these against filePath, so render() resolves each image placeholder.
-						assetImports: rendered.metadata?.imagePaths,
+						...(await renderSection(context, markdown, file)),
 					});
 				}
 			}

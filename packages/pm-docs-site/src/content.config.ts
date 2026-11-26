@@ -3,6 +3,7 @@ import { defineCollection } from 'astro:content';
 import config from 'virtual:pm-docs-site/config';
 
 import { adrSectionsLoader, adrsLoader } from './loaders/adrs';
+import { briefSectionsLoader, inboxSectionsLoader } from './loaders/records';
 import { repoDocsLoader } from './loaders/repo-docs';
 
 // Starlight reads a `docs` and an `i18n` collection. Astro registers a
@@ -31,4 +32,8 @@ export const collections = {
 	adrs: defineCollection({ loader: adrsLoader() }),
 	// The same sections as rendered entries, so Astro resolves their relative images (ADR-012).
 	'adr-sections': defineCollection({ loader: adrSectionsLoader() }),
+	// Each brief's and inbox file's sections, rendered once, with relative images
+	// resolved beside the file in briefs/ or inbox/ (src/loaders/records.ts, ADR-017).
+	'brief-sections': defineCollection({ loader: briefSectionsLoader() }),
+	'inbox-sections': defineCollection({ loader: inboxSectionsLoader() }),
 };
