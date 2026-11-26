@@ -1,6 +1,6 @@
 # ADR-015 ADR page references come from adr-sections
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-26
 - Category: architecture
 - Supersedes: ADR-011
