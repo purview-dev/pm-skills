@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-26T16:29:58+00:00",
+  "generatedAt": "2026-11-26T17:44:20+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-052-docs-site-package-brief-and-inbox-pages",
-    "head": "d6702ee5f03312821a139071f0889bc695d094d9"
+    "head": "2f491c4abb7b5017ddf5847ec5cf0958ac3da9f8"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -393,11 +393,11 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-052-docs-site-package-brief-and-inbox-pages",
     "brief": "planning/briefs/2026-11-17-docs-site-package.md",
     "milestone": "M5",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-26-docs-site-brief-and-inbox-pages-design.md",
     "plan": null,
     "started": "2026-11-26",
     "doneWhen": [
@@ -741,7 +741,7 @@
           "title": "Docs-site package: brief and inbox pages",
           "owner": "agent",
           "size": "S",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
@@ -2484,6 +2484,38 @@
       "decision": "The `adrs` collection holds the ADR as exported and renders nothing. The\nADR page reads a missing (`null`) or empty (`''`) section from the\nMarkdown. `siteRefs()` reads the `adr-sections` collection once and\ncollects the `linkHtml` keys from each entry's `rendered.html`, so a\npage's links and its Linked from entries still come from the same\nrendered HTML.",
       "alternatives": "| Approach | Trade-off | Outcome |\n| --- | --- | --- |\n| Render only in `adr-sections`; `siteRefs()` reads its `rendered.html` | One render per section, no cache; supersedes ADR-011 | Chosen |\n| Memoise `renderMarkdown` per section, shared by both loaders | Keeps ADR-011; a module cache that grows in dev, and two copies of the HTML | Rejected |\n| Do nothing | Two renders per section, Mermaid included | Rejected |",
       "consequences": "- Each ADR section is rendered once per build.\n- `RenderedAdr`'s `html` field goes.\n- `adr-sections` is empty when the Decisions view is off, and\n  `siteRefs()` already skips ADR keys then.\n- Follows ADR-002 ADR sections export as Markdown text, ADR-006 Mermaid\n  renders at build time with Pele, and ADR-012 The site reads image files\n  beside an ADR."
+    },
+    {
+      "id": "ADR-016",
+      "path": "planning/decisions/ADR-016-briefs-and-inbox-files-export-ordered-sections.md",
+      "title": "Briefs and inbox files export ordered sections",
+      "status": "proposed",
+      "supersededBy": null,
+      "date": "2026-11-26",
+      "category": "data",
+      "supersedes": null,
+      "item": "R-052",
+      "source": null,
+      "context": "The docs site must show whole briefs and inbox files, and it reads\n`planning.json` only. Today the export carries a brief's `problem`,\n`doneWhen`, and `decision` first lines and an inbox file's `idea`. ADR-002\nexports ADR sections as named Markdown fields.",
+      "decision": "Each brief and inbox entry in `planning.json` gains `sections`: an ordered\narray of `{ heading, markdown }`, one per level-2 section after the header\nblock, in file order. The Markdown is verbatim, with HTML comments stripped\noutside code and kept inside it. The existing summary fields stay. The\nexport moves to `schemaVersion` 6.",
+      "alternatives": "| Approach | Trade-off | Outcome |\n| --- | --- | --- |\n| An ordered `sections` list | Keeps every heading, including optional and consumer-added ones; the schema checks shape only | Chosen |\n| One named field per heading, as ADRs have | 11 brief and 4 inbox fields; loses an unmodelled heading, as ADR-002 rejected structure | Rejected |\n| Summary fields only (do nothing) | No export change, but a brief page adds little beyond Linked from | Rejected by the user (2026-11-26) |",
+      "consequences": "- The export grows by the text of every brief and inbox file.\n- The schema, its example, the `pm-export` field map, and `planning.ts`\n  change together.\n- `@purview-dev/pm-docs-site` reads `schemaVersion` 6 from `0.1.0-pre.7`.\n- Follows ADR-002 ADR sections export as Markdown text."
+    },
+    {
+      "id": "ADR-017",
+      "path": "planning/decisions/ADR-017-the-site-reads-image-files-beside-briefs-and-inbox-files.md",
+      "title": "The site reads image files beside briefs and inbox files",
+      "status": "proposed",
+      "supersededBy": null,
+      "date": "2026-11-26",
+      "category": "architecture",
+      "supersedes": null,
+      "item": "R-052",
+      "source": null,
+      "context": "ADR-012 lets the site read the image files beside an ADR in\n`<PM root>/decisions/`. Brief and inbox pages render their sections the\nsame way, and a section may reference a relative image.",
+      "decision": "`brief-sections` and `inbox-sections` content collections render each\nsection once with `renderMarkdown`, resolving relative images against\n`briefs/<file>` or `inbox/<file>` beside the configured `planning.json`.\nLinked from keys come from the same rendered HTML, as ADR-015 does for\nADRs. Every PM record is still read only from `planning.json`. A missing\nimage file fails the build.",
+      "alternatives": "| Approach | Trade-off | Outcome |\n| --- | --- | --- |\n| Extend the ADR pipeline to briefs and inbox files | Same fidelity and link guarantees as ADR pages; two more collections | Chosen |\n| Plain text through `LinkedText` | Cheaper; lists and tables flatten | Rejected |\n| Read the brief and inbox Markdown files directly | Breaks the rule that the site reads the export only | Rejected |",
+      "consequences": "- Two more content collections, each empty when its view is off.\n- Extends ADR-012 to two more folders without superseding it.\n- Follows ADR-012 The site reads image files beside an ADR and ADR-015 ADR\n  page references come from adr-sections."
     }
   ],
   "counts": {
@@ -2508,6 +2540,6 @@
       "R-056",
       "R-042"
     ],
-    "drift": true
+    "drift": false
   }
 }
