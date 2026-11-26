@@ -31,28 +31,30 @@
 ### Task 1: Script and style bodies in linkHtml (finding 26)
 
 **Files:**
+
 - Modify: `src/lib/link-html.ts`
 - Test: `test/link-html.test.ts`
 
 **Interfaces:**
+
 - Produces: `linkHtml(html: string, known: Map<string, Target>): LinkedHtml`, signature unchanged.
 
 - [ ] **Step 1: Write the failing tests** in `describe('linkHtml')`:
 
 ```ts
 it('copies a script body to its close tag, so a raw < never opens a tag', () => {
-	const result = linkHtml("<script>if (a<b) x='R-012'</script><p>R-013</p>", known);
+ const result = linkHtml("<script>if (a<b) x='R-012'</script><p>R-013</p>", known);
 
-	expect(result.html).toBe("<script>if (a<b) x='R-012'</script><p><a href=\"/plan/features/r-013/\">R-013</a></p>");
-	expect([...result.keys]).toEqual(['R-013']);
+ expect(result.html).toBe("<script>if (a<b) x='R-012'</script><p><a href=\"/plan/features/r-013/\">R-013</a></p>");
+ expect([...result.keys]).toEqual(['R-013']);
 });
 
 it('matches the close tag in any case, for style too', () => {
-	expect(linkHtml('<STYLE>a<b{}</Style><p>R-013</p>', known).html).toBe('<STYLE>a<b{}</Style><p><a href="/plan/features/r-013/">R-013</a></p>');
+ expect(linkHtml('<STYLE>a<b{}</Style><p>R-013</p>', known).html).toBe('<STYLE>a<b{}</Style><p><a href="/plan/features/r-013/">R-013</a></p>');
 });
 
 it('copies an unclosed script to the end', () => {
-	expect(linkHtml('<p>R-013</p><script>a<b R-012', known).html).toBe('<p><a href="/plan/features/r-013/">R-013</a></p><script>a<b R-012');
+ expect(linkHtml('<p>R-013</p><script>a<b R-012', known).html).toBe('<p><a href="/plan/features/r-013/">R-013</a></p><script>a<b R-012');
 });
 ```
 
@@ -69,6 +71,7 @@ git commit -m "fix(pm-docs-site): copy script and style bodies whole in linkHtml
 ### Task 2: Pin the Decisions list and remote ADR images (findings 28, 29)
 
 **Files:**
+
 - Modify: `test/links.test.ts:192-196`
 - Modify: `test/integration.test.ts:410-434`
 
@@ -79,6 +82,7 @@ for (const adr of planning.adrs) expect(page).toContain(`data-adr="${adr.id}"`);
 ```
 
 with `const page = html('plan/decisions/index.html');`.
+
 - [ ] **Step 2: Remote image.** In "an ADR section with a relative image builds to a resolved img", change the appended text to `'R-013 ![a](x.png) ![r](https://example.com/r.png)'` and add:
 
 ```ts
@@ -97,29 +101,31 @@ git commit -m "test(pm-docs-site): pin the decisions rows and remote adr images 
 ### Task 3: One render per ADR section (finding 30, ADR-015)
 
 **Files:**
+
 - Modify: `src/loaders/adrs.ts`
 - Modify: `src/lib/site-refs.ts`
 - Modify: `src/routes/plan/decisions/[id].astro`
 - Create: `test/adrs-loader.test.ts`
 
 **Interfaces:**
+
 - Produces: `adrsLoader()` stores `{ id, data: Adr }` (no `html`). `RenderedAdr` is removed; `[id].astro` and `site-refs.ts` use `Adr` from `../lib/planning-types`. `ADR_SECTIONS`, `adrSectionId`, `adrFile`, `AdrSectionData`, `adrSectionsLoader` unchanged.
 
 - [ ] **Step 1: Write the failing test** in `test/adrs-loader.test.ts`, following `test/repo-docs.test.ts`'s stub context (`test/setup.ts` already points the config at the fixture, Decisions view on):
 
 ```ts
 it('the adrs loader renders nothing; adr-sections renders each non-empty section once', async () => {
-	const context = () => ({ config: { root: pathToFileURL(join(FIXTURES, 'site', '/')) }, store: { set: mock(), clear: mock(), delete: mock() }, parseData: async ({ data }: { data: unknown }) => data, renderMarkdown: mock(async () => ({ html: '' })), generateDigest: () => 'digest', logger: { info: mock() } });
-	const adrs = context();
-	const sections = context();
+ const context = () => ({ config: { root: pathToFileURL(join(FIXTURES, 'site', '/')) }, store: { set: mock(), clear: mock(), delete: mock() }, parseData: async ({ data }: { data: unknown }) => data, renderMarkdown: mock(async () => ({ html: '' })), generateDigest: () => 'digest', logger: { info: mock() } });
+ const adrs = context();
+ const sections = context();
 
-	await adrsLoader().load(adrs as never);
-	await adrSectionsLoader().load(sections as never);
+ await adrsLoader().load(adrs as never);
+ await adrSectionsLoader().load(sections as never);
 
-	const nonEmpty = loadPlanning().adrs.flatMap((adr) => ADR_SECTIONS.filter(({ key }) => adr[key] !== null && adr[key]!.trim() !== ''));
-	expect(adrs.renderMarkdown).not.toHaveBeenCalled();
-	expect(sections.renderMarkdown).toHaveBeenCalledTimes(nonEmpty.length);
-	expect(adrs.store.set.mock.calls[0][0].data).not.toHaveProperty('html');
+ const nonEmpty = loadPlanning().adrs.flatMap((adr) => ADR_SECTIONS.filter(({ key }) => adr[key] !== null && adr[key]!.trim() !== ''));
+ expect(adrs.renderMarkdown).not.toHaveBeenCalled();
+ expect(sections.renderMarkdown).toHaveBeenCalledTimes(nonEmpty.length);
+ expect(adrs.store.set.mock.calls[0][0].data).not.toHaveProperty('html');
 });
 ```
 
@@ -141,6 +147,7 @@ git commit -m "perf(pm-docs-site): render each adr section once (R-058, ADR-015)
 ### Task 4: Release 0.1.0-pre.6 and verify
 
 **Files:**
+
 - Modify: `package.json:3` (`"version": "0.1.0-pre.6"`)
 - Modify: `README.md:34` (the pinned dependency to `0.1.0-pre.6`)
 
