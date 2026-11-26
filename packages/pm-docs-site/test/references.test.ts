@@ -19,7 +19,47 @@ describe('targets', () => {
 		expect(known.get('RK-002')?.href).toBe('/plan/risks/rk-002/');
 		expect(known.get('RK-001')?.href).toBe('/plan/risks/rk-001/');
 		expect(known.get('RK-003')?.href).toBe('/plan/risks/#rk-003');
-		expect(known.get('planning/briefs/2026-11-07-referrals.md')?.href).toBe('/plan/briefs/#2026-11-07-referrals');
+		expect(known.get('planning/briefs/2026-11-07-referrals.md')?.href).toBe('/plan/briefs/2026-11-07-referrals/');
+	});
+
+	it('a brief links to its page and an inbox file is a target', () => {
+		expect(known.get('planning/briefs/2026-11-09-invoice-export.md')?.href).toBe('/plan/briefs/2026-11-09-invoice-export/');
+		expect(known.get('planning/inbox/2026-11-08-1010-csv-encoding.md')).toEqual({
+			kind: 'inbox',
+			key: 'planning/inbox/2026-11-08-1010-csv-encoding.md',
+			href: '/plan/inbox/2026-11-08-1010-csv-encoding/',
+			label: 'CSV from R-012 opens garbled in Excel',
+		});
+		expect(targets(planning, { ...all, inbox: false }).get('planning/inbox/2026-11-08-1010-csv-encoding.md')?.href).toBeNull();
+	});
+
+	it('an inbox page is in the Linked from of the item it affects and relates to, and a brief page of its item', () => {
+		const back = references(planning, all);
+		const inbox = { href: '/plan/inbox/2026-11-08-1010-csv-encoding/', label: 'CSV from R-012 opens garbled in Excel' };
+
+		// The fixture entry has `Affects: R-012` and `Related: R-012`.
+		expect(back.get('R-012')).toContainEqual({ ...inbox, relation: 'affects' });
+		expect(back.get('R-012')).toContainEqual({ ...inbox, relation: 'related' });
+		expect(back.get('R-012')).toContainEqual({ href: '/plan/briefs/2026-11-09-invoice-export/', label: 'Invoice export', relation: 'listed' });
+		// Each list page lists its entries.
+		expect(back.get('planning/inbox/2026-11-08-1010-csv-encoding.md')).toContainEqual({ href: '/plan/inbox/', label: 'Inbox', relation: 'listed' });
+		expect(back.get('planning/briefs/2026-11-09-invoice-export.md')).toContainEqual({ href: '/plan/briefs/', label: 'Briefs', relation: 'listed' });
+	});
+
+	it('a brief section that names an item is a backlink without rendered keys', () => {
+		// The invoice-export brief's Proposal names R-012 in a table.
+		const back = references(planning, all);
+
+		expect(back.get('R-012')).toContainEqual({ href: '/plan/briefs/2026-11-09-invoice-export/', label: 'Invoice export', relation: 'mentions' });
+	});
+
+	it('takes rendered section keys over the raw Markdown when given', () => {
+		// RK-002 is in no brief's Markdown, so only the rendered keys can link it.
+		const page: Backlink = { href: '/plan/briefs/2026-11-09-invoice-export/', label: 'Invoice export', relation: 'mentions' };
+		const rendered = references(planning, all, undefined, new Map([['planning/briefs/2026-11-09-invoice-export.md', new Set(['RK-002'])]]));
+
+		expect(rendered.get('RK-002')).toContainEqual(page);
+		expect(references(planning, all).get('RK-002')).not.toContainEqual(page);
 	});
 
 	it('links done and dropped items too', () => {
@@ -102,6 +142,12 @@ describe('refText', () => {
 });
 
 describe('linkify', () => {
+	it('links an inbox file path in prose to its page', () => {
+		const runs = linkify('from planning/inbox/2026-11-08-1010-csv-encoding.md today', known);
+
+		expect(runs.map((run) => run.target?.kind ?? null)).toEqual([null, 'inbox', null]);
+	});
+
 	it('links only exact known IDs and brief paths', () => {
 		const text = 'See R-012, (RK-002). Not M10, R-0120 or R-999; brief planning/briefs/2026-11-07-referrals.md.';
 		const runs = linkify(text, known);

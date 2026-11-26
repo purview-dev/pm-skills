@@ -423,6 +423,16 @@ export function briefAnchor(path: string): string {
 	return (path.split('/').at(-1) ?? path).replace(/\.md$/i, '').toLowerCase();
 }
 
+/** The page of one brief on this site. */
+export function briefHref(path: string): string {
+	return `/plan/briefs/${briefAnchor(path)}/`;
+}
+
+/** The page of one inbox file on this site. */
+export function inboxHref(file: string): string {
+	return `/plan/inbox/${briefAnchor(file)}/`;
+}
+
 /** The page of one item on this site. */
 export function featureHref(id: string): string {
 	return `/plan/features/${id.toLowerCase()}/`;
