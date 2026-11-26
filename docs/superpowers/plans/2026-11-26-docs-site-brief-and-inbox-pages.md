@@ -49,7 +49,7 @@
 
 - Produces: `export interface RecordSection { heading: string; markdown: string }` and `export function recordSections(text: string): RecordSection[]` in `planning.ts`; `sections: RecordSection[]` as the last key of each `briefs[]` and `inbox[]` entry (schema `properties` order: after `revisions` / `idea`); package types `Brief.sections` and `InboxEntry.sections` of type `{ heading: string; markdown: string }[]`.
 
-- [ ] **Step 1: Write the failing tests** in `export.test.ts`, describe `build`:
+- [x] **Step 1: Write the failing tests** in `export.test.ts`, describe `build`:
 
 ```ts
 it("exports every brief and inbox section in file order, whole (ADR-016)", () => {
@@ -83,23 +83,23 @@ Add `recordSections` to the import from `./planning.ts`. Add to the fixture brie
 ```
 ````
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `bun test skills/pm-export/scripts/export.test.ts`
 Expected: FAIL (`recordSections` is not exported; `sections` undefined).
 
-- [ ] **Step 3: Implement `recordSections(text: string): RecordSection[]`** in `planning.ts`: `sections(stripCommentsOutsideCode(text), 2).slice(1)`, each body trimmed as `sectionText` does (leading blank lines, trailing whitespace). Read the inbox and brief files raw (`folder("inbox", true)`, `folder("briefs", true)`) and apply `stripComments` yourself for the existing fields, so only `sections` keeps comments inside code. Append `sections: recordSections(text)` to both entries.
+- [x] **Step 3: Implement `recordSections(text: string): RecordSection[]`** in `planning.ts`: `sections(stripCommentsOutsideCode(text), 2).slice(1)`, each body trimmed as `sectionText` does (leading blank lines, trailing whitespace). Read the inbox and brief files raw (`folder("inbox", true)`, `folder("briefs", true)`) and apply `stripComments` yourself for the existing fields, so only `sections` keeps comments inside code. Append `sections: recordSections(text)` to both entries.
 
-- [ ] **Step 4: Schema, example, field map.** Add `$defs.section` `{ type: object, additionalProperties: false, required: [heading, markdown], properties: { heading: {type: string}, markdown: {type: string} } }`; add `sections: { type: array, items: { $ref: "#/$defs/section" } }` last in `brief` and `inboxEntry` `properties` and `required`; `schemaVersion` const `6`. Give every brief and inbox entry in `planning.example.json` a `sections` array, and set `schemaVersion: 6`. In `skills/pm-export/SKILL.md`, row `schemaVersion` reads `6`, and append to both field-map bullets: `` `sections[]` is `{heading, markdown}` for every `##` section after the header, in file order, the Markdown verbatim with HTML comments removed outside code (ADR-016). ``
+- [x] **Step 4: Schema, example, field map.** Add `$defs.section` `{ type: object, additionalProperties: false, required: [heading, markdown], properties: { heading: {type: string}, markdown: {type: string} } }`; add `sections: { type: array, items: { $ref: "#/$defs/section" } }` last in `brief` and `inboxEntry` `properties` and `required`; `schemaVersion` const `6`. Give every brief and inbox entry in `planning.example.json` a `sections` array, and set `schemaVersion: 6`. In `skills/pm-export/SKILL.md`, row `schemaVersion` reads `6`, and append to both field-map bullets: `` `sections[]` is `{heading, markdown}` for every `##` section after the header, in file order, the Markdown verbatim with HTML comments removed outside code (ADR-016). ``
 
-- [ ] **Step 5: Package reads 6.** `SUPPORTED_SCHEMA_VERSIONS = Object.freeze([6])`; add `sections` to `Brief` and `InboxEntry`; in `test/fixtures/planning.json` set `schemaVersion` 6 and give each brief and inbox entry `sections` — `2026-11-09-invoice-export.md` gets `Problem`, `Proposal` (with a two-column Markdown table naming `R-012`), `Decision`, and an empty `Open questions` (`""`); `2026-11-07-referrals.md` gets `[]`; `2026-11-08-1010-csv-encoding.md` gets `Idea` and `Reproduction` (`1. Export R-012.\n2. Open it in Excel.`); `2026-11-09-0900-yearly-export.md` gets `Idea`. Package `version` `0.1.0-pre.7`; `skills/pm-docs-site/SKILL.md` lines 28 and 30 as in Global Constraints. Update any test that pins `5`.
+- [x] **Step 5: Package reads 6.** `SUPPORTED_SCHEMA_VERSIONS = Object.freeze([6])`; add `sections` to `Brief` and `InboxEntry`; in `test/fixtures/planning.json` set `schemaVersion` 6 and give each brief and inbox entry `sections` — `2026-11-09-invoice-export.md` gets `Problem`, `Proposal` (with a two-column Markdown table naming `R-012`), `Decision`, and an empty `Open questions` (`""`); `2026-11-07-referrals.md` gets `[]`; `2026-11-08-1010-csv-encoding.md` gets `Idea` and `Reproduction` (`1. Export R-012.\n2. Open it in Excel.`); `2026-11-09-0900-yearly-export.md` gets `Idea`. Package `version` `0.1.0-pre.7`; `skills/pm-docs-site/SKILL.md` lines 28 and 30 as in Global Constraints. Update any test that pins `5`.
 
-- [ ] **Step 6: Verify**
+- [x] **Step 6: Verify**
 
 Run: `bun test skills/pm-export/scripts/export.test.ts` → PASS.
 Run: `just validate` → exit 0 (schema, example, docs-site fixture, supported versions, minimum package version agree).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add skills/pm-export skills/pm-docs-site/SKILL.md packages/pm-docs-site/lib/schema-version.ts packages/pm-docs-site/src/lib/planning-types.ts packages/pm-docs-site/test packages/pm-docs-site/package.json
@@ -125,7 +125,7 @@ git commit -m "feat(pm-export): export brief and inbox sections, schemaVersion 6
   - `recordSectionId(slug: string, index: number): string` → `` `${slug}/${index}` ``.
   - Collections `'brief-sections'` and `'inbox-sections'`, filled only when `config.views.briefs` / `config.views.inbox`, one entry per section with non-blank Markdown, `filePath` and `assetImports` set as `adr-sections` does. A duplicate entry id throws `Duplicate <collection> entry <id>`.
 
-- [ ] **Step 1: Write the failing tests** in `test/records-loader.test.ts`:
+- [x] **Step 1: Write the failing tests** in `test/records-loader.test.ts`:
 
 ```ts
 it('recordFile resolves a brief and an inbox file beside planning.json', () => {
@@ -144,18 +144,18 @@ it('recordEntries skips blank sections and throws on a duplicate id', () => {
 
 `recordEntries(records: { key: string; sections: { heading: string; markdown: string }[] }[]): { id: string; record: string; index: number; heading: string; markdown: string }[]` lives in `sections.ts`; the slug is `briefAnchor(key)`.
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `cd packages/pm-docs-site && bun test test/records-loader.test.ts`
 Expected: FAIL (module not found).
 
-- [ ] **Step 3: Implement** `sections.ts` (`recordFile`, `recordSectionId`, `recordEntries`, and `renderSection(renderMarkdown, markdown, file)` returning the `store.set` fields `rendered`, `filePath`, `assetImports`, with `siteRoot` as `adrSectionsLoader` computes it); `records.ts` loaders; register both in `content.config.ts` with one comment each, naming ADR-017. Refactor `adrSectionsLoader` onto `renderSection` and `recordFile`.
+- [x] **Step 3: Implement** `sections.ts` (`recordFile`, `recordSectionId`, `recordEntries`, and `renderSection(renderMarkdown, markdown, file)` returning the `store.set` fields `rendered`, `filePath`, `assetImports`, with `siteRoot` as `adrSectionsLoader` computes it); `records.ts` loaders; register both in `content.config.ts` with one comment each, naming ADR-017. Refactor `adrSectionsLoader` onto `renderSection` and `recordFile`.
 
-- [ ] **Step 4: Verify**
+- [x] **Step 4: Verify**
 
 Run: `bun test test/records-loader.test.ts test/adrs-loader.test.ts` → PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add packages/pm-docs-site/src/loaders packages/pm-docs-site/src/content.config.ts packages/pm-docs-site/test/records-loader.test.ts
@@ -181,7 +181,7 @@ git commit -m "feat(pm-docs-site): brief and inbox section collections (R-052)"
   - `references(planning, views, adrKeys?, recordKeys?)` where `recordKeys: Map<string, Set<string>>` is keyed by brief `path` / inbox `file`; `siteRefs()` fills it from the two collections' `rendered.html` through `linkHtml`, as for ADRs (ADR-015).
   - Brief page sources (when `views.briefs`): `prose(status)`, `prose(origin)`, `link(brief.id, 'listed')`, then `recordKeys` keys as `mentions` (without `recordKeys`, `prose` each section's Markdown). Inbox page sources (when `views.inbox`): `prose(affects, 'affects')`, `prose(context)`, each `related` `link(id, 'related')`, `link(brief, 'brief')`, then section keys as `mentions`. The Briefs list page adds `link(brief.path, 'listed')`; the Inbox list page adds `link(entry.file, 'listed')`.
 
-- [ ] **Step 1: Write the failing tests** in `references.test.ts`, using the fixture planning:
+- [x] **Step 1: Write the failing tests** in `references.test.ts`, using the fixture planning:
 
 ```ts
 it('a brief links to its page and an inbox file is a target', () => {
@@ -203,17 +203,17 @@ it('an inbox path in prose links to the inbox page', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `bun test test/references.test.ts` → FAIL.
 
-- [ ] **Step 3: Implement** the Interfaces above.
+- [x] **Step 3: Implement** the Interfaces above.
 
-- [ ] **Step 4: Verify**
+- [x] **Step 4: Verify**
 
 Run: `bun test test/references.test.ts test/link-html.test.ts test/planning.test.ts` → PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add packages/pm-docs-site/src/lib packages/pm-docs-site/test/references.test.ts
@@ -234,7 +234,7 @@ git commit -m "feat(pm-docs-site): brief and inbox link targets and backlinks (R
 - Consumes: Task 2 collections, Task 3 `briefHref`, `inboxHref`, `siteRefs()`.
 - Produces: pages at `/plan/briefs/<slug>/` and `/plan/inbox/<slug>/`, following `src/routes/plan/decisions/[id].astro`: `<ExportStamp kind="Brief" | "Inbox" />`, a back link (`All briefs` → `/plan/briefs/`, `Inbox` → `/plan/inbox/`), a `plan-facts` list (brief: Status, Origin, Updated, File; inbox: Captured, Source, Kind, Severity, Affects, Context, Discuss, Related, Brief, Reviewed, File, each present value only, prose through `LinkedText`, IDs through `RefLink`), each section as `<h2>{heading}</h2>` with its `render()`ed `Content` in `<LinkedHtml>`, or `<p>None recorded.</p>` when blank, then `<LinkedFrom ref={key} />`. Title: brief `` `${brief.id} ${brief.title}` `` when it has an ID, else the title; inbox: its title.
 
-- [ ] **Step 1: Write the failing tests.** In `links.test.ts`, change `TARGET_PAGE` to `/^\/plan\/(features|milestones|risks|decisions|briefs|inbox)\/[^/]+\/$/` (the existing Linked from tests now cover both kinds). Add `describe('brief and inbox pages')`:
+- [x] **Step 1: Write the failing tests.** In `links.test.ts`, change `TARGET_PAGE` to `/^\/plan\/(features|milestones|risks|decisions|briefs|inbox)\/[^/]+\/$/` (the existing Linked from tests now cover both kinds). Add `describe('brief and inbox pages')`:
 
 ```ts
 it('a brief page renders its section table and links IDs inside it', () => {
@@ -260,17 +260,17 @@ Add the four pages to `expected-pages.txt`. In `integration.test.ts`, add `appen
 - `a brief section with a missing relative image fails the build`: `![a](missing.png)`; expect exit non-zero and `missing.png` in the output.
 - `a missing brief image does not fail the build when the Briefs view is off`: options with `views` omitting `briefs`; expect exit 0 and no `plan/briefs/` page directory.
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `bun test test/links.test.ts test/integration.test.ts` → FAIL (pages not built).
 
-- [ ] **Step 3: Implement** the two pages, the routes in `lib/index.ts` (`inbox: [['/plan/inbox', ...], ['/plan/inbox/[slug]', 'plan/inbox/[slug].astro']]`, same for `briefs`), and the list-page links (`RefLink` on the brief title and the inbox card title, `label="full"`). `getStaticPaths` returns `[]` when the export has no briefs / inbox entries, so an empty collection is never looked up.
+- [x] **Step 3: Implement** the two pages, the routes in `lib/index.ts` (`inbox: [['/plan/inbox', ...], ['/plan/inbox/[slug]', 'plan/inbox/[slug].astro']]`, same for `briefs`), and the list-page links (`RefLink` on the brief title and the inbox card title, `label="full"`). `getStaticPaths` returns `[]` when the export has no briefs / inbox entries, so an empty collection is never looked up.
 
-- [ ] **Step 4: Verify**
+- [x] **Step 4: Verify**
 
 Run: `bun test test/links.test.ts test/integration.test.ts test/build.test.ts` → PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add packages/pm-docs-site/src/routes packages/pm-docs-site/lib/index.ts packages/pm-docs-site/test
@@ -286,7 +286,7 @@ git commit -m "feat(pm-docs-site): a page per brief and per inbox file (R-052)"
 - Modify: `package.json` via `just bump prerelease`
 - Modify: `examples/demo/planning/planning.json` (regenerated)
 
-- [ ] **Step 1: Upgrade note.** Append to the managed section reference, and to the same place in `AGENTS.md` (the installed copy has no `version=` in its marker):
+- [x] **Step 1: Upgrade note.** Append to the managed section reference, and to the same place in `AGENTS.md` (the installed copy has no `version=` in its marker):
 
 ```markdown
 Version 21 also moves the export to `schemaVersion` 6 (ADR-016): each brief
@@ -297,14 +297,14 @@ and the docs site gives each brief and inbox file its own page. Run
 setting is added.
 ```
 
-- [ ] **Step 2: README** of the package: document both pages under the Briefs and Inbox views.
+- [x] **Step 2: README** of the package: document both pages under the Briefs and Inbox views.
 
-- [ ] **Step 3: Versions and the demo.**
+- [x] **Step 3: Versions and the demo.**
 
 Run: `just bump prerelease` → `package.json` is `21.0.0-pre.15`.
 Run: `bun skills/pm-export/scripts/export.ts write --frozen --root examples/demo --pm-root planning/` → `wrote: ...`.
 
-- [ ] **Step 4: Full verification** (the item's `Done when`)
+- [x] **Step 4: Full verification** (the item's `Done when`)
 
 Run: `just validate` → exit 0.
 Run: `just test` → all pass.
@@ -312,7 +312,7 @@ Run: `just package-test` → all pass (package tests, browser tests, demo site).
 Run: `just docs-check` → exit 0. This repository's `planning/planning.json` must be `schemaVersion` 6 first: `bun skills/pm-export/scripts/export.ts write --root . --pm-root planning/` (the PM commit in `pm-checkpoint` refreshes it again).
 Run: `just lint-check` → exit 0.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add packages/pm-docs-site/README.md skills/pm-setup/references/AGENTS-section.md AGENTS.md package.json examples/demo/planning/planning.json
