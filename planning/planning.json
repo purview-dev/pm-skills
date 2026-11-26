@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-26T08:46:06+00:00",
+  "generatedAt": "2026-11-26T12:02:50+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-036-plan-citation-and-done-check",
-    "head": "82a6975c7845974643eaa743f792cac35d5b0750"
+    "branch": "feat/r-057-pm-setup-suggests-adr-import-before-init",
+    "head": "aab03b62083847e52650d3a679dddf89f879678a"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -53,8 +53,8 @@
   },
   "strategy": {
     "focus": {
-      "milestone": "M4 Recorded technical decisions",
-      "whyNow": "ADR support must be complete (user, 2026-11-25); 8 of its items are done, 2 were dropped, its 1 open item (R-036 Plan citation and done check) is in Next, and the forecast is about 0.1 weeks at 8.25 items per week."
+      "milestone": "M2 Verified install and upgrade",
+      "whyNow": "M4 is done (2026-11-26), and the user chose M2 over M5 on 2026-11-26; a consumer's fresh install (V1) has never been rehearsed end to end, which is the riskiest open assumption. Its 3 items (R-006, R-015, R-057) are S, so the forecast is about 0.4 weeks at 8.5 items per week."
     },
     "milestones": [
       {
@@ -93,9 +93,9 @@
         "serves": [
           "V1"
         ],
-        "exitCriteria": "in an empty scratch repository, `npx skills add https://github.com/purview-dev/pm-skills -y` then `pm-setup` reports every pm-* and workflow skill installed, and `just validate` fails when `pm-setup`'s skill count differs from the shipped skills.",
+        "exitCriteria": "`just validate` fails when `pm-setup`'s skill count differs from the shipped skills, and `pm-setup` run in a repository with `docs/adr/` and no `<PM root>/config.md` prints the Note that suggests `pm-adr import docs/adr/`.",
         "target": null,
-        "status": "planned"
+        "status": "active"
       },
       {
         "id": "M3",
@@ -122,7 +122,7 @@
         "statement": "We believe recording technology, principles, and ADRs, and naming the ones that apply in every design handoff, will stop agents contradicting earlier technical decisions, for maintainers of repositories that use pm-skills.",
         "evidence": "`planning/briefs/2026-11-22-where-do-adrs-fit.md` and `planning/briefs/2026-11-20-technology-and-engineering-principles.md` record agents contradicting earlier decisions because nothing records or points at them.",
         "signal": "the M4 rehearsal report in `planning/research/` shows the design handoff naming the ADRs and principles that apply and `pm-checkpoint` (`done`) refusing a failing command check.",
-        "status": "open"
+        "status": "won (2026-11-26)"
       }
     ],
     "assumptions": [
@@ -147,7 +147,7 @@
       {
         "id": "A5",
         "statement": "A design stage that is handed the applicable ADRs and principles follows them.",
-        "test": "R-036 Plan citation and done check's rehearsal report in `planning/research/`.",
+        "test": "the next item whose spec names ADRs has its plan written by a separate session from the handoff, and that plan cites them (the R-036 rehearsal plan cited every ID, but one agent wrote both the handoff and the plan).",
         "status": "untested"
       }
     ],
@@ -160,17 +160,12 @@
       {
         "thing": "Hosting the docs site (GitHub Pages or any deploy)",
         "why": "the site is a local view of the plan, and M1 is about reproducible builds.",
-        "revisit": "after M1 is done."
+        "revisit": "after M5 Docs-site package 1.0.0 is done."
       },
       {
         "thing": "Writing PM state from the site (drag and drop, edit actions)",
         "why": "PM state changes only through the pm-* skills; the site reads `planning.json` only.",
         "revisit": "never."
-      },
-      {
-        "thing": "GitHub issue and Project sync (`planning/inbox/2026-11-22-1739-github-issue-project-sync.md`, brief `planning/briefs/2026-11-22-github-issue-project-sync.md`)",
-        "why": "M4 and M5 come first.",
-        "revisit": "after M5 Docs-site package 1.0.0 is done."
       },
       {
         "thing": "Inferring `ENGINEERING.md` from a repository (`pm-engineering infer`)",
@@ -179,6 +174,54 @@
       }
     ],
     "decisions": [
+      {
+        "date": "2026-11-26",
+        "decision": "Focus stays M2 Verified install and upgrade (R-057, R-006); R-042 Docs-site package: deferred review minors moves to Next 5.",
+        "why": "M2 is 2 S items, about 0.25 weeks; Next had a free slot.",
+        "rejected": "focus on M5; leaving Next at 4."
+      },
+      {
+        "date": "2026-11-26",
+        "decision": "Bet B3 and assumption A6 removed.",
+        "why": "R-015 Rehearse a fresh install in a scratch repository, their only test, was dropped.",
+        "rejected": "keeping both untested; keeping A6 only."
+      },
+      {
+        "date": "2026-11-26",
+        "decision": "M2 Verified install and upgrade exit criteria drop the fresh-install rehearsal and add the pm-setup ADR import Note before init.",
+        "why": "R-015 was dropped (user, during its design); R-006 and R-057 now cover M2.",
+        "rejected": "a smaller isolated `npx skills list` item; retiring M2."
+      },
+      {
+        "date": "2026-11-26",
+        "decision": "Re-planned roadmap.",
+        "why": "focus moved to M2 Verified install and upgrade, so Next is R-015, R-057, R-006 (M2, risk first), then R-052 and R-056 (M5); R-042 and R-053 move to the top of Later under M5; Later is M5, M3, then Unassigned.",
+        "rejected": "keeping Next all M5; R-042 in Next ahead of R-056."
+      },
+      {
+        "date": "2026-11-26",
+        "decision": "Not doing: GitHub issue and Project sync removed (dropped in the 2026-11-26 review); hosting the docs site stays deferred, revisit after M5 Docs-site package 1.0.0 is done.",
+        "why": "M1's revisit condition is met and M5 is not done.",
+        "rejected": "hosting now."
+      },
+      {
+        "date": "2026-11-26",
+        "decision": "Bet B3 and assumption A6 added for M2; B2 won; A5 stays untested with an independent-session test.",
+        "why": "the M4 rehearsal report meets B2's signal, but one agent wrote both A5's handoff and plan.",
+        "rejected": "marking A5 holds."
+      },
+      {
+        "date": "2026-11-26",
+        "decision": "Milestone order kept M5, M2, M3 with M2 as the focus.",
+        "why": "the user chose it; M2 is a short detour of 3 S items before M5.",
+        "rejected": "M2, M5, M3."
+      },
+      {
+        "date": "2026-11-26",
+        "decision": "Current focus M2 Verified install and upgrade; M2 active.",
+        "why": "M4 is done; the user chose M2, which tests the riskiest open assumption (an unrehearsed fresh install, V1).",
+        "rejected": "focus on M5 Docs-site package 1.0.0."
+      },
       {
         "date": "2026-11-26",
         "decision": "M4 Recorded technical decisions complete.",
@@ -348,10 +391,34 @@
   "roadmap": {
     "next": [
       {
+        "id": "R-006",
+        "title": "Check pm-setup's skill counts in validate",
+        "section": "next",
+        "position": 1,
+        "label": "next",
+        "serves": [
+          "V1"
+        ],
+        "milestone": "M2",
+        "owner": "agent",
+        "doneWhen": "`just validate` fails when the `<n> of 22` counts in `pm-setup` differ from the number of shipped skills.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": null,
+        "revisits": null,
+        "claimable": true
+      },
+      {
         "id": "R-052",
         "title": "Docs-site package: brief and inbox pages",
         "section": "next",
-        "position": 1,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -368,30 +435,6 @@
         },
         "brief": "planning/briefs/2026-11-17-docs-site-package.md",
         "note": "From the 2026-11-25 review (inbox 2026-11-23-1525, user, R-013 design). The package must contain everything before 1.0.0. A page per brief and per inbox file, as items, risks, and ADRs already have, with links and Linked from (S). Sliced out of R-013 by the user's choice on 2026-11-23; 1.0.0 depends on it.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
-        "id": "R-042",
-        "title": "Docs-site package: deferred review minors",
-        "section": "next",
-        "position": 2,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M5",
-        "owner": "agent",
-        "doneWhen": "each finding listed in this Note is fixed or has a one-line won't-fix reason in the item's plan, `.astro` client scripts are covered by the island import guard, `start()` in `src/scripts/plan.ts` registers its listeners once per document, and `just package-test` passes.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "From the 2026-11-22 review; review minors in `packages/pm-docs-site` (inbox 2026-11-18-1222, 2026-11-20-1844 x3). R-010 board: (1) the 3s reveal of a pending board also fires on a slow but successful hydration; document it in `components.css` and the `useBoardUrlState.ts` header, or tune it. (2) The pending mark is also set on `/plan/roadmap/?owner=...`; scope it to the Board page. (3) `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`. (4) The lane header is a plain `div`; use an `h3` or `role=\"heading\"`. (5) Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed. (6) The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page. (7) A collapsed column's vertical title stretches the shared header row. (8) `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab`; its header comment lists only some changes. (9) `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array. (10) `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id`; `tagHref` never asserted. (11) `integration.test.ts` asserts the integration names two ways. (12) `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`. (13) The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP. R-028: (14) `test/island-imports.test.ts` scans only `.ts` and `.tsx` under `src/components`, so an `.astro` client `<script>` that value-imports a server-only lib is not caught. (15) `start()` in `src/scripts/plan.ts` adds `pointerdown`, `pointerup`, and `click` listeners on `document` each run, so they stack under view transitions. (16) `test/browser/board.browser.ts` test \"a localStorage that throws leaves the Board usable\" pins Starlight theme-script error counts per `<starlight-theme-select>`; a Starlight upgrade fails it with no fault in the package; loosen it or report the unguarded `localStorage` read upstream. R-031 (inbox 2026-11-21-1205): (17) `relativeImports` in `test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports in comments, and misses template-literal dynamic imports (false failures only). (18) In `scripts/check-demo.ts`, a `plan-empty` element's text is cut off at a nested `plan-empty` element. (19) `src/pages/plan/log.astro` labels a known ID whose page is not built with the logged title, not the export's current title, and no test covers that view-off case. R-025 (2026-11-25 review, inbox 2026-11-22-1821): (20) `revisers()` order is not pinned by a test: every assertion in `test/planning.test.ts` (the revisers case) returns one item; give a second item `revisits: 'R-003'` in the populated case and assert both IDs in `features()` order. (21) `src/lib/references.ts` line 188 still checks `other.dependsOn.includes(feature.id) || other.revisits === feature.id` inline; it could reuse `dependents()` and `revisers()`. R-013 (2026-11-25 review, inbox 2026-11-24-2044): (22) `--port=4399` (the `=` form) is not parsed, so it becomes the site folder, and any unknown flag silently becomes a positional argument (`lib/cli-args.ts`). (23) `test/cli.test.ts` \"dev --port 4399 serves on 4399\" uses a fixed port, which can collide with another process. (24) `skills/pm-docs-site/SKILL.md` Guard checks `bun --version` but not Node 24, so an older Node fails only at verify, after files are written. (25) Two byte-identical Markdown sources on one page (for example two ADR sections with the same text and fence) get the same Pele IDs (`lib/mermaid.ts`). R-040 (2026-11-25 review, inbox 2026-11-25-1008): (26) linkHtml: a raw `<` inside a script or style body (`<script>if (a<b) x='R-012'</script>`) is read as a tag, so the script never closes and the rest of the ADR section is not linked; links and Linked from entries still agree. Fix: while script or style is open, scan to the matching close tag (`src/lib/link-html.ts`). (27) `test/link-html.test.ts`, `test/links.test.ts`, and `test/references.test.ts` lack a final newline, and `skills/pm-export/scripts/export.test.ts` has an `it(` at column 0 near line 122. (28) The Decisions noscript test checks a string only. R-050 (2026-11-25 strategy re-plan, inbox 2026-11-25-1417): (29) No test pins a remote ADR image staying a plain img with its src; a consumer who sets Astro `image.domains` would get it optimised and its src rewritten. Append `![r](https://example.com/r.png)` to the relative-image test in `test/integration.test.ts` and assert `src=\"https://example.com/r.png\"`. (30) Every non-empty ADR section is rendered twice per build (the `adrs` html and the `adr-sections` entry in `src/loaders/adrs.ts`), Mermaid included; share one memoised render per section.",
         "revisits": null,
         "claimable": true
       },
@@ -420,10 +463,36 @@
         "claimable": true
       },
       {
-        "id": "R-053",
-        "title": "Docs-site package: release 1.0.0",
+        "id": "R-042",
+        "title": "Docs-site package: deferred review minors",
         "section": "next",
         "position": 4,
+        "label": "next",
+        "serves": [
+          "V4"
+        ],
+        "milestone": "M5",
+        "owner": "agent",
+        "doneWhen": "each finding listed in this Note is fixed or has a one-line won't-fix reason in the item's plan, `.astro` client scripts are covered by the island import guard, `start()` in `src/scripts/plan.ts` registers its listeners once per document, and `just package-test` passes.",
+        "size": "M",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "From the 2026-11-22 review; review minors in `packages/pm-docs-site` (inbox 2026-11-18-1222, 2026-11-20-1844 x3). R-010 board: (1) the 3s reveal of a pending board also fires on a slow but successful hydration; document it in `components.css` and the `useBoardUrlState.ts` header, or tune it. (2) The pending mark is also set on `/plan/roadmap/?owner=...`; scope it to the Board page. (3) `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`. (4) The lane header is a plain `div`; use an `h3` or `role=\"heading\"`. (5) Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed. (6) The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page. (7) A collapsed column's vertical title stretches the shared header row. (8) `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab`; its header comment lists only some changes. (9) `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array. (10) `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id`; `tagHref` never asserted. (11) `integration.test.ts` asserts the integration names two ways. (12) `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`. (13) The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP. R-028: (14) `test/island-imports.test.ts` scans only `.ts` and `.tsx` under `src/components`, so an `.astro` client `<script>` that value-imports a server-only lib is not caught. (15) `start()` in `src/scripts/plan.ts` adds `pointerdown`, `pointerup`, and `click` listeners on `document` each run, so they stack under view transitions. (16) `test/browser/board.browser.ts` test \"a localStorage that throws leaves the Board usable\" pins Starlight theme-script error counts per `<starlight-theme-select>`; a Starlight upgrade fails it with no fault in the package; loosen it or report the unguarded `localStorage` read upstream. R-031 (inbox 2026-11-21-1205): (17) `relativeImports` in `test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports in comments, and misses template-literal dynamic imports (false failures only). (18) In `scripts/check-demo.ts`, a `plan-empty` element's text is cut off at a nested `plan-empty` element. (19) `src/pages/plan/log.astro` labels a known ID whose page is not built with the logged title, not the export's current title, and no test covers that view-off case. R-025 (2026-11-25 review, inbox 2026-11-22-1821): (20) `revisers()` order is not pinned by a test: every assertion in `test/planning.test.ts` (the revisers case) returns one item; give a second item `revisits: 'R-003'` in the populated case and assert both IDs in `features()` order. (21) `src/lib/references.ts` line 188 still checks `other.dependsOn.includes(feature.id) || other.revisits === feature.id` inline; it could reuse `dependents()` and `revisers()`. R-013 (2026-11-25 review, inbox 2026-11-24-2044): (22) `--port=4399` (the `=` form) is not parsed, so it becomes the site folder, and any unknown flag silently becomes a positional argument (`lib/cli-args.ts`). (23) `test/cli.test.ts` \"dev --port 4399 serves on 4399\" uses a fixed port, which can collide with another process. (24) `skills/pm-docs-site/SKILL.md` Guard checks `bun --version` but not Node 24, so an older Node fails only at verify, after files are written. (25) Two byte-identical Markdown sources on one page (for example two ADR sections with the same text and fence) get the same Pele IDs (`lib/mermaid.ts`). R-040 (2026-11-25 review, inbox 2026-11-25-1008): (26) linkHtml: a raw `<` inside a script or style body (`<script>if (a<b) x='R-012'</script>`) is read as a tag, so the script never closes and the rest of the ADR section is not linked; links and Linked from entries still agree. Fix: while script or style is open, scan to the matching close tag (`src/lib/link-html.ts`). (27) `test/link-html.test.ts`, `test/links.test.ts`, and `test/references.test.ts` lack a final newline, and `skills/pm-export/scripts/export.test.ts` has an `it(` at column 0 near line 122. (28) The Decisions noscript test checks a string only. R-050 (2026-11-25 strategy re-plan, inbox 2026-11-25-1417): (29) No test pins a remote ADR image staying a plain img with its src; a consumer who sets Astro `image.domains` would get it optimised and its src rewritten. Append `![r](https://example.com/r.png)` to the relative-image test in `test/integration.test.ts` and assert `src=\"https://example.com/r.png\"`. (30) Every non-empty ADR section is rendered twice per build (the `adrs` html and the `adr-sections` entry in `src/loaders/adrs.ts`), Mermaid included; share one memoised render per section.",
+        "revisits": null,
+        "claimable": true
+      }
+    ],
+    "later": [
+      {
+        "id": "R-053",
+        "title": "Docs-site package: release 1.0.0",
+        "section": "later",
+        "position": 1,
         "label": "waiting",
         "serves": [
           "V4"
@@ -444,62 +513,12 @@
         "note": "From the 2026-11-25 review (inbox 2026-11-23-1525, user, R-013 design). Not stable until it contains everything, with complete instructions (user, 2026-11-23). Release `@purview-dev/pm-docs-site` 1.0.0 once R-013, R-045 Docs-site package: architecture view, and the brief and inbox pages, and research items are done (S, both). This replaces the brief's 2026-11-18 answer that R-013 releases 1.0.0; R-013 publishes 0.1.0-pre.4 instead. The research reports item is being shaped (inbox 2026-11-23-1525-docs-site-package-research.md); add its ID to `Depends on` when pm-shape creates it.",
         "revisits": null,
         "claimable": false
-      }
-    ],
-    "later": [
-      {
-        "id": "R-006",
-        "title": "Check pm-setup's skill counts in validate",
-        "section": "later",
-        "position": 1,
-        "label": "later",
-        "serves": [
-          "V1"
-        ],
-        "milestone": "M2",
-        "owner": "agent",
-        "doneWhen": "`just validate` fails when the `<n> of 22` counts in `pm-setup` differ from the number of shipped skills.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": null,
-        "revisits": null,
-        "claimable": false
-      },
-      {
-        "id": "R-015",
-        "title": "Rehearse a fresh install in a scratch repository",
-        "section": "later",
-        "position": 2,
-        "label": "later",
-        "serves": [
-          "V1"
-        ],
-        "milestone": "M2",
-        "owner": "agent",
-        "doneWhen": "in an empty scratch repository, `npx skills add https://github.com/purview-dev/pm-skills -y` then `pm-setup` reports every pm-* and workflow skill installed, recorded in a report in `planning/research/`.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": null,
-        "revisits": null,
-        "claimable": false
       },
       {
         "id": "R-016",
         "title": "Rehearse the lifecycle guards",
         "section": "later",
-        "position": 3,
+        "position": 2,
         "label": "later",
         "serves": [
           "V2",
@@ -524,7 +543,7 @@
         "id": "R-024",
         "title": "Self-contained aspire module test example",
         "section": "later",
-        "position": 4,
+        "position": 3,
         "label": "later",
         "serves": [
           "V4"
@@ -548,7 +567,7 @@
         "id": "R-030",
         "title": "Pre-push runs fast checks only",
         "section": "later",
-        "position": 5,
+        "position": 4,
         "label": "later",
         "serves": [
           "V4"
@@ -572,7 +591,7 @@
         "id": "R-032",
         "title": "pm-checkpoint and pm-lint Note follow-ups",
         "section": "later",
-        "position": 6,
+        "position": 5,
         "label": "later",
         "serves": [
           "V2"
@@ -588,7 +607,7 @@
           "since": null
         },
         "brief": null,
-        "note": "From the 2026-11-20 review; R-026 final-review minors, a rules bump. (1) `skills/pm-lint/scripts/structure.ts` comment on `NOW_NOTE` says \"rules 22\"; the change shipped on rules 21 (21.0.0-pre.2). (2) The R-026 spec (design item 6) and plan (Task 3) still describe `just bump major` to rules 22; add a superseded line. (3) The `now/fields` rule text in `rules.md`, `rules.ts`, and the `checkNow` message says \"and then an optional Note\", readable as after `Started`; say \"an optional Note after Revisits\". (4) `pm-checkpoint` `switch` recovery runs only when `Serves`/`Size` are missing and never restores `Note`, so an item claimed under 21.0.0-pre.1 switches back without it; also restore `Note` from the claim-commit block. (5) `pm-next` steps 3 and 5 can each hold a `Note:`, but step 7 joins \"a held note\" in the singular; state the order for two. (6) A blank `- Note:` on an item: say \"a non-empty Note\" in `pm-next` step 7 and `pm-rejoin` step 3. (7) No test pins that a `Note` without the five item fields fails `now/fields`. From the 2026-11-22 review (inbox 2026-11-22-1425): (8) `expandTargets` in `skills/pm-lint/scripts/lint.ts` (added in `981977a`) expands a folder argument one level only, so `check planning/` misses `inbox/`, `briefs/`, and `decisions/` files; recurse, and test it. (9) No test covers `--staged` with a folder argument. (10) Cosmetic: ADR-001's Alternatives row says ADRs are \"exported\" (quoted from the spec), and the `pm-init` template row keeps \"(new project only)\" inside the code span because `scripts/validate.ts` parses it.",
+        "note": "From the 2026-11-20 review; R-026 final-review minors, a rules bump. (1) `skills/pm-lint/scripts/structure.ts` comment on `NOW_NOTE` says \"rules 22\"; the change shipped on rules 21 (21.0.0-pre.2). (2) The R-026 spec (design item 6) and plan (Task 3) still describe `just bump major` to rules 22; add a superseded line. (3) The `now/fields` rule text in `rules.md`, `rules.ts`, and the `checkNow` message says \"and then an optional Note\", readable as after `Started`; say \"an optional Note after Revisits\". (4) `pm-checkpoint` `switch` recovery runs only when `Serves`/`Size` are missing and never restores `Note`, so an item claimed under 21.0.0-pre.1 switches back without it; also restore `Note` from the claim-commit block. (5) `pm-next` steps 3 and 5 can each hold a `Note:`, but step 7 joins \"a held note\" in the singular; state the order for two. (6) A blank `- Note:` on an item: say \"a non-empty Note\" in `pm-next` step 7 and `pm-rejoin` step 3. (7) No test pins that a `Note` without the five item fields fails `now/fields`. From the 2026-11-22 review (inbox 2026-11-22-1425): (8) `expandTargets` in `skills/pm-lint/scripts/lint.ts` (added in `981977a`) expands a folder argument one level only, so `check planning/` misses `inbox/`, `briefs/`, and `decisions/` files; recurse, and test it. (9) No test covers `--staged` with a folder argument. (10) Cosmetic: ADR-001's Alternatives row says ADRs are \"exported\" (quoted from the spec), and the `pm-init` template row keeps \"(new project only)\" inside the code span because `scripts/validate.ts` parses it. From the 2026-11-26 review (bug, inbox 2026-11-26-0300, severity minor, from R-036 execute): (11) `pm-checkpoint switch` run on an item branch writes NOW.md and ROADMAP.md, then the PM commit's recommended option `Switch to main and commit` fails: `git switch` refuses because NOW.md and ROADMAP.md differ between the item branch and main. Reproduction: the M4 rehearsal re-run (`planning/research/2026-11-26-m4-rehearsal.md`, Skill defects found); claim an item on its branch, stage it to plan, run `pm-checkpoint switch`, accept the recommended option. Every run.",
         "revisits": null,
         "claimable": false
       },
@@ -596,7 +615,7 @@
         "id": "R-046",
         "title": "Upgrade, format, and git rules move to references",
         "section": "later",
-        "position": 7,
+        "position": 6,
         "label": "later",
         "serves": [
           "V2"
@@ -622,7 +641,7 @@
         "id": "R-047",
         "title": "Core rules file and a 15 KB managed section",
         "section": "later",
-        "position": 8,
+        "position": 7,
         "label": "waiting",
         "serves": [
           "V2"
@@ -648,7 +667,7 @@
         "id": "R-048",
         "title": "Repository AGENTS.md top part into dedicated files",
         "section": "later",
-        "position": 9,
+        "position": 8,
         "label": "later",
         "serves": [
           "V2"
@@ -672,7 +691,7 @@
         "id": "R-049",
         "title": "Trim the largest SKILL.md files",
         "section": "later",
-        "position": 10,
+        "position": 9,
         "label": "waiting",
         "serves": [
           "V2"
@@ -698,7 +717,7 @@
         "id": "R-051",
         "title": "PM sync review minors",
         "section": "later",
-        "position": 11,
+        "position": 10,
         "label": "later",
         "serves": [
           "V2"
@@ -722,7 +741,7 @@
         "id": "R-054",
         "title": "Git subprocess tests stable under load",
         "section": "later",
-        "position": 12,
+        "position": 11,
         "label": "later",
         "serves": [
           "V4"
@@ -749,8 +768,22 @@
       "now": [],
       "next": [
         {
+          "id": "R-006",
+          "title": "Check pm-setup's skill counts in validate",
+          "owner": "agent",
+          "size": "S",
+          "detail": "ready"
+        },
+        {
           "id": "R-052",
           "title": "Docs-site package: brief and inbox pages",
+          "owner": "agent",
+          "size": "S",
+          "detail": "ready"
+        },
+        {
+          "id": "R-056",
+          "title": "Package tests stable under full lint-check",
           "owner": "agent",
           "size": "S",
           "detail": "ready"
@@ -761,26 +794,20 @@
           "owner": "agent",
           "size": "M",
           "detail": "ready"
-        },
-        {
-          "id": "R-056",
-          "title": "Package tests stable under full lint-check",
-          "owner": "agent",
-          "size": "S",
-          "detail": "ready"
         }
       ],
       "foryou": [],
-      "waiting": [
-        {
-          "id": "R-053",
-          "title": "Docs-site package: release 1.0.0",
-          "owner": "both",
-          "size": "S",
-          "detail": "needs R-052 Docs-site package: brief and inbox pages"
-        }
-      ],
+      "waiting": [],
       "done": [
+        {
+          "date": "2026-11-26",
+          "id": "R-057",
+          "title": "pm-setup suggests ADR import before init",
+          "milestone": "M2",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-26-pm-setup-adr-import-before-init.md",
+          "result": "branch feat/r-057-pm-setup-suggests-adr-import-before-init"
+        },
         {
           "date": "2026-11-26",
           "id": "R-036",
@@ -1093,11 +1120,47 @@
       {
         "date": "2026-11-26",
         "kind": "done",
+        "id": "R-057",
+        "title": "pm-setup suggests ADR import before init",
+        "milestone": "M2",
+        "owner": "agent",
+        "result": "branch feat/r-057-pm-setup-suggests-adr-import-before-init"
+      },
+      {
+        "date": "2026-11-26",
+        "kind": "done",
         "id": "R-036",
         "title": "Plan citation and done check",
         "milestone": "M4",
         "owner": "agent",
         "result": "branch feat/r-036-plan-citation-and-done-check"
+      },
+      {
+        "date": "2026-11-26",
+        "kind": "dropped",
+        "id": "R-015",
+        "title": "Rehearse a fresh install in a scratch repository",
+        "milestone": null,
+        "owner": null,
+        "result": "Reason: the user dropped it during R-015 design (after choosing an isolated-home install); M2's fresh-install exit criterion, B3, and A6 go to pm-strategy"
+      },
+      {
+        "date": "2026-11-26",
+        "kind": "dropped",
+        "id": null,
+        "title": "GitHub issue and Project sync",
+        "milestone": null,
+        "owner": null,
+        "result": "Reason: the user dropped it in the 2026-11-26 review; brief `planning/briefs/2026-11-22-github-issue-project-sync.md` set to dropped"
+      },
+      {
+        "date": "2026-11-26",
+        "kind": "review",
+        "id": null,
+        "title": null,
+        "milestone": null,
+        "owner": null,
+        "result": "Inbox 7 to 4. Added R-057; 1 file merged into R-032, 1 dropped (GitHub issue and Project sync), 3 to shape, 1 kept parked; ADR docs-site findings stay in R-042; Next order kept; M4 is done, so pm-strategy sets the next focus."
       },
       {
         "date": "2026-11-25",
@@ -1519,6 +1582,15 @@
     "done": [
       {
         "date": "2026-11-26",
+        "id": "R-057",
+        "title": "pm-setup suggests ADR import before init",
+        "milestone": "M2",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-26-pm-setup-adr-import-before-init.md",
+        "result": "branch feat/r-057-pm-setup-suggests-adr-import-before-init"
+      },
+      {
+        "date": "2026-11-26",
         "id": "R-036",
         "title": "Plan citation and done check",
         "milestone": "M4",
@@ -1826,6 +1898,18 @@
     ],
     "dropped": [
       {
+        "date": "2026-11-26",
+        "id": "R-015",
+        "title": "Rehearse a fresh install in a scratch repository",
+        "reason": "the user dropped it during R-015 design (after choosing an isolated-home install); M2's fresh-install exit criterion, B3, and A6 go to pm-strategy"
+      },
+      {
+        "date": "2026-11-26",
+        "id": null,
+        "title": "GitHub issue and Project sync",
+        "reason": "the user dropped it in the 2026-11-26 review; brief `planning/briefs/2026-11-22-github-issue-project-sync.md` set to dropped"
+      },
+      {
         "date": "2026-11-25",
         "id": "R-035",
         "title": "pm-engineering infer from an existing repository",
@@ -1882,6 +1966,10 @@
     ],
     "reviews": [
       {
+        "date": "2026-11-26",
+        "summary": "Inbox 7 to 4. Added R-057; 1 file merged into R-032, 1 dropped (GitHub issue and Project sync), 3 to shape, 1 kept parked; ADR docs-site findings stay in R-042; Next order kept; M4 is done, so pm-strategy sets the next focus."
+      },
+      {
         "date": "2026-11-25",
         "summary": "Inbox 16 to 4. Added R-050 to R-055; 5 files merged into R-037 and R-042, 2 dropped, 3 to shape, 1 kept parked; current focus M1 is done, so pm-strategy sets the next; Next filled from Later with R-037, R-055, R-035, R-036."
       },
@@ -1900,21 +1988,6 @@
     ]
   },
   "inbox": [
-    {
-      "file": "planning/inbox/2026-11-22-1739-github-issue-project-sync.md",
-      "title": "GitHub issue and Project sync",
-      "captured": "2026-11-22 17:39",
-      "source": "user",
-      "kind": "feature",
-      "severity": null,
-      "affects": null,
-      "context": null,
-      "discuss": "no",
-      "related": [],
-      "brief": "planning/briefs/2026-11-22-github-issue-project-sync.md",
-      "reviewed": "2026-11-22",
-      "idea": "GitHub issue / Project sync"
-    },
     {
       "file": "planning/inbox/2026-11-23-1525-docs-site-package-research.md",
       "title": "Docs-site package: research reports",
@@ -1976,38 +2049,23 @@
         "R-055"
       ],
       "brief": null,
-      "reviewed": "never",
+      "reviewed": "2026-11-26",
       "idea": "Five minors the R-055 whole-branch review found and deferred. (1) `engineering/values` and `engineering/decision-current` messages name a technology headed `### EP-001 Bun` as `EP-001`, because `checkEngineeringValues` uses `block.id || block.title`; use `block.name` for Technology blocks. (2) The `engineering/removed` message says \"A removed entry is\", while the rule text now says \"A removed line is\". (3) The `pm-engineering` view recommends `change <entry> Decision <ADR-MMM>` with the immediate successor, not the end of the `superseded by` chain that step 1 now follows; a deprecated chain end has no ADR to suggest. (4) The \"orders technology with English collation\" test passes on an English-locale host without the `\"en\"` argument; add a case where code-point order and English collation differ. (5) `pm-engineering` step 4 (`change`) does not name the Challenge protocol checks that the managed section now says apply to it."
     },
     {
-      "file": "planning/inbox/2026-11-26-0200-pm-setup-adr-note-before-init.md",
-      "title": "pm-setup misses docs/adr Note before init",
-      "captured": "2026-11-26 02:00",
-      "source": "agent (R-036 execute)",
-      "kind": "bug",
-      "severity": "minor",
+      "file": "planning/inbox/2026-11-26-1130-pm-setup-current-install-skips-step-5.md",
+      "title": "pm-setup current install skips Step 5 checks",
+      "captured": "2026-11-26 11:30",
+      "source": "agent (R-057 execute)",
+      "kind": "question",
+      "severity": null,
       "affects": "pm-setup",
-      "context": "R-036 execute",
+      "context": "R-057 execute",
       "discuss": "no",
       "related": [],
       "brief": null,
       "reviewed": "never",
-      "idea": "pm-setup Step 5 item 4 checks for an existing docs/adr/ folder only when `<PM root>/config.md` exists, so running pm-setup before pm-init (the usual order on a new install) never prints the Note that suggests `pm-adr import docs/adr/`."
-    },
-    {
-      "file": "planning/inbox/2026-11-26-0300-checkpoint-switch-fails-on-item-branch.md",
-      "title": "pm-checkpoint switch commit fails on item branch",
-      "captured": "2026-11-26 03:00",
-      "source": "agent (R-036 execute)",
-      "kind": "bug",
-      "severity": "minor",
-      "affects": "pm-checkpoint",
-      "context": "R-036 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "`pm-checkpoint switch` run on an item branch writes NOW.md and ROADMAP.md, then the PM commit's recommended option `Switch to main and commit` fails: `git switch` refuses because NOW.md and ROADMAP.md differ between the item branch and main."
+      "idea": "pm-setup Step 4 stops after showing the plan when the install is already current, so Step 5 never runs; the read-only Step 5 checks (item 7, the outside ADR folder Note) then never surface on a current install. Decide whether read-only checks belong before the Step 4 stop."
     }
   ],
   "briefs": [
@@ -2073,7 +2131,7 @@
       "path": "planning/briefs/2026-11-22-github-issue-project-sync.md",
       "id": null,
       "title": "GitHub issue and Project sync",
-      "status": "parked",
+      "status": "dropped",
       "origin": "planning/inbox/2026-11-22-1739-github-issue-project-sync.md",
       "updated": "2026-11-22",
       "decision": "2026-11-22 Kept parked. Why: no V line covers capture from outside, and there is no measured evidence yet (0 issues on this repository). Revisit when a consumer reports a lost issue, or when v1 is done.",
@@ -2349,13 +2407,13 @@
   ],
   "counts": {
     "next": 4,
-    "later": 12,
+    "later": 11,
     "nextMax": 5,
-    "openInbox": 7,
+    "openInbox": 4,
     "discuss": 3,
     "shapingBriefs": 0,
-    "done": 34,
-    "dropped": 9,
+    "done": 35,
+    "dropped": 11,
     "blockers": 0,
     "openRisks": 0,
     "redRisks": 0,
@@ -2364,11 +2422,12 @@
   },
   "checks": {
     "reviewDue": false,
-    "lastReview": "2026-11-25",
+    "lastReview": "2026-11-26",
     "claimable": [
+      "R-006",
       "R-052",
-      "R-042",
-      "R-056"
+      "R-056",
+      "R-042"
     ],
     "drift": true
   }

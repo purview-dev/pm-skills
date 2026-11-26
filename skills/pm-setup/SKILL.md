@@ -240,12 +240,6 @@ Rules for this step:
 
    These questions do not count against the one question in Step 4. Do not
    edit anything else in the file.
-
-   Also check, read-only: when `<PM state directory>/decisions/` does not
-   exist and one of `docs/adr/`, `docs/decisions/`, `doc/adr/`, or
-   `docs/architecture/decisions/` does, add the output Note
-   `Existing ADRs in <folder>. Run pm-adr import <folder> to bring them
-   in.` No question, no write.
 5. **Active item fields (version 20).** If `<PM state directory>/NOW.md`
    is `Status: active` and lacks `Owner`, first check its `Session`
    against the current session (`git branch --show-current`). When it
@@ -278,6 +272,15 @@ Rules for this step:
    `git config` commands for the user to run. `pm-setup` does not commit
    `.gitattributes`: it is outside the PM root, so the output Note gives
    `git add .gitattributes` and a commit command for the user.
+7. **Outside ADR folder (read-only).** Runs whether or not
+   `<PM state directory>/config.md` exists. When `<PM state
+   directory>/decisions/` does not exist and one of `docs/adr/`,
+   `docs/decisions/`, `doc/adr/`, or `docs/architecture/decisions/` does,
+   take the first that exists, in that order, and add the output Note
+   `Existing ADRs in <folder>. Run pm-adr import <folder> to bring them
+   in.`, or, when `config.md` does not exist, `Existing ADRs in <folder>.
+   After pm-init, run pm-adr import <folder> to bring them in.` (ADR-001).
+   No question, no write.
 
 ## Step 6: Verify
 
@@ -309,7 +312,7 @@ Rules for this step:
 - Commits: <PM state commit <value>, Export on commit <value> | PM state not initialised>
 - PM state: <not initialized | current | missing version 4 files: names>
 - Upgrade gate: <cleared, rules at v<n> | unchanged>
-- Note: <Existing ADRs in <folder>. Run pm-adr import <folder> to bring them in. | none>
+- Note: <Existing ADRs in <folder>. Run pm-adr import <folder> to bring them in. | Existing ADRs in <folder>. After pm-init, run pm-adr import <folder> to bring them in. | none>
 
 ## Do this next
 

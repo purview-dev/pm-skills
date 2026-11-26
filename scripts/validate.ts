@@ -87,6 +87,12 @@ if (!checkpoint.includes("**Record the Purview package**")) {
   fail("skills/pm-checkpoint/SKILL.md: done has no **Record the Purview package** sub-step");
 }
 
+// pm-setup checks for an outside ADR folder before pm-init too (R-057).
+const setupSkill = read("skills", "pm-setup", "SKILL.md");
+if (!setupSkill.includes("After pm-init, run pm-adr import <folder>") || !setupSkill.includes("**Outside ADR folder (read-only).**")) {
+  fail("skills/pm-setup/SKILL.md: the outside ADR check does not run before pm-init");
+}
+
 for (const name of repo) {
   const fm = checkFrontmatter("skills", name);
   if (fm === null) continue;

@@ -14,6 +14,16 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
+### R-006 Check pm-setup's skill counts in validate
+
+- Serves: V1
+- Milestone: M2
+- Owner: agent
+- Done when: `just validate` fails when the `<n> of 22` counts in `pm-setup` differ from the number of shipped skills.
+- Size: S
+- Depends on: none
+- Status: ready
+
 ### R-052 Docs-site package: brief and inbox pages
 
 - Serves: V4
@@ -26,6 +36,17 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 - Note: From the 2026-11-25 review (inbox 2026-11-23-1525, user, R-013 design). The package must contain everything before 1.0.0. A page per brief and per inbox file, as items, risks, and ADRs already have, with links and Linked from (S). Sliced out of R-013 by the user's choice on 2026-11-23; 1.0.0 depends on it.
 
+### R-056 Package tests stable under full lint-check
+
+- Serves: V4
+- Milestone: M5
+- Owner: agent
+- Done when: two consecutive `just lint-check` runs on Windows pass `package-test`, including `test/cli.test.ts` "still reads a site whose config is astro.config.mjs" and `test/browser/graph.browser.ts` "usable at 320px".
+- Size: S
+- Depends on: none
+- Status: ready
+- Note: From the 2026-11-25 strategy re-plan (bug, inbox 2026-11-25-0717, severity minor, from R-041 execute). Two consecutive `just lint-check` runs on a prose-only branch failed in `package-test`, each on a different test that passes alone: `cli.test.ts` timed out after 180000ms (4.27s alone), and `graph.browser.ts:296` found `.plan-graph__toolbar` hidden within 5000ms (482ms alone). Reproduction: run `just lint-check` twice on Windows; one package test fails per run under load.
+
 ### R-042 Docs-site package: deferred review minors
 
 - Serves: V4
@@ -37,16 +58,9 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Status: ready
 - Note: From the 2026-11-22 review; review minors in `packages/pm-docs-site` (inbox 2026-11-18-1222, 2026-11-20-1844 x3). R-010 board: (1) the 3s reveal of a pending board also fires on a slow but successful hydration; document it in `components.css` and the `useBoardUrlState.ts` header, or tune it. (2) The pending mark is also set on `/plan/roadmap/?owner=...`; scope it to the Board page. (3) `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`. (4) The lane header is a plain `div`; use an `h3` or `role="heading"`. (5) Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed. (6) The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page. (7) A collapsed column's vertical title stretches the shared header row. (8) `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab`; its header comment lists only some changes. (9) `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array. (10) `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id`; `tagHref` never asserted. (11) `integration.test.ts` asserts the integration names two ways. (12) `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`. (13) The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP. R-028: (14) `test/island-imports.test.ts` scans only `.ts` and `.tsx` under `src/components`, so an `.astro` client `<script>` that value-imports a server-only lib is not caught. (15) `start()` in `src/scripts/plan.ts` adds `pointerdown`, `pointerup`, and `click` listeners on `document` each run, so they stack under view transitions. (16) `test/browser/board.browser.ts` test "a localStorage that throws leaves the Board usable" pins Starlight theme-script error counts per `<starlight-theme-select>`; a Starlight upgrade fails it with no fault in the package; loosen it or report the unguarded `localStorage` read upstream. R-031 (inbox 2026-11-21-1205): (17) `relativeImports` in `test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports in comments, and misses template-literal dynamic imports (false failures only). (18) In `scripts/check-demo.ts`, a `plan-empty` element's text is cut off at a nested `plan-empty` element. (19) `src/pages/plan/log.astro` labels a known ID whose page is not built with the logged title, not the export's current title, and no test covers that view-off case. R-025 (2026-11-25 review, inbox 2026-11-22-1821): (20) `revisers()` order is not pinned by a test: every assertion in `test/planning.test.ts` (the revisers case) returns one item; give a second item `revisits: 'R-003'` in the populated case and assert both IDs in `features()` order. (21) `src/lib/references.ts` line 188 still checks `other.dependsOn.includes(feature.id) || other.revisits === feature.id` inline; it could reuse `dependents()` and `revisers()`. R-013 (2026-11-25 review, inbox 2026-11-24-2044): (22) `--port=4399` (the `=` form) is not parsed, so it becomes the site folder, and any unknown flag silently becomes a positional argument (`lib/cli-args.ts`). (23) `test/cli.test.ts` "dev --port 4399 serves on 4399" uses a fixed port, which can collide with another process. (24) `skills/pm-docs-site/SKILL.md` Guard checks `bun --version` but not Node 24, so an older Node fails only at verify, after files are written. (25) Two byte-identical Markdown sources on one page (for example two ADR sections with the same text and fence) get the same Pele IDs (`lib/mermaid.ts`). R-040 (2026-11-25 review, inbox 2026-11-25-1008): (26) linkHtml: a raw `<` inside a script or style body (`<script>if (a<b) x='R-012'</script>`) is read as a tag, so the script never closes and the rest of the ADR section is not linked; links and Linked from entries still agree. Fix: while script or style is open, scan to the matching close tag (`src/lib/link-html.ts`). (27) `test/link-html.test.ts`, `test/links.test.ts`, and `test/references.test.ts` lack a final newline, and `skills/pm-export/scripts/export.test.ts` has an `it(` at column 0 near line 122. (28) The Decisions noscript test checks a string only. R-050 (2026-11-25 strategy re-plan, inbox 2026-11-25-1417): (29) No test pins a remote ADR image staying a plain img with its src; a consumer who sets Astro `image.domains` would get it optimised and its src rewritten. Append `![r](https://example.com/r.png)` to the relative-image test in `test/integration.test.ts` and assert `src="https://example.com/r.png"`. (30) Every non-empty ADR section is rendered twice per build (the `adrs` html and the `adr-sections` entry in `src/loaders/adrs.ts`), Mermaid included; share one memoised render per section.
 
-### R-056 Package tests stable under full lint-check
+## Later
 
-- Serves: V4
-- Milestone: M5
-- Owner: agent
-- Done when: two consecutive `just lint-check` runs on Windows pass `package-test`, including `test/cli.test.ts` "still reads a site whose config is astro.config.mjs" and `test/browser/graph.browser.ts` "usable at 320px".
-- Size: S
-- Depends on: none
-- Status: ready
-- Note: From the 2026-11-25 strategy re-plan (bug, inbox 2026-11-25-0717, severity minor, from R-041 execute). Two consecutive `just lint-check` runs on a prose-only branch failed in `package-test`, each on a different test that passes alone: `cli.test.ts` timed out after 180000ms (4.27s alone), and `graph.browser.ts:296` found `.plan-graph__toolbar` hidden within 5000ms (482ms alone). Reproduction: run `just lint-check` twice on Windows; one package test fails per run under load.
+<!-- Grouped by milestone where one is set. Same item format. -->
 
 ### R-053 Docs-site package: release 1.0.0
 
@@ -59,30 +73,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Status: ready
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 - Note: From the 2026-11-25 review (inbox 2026-11-23-1525, user, R-013 design). Not stable until it contains everything, with complete instructions (user, 2026-11-23). Release `@purview-dev/pm-docs-site` 1.0.0 once R-013, R-045 Docs-site package: architecture view, and the brief and inbox pages, and research items are done (S, both). This replaces the brief's 2026-11-18 answer that R-013 releases 1.0.0; R-013 publishes 0.1.0-pre.4 instead. The research reports item is being shaped (inbox 2026-11-23-1525-docs-site-package-research.md); add its ID to `Depends on` when pm-shape creates it.
-
-## Later
-
-<!-- Grouped by milestone where one is set. Same item format. -->
-
-### R-006 Check pm-setup's skill counts in validate
-
-- Serves: V1
-- Milestone: M2
-- Owner: agent
-- Done when: `just validate` fails when the `<n> of 22` counts in `pm-setup` differ from the number of shipped skills.
-- Size: S
-- Depends on: none
-- Status: ready
-
-### R-015 Rehearse a fresh install in a scratch repository
-
-- Serves: V1
-- Milestone: M2
-- Owner: agent
-- Done when: in an empty scratch repository, `npx skills add https://github.com/purview-dev/pm-skills -y` then `pm-setup` reports every pm-* and workflow skill installed, recorded in a report in `planning/research/`.
-- Size: S
-- Depends on: none
-- Status: ready
 
 ### R-016 Rehearse the lifecycle guards
 
@@ -122,7 +112,7 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Size: M
 - Depends on: none
 - Status: ready
-- Note: From the 2026-11-20 review; R-026 final-review minors, a rules bump. (1) `skills/pm-lint/scripts/structure.ts` comment on `NOW_NOTE` says "rules 22"; the change shipped on rules 21 (21.0.0-pre.2). (2) The R-026 spec (design item 6) and plan (Task 3) still describe `just bump major` to rules 22; add a superseded line. (3) The `now/fields` rule text in `rules.md`, `rules.ts`, and the `checkNow` message says "and then an optional Note", readable as after `Started`; say "an optional Note after Revisits". (4) `pm-checkpoint` `switch` recovery runs only when `Serves`/`Size` are missing and never restores `Note`, so an item claimed under 21.0.0-pre.1 switches back without it; also restore `Note` from the claim-commit block. (5) `pm-next` steps 3 and 5 can each hold a `Note:`, but step 7 joins "a held note" in the singular; state the order for two. (6) A blank `- Note:` on an item: say "a non-empty Note" in `pm-next` step 7 and `pm-rejoin` step 3. (7) No test pins that a `Note` without the five item fields fails `now/fields`. From the 2026-11-22 review (inbox 2026-11-22-1425): (8) `expandTargets` in `skills/pm-lint/scripts/lint.ts` (added in `981977a`) expands a folder argument one level only, so `check planning/` misses `inbox/`, `briefs/`, and `decisions/` files; recurse, and test it. (9) No test covers `--staged` with a folder argument. (10) Cosmetic: ADR-001's Alternatives row says ADRs are "exported" (quoted from the spec), and the `pm-init` template row keeps "(new project only)" inside the code span because `scripts/validate.ts` parses it.
+- Note: From the 2026-11-20 review; R-026 final-review minors, a rules bump. (1) `skills/pm-lint/scripts/structure.ts` comment on `NOW_NOTE` says "rules 22"; the change shipped on rules 21 (21.0.0-pre.2). (2) The R-026 spec (design item 6) and plan (Task 3) still describe `just bump major` to rules 22; add a superseded line. (3) The `now/fields` rule text in `rules.md`, `rules.ts`, and the `checkNow` message says "and then an optional Note", readable as after `Started`; say "an optional Note after Revisits". (4) `pm-checkpoint` `switch` recovery runs only when `Serves`/`Size` are missing and never restores `Note`, so an item claimed under 21.0.0-pre.1 switches back without it; also restore `Note` from the claim-commit block. (5) `pm-next` steps 3 and 5 can each hold a `Note:`, but step 7 joins "a held note" in the singular; state the order for two. (6) A blank `- Note:` on an item: say "a non-empty Note" in `pm-next` step 7 and `pm-rejoin` step 3. (7) No test pins that a `Note` without the five item fields fails `now/fields`. From the 2026-11-22 review (inbox 2026-11-22-1425): (8) `expandTargets` in `skills/pm-lint/scripts/lint.ts` (added in `981977a`) expands a folder argument one level only, so `check planning/` misses `inbox/`, `briefs/`, and `decisions/` files; recurse, and test it. (9) No test covers `--staged` with a folder argument. (10) Cosmetic: ADR-001's Alternatives row says ADRs are "exported" (quoted from the spec), and the `pm-init` template row keeps "(new project only)" inside the code span because `scripts/validate.ts` parses it. From the 2026-11-26 review (bug, inbox 2026-11-26-0300, severity minor, from R-036 execute): (11) `pm-checkpoint switch` run on an item branch writes NOW.md and ROADMAP.md, then the PM commit's recommended option `Switch to main and commit` fails: `git switch` refuses because NOW.md and ROADMAP.md differ between the item branch and main. Reproduction: the M4 rehearsal re-run (`planning/research/2026-11-26-m4-rehearsal.md`, Skill defects found); claim an item on its branch, stage it to plan, run `pm-checkpoint switch`, accept the recommended option. Every run.
 
 ### R-046 Upgrade, format, and git rules move to references
 
