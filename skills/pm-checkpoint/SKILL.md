@@ -122,9 +122,11 @@ and `Explain <ID>`.
      to` is `all` or matches a changed file, is the Note `Principles: none
      apply.` Otherwise, for each matching principle: a `Check: <command>`
      runs in the item's worktree, in the shell the session uses; a
-     non-zero exit, including a command that cannot run, keeps `done` in
+     non-zero exit, or a command that cannot run (not found; in PowerShell
+     `$?` is false while `$LASTEXITCODE` may stay 0), keeps `done` in
      `pause` with nothing written, listing `EP-NNN <title>: <command>
-     failed (exit <n>).` with the last 20 lines of output — run every
+     failed (exit <n>).`, or `failed (not run: <error>).` for a command
+     that cannot run, with the last 20 lines of output — run every
      matching command check before stopping, so every failure is listed at
      once. A `Check: review` reads the diff of the matching files against
      `Rule`; each break found is the Note `EP-NNN <title>: <file>
@@ -185,7 +187,9 @@ and `Explain <ID>`.
      sentence of `## Decision` in the ADR whose `Item` is this ID and that
      names the package (accepted or still proposed), else `Adopted through
      <ID> <title> (pm-purview).`, `Decision` that ADR, or `none` when there
-     is none, `Source` the manifest path, `Added` today. An existing
+     is none, `Source` the path of the manifest that holds the
+     `PackageReference` (or `global.json` for an SDK), even when the
+     version comes from `Directory.Packages.props`, `Added` today. An existing
      `### <Name>` entry of that name gets only its `Version` changed. Add
      the Note `Recorded <PackageId> <version> in ENGINEERING.md.`
    - If this item is the last open item of its milestone (no other item
