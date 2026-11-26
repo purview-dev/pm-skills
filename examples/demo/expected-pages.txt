@@ -13,6 +13,7 @@ plan/decisions/adr-002/index.html
 plan/decisions/adr-003/index.html
 plan/decisions/adr-004/index.html
 plan/decisions/adr-005/index.html
+plan/decisions/adr-006/index.html
 plan/decisions/index.html
 plan/features/index.html
 plan/features/r-001/index.html

@@ -1,9 +1,9 @@
-// planning.json's ADRs as the `adrs` content collection, with each section's
-// Markdown rendered to HTML by the site's own Markdown processor (ADR-002), so
-// an ADR page shows its tables, lists, and code as written. The same sections
-// are also the `adr-sections` collection, one rendered entry each, so Astro
-// resolves a relative image against the ADR's file in the decisions folder
-// beside planning.json (ADR-012).
+// planning.json's ADRs as the `adrs` content collection, as exported. Each
+// non-empty section is rendered once, by the site's own Markdown processor
+// (ADR-002), as one `adr-sections` entry, so an ADR page shows its tables,
+// lists, and code as written, Astro resolves a relative image against the ADR's
+// file in the decisions folder beside planning.json (ADR-012), and siteRefs()
+// reads the same HTML for Linked from (ADR-015).
 
 import { basename, dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -23,9 +23,6 @@ export const ADR_SECTIONS = [
 
 export type AdrSection = (typeof ADR_SECTIONS)[number]['key'];
 
-/** An ADR with each section as HTML: `null` when the section is missing, `''` when it is empty. */
-export type RenderedAdr = Adr & { html: Record<AdrSection, string | null> };
-
 /** One `adr-sections` entry's data; its id is `<adr id, lower case>/<section key>`. */
 export type AdrSectionData = { adr: string; section: AdrSection };
 
@@ -37,6 +34,9 @@ export function adrFile(planningPath: string, adrPath: string): string {
 /** The `adr-sections` entry id for one section. */
 export const adrSectionId = (adrId: string, section: AdrSection) => `${adrId.toLowerCase()}/${section}`;
 
+/** Whether a section has Markdown to render: present and not blank. */
+export const hasContent = (markdown: string | null): markdown is string => markdown !== null && markdown.trim() !== '';
+
 /** Each present, non-empty section's Markdown, with the ADR's file URL that relative images resolve against. */
 function sectionsOf(adr: Adr): { key: AdrSection; markdown: string; file: string }[] {
 	const file = adrFile(config.planning, adr.path);
@@ -44,25 +44,20 @@ function sectionsOf(adr: Adr): { key: AdrSection; markdown: string; file: string
 	return ADR_SECTIONS.flatMap(({ key }) => {
 		const markdown = adr[key];
 
-		return markdown === null || markdown.trim() === '' ? [] : [{ key, markdown, file }];
+		return hasContent(markdown) ? [{ key, markdown, file }] : [];
 	});
 }
 
 export function adrsLoader(): Loader {
 	return {
 		name: 'adrs',
-		async load({ store, parseData, renderMarkdown }) {
+		async load({ store, parseData }) {
 			store.clear();
 
 			for (const adr of loadPlanning().adrs) {
-				const html = {} as Record<AdrSection, string | null>;
-
-				for (const { key } of ADR_SECTIONS) html[key] = adr[key] === null ? null : '';
-				for (const { key, markdown, file } of sectionsOf(adr)) html[key] = (await renderMarkdown(markdown, { fileURL: pathToFileURL(file) })).html;
-
 				const id = adr.id.toLowerCase();
 
-				store.set({ id, data: await parseData({ id, data: { ...adr, html } }) });
+				store.set({ id, data: await parseData({ id, data: { ...adr } }) });
 			}
 		},
 	};

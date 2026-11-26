@@ -12,7 +12,8 @@ import LinkedHtml from '../../../components/LinkedHtml.astro';
 import LinkedText from '../../../components/LinkedText.astro';
 import RefLink from '../../../components/RefLink.astro';
 import { loadPlanning } from '../../../lib/planning';
-import { ADR_SECTIONS, adrSectionId, type RenderedAdr } from '../../../loaders/adrs';
+import type { Adr } from '../../../lib/planning-types';
+import { ADR_SECTIONS, adrSectionId, hasContent } from '../../../loaders/adrs';
 import '../../../styles/components.css';
 
 export async function getStaticPaths() {
@@ -21,14 +22,14 @@ export async function getStaticPaths() {
 
 	const entries = await getCollection('adrs');
 
-	return entries.map((entry: { id: string; data: unknown }) => ({ params: { id: entry.id }, props: { adr: entry.data as RenderedAdr } }));
+	return entries.map((entry: { id: string; data: unknown }) => ({ params: { id: entry.id }, props: { adr: entry.data as Adr } }));
 }
 
-const { adr } = Astro.props as { adr: RenderedAdr };
-// Each non-empty section's Content component; a missing section is null and an empty one ''.
+const { adr } = Astro.props as { adr: Adr };
+// Each non-empty section's Content component (ADR-015); a missing section is left out and a blank one says so.
 const sections = await Promise.all(
-	ADR_SECTIONS.filter(({ key }) => adr.html[key] !== null).map(async ({ key, label }) => {
-		const entry = adr.html[key] === '' ? undefined : await getEntry('adr-sections', adrSectionId(adr.id, key));
+	ADR_SECTIONS.filter(({ key }) => adr[key] !== null).map(async ({ key, label }) => {
+		const entry = hasContent(adr[key]) ? await getEntry('adr-sections', adrSectionId(adr.id, key)) : undefined;
 
 		return { key, label, Content: entry ? (await render(entry)).Content : null };
 	}),

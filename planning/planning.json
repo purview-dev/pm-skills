@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-26T12:02:50+00:00",
+  "generatedAt": "2026-11-26T14:13:09+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-057-pm-setup-suggests-adr-import-before-init",
-    "head": "aab03b62083847e52650d3a679dddf89f879678a"
+    "branch": "feat/r-058-adr-pages-fix-and-release",
+    "head": "083edfcf31d0c6d5bae6c81f35fb3f109efd2f60"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -482,7 +482,7 @@
           "since": null
         },
         "brief": null,
-        "note": "From the 2026-11-22 review; review minors in `packages/pm-docs-site` (inbox 2026-11-18-1222, 2026-11-20-1844 x3). R-010 board: (1) the 3s reveal of a pending board also fires on a slow but successful hydration; document it in `components.css` and the `useBoardUrlState.ts` header, or tune it. (2) The pending mark is also set on `/plan/roadmap/?owner=...`; scope it to the Board page. (3) `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`. (4) The lane header is a plain `div`; use an `h3` or `role=\"heading\"`. (5) Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed. (6) The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page. (7) A collapsed column's vertical title stretches the shared header row. (8) `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab`; its header comment lists only some changes. (9) `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array. (10) `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id`; `tagHref` never asserted. (11) `integration.test.ts` asserts the integration names two ways. (12) `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`. (13) The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP. R-028: (14) `test/island-imports.test.ts` scans only `.ts` and `.tsx` under `src/components`, so an `.astro` client `<script>` that value-imports a server-only lib is not caught. (15) `start()` in `src/scripts/plan.ts` adds `pointerdown`, `pointerup`, and `click` listeners on `document` each run, so they stack under view transitions. (16) `test/browser/board.browser.ts` test \"a localStorage that throws leaves the Board usable\" pins Starlight theme-script error counts per `<starlight-theme-select>`; a Starlight upgrade fails it with no fault in the package; loosen it or report the unguarded `localStorage` read upstream. R-031 (inbox 2026-11-21-1205): (17) `relativeImports` in `test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports in comments, and misses template-literal dynamic imports (false failures only). (18) In `scripts/check-demo.ts`, a `plan-empty` element's text is cut off at a nested `plan-empty` element. (19) `src/pages/plan/log.astro` labels a known ID whose page is not built with the logged title, not the export's current title, and no test covers that view-off case. R-025 (2026-11-25 review, inbox 2026-11-22-1821): (20) `revisers()` order is not pinned by a test: every assertion in `test/planning.test.ts` (the revisers case) returns one item; give a second item `revisits: 'R-003'` in the populated case and assert both IDs in `features()` order. (21) `src/lib/references.ts` line 188 still checks `other.dependsOn.includes(feature.id) || other.revisits === feature.id` inline; it could reuse `dependents()` and `revisers()`. R-013 (2026-11-25 review, inbox 2026-11-24-2044): (22) `--port=4399` (the `=` form) is not parsed, so it becomes the site folder, and any unknown flag silently becomes a positional argument (`lib/cli-args.ts`). (23) `test/cli.test.ts` \"dev --port 4399 serves on 4399\" uses a fixed port, which can collide with another process. (24) `skills/pm-docs-site/SKILL.md` Guard checks `bun --version` but not Node 24, so an older Node fails only at verify, after files are written. (25) Two byte-identical Markdown sources on one page (for example two ADR sections with the same text and fence) get the same Pele IDs (`lib/mermaid.ts`). R-040 (2026-11-25 review, inbox 2026-11-25-1008): (26) linkHtml: a raw `<` inside a script or style body (`<script>if (a<b) x='R-012'</script>`) is read as a tag, so the script never closes and the rest of the ADR section is not linked; links and Linked from entries still agree. Fix: while script or style is open, scan to the matching close tag (`src/lib/link-html.ts`). (27) `test/link-html.test.ts`, `test/links.test.ts`, and `test/references.test.ts` lack a final newline, and `skills/pm-export/scripts/export.test.ts` has an `it(` at column 0 near line 122. (28) The Decisions noscript test checks a string only. R-050 (2026-11-25 strategy re-plan, inbox 2026-11-25-1417): (29) No test pins a remote ADR image staying a plain img with its src; a consumer who sets Astro `image.domains` would get it optimised and its src rewritten. Append `![r](https://example.com/r.png)` to the relative-image test in `test/integration.test.ts` and assert `src=\"https://example.com/r.png\"`. (30) Every non-empty ADR section is rendered twice per build (the `adrs` html and the `adr-sections` entry in `src/loaders/adrs.ts`), Mermaid included; share one memoised render per section.",
+        "note": "From the 2026-11-22 review; review minors in `packages/pm-docs-site` (inbox 2026-11-18-1222, 2026-11-20-1844 x3). R-010 board: (1) the 3s reveal of a pending board also fires on a slow but successful hydration; document it in `components.css` and the `useBoardUrlState.ts` header, or tune it. (2) The pending mark is also set on `/plan/roadmap/?owner=...`; scope it to the Board page. (3) `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`. (4) The lane header is a plain `div`; use an `h3` or `role=\"heading\"`. (5) Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed. (6) The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page. (7) A collapsed column's vertical title stretches the shared header row. (8) `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab`; its header comment lists only some changes. (9) `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array. (10) `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id`; `tagHref` never asserted. (11) `integration.test.ts` asserts the integration names two ways. (12) `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`. (13) The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP. R-028: (14) `test/island-imports.test.ts` scans only `.ts` and `.tsx` under `src/components`, so an `.astro` client `<script>` that value-imports a server-only lib is not caught. (15) `start()` in `src/scripts/plan.ts` adds `pointerdown`, `pointerup`, and `click` listeners on `document` each run, so they stack under view transitions. (16) `test/browser/board.browser.ts` test \"a localStorage that throws leaves the Board usable\" pins Starlight theme-script error counts per `<starlight-theme-select>`; a Starlight upgrade fails it with no fault in the package; loosen it or report the unguarded `localStorage` read upstream. R-031 (inbox 2026-11-21-1205): (17) `relativeImports` in `test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports in comments, and misses template-literal dynamic imports (false failures only). (18) In `scripts/check-demo.ts`, a `plan-empty` element's text is cut off at a nested `plan-empty` element. (19) `src/pages/plan/log.astro` labels a known ID whose page is not built with the logged title, not the export's current title, and no test covers that view-off case. R-025 (2026-11-25 review, inbox 2026-11-22-1821): (20) `revisers()` order is not pinned by a test: every assertion in `test/planning.test.ts` (the revisers case) returns one item; give a second item `revisits: 'R-003'` in the populated case and assert both IDs in `features()` order. (21) `src/lib/references.ts` line 188 still checks `other.dependsOn.includes(feature.id) || other.revisits === feature.id` inline; it could reuse `dependents()` and `revisers()`. R-013 (2026-11-25 review, inbox 2026-11-24-2044): (22) `--port=4399` (the `=` form) is not parsed, so it becomes the site folder, and any unknown flag silently becomes a positional argument (`lib/cli-args.ts`). (23) `test/cli.test.ts` \"dev --port 4399 serves on 4399\" uses a fixed port, which can collide with another process. (24) `skills/pm-docs-site/SKILL.md` Guard checks `bun --version` but not Node 24, so an older Node fails only at verify, after files are written. (25) Two byte-identical Markdown sources on one page (for example two ADR sections with the same text and fence) get the same Pele IDs (`lib/mermaid.ts`). R-040 (2026-11-25 review, inbox 2026-11-25-1008): (27) `test/link-html.test.ts`, `test/links.test.ts`, and `test/references.test.ts` lack a final newline, and `skills/pm-export/scripts/export.test.ts` has an `it(` at column 0 near line 122. Findings 26, 28, 29, and 30 (ADR pages) moved to R-058 ADR pages: fix and release (2026-11-26).",
         "revisits": null,
         "claimable": true
       }
@@ -801,6 +801,15 @@
       "done": [
         {
           "date": "2026-11-26",
+          "id": "R-058",
+          "title": "ADR pages: fix and release",
+          "milestone": "M5",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-26-adr-pages-fix-and-release.md",
+          "result": "branch feat/r-058-adr-pages-fix-and-release"
+        },
+        {
+          "date": "2026-11-26",
           "id": "R-057",
           "title": "pm-setup suggests ADR import before init",
           "milestone": "M2",
@@ -1117,6 +1126,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-26",
+        "kind": "done",
+        "id": "R-058",
+        "title": "ADR pages: fix and release",
+        "milestone": "M5",
+        "owner": "agent",
+        "result": "branch feat/r-058-adr-pages-fix-and-release"
+      },
       {
         "date": "2026-11-26",
         "kind": "done",
@@ -1580,6 +1598,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-26",
+        "id": "R-058",
+        "title": "ADR pages: fix and release",
+        "milestone": "M5",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-26-adr-pages-fix-and-release.md",
+        "result": "branch feat/r-058-adr-pages-fix-and-release"
+      },
       {
         "date": "2026-11-26",
         "id": "R-057",
@@ -2066,6 +2093,38 @@
       "brief": null,
       "reviewed": "never",
       "idea": "pm-setup Step 4 stops after showing the plan when the install is already current, so Step 5 never runs; the read-only Step 5 checks (item 7, the outside ADR folder Note) then never surface on a current install. Decide whether read-only checks belong before the Step 4 stop."
+    },
+    {
+      "file": "planning/inbox/2026-11-26-1339-deploy-the-demo-site.md",
+      "title": "Deploy the demo site",
+      "captured": "2026-11-26 13:39",
+      "source": "user",
+      "kind": "feature",
+      "severity": null,
+      "affects": "examples/demo",
+      "context": "R-058 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Have the demo site as a deployable product. So we can deploy (on a change to the demo site only) to either GitHub static pages, or to CloudFlare workers"
+    },
+    {
+      "file": "planning/inbox/2026-11-26-1412-r-058-review-minors.md",
+      "title": "R-058 review minors in pm-docs-site",
+      "captured": "2026-11-26 14:12",
+      "source": "agent (R-058 done)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "R-058, packages/pm-docs-site",
+      "context": "R-058 done",
+      "discuss": "no",
+      "related": [
+        "R-042"
+      ],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "The R-058 whole-branch review found four minors in `packages/pm-docs-site`. (1) The comment above `adrs:` in `src/content.config.ts` still says the sections are rendered there (ADR-015 moved rendering to `adr-sections`). (2) No test pins a whitespace-only section as blank (`hasContent('  \\n')` in `src/loaders/adrs.ts`); the fixture's empty section is `\"\"`. (3) The Decisions-view-off integration test does not assert the build skips the empty `adr-sections` collection (no \"does not exist or is empty\" warning). (4) `src/lib/site-refs.ts` repeats the loader's non-empty-section predicate inline; export one predicate beside `hasContent`."
     }
   ],
   "briefs": [
@@ -2344,8 +2403,8 @@
       "id": "ADR-011",
       "path": "planning/decisions/ADR-011-adr-page-references-come-from-rendered-html.md",
       "title": "ADR page references come from rendered HTML",
-      "status": "accepted",
-      "supersededBy": null,
+      "status": "superseded",
+      "supersededBy": "ADR-015",
       "date": "2026-11-25",
       "category": "architecture",
       "supersedes": null,
@@ -2403,16 +2462,32 @@
       "decision": "`pm-purview` writes `Purview package: <PackageId>.` in the accepted item's `Note`, only when the recommendation is one package, and nothing in `ENGINEERING.md`. When that item closes, `pm-checkpoint` (`done`) finds the package in the item branch's manifests and applies `pm-engineering` `add technology` write steps only, with `Source` the manifest that holds the `PackageReference` (or `global.json` for an SDK) and `Decision` the item's ADR that names the package, accepted or still proposed: an ADR that lives only in the main worktree is accepted there only after the close commit succeeds. `pm-item` (`done`) and `pm-rejoin` (merged-unclosed) write no entry; they add a Note to run `pm-engineering add technology <PackageId>`. `ENGINEERING.md` is read from the PM base and written in the item's worktree, so the entry rides the pull request.",
       "alternatives": "- Record at acceptance in `pm-purview`: simplest, but lists a package before it is installed, and stays wrong when the item is dropped. Rejected by the user (2026-11-25).\n- `pm-purview` output tells the user to run `pm-engineering add` later: no automation, easily forgotten.",
       "consequences": "- `ENGINEERING.md` lists only packages found in a manifest.\n- `pm-checkpoint` (`done`) gains a second write it applies on another skill's behalf, after `pm-adr accept` (ADR-010).\n- An uncommitted `ENGINEERING.md` stops `done` like `ROADMAP.md`; it is not a capture."
+    },
+    {
+      "id": "ADR-015",
+      "path": "planning/decisions/ADR-015-adr-page-references-come-from-adr-sections.md",
+      "title": "ADR page references come from adr-sections",
+      "status": "accepted",
+      "supersededBy": null,
+      "date": "2026-11-26",
+      "category": "architecture",
+      "supersedes": "ADR-011",
+      "item": "R-058",
+      "source": null,
+      "context": "Every non-empty ADR section is rendered twice per build: the `adrs`\nloader renders it so `siteRefs()` can collect the Linked from keys\n(ADR-011), and the `adr-sections` loader renders it again for the page\n(ADR-012), Mermaid included.",
+      "decision": "The `adrs` collection holds the ADR as exported and renders nothing. The\nADR page reads a missing (`null`) or empty (`''`) section from the\nMarkdown. `siteRefs()` reads the `adr-sections` collection once and\ncollects the `linkHtml` keys from each entry's `rendered.html`, so a\npage's links and its Linked from entries still come from the same\nrendered HTML.",
+      "alternatives": "| Approach | Trade-off | Outcome |\n| --- | --- | --- |\n| Render only in `adr-sections`; `siteRefs()` reads its `rendered.html` | One render per section, no cache; supersedes ADR-011 | Chosen |\n| Memoise `renderMarkdown` per section, shared by both loaders | Keeps ADR-011; a module cache that grows in dev, and two copies of the HTML | Rejected |\n| Do nothing | Two renders per section, Mermaid included | Rejected |",
+      "consequences": "- Each ADR section is rendered once per build.\n- `RenderedAdr`'s `html` field goes.\n- `adr-sections` is empty when the Decisions view is off, and\n  `siteRefs()` already skips ADR keys then.\n- Follows ADR-002 ADR sections export as Markdown text, ADR-006 Mermaid\n  renders at build time with Pele, and ADR-012 The site reads image files\n  beside an ADR."
     }
   ],
   "counts": {
     "next": 4,
     "later": 11,
     "nextMax": 5,
-    "openInbox": 4,
+    "openInbox": 6,
     "discuss": 3,
     "shapingBriefs": 0,
-    "done": 35,
+    "done": 36,
     "dropped": 11,
     "blockers": 0,
     "openRisks": 0,

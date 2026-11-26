@@ -52,6 +52,21 @@ describe('linkHtml', () => {
 		expect(out.keys.size).toBe(0);
 	});
 
+	it('copies a script body to its close tag, so a raw < never opens a tag', () => {
+		const result = linkHtml("<script>if (a<b) x='R-012'</script><p>R-013</p>", known);
+
+		expect(result.html).toBe("<script>if (a<b) x='R-012'</script><p><a href=\"/plan/features/r-013/\">R-013</a></p>");
+		expect([...result.keys]).toEqual(['R-013']);
+	});
+
+	it('matches the close tag in any case, for style too', () => {
+		expect(linkHtml('<STYLE>a<b{}</Style><p>R-013</p>', known).html).toBe('<STYLE>a<b{}</Style><p><a href="/plan/features/r-013/">R-013</a></p>');
+	});
+
+	it('copies an unclosed script to the end', () => {
+		expect(linkHtml('<p>R-013</p><script>a<b R-012', known).html).toBe('<p><a href="/plan/features/r-013/">R-013</a></p><script>a<b R-012');
+	});
+
 	it('keys: every linked key, none from inside links or unknown IDs', () => {
 		const out = linkHtml('<p><em>R-012</em> <a href="/x">ADR-002</a> R-099</p>', known);
 

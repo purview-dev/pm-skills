@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="160" viewBox="0 0 560 160" font-family="sans-serif" font-size="14">
+	<title>Timetable caching: visitor, edge cache, Slotwise</title>
+	<rect x="10" y="50" width="130" height="60" rx="8" fill="#e8f0fe" stroke="#3b6fd8"/>
+	<text x="75" y="85" text-anchor="middle">Visitor</text>
+	<rect x="215" y="50" width="130" height="60" rx="8" fill="#e6f4ea" stroke="#2e8b57"/>
+	<text x="280" y="78" text-anchor="middle">Edge cache</text>
+	<text x="280" y="96" text-anchor="middle" font-size="12">s-maxage=60</text>
+	<rect x="420" y="50" width="130" height="60" rx="8" fill="#fef3e0" stroke="#d98a1a"/>
+	<text x="485" y="85" text-anchor="middle">Slotwise</text>
+	<line x1="140" y1="80" x2="210" y2="80" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+	<line x1="345" y1="72" x2="415" y2="72" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+	<text x="380" y="62" text-anchor="middle" font-size="12">on a miss</text>
+	<line x1="415" y1="95" x2="350" y2="95" stroke="#d98a1a" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+	<text x="382" y="130" text-anchor="middle" font-size="12">purge on booking</text>
+	<defs>
+		<marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+			<path d="M0,0 L10,5 L0,10 z" fill="#333"/>
+		</marker>
+	</defs>
+</svg>

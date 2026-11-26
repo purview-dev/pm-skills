@@ -1,6 +1,6 @@
 # pm-docs-site demo
 
-A site built with `@purview-dev/pm-docs-site` from an invented plan, so every view has content: the board, the roadmap and its timeline, milestones, features, the dependency graph, Now, the inbox, briefs, strategy, risks, the log, and repository docs.
+A site built with `@purview-dev/pm-docs-site` from an invented plan, so every view has content: the board, the roadmap and its timeline, milestones, features, the dependency graph, Now, the inbox, briefs, strategy, risks, decisions, the log, the architecture view, and repository docs. The decisions cover every ADR status, a supersede pair, an imported ADR with an empty section, a Mermaid diagram, a code block, and a relative image beside its ADR.
 
 The plan belongs to Slotwise, a booking app for small studios that does not exist. Nothing in it is pm-skills' own plan.
 

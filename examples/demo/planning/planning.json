@@ -1038,7 +1038,7 @@
       "item": "R-012",
       "source": null,
       "context": "R-012 keeps a studio's external calendar and its timetable in step both ways.\nPolling every calendar every few minutes would exceed the providers' rate\nlimits once more than a few dozen studios connect.",
-      "decision": "Subscribe to each provider's change notifications and fetch only the changed\nevents; poll once a day to repair missed notifications.",
+      "decision": "Subscribe to each provider's change notifications and fetch only the changed\nevents; poll once a day to repair missed notifications.\n\n```mermaid\nsequenceDiagram\n  participant P as Calendar provider\n  participant S as Slotwise\n  P->>S: change notification (channel, resource)\n  S->>P: fetch events changed since the sync token\n  P-->>S: changed events and the next sync token\n  S->>S: update the timetable\n```\n\nA notification carries no event data, only what changed:\n\n```json\n{\n  \"channel\": \"studio-42-main\",\n  \"resource\": \"calendars/primary/events\",\n  \"state\": \"exists\"\n}\n```",
       "alternatives": "Poll every calendar every five minutes: simpler, but hits rate limits.",
       "consequences": "- Each provider needs a public webhook endpoint."
     },
@@ -1057,6 +1057,22 @@
       "decision": "Send every confirmation through one SMTP server we run.",
       "alternatives": "An email delivery service: a monthly cost before the pilot proved demand.",
       "consequences": "- We watch the server's sending reputation ourselves.\n- 2026-11-12 Deprecated: confirmations moved to the email provider's API after messages from the server landed in spam."
+    },
+    {
+      "id": "ADR-006",
+      "path": "planning/decisions/ADR-006-cache-timetable-pages-at-the-edge.md",
+      "title": "Cache timetable pages at the edge",
+      "status": "accepted",
+      "supersededBy": null,
+      "date": "2026-11-04",
+      "category": "operations",
+      "supersedes": null,
+      "item": null,
+      "source": "docs/adr/0007-cache-timetable-pages.md",
+      "context": "Imported from the studio app's own ADR folder. A studio shares its public\ntimetable link on social media, and a busy post sends thousands of visits in\nminutes to a page that changes only when a class is booked.\n\n![The timetable is served from the edge cache and refreshed on each booking](timetable-cache.svg)",
+      "decision": "Serve public timetable pages from the CDN's edge cache for up to 60 seconds,\nand purge a studio's pages when one of its classes is booked or changed, so\nR-011 confirmations and the page agree.",
+      "alternatives": "",
+      "consequences": "- A booking appears on the public page within one purge, not on the next\n  visit's database read.\n- `Cache-Control: s-maxage=60` is set on every timetable response."
     }
   ],
   "counts": {

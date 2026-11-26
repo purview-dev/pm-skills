@@ -191,6 +191,9 @@ describe('ADR pages', () => {
 
 describe('the Decisions page', () => {
 	it('shows every row without JavaScript', () => {
-		expect(html('plan/decisions/index.html')).toContain('<noscript><style>.decisions [hidden]');
+		const page = html('plan/decisions/index.html');
+
+		expect(page).toContain('<noscript><style>.decisions [hidden]');
+		for (const adr of planning.adrs) expect(page).toContain(`data-adr="${adr.id}"`);
 	});
 });
