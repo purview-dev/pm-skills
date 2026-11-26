@@ -30,6 +30,7 @@
 ### Task 1: Item 7 and its guard
 
 **Files:**
+
 - Modify: `skills/pm-setup/SKILL.md:244-248` (remove), Step 5 (add item 7 after item 6), Output `Note` line (~312)
 - Modify: `scripts/validate.ts` (after the R-036 guards)
 - Modify: `package.json` (via `just bump prerelease`)
