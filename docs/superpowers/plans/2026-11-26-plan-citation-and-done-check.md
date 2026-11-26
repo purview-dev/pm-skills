@@ -33,6 +33,7 @@
 ### Task 1: Every plan handoff
 
 **Files:**
+
 - Modify: `scripts/validate.ts:59-64` (guard)
 - Modify: `skills/pm-setup/references/AGENTS-section.md` (after **Every design handoff**, line ~300)
 - Modify: `skills/pm-checkpoint/SKILL.md` step 3 (`stage`) and step 8 (`pop`)
@@ -43,6 +44,7 @@
 - Modify: `AGENTS.md` (reinstalled section)
 
 **Interfaces:**
+
 - Produces: the definition name `**Every plan handoff**` and the handoff block format, used by Task 5:
 
   ```markdown
@@ -67,11 +69,13 @@ git commit -m "feat(pm-skills): pass principles and adrs to every plan handoff (
 ### Task 2: Principles check at done
 
 **Files:**
+
 - Modify: `scripts/validate.ts` (guard)
 - Modify: `skills/pm-checkpoint/SKILL.md` step 5 (new sub-step after the spec's ADR check, before **Check before writing**; output template Note)
 - Modify: `skills/pm-setup/references/AGENTS-section.md` (**Completion record** definition: the close checks the principles first), `AGENTS.md`
 
 **Interfaces:**
+
 - Consumes: `**Every plan handoff**` matching wording from Task 1 (same `all` / glob rule).
 - Produces: the sub-step heading `**Principles check**` (ADR-013) and these exact lines, used by Task 5:
   - block: `EP-NNN <title>: <command> failed (exit <n>).` plus the last 20 lines of output
@@ -88,6 +92,7 @@ git commit -m "feat(pm-skills): pass principles and adrs to every plan handoff (
 ### Task 3: Purview packages recorded at close
 
 **Files:**
+
 - Modify: `skills/pm-purview/SKILL.md:112-116` (step 6, the item's `Note:`)
 - Modify: `skills/pm-checkpoint/SKILL.md` step 5 (after **Accept the item's ADRs**; the PM-base read list in **Choose the commit worktree**; **Check before writing** treats `ENGINEERING.md` like `ROADMAP.md`)
 - Modify: `skills/pm-engineering/SKILL.md` Guard (the during-workflow bullet)
@@ -95,6 +100,7 @@ git commit -m "feat(pm-skills): pass principles and adrs to every plan handoff (
 - Modify: `scripts/validate.ts` (guard)
 
 **Interfaces:**
+
 - Produces: marker `Purview package: <PackageId>.` in the item `Note` (written by `pm-purview`, read by `done`), sub-step `**Record the Purview package**` (ADR-014), Notes `Recorded <PackageId> <version> in ENGINEERING.md.` and `Purview package <PackageId> is not in a manifest; not recorded.`
 
 - [ ] **Step 1: Add the failing guard:** `skills/pm-purview/SKILL.md` contains `Purview package: <PackageId>.` and `skills/pm-checkpoint/SKILL.md` contains `**Record the Purview package**`.
@@ -109,6 +115,7 @@ git commit -m "feat(pm-skills): pass principles and adrs to every plan handoff (
 ### Task 4: Upgrade note, help, and version
 
 **Files:**
+
 - Modify: `skills/pm-setup/references/AGENTS-section.md` (append a `Version 21 also ...` paragraph after line ~1133), `AGENTS.md`
 - Modify: `skills/pm-help/SKILL.md:54` (`pm-checkpoint` row Reads/Writes column adds `ENGINEERING.md`)
 - Modify: `package.json` (via `just bump prerelease`)
@@ -122,6 +129,7 @@ git commit -m "feat(pm-skills): pass principles and adrs to every plan handoff (
 ### Task 5: Rehearsal in a fresh session
 
 **Files:**
+
 - Create: `planning/research/2026-11-26-m4-rehearsal.md` (format of `planning/research/2026-11-24-context-baseline.md`)
 
 Run by one fresh subagent (Agent tool, general-purpose) whose prompt is the spec's section 5 plus this task; it reports commands and output excerpts, and the main session writes the report. The scratch repository is a new empty temp directory outside this repository.
