@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-25T21:40:02+00:00",
+  "generatedAt": "2026-11-26T00:35:09+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-036-plan-citation-and-done-check",
-    "head": "58adba449fcf0d4280e26ad2ef47158cb60b1536"
+    "head": "659a2ee37f04edbe081b0337725ddfdb1e49712b"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -341,11 +341,11 @@
       ],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-036-plan-citation-and-done-check",
     "brief": "planning/briefs/2026-11-20-technology-and-engineering-principles.md",
     "milestone": "M4",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-25-plan-citation-and-done-check-design.md",
     "plan": null,
     "started": "2026-11-25",
     "doneWhen": [
@@ -769,7 +769,7 @@
           "title": "Plan citation and done check",
           "owner": "agent",
           "size": "M",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
