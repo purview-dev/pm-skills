@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-26T15:17:20+00:00",
+  "generatedAt": "2026-11-26T15:54:57+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-006-check-pm-setup-skill-counts",
-    "head": "f932580cc38def671d9b7dd6d42e74c2104f8027"
+    "head": "17e9da2826b956fe08cea67088b07b3c52607d11"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -95,7 +95,7 @@
         ],
         "exitCriteria": "`just validate` fails when `pm-setup`'s skill count differs from the shipped skills, and `pm-setup` run in a repository with `docs/adr/` and no `<PM root>/config.md` prints the Note that suggests `pm-adr import docs/adr/`.",
         "target": null,
-        "status": "active"
+        "status": "done (2026-11-26)"
       },
       {
         "id": "M3",
@@ -174,6 +174,12 @@
       }
     ],
     "decisions": [
+      {
+        "date": "2026-11-26",
+        "decision": "M2 Verified install and upgrade complete.",
+        "why": "on R-006's branch `just validate` fails with `pm-setup/SKILL.md:146: skill count 25, expected 26` on a wrong count and when either count line is reworded (`scripts/skill-counts.ts`), and R-057 makes `pm-setup` print the `pm-adr import docs/adr/` Note before `pm-init`, checked by `scripts/validate.ts`.",
+        "rejected": "none."
+      },
       {
         "date": "2026-11-26",
         "decision": "Focus stays M2 Verified install and upgrade (R-057, R-006); R-042 Docs-site package: deferred review minors moves to Next 5.",
@@ -375,85 +381,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-006",
-      "title": "Check pm-setup's skill counts in validate",
-      "serves": [
-        "V1"
-      ],
-      "owner": "agent",
-      "size": "S",
-      "dependsOn": [],
-      "revisits": null
-    },
-    "stage": "execute",
-    "session": "feat/r-006-check-pm-setup-skill-counts",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
     "brief": null,
-    "milestone": "M2",
-    "spec": "docs/superpowers/specs/2026-11-26-r-006-pm-setup-skill-counts-design.md",
-    "plan": "docs/superpowers/plans/2026-11-26-r-006-pm-setup-skill-counts.md",
-    "started": "2026-11-26",
-    "doneWhen": [
-      "`just validate` fails when the `<n> of 22` counts in `pm-setup` differ from the number of shipped skills."
-    ],
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-26-r-006-pm-setup-skill-counts.md",
-    "checked": 0,
-    "total": 10,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "Skill count check",
-        "checked": 0,
-        "total": 10,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing tests** in `scripts/skill-counts.test.ts` (`describe(\"pm-setup skill counts\")`):",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run to verify failure**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement `skillCountDrift`** in `scripts/skill-counts.ts`: split on `\\n`, match `/(\\d+) of (\\d+)/g` per line, push `<file>:<line>: skill count <N>, expected <expected>` for each number not equal to `expected`; when no line matched, return the single \"no count found\" message. Add a one-line comment saying the inventory omits `pm-setup` itself.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run to verify pass**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Wire into `validate.ts`**: import `skillCountDrift`; after the shipped loop, `for (const message of skillCountDrift(\"pm-setup/SKILL.md\", setup, shipped.filter((name) => name !== \"pm-setup\").length)) fail(message);`",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Verify `just validate` passes on the real file**",
-            "checked": false
-          },
-          {
-            "text": "**Step 7: Verify it fails on a wrong count** (temporary edit, then restore)",
-            "checked": false
-          },
-          {
-            "text": "**Step 8: Document** in `AGENTS.md`: in the `Validate only` bullet's list, after `markers,` add `pm-setup's skill counts against the shipped skills,`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 9: Full check**",
-            "checked": false
-          },
-          {
-            "text": "**Step 10: Commit**",
-            "checked": false
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [
       {
@@ -807,15 +747,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-006",
-          "title": "Check pm-setup's skill counts in validate",
-          "owner": "agent",
-          "size": "S",
-          "detail": "execute, 0/10 plan steps"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-052",
@@ -842,6 +774,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-26",
+          "id": "R-006",
+          "title": "Check pm-setup's skill counts in validate",
+          "milestone": "M2",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-26-r-006-pm-setup-skill-counts.md",
+          "result": "branch feat/r-006-check-pm-setup-skill-counts"
+        },
         {
           "date": "2026-11-26",
           "id": "R-058",
@@ -1169,6 +1110,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-26",
+        "kind": "done",
+        "id": "R-006",
+        "title": "Check pm-setup's skill counts in validate",
+        "milestone": "M2",
+        "owner": "agent",
+        "result": "branch feat/r-006-check-pm-setup-skill-counts"
+      },
       {
         "date": "2026-11-26",
         "kind": "done",
@@ -1641,6 +1591,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-26",
+        "id": "R-006",
+        "title": "Check pm-setup's skill counts in validate",
+        "milestone": "M2",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-26-r-006-pm-setup-skill-counts.md",
+        "result": "branch feat/r-006-check-pm-setup-skill-counts"
+      },
       {
         "date": "2026-11-26",
         "id": "R-058",
@@ -2168,6 +2127,21 @@
       "brief": null,
       "reviewed": "never",
       "idea": "The R-058 whole-branch review found four minors in `packages/pm-docs-site`. (1) The comment above `adrs:` in `src/content.config.ts` still says the sections are rendered there (ADR-015 moved rendering to `adr-sections`). (2) No test pins a whitespace-only section as blank (`hasContent('  \\n')` in `src/loaders/adrs.ts`); the fixture's empty section is `\"\"`. (3) The Decisions-view-off integration test does not assert the build skips the empty `adr-sections` collection (no \"does not exist or is empty\" warning). (4) `src/lib/site-refs.ts` repeats the loader's non-empty-section predicate inline; export one predicate beside `hasContent`."
+    },
+    {
+      "file": "planning/inbox/2026-11-26-1541-r-006-count-message-minor.md",
+      "title": "R-006 skill count messages are ambiguous",
+      "captured": "2026-11-26 15:41",
+      "source": "agent (R-006 done)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "R-006, scripts/skill-counts.ts",
+      "context": "R-006 done",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "The R-006 whole-branch review found one minor in `scripts/skill-counts.ts`: when both numbers on the output line (`- Skills: <27 of 27 installed`) are wrong, validate prints two identical messages (`skill count 27, expected 26`), so the reader cannot tell the installed count from the total. Name which number each message is about (\"installed count\" or \"total\")."
     }
   ],
   "briefs": [
@@ -2527,10 +2501,10 @@
     "next": 3,
     "later": 11,
     "nextMax": 5,
-    "openInbox": 6,
+    "openInbox": 7,
     "discuss": 3,
     "shapingBriefs": 0,
-    "done": 36,
+    "done": 37,
     "dropped": 11,
     "blockers": 0,
     "openRisks": 0,
@@ -2546,6 +2520,6 @@
       "R-056",
       "R-042"
     ],
-    "drift": false
+    "drift": true
   }
 }

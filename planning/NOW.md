@@ -11,25 +11,22 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: active
-- Item: R-006 Check pm-setup's skill counts in validate
-- Session: feat/r-006-check-pm-setup-skill-counts
-- Stage: execute
+- Status: idle
+- Item:
+- Session:
+- Stage:
 - Brief:
-- Milestone: M2
-- Serves: V1
-- Owner: agent
-- Size: S
-- Depends on: none
+- Milestone:
+- Serves:
+- Owner:
+- Size:
+- Depends on:
 - Revisits:
-- Note: 2026-11-26: the Done when's `22` is the old number; `pm-setup`'s `26 of 26` is correct today (27 shipped `pm-*` skills minus `pm-setup`, which its inventory omits; `release` is internal), and the check compares the counts with that number, whatever it is.
-- Spec: docs/superpowers/specs/2026-11-26-r-006-pm-setup-skill-counts-design.md
-- Plan: docs/superpowers/plans/2026-11-26-r-006-pm-setup-skill-counts.md
-- Started: 2026-11-26
+- Spec:
+- Plan:
+- Started:
 
 ## Done when
-
-- `just validate` fails when the `<n> of 22` counts in `pm-setup` differ from the number of shipped skills.
 
 ## Checkpoint
 

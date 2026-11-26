@@ -52,7 +52,7 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 - Serves: V1
 - Exit criteria: `just validate` fails when `pm-setup`'s skill count differs from the shipped skills, and `pm-setup` run in a repository with `docs/adr/` and no `<PM root>/config.md` prints the Note that suggests `pm-adr import docs/adr/`.
 - Target: none
-- Status: active
+- Status: done (2026-11-26)
 
 ### M3 Verified lifecycle guards
 
@@ -113,6 +113,7 @@ Newest first. Nothing in this file changes without a line here.
 - <YYYY-MM-DD> <decision>. Why: <reason>. Rejected: <alternatives>.
 -->
 
+- 2026-11-26 M2 Verified install and upgrade complete. Why: on R-006's branch `just validate` fails with `pm-setup/SKILL.md:146: skill count 25, expected 26` on a wrong count and when either count line is reworded (`scripts/skill-counts.ts`), and R-057 makes `pm-setup` print the `pm-adr import docs/adr/` Note before `pm-init`, checked by `scripts/validate.ts`. Rejected: none.
 - 2026-11-26 Focus stays M2 Verified install and upgrade (R-057, R-006); R-042 Docs-site package: deferred review minors moves to Next 5. Why: M2 is 2 S items, about 0.25 weeks; Next had a free slot. Rejected: focus on M5; leaving Next at 4.
 - 2026-11-26 Bet B3 and assumption A6 removed. Why: R-015 Rehearse a fresh install in a scratch repository, their only test, was dropped. Rejected: keeping both untested; keeping A6 only.
 - 2026-11-26 M2 Verified install and upgrade exit criteria drop the fresh-install rehearsal and add the pm-setup ADR import Note before init. Why: R-015 was dropped (user, during its design); R-006 and R-057 now cover M2. Rejected: a smaller isolated `npx skills list` item; retiring M2.
