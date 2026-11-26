@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-26T11:09:09+00:00",
+  "generatedAt": "2026-11-26T11:48:01+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-057-pm-setup-suggests-adr-import-before-init",
-    "head": "06096970d6db5c507499dd0a8c3c10372f9740a3"
+    "head": "14857825afb6cf76f30c99682d1bc3f0ae64279a"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
