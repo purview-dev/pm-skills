@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-26T13:07:40+00:00",
+  "generatedAt": "2026-11-26T13:10:37+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-058-adr-pages-fix-and-release",
-    "head": "2329af013e78277673a39d344eed0f166d0002a9"
+    "head": "b6aa1cda3d4f6e2d762298aea38d27a7de498577"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -387,19 +387,153 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-058-adr-pages-fix-and-release",
     "brief": null,
     "milestone": "M5",
     "spec": "docs/superpowers/specs/2026-11-26-adr-pages-fix-and-release-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-26-adr-pages-fix-and-release.md",
     "started": "2026-11-26",
     "doneWhen": [
       "`src/lib/link-html.ts` scans a script or style body to its close tag so the rest of the ADR section is linked, with a `test/link-html.test.ts` case; the Decisions noscript test asserts the rendered list; a test pins a remote ADR image as a plain `img` with its `src`; each ADR section renders once per build, shown by a test; `packages/pm-docs-site/package.json` is `0.1.0-pre.6`; and `just package-test` and `just docs-check` pass."
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-26-adr-pages-fix-and-release.md",
+    "checked": 0,
+    "total": 24,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "Script and style bodies in linkHtml (finding 26)",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** in `describe('linkHtml')`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run** `bun test test/link-html.test.ts`. Expected: the three new tests FAIL.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement.** Replace the `split(TAG)` loop with a scan: on a `script` or `style` open tag (not self-closing), find the next `</script` or `</style` case-insensitively (`/<\\/script\\b[^>]*>/i`), append the body and close tag verbatim, and continue after it (or append the rest when none). `a` keeps the existing open-stack handling. Update the header comment.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run** `bun test test/link-html.test.ts`. Expected: all PASS.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "Pin the Decisions list and remote ADR images (findings 28, 29)",
+        "checked": 0,
+        "total": 4,
+        "steps": [
+          {
+            "text": "**Step 1: Decisions list.** In \"the Decisions page\" test \"shows every row without JavaScript\", keep the noscript assertion and add, for every `planning.adrs` ID (the fixture: ADR-001 to ADR-004):",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Remote image.** In \"an ADR section with a relative image builds to a resolved img\", change the appended text to `'R-013 ![a](x.png) ![r](https://example.com/r.png)'` and add:",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Run** `bun test test/links.test.ts test/integration.test.ts -t \"Decisions page|relative image builds\"`. Expected: PASS (both pin current behaviour).",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "One render per ADR section (finding 30, ADR-015)",
+        "checked": 0,
+        "total": 8,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing test** in `test/adrs-loader.test.ts`, following `test/repo-docs.test.ts`'s stub context (`test/setup.ts` already points the config at the fixture, Decisions view on):",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run** `bun test test/adrs-loader.test.ts`. Expected: FAIL (`adrsLoader` calls `renderMarkdown`).",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Loader.** In `src/loaders/adrs.ts`, `adrsLoader` stores `parseData({ id, data: adr })`; drop `RenderedAdr` and the `renderMarkdown` use; update the header comment to cite ADR-015.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Page.** In `[id].astro`, type `adr` as `Adr`; a section with `adr[key] === null` is left out, one with `adr[key].trim() === ''` gets `Content: null` (`None recorded.`), otherwise `getEntry('adr-sections', adrSectionId(adr.id, key))` as now.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: siteRefs.** In `src/lib/site-refs.ts`, under the same guard, loop `await getCollection('adr-sections')`: for each entry with `entry.rendered?.html`, add `linkHtml(entry.rendered.html, known).keys` to the set for `(entry.data as AdrSectionData).adr` (create the set per ADR ID; set an empty set for every `planning.adrs` ID first, so an ADR with no sections still has an entry, as before). Update the header comment: ADR-015.",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Run** `bun test test/adrs-loader.test.ts test/link-html.test.ts test/links.test.ts`. Expected: all PASS, including the ADR-003 and ADR-004 page tests (links and Linked from still agree).",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Type-check** `bun run check` in `packages/pm-docs-site`. Expected: 0 errors.",
+            "checked": false
+          },
+          {
+            "text": "**Step 8: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "Release 0.1.0-pre.6 and verify",
+        "checked": 0,
+        "total": 7,
+        "steps": [
+          {
+            "text": "**Step 1: Bump** both lines to `0.1.0-pre.6`. Run `bun install` in `docs-site/` only if `just docs-check` reports a lockfile mismatch.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Validate** from the repository root: `just validate`. Expected: exit 0 (pinned versions, minimum package version, schema versions).",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Version check:** `just version-check`. Expected: exit 0 (package version moves forward and is untagged).",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Package tests:** `just package-test`. Expected: exit 0.",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Docs site:** `just docs-check`. Expected: exit 0.",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Full lint:** `just lint-check`. Expected: exit 0.",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Commit**",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -783,7 +917,7 @@
           "title": "ADR pages: fix and release",
           "owner": "agent",
           "size": "S",
-          "detail": "plan"
+          "detail": "execute, 0/24 plan steps"
         }
       ],
       "next": [
