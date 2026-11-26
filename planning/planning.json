@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-26T08:46:06+00:00",
+  "generatedAt": "2026-11-26T09:55:22+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-036-plan-citation-and-done-check",
-    "head": "82a6975c7845974643eaa743f792cac35d5b0750"
+    "branch": "main",
+    "head": "17757bd6f05ceda660cc4b3f708097ef4aaf2450"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -496,10 +496,34 @@
         "claimable": false
       },
       {
+        "id": "R-057",
+        "title": "pm-setup suggests ADR import before init",
+        "section": "later",
+        "position": 3,
+        "label": "later",
+        "serves": [
+          "V1"
+        ],
+        "milestone": "M2",
+        "owner": "agent",
+        "doneWhen": "`pm-setup` run in a repository with `docs/adr/` and no `<PM root>/config.md` prints the Note that suggests `pm-adr import docs/adr/`, shown in a scratch-repository run, and `just validate` passes.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "From the 2026-11-26 review (bug, inbox 2026-11-26-0200, severity minor, from R-036 execute). pm-setup Step 5 item 4 checks for an existing docs/adr/ folder only when `<PM root>/config.md` exists, so running pm-setup before pm-init (the usual order on a new install) never prints the Note that suggests `pm-adr import docs/adr/`. Reproduction: the M4 rehearsal (`planning/research/2026-11-26-m4-rehearsal.md`); a scratch repository with `docs/adr/`, `pm-setup` run first, then `pm-init`; no import Note appeared. Every run.",
+        "revisits": null,
+        "claimable": false
+      },
+      {
         "id": "R-016",
         "title": "Rehearse the lifecycle guards",
         "section": "later",
-        "position": 3,
+        "position": 4,
         "label": "later",
         "serves": [
           "V2",
@@ -524,7 +548,7 @@
         "id": "R-024",
         "title": "Self-contained aspire module test example",
         "section": "later",
-        "position": 4,
+        "position": 5,
         "label": "later",
         "serves": [
           "V4"
@@ -548,7 +572,7 @@
         "id": "R-030",
         "title": "Pre-push runs fast checks only",
         "section": "later",
-        "position": 5,
+        "position": 6,
         "label": "later",
         "serves": [
           "V4"
@@ -572,7 +596,7 @@
         "id": "R-032",
         "title": "pm-checkpoint and pm-lint Note follow-ups",
         "section": "later",
-        "position": 6,
+        "position": 7,
         "label": "later",
         "serves": [
           "V2"
@@ -588,7 +612,7 @@
           "since": null
         },
         "brief": null,
-        "note": "From the 2026-11-20 review; R-026 final-review minors, a rules bump. (1) `skills/pm-lint/scripts/structure.ts` comment on `NOW_NOTE` says \"rules 22\"; the change shipped on rules 21 (21.0.0-pre.2). (2) The R-026 spec (design item 6) and plan (Task 3) still describe `just bump major` to rules 22; add a superseded line. (3) The `now/fields` rule text in `rules.md`, `rules.ts`, and the `checkNow` message says \"and then an optional Note\", readable as after `Started`; say \"an optional Note after Revisits\". (4) `pm-checkpoint` `switch` recovery runs only when `Serves`/`Size` are missing and never restores `Note`, so an item claimed under 21.0.0-pre.1 switches back without it; also restore `Note` from the claim-commit block. (5) `pm-next` steps 3 and 5 can each hold a `Note:`, but step 7 joins \"a held note\" in the singular; state the order for two. (6) A blank `- Note:` on an item: say \"a non-empty Note\" in `pm-next` step 7 and `pm-rejoin` step 3. (7) No test pins that a `Note` without the five item fields fails `now/fields`. From the 2026-11-22 review (inbox 2026-11-22-1425): (8) `expandTargets` in `skills/pm-lint/scripts/lint.ts` (added in `981977a`) expands a folder argument one level only, so `check planning/` misses `inbox/`, `briefs/`, and `decisions/` files; recurse, and test it. (9) No test covers `--staged` with a folder argument. (10) Cosmetic: ADR-001's Alternatives row says ADRs are \"exported\" (quoted from the spec), and the `pm-init` template row keeps \"(new project only)\" inside the code span because `scripts/validate.ts` parses it.",
+        "note": "From the 2026-11-20 review; R-026 final-review minors, a rules bump. (1) `skills/pm-lint/scripts/structure.ts` comment on `NOW_NOTE` says \"rules 22\"; the change shipped on rules 21 (21.0.0-pre.2). (2) The R-026 spec (design item 6) and plan (Task 3) still describe `just bump major` to rules 22; add a superseded line. (3) The `now/fields` rule text in `rules.md`, `rules.ts`, and the `checkNow` message says \"and then an optional Note\", readable as after `Started`; say \"an optional Note after Revisits\". (4) `pm-checkpoint` `switch` recovery runs only when `Serves`/`Size` are missing and never restores `Note`, so an item claimed under 21.0.0-pre.1 switches back without it; also restore `Note` from the claim-commit block. (5) `pm-next` steps 3 and 5 can each hold a `Note:`, but step 7 joins \"a held note\" in the singular; state the order for two. (6) A blank `- Note:` on an item: say \"a non-empty Note\" in `pm-next` step 7 and `pm-rejoin` step 3. (7) No test pins that a `Note` without the five item fields fails `now/fields`. From the 2026-11-22 review (inbox 2026-11-22-1425): (8) `expandTargets` in `skills/pm-lint/scripts/lint.ts` (added in `981977a`) expands a folder argument one level only, so `check planning/` misses `inbox/`, `briefs/`, and `decisions/` files; recurse, and test it. (9) No test covers `--staged` with a folder argument. (10) Cosmetic: ADR-001's Alternatives row says ADRs are \"exported\" (quoted from the spec), and the `pm-init` template row keeps \"(new project only)\" inside the code span because `scripts/validate.ts` parses it. From the 2026-11-26 review (bug, inbox 2026-11-26-0300, severity minor, from R-036 execute): (11) `pm-checkpoint switch` run on an item branch writes NOW.md and ROADMAP.md, then the PM commit's recommended option `Switch to main and commit` fails: `git switch` refuses because NOW.md and ROADMAP.md differ between the item branch and main. Reproduction: the M4 rehearsal re-run (`planning/research/2026-11-26-m4-rehearsal.md`, Skill defects found); claim an item on its branch, stage it to plan, run `pm-checkpoint switch`, accept the recommended option. Every run.",
         "revisits": null,
         "claimable": false
       },
@@ -596,7 +620,7 @@
         "id": "R-046",
         "title": "Upgrade, format, and git rules move to references",
         "section": "later",
-        "position": 7,
+        "position": 8,
         "label": "later",
         "serves": [
           "V2"
@@ -622,7 +646,7 @@
         "id": "R-047",
         "title": "Core rules file and a 15 KB managed section",
         "section": "later",
-        "position": 8,
+        "position": 9,
         "label": "waiting",
         "serves": [
           "V2"
@@ -648,7 +672,7 @@
         "id": "R-048",
         "title": "Repository AGENTS.md top part into dedicated files",
         "section": "later",
-        "position": 9,
+        "position": 10,
         "label": "later",
         "serves": [
           "V2"
@@ -672,7 +696,7 @@
         "id": "R-049",
         "title": "Trim the largest SKILL.md files",
         "section": "later",
-        "position": 10,
+        "position": 11,
         "label": "waiting",
         "serves": [
           "V2"
@@ -698,7 +722,7 @@
         "id": "R-051",
         "title": "PM sync review minors",
         "section": "later",
-        "position": 11,
+        "position": 12,
         "label": "later",
         "serves": [
           "V2"
@@ -722,7 +746,7 @@
         "id": "R-054",
         "title": "Git subprocess tests stable under load",
         "section": "later",
-        "position": 12,
+        "position": 13,
         "label": "later",
         "serves": [
           "V4"
@@ -1098,6 +1122,24 @@
         "milestone": "M4",
         "owner": "agent",
         "result": "branch feat/r-036-plan-citation-and-done-check"
+      },
+      {
+        "date": "2026-11-26",
+        "kind": "dropped",
+        "id": null,
+        "title": "GitHub issue and Project sync",
+        "milestone": null,
+        "owner": null,
+        "result": "Reason: the user dropped it in the 2026-11-26 review; brief `planning/briefs/2026-11-22-github-issue-project-sync.md` set to dropped"
+      },
+      {
+        "date": "2026-11-26",
+        "kind": "review",
+        "id": null,
+        "title": null,
+        "milestone": null,
+        "owner": null,
+        "result": "Inbox 7 to 4. Added R-057; 1 file merged into R-032, 1 dropped (GitHub issue and Project sync), 3 to shape, 1 kept parked; ADR docs-site findings stay in R-042; Next order kept; M4 is done, so pm-strategy sets the next focus."
       },
       {
         "date": "2026-11-25",
@@ -1826,6 +1868,12 @@
     ],
     "dropped": [
       {
+        "date": "2026-11-26",
+        "id": null,
+        "title": "GitHub issue and Project sync",
+        "reason": "the user dropped it in the 2026-11-26 review; brief `planning/briefs/2026-11-22-github-issue-project-sync.md` set to dropped"
+      },
+      {
         "date": "2026-11-25",
         "id": "R-035",
         "title": "pm-engineering infer from an existing repository",
@@ -1882,6 +1930,10 @@
     ],
     "reviews": [
       {
+        "date": "2026-11-26",
+        "summary": "Inbox 7 to 4. Added R-057; 1 file merged into R-032, 1 dropped (GitHub issue and Project sync), 3 to shape, 1 kept parked; ADR docs-site findings stay in R-042; Next order kept; M4 is done, so pm-strategy sets the next focus."
+      },
+      {
         "date": "2026-11-25",
         "summary": "Inbox 16 to 4. Added R-050 to R-055; 5 files merged into R-037 and R-042, 2 dropped, 3 to shape, 1 kept parked; current focus M1 is done, so pm-strategy sets the next; Next filled from Later with R-037, R-055, R-035, R-036."
       },
@@ -1900,21 +1952,6 @@
     ]
   },
   "inbox": [
-    {
-      "file": "planning/inbox/2026-11-22-1739-github-issue-project-sync.md",
-      "title": "GitHub issue and Project sync",
-      "captured": "2026-11-22 17:39",
-      "source": "user",
-      "kind": "feature",
-      "severity": null,
-      "affects": null,
-      "context": null,
-      "discuss": "no",
-      "related": [],
-      "brief": "planning/briefs/2026-11-22-github-issue-project-sync.md",
-      "reviewed": "2026-11-22",
-      "idea": "GitHub issue / Project sync"
-    },
     {
       "file": "planning/inbox/2026-11-23-1525-docs-site-package-research.md",
       "title": "Docs-site package: research reports",
@@ -1976,38 +2013,8 @@
         "R-055"
       ],
       "brief": null,
-      "reviewed": "never",
+      "reviewed": "2026-11-26",
       "idea": "Five minors the R-055 whole-branch review found and deferred. (1) `engineering/values` and `engineering/decision-current` messages name a technology headed `### EP-001 Bun` as `EP-001`, because `checkEngineeringValues` uses `block.id || block.title`; use `block.name` for Technology blocks. (2) The `engineering/removed` message says \"A removed entry is\", while the rule text now says \"A removed line is\". (3) The `pm-engineering` view recommends `change <entry> Decision <ADR-MMM>` with the immediate successor, not the end of the `superseded by` chain that step 1 now follows; a deprecated chain end has no ADR to suggest. (4) The \"orders technology with English collation\" test passes on an English-locale host without the `\"en\"` argument; add a case where code-point order and English collation differ. (5) `pm-engineering` step 4 (`change`) does not name the Challenge protocol checks that the managed section now says apply to it."
-    },
-    {
-      "file": "planning/inbox/2026-11-26-0200-pm-setup-adr-note-before-init.md",
-      "title": "pm-setup misses docs/adr Note before init",
-      "captured": "2026-11-26 02:00",
-      "source": "agent (R-036 execute)",
-      "kind": "bug",
-      "severity": "minor",
-      "affects": "pm-setup",
-      "context": "R-036 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "pm-setup Step 5 item 4 checks for an existing docs/adr/ folder only when `<PM root>/config.md` exists, so running pm-setup before pm-init (the usual order on a new install) never prints the Note that suggests `pm-adr import docs/adr/`."
-    },
-    {
-      "file": "planning/inbox/2026-11-26-0300-checkpoint-switch-fails-on-item-branch.md",
-      "title": "pm-checkpoint switch commit fails on item branch",
-      "captured": "2026-11-26 03:00",
-      "source": "agent (R-036 execute)",
-      "kind": "bug",
-      "severity": "minor",
-      "affects": "pm-checkpoint",
-      "context": "R-036 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "`pm-checkpoint switch` run on an item branch writes NOW.md and ROADMAP.md, then the PM commit's recommended option `Switch to main and commit` fails: `git switch` refuses because NOW.md and ROADMAP.md differ between the item branch and main."
     }
   ],
   "briefs": [
@@ -2073,7 +2080,7 @@
       "path": "planning/briefs/2026-11-22-github-issue-project-sync.md",
       "id": null,
       "title": "GitHub issue and Project sync",
-      "status": "parked",
+      "status": "dropped",
       "origin": "planning/inbox/2026-11-22-1739-github-issue-project-sync.md",
       "updated": "2026-11-22",
       "decision": "2026-11-22 Kept parked. Why: no V line covers capture from outside, and there is no measured evidence yet (0 issues on this repository). Revisit when a consumer reports a lost issue, or when v1 is done.",
@@ -2349,13 +2356,13 @@
   ],
   "counts": {
     "next": 4,
-    "later": 12,
+    "later": 13,
     "nextMax": 5,
-    "openInbox": 7,
+    "openInbox": 3,
     "discuss": 3,
     "shapingBriefs": 0,
     "done": 34,
-    "dropped": 9,
+    "dropped": 10,
     "blockers": 0,
     "openRisks": 0,
     "redRisks": 0,
@@ -2364,12 +2371,12 @@
   },
   "checks": {
     "reviewDue": false,
-    "lastReview": "2026-11-25",
+    "lastReview": "2026-11-26",
     "claimable": [
       "R-052",
       "R-042",
       "R-056"
     ],
-    "drift": true
+    "drift": false
   }
 }

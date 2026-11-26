@@ -1,6 +1,6 @@
 # GitHub issue and Project sync
 
-- Status: parked
+- Status: dropped
 - Origin: planning/inbox/2026-11-22-1739-github-issue-project-sync.md
 - Updated: 2026-11-22
 
@@ -87,3 +87,4 @@ GitHub issue / Project sync
 ## Decision
 
 - 2026-11-22 Kept parked. Why: no V line covers capture from outside, and there is no measured evidence yet (0 issues on this repository). Revisit when a consumer reports a lost issue, or when v1 is done.
+- 2026-11-26 Dropped (user, 2026-11-26 review).

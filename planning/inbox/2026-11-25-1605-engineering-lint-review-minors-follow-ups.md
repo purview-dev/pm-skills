@@ -8,7 +8,7 @@
 - Discuss: no
 - Related: R-055
 - Brief: none
-- Reviewed: never
+- Reviewed: 2026-11-26
 
 ## Idea
 
