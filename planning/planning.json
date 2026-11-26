@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 6,
-  "generatedAt": "2026-11-26T22:14:01+00:00",
+  "generatedAt": "2026-11-26T23:11:15+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-056-package-tests-stable-under-full-lint-check",
-    "head": "4214bcf68f6e51eaafe27902da10eb6c9336f849"
+    "head": "800a606c74bb4f9261fea4483088789ed1a61237"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -393,19 +393,121 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-056-package-tests-stable-under-full-lint-check",
     "brief": null,
     "milestone": "M5",
     "spec": "docs/superpowers/specs/2026-11-26-package-tests-stable-under-load-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-26-package-tests-stable-under-load.md",
     "started": "2026-11-26",
     "doneWhen": [
       "Two consecutive `just lint-check` runs on Windows pass `package-test`, including `test/cli.test.ts` \"still reads a site whose config is astro.config.mjs\" and `test/browser/graph.browser.ts` \"usable at 320px\"."
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-26-package-tests-stable-under-load.md",
+    "checked": 0,
+    "total": 16,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "`runCli` stops a hung child and reports it",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** in `test/helpers.test.ts`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run to verify they fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement** in `test/helpers.ts`: `childTimeout` returns `BUILD - 10_000` when `args[0] === 'build'`, else `CHECK - 10_000`. `runCli` passes `timeout: options?.timeout ?? childTimeout(args)` and `killSignal: 'SIGKILL'` to `Bun.spawnSync`, sets `timedOut` from the result's `exitedDueToTimeout === true`, maps a `null` exit code to `-1`, and on a timeout prefixes stderr with `runCli: timed out after <ms>ms: node lib/cli.ts <args joined by spaces>\\n`. Move `BUILD` and `CHECK` here and import them in the three test files.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run to verify they pass**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Type-check and commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "One hydration timeout for the browser tests",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing guard test** in `test/hydration.test.ts`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run to verify it fails**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement** `hydration.ts`, and in each `hydrated()` call `toBeVisible({ timeout: HYDRATED })`, importing `HYDRATED` from `./hydration.ts`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Run to verify**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "Reproduce under the full run and fix the cause",
+        "checked": 0,
+        "total": 4,
+        "steps": [
+          {
+            "text": "**Step 1: Run the full check, output to a file**",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Record each run** in the Run log: exit code, failing test name, and for a `runCli: timed out` line the 20 stderr lines after it. Note any `EBUSY`/`EPERM` from `afterAll` (Review Focus 5).",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Fix the cause** the output shows, with a test that fails before the fix. If the cause is in `lib/` or `src/`, stop: write `SCOPE CHANGE: <cause, file>` in the Run log and report to the user before any change. If both runs passed and no `timed out` line appeared, write `No hang reproduced in 2 runs; Task 1 reports it if it recurs.` and skip to Task 4.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Commit** the fix with `fix(pm-docs-site): <cause> (R-056)`.",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "Done when",
+        "checked": 0,
+        "total": 2,
+        "steps": [
+          {
+            "text": "**Step 1:** Run `just lint-check` twice in a row on Windows. Expected: both exit 0, and both logs show `still reads a site whose config is astro.config.mjs` and `usable at 320px` passing. Record both in the Run log.",
+            "checked": false
+          },
+          {
+            "text": "**Step 2:** Commit the Run log update: `git add docs/superpowers/plans/2026-11-26-package-tests-stable-under-load.md` and `git commit -m \"docs(plan): R-056 run log\"`.",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -717,7 +819,7 @@
           "title": "Package tests stable under full lint-check",
           "owner": "agent",
           "size": "S",
-          "detail": "plan"
+          "detail": "execute, 0/16 plan steps"
         }
       ],
       "next": [
