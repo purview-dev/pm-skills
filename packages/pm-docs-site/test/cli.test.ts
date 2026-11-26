@@ -192,21 +192,21 @@ describe('pm-docs-site check', () => {
 		const result = runCli(['check', FIXTURE_SITE]);
 
 		expect(result.code, result.stderr).toBe(0);
-		expect(result.stdout).toContain('schemaVersion 5');
+		expect(result.stdout).toContain('schemaVersion 6');
 	}, CHECK);
 
 	it(
-		'a scratch export at schemaVersion 6 fails check and build',
+		'a scratch export at schemaVersion 7 fails check and build',
 		() => {
-			const dir = scratchFixture('v6-');
+			const dir = scratchFixture('v7-');
 			const planning = JSON.parse(readFileSync(join(dir, 'planning.json'), 'utf8'));
-			writeFileSync(join(dir, 'planning.json'), JSON.stringify({ ...planning, schemaVersion: 6 }));
-			writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'V6', planning: '../planning.json' }`));
+			writeFileSync(join(dir, 'planning.json'), JSON.stringify({ ...planning, schemaVersion: 7 }));
+			writeFileSync(join(dir, 'site', 'astro.config.ts'), siteConfig(`{ title: 'V7', planning: '../planning.json' }`));
 
 			const check = runCli(['check', join(dir, 'site')]);
 
 			expect(check.code).not.toBe(0);
-			expect(check.stderr).toContain('has schemaVersion 6; this site reads schemaVersion 5');
+			expect(check.stderr).toContain('has schemaVersion 7; this site reads schemaVersion 6');
 			expect(existsSync(join(dir, 'site', 'dist'))).toBe(false);
 
 			const build = runCli(['build', join(dir, 'site')]);

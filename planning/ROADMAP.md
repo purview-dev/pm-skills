@@ -14,18 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-052 Docs-site package: brief and inbox pages
-
-- Serves: V4
-- Milestone: M5
-- Owner: agent
-- Done when: the package builds one page per brief and one per inbox file, each with links and a Linked from list as item, risk, and ADR pages have, a test in `packages/pm-docs-site/test/` covers both, and `just package-test` and `just docs-check` pass.
-- Size: S
-- Depends on: none
-- Status: ready
-- Brief: planning/briefs/2026-11-17-docs-site-package.md
-- Note: From the 2026-11-25 review (inbox 2026-11-23-1525, user, R-013 design). The package must contain everything before 1.0.0. A page per brief and per inbox file, as items, risks, and ADRs already have, with links and Linked from (S). Sliced out of R-013 by the user's choice on 2026-11-23; 1.0.0 depends on it.
-
 ### R-056 Package tests stable under full lint-check
 
 - Serves: V4

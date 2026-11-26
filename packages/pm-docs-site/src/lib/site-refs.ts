@@ -7,6 +7,7 @@ import { getCollection } from 'astro:content';
 import config from 'virtual:pm-docs-site/config';
 
 import { ADR_SECTIONS, hasContent, type AdrSectionData } from '../loaders/adrs';
+import type { RecordSectionData } from '../loaders/records';
 import { linkHtml } from './link-html';
 import { loadPlanning } from './planning';
 import { references, targets, type Backlink, type Target } from './references';
@@ -37,7 +38,26 @@ async function build(): Promise<SiteRefs> {
 		}
 	}
 
-	return { known, back: references(planning, config.views, adrKeys) };
+	// Brief and inbox sections the same way, keyed by the record's path (ADR-017).
+	const recordKeys = new Map<string, Set<string>>();
+	const collect = async (name: 'brief-sections' | 'inbox-sections', on: boolean, records: { key: string; sections: { markdown: string }[] }[]) => {
+		if (!on) return;
+		for (const record of records) recordKeys.set(record.key, new Set());
+		// An empty collection is never looked up: Astro warns that it does not exist.
+		if (!records.some((record) => record.sections.some((section) => section.markdown.trim() !== ''))) return;
+
+		for (const entry of await getCollection(name)) {
+			const html = entry.rendered?.html;
+			const keys = recordKeys.get((entry.data as RecordSectionData).record);
+
+			if (html && keys) for (const linked of linkHtml(html, known).keys) keys.add(linked);
+		}
+	};
+
+	await collect('brief-sections', config.views.briefs, planning.briefs.map((brief) => ({ key: brief.path, sections: brief.sections })));
+	await collect('inbox-sections', config.views.inbox, planning.inbox.map((entry) => ({ key: entry.file, sections: entry.sections })));
+
+	return { known, back: references(planning, config.views, adrKeys, recordKeys) };
 }
 
 /** The site's targets and backlinks, computed once per build. */

@@ -186,7 +186,7 @@ else {
       fail("planning.schema.json: the top level must set additionalProperties: false");
     }
     const schemaVersion = schema.properties?.schemaVersion?.const;
-    if (schemaVersion !== 5) fail(`planning.schema.json: schemaVersion const must be 5 (got ${schemaVersion})`);
+    if (schemaVersion !== 6) fail(`planning.schema.json: schemaVersion const must be 6 (got ${schemaVersion})`);
     // Every definition is used, and every reference resolves.
     const refs = new Set<string>();
     const collectRefs = (node: unknown): void => {

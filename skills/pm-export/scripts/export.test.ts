@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { at, findId, firstDifference, main } from "./export.ts";
-import { type Adr, build, bullets, parseAdr, SCHEMA_PATH, serialise, sortAdrs, stripComments, stripCommentsOutsideCode, value } from "./planning.ts";
+import { type Adr, build, bullets, parseAdr, recordSections, SCHEMA_PATH, serialise, sortAdrs, stripComments, stripCommentsOutsideCode, value } from "./planning.ts";
 import { validate } from "./schema.ts";
 
 // A synthetic repository, never this project's own PM state: the tests must not change when the plan does.
@@ -77,7 +77,7 @@ describe("build", () => {
 
   it("reads NOW.md, its checkpoint, and the plan's tasks, skipping fenced checkboxes", () => {
     expect(doc.now.item).toEqual({ id: "R-007", title: "Tenant billing", serves: ["V1"], owner: "both", size: "M", dependsOn: ["R-006"], revisits: null });
-    expect(doc.schemaVersion).toBe(5);
+    expect(doc.schemaVersion).toBe(6);
     expect(doc.now.doneWhen).toHaveLength(2);
     expect(doc.now.checkpoint.at).toBe("2026-11-08 14:10");
     expect(doc.now.checkpoint.openQuestion).toBeNull();
@@ -185,6 +185,33 @@ it("stripCommentsOutsideCode: inline code and fences keep comments", () => {
     expect(doc.risks.open.map((r: any) => [r.id, r.rag])).toEqual([["RK-002", "red"], ["RK-003", "amber"]]);
     expect(doc.risks.closed[0].closed).toBe("2026-11-06: the contract is signed");
     expect(doc.risks.removed).toEqual([{ date: "2026-11-02", id: "RK-004", title: "Duplicate of RK-002", reason: "duplicate" }]);
+  });
+
+  it("exports every brief and inbox section in file order, whole (ADR-016)", () => {
+    const brief = doc.briefs.find((entry: any) => entry.id === "R-007");
+    expect(brief.sections.map((s: any) => s.heading)).toEqual([
+      "Problem", "Who and evidence", "Original idea", "Proposal", "Alternatives considered", "Challenges and answers",
+      "Ramifications", "Done when", "Size and slicing", "Open questions", "Decision", "Revisions",
+    ]);
+    expect(brief.sections[0]).toEqual({ heading: "Problem", markdown: "A tenant cannot see what they owe." });
+    // A `## ` line and a comment inside a fence stay in Proposal's Markdown.
+    expect(brief.sections[3].markdown).toContain("## not a heading");
+    expect(brief.sections[3].markdown).toContain("<!-- kept -->");
+    const bug = doc.inbox.find((entry: any) => entry.file.endsWith("invoice-total-wrong.md"));
+    expect(bug.sections.map((s: any) => s.heading)).toEqual(["Idea", "Reproduction"]);
+    expect(bug.sections[1].markdown).toBe("1. Pause one seat.\n2. Open the invoice.");
+  });
+
+  it("recordSections: no level-2 heading is an empty list; an empty section is ''", () => {
+    expect(recordSections("# Title\n\n- Status: x\n")).toEqual([]);
+    expect(recordSections("# T\n\n## A\n\n## B\n\nb\n")).toEqual([{ heading: "A", markdown: "" }, { heading: "B", markdown: "b" }]);
+    expect(recordSections("# T\n\n## A\n\n<!-- gone -->\ntext\n")).toEqual([{ heading: "A", markdown: "text" }]);
+  });
+
+  it("recordSections: a fence closes only on its own character and length", () => {
+    const text = "# T\n\n## A\n\n~~~\n```\n## Inner\n~~~\n\n## B\n\n````md\n```\n## Quoted\n```\n````\n\n## C\n\nc\n";
+    expect(recordSections(text).map((s) => s.heading)).toEqual(["A", "B", "C"]);
+    expect(recordSections(text)[1]!.markdown).toContain("## Quoted");
   });
 
   it("derives counts and checks from the files", () => {

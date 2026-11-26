@@ -1,0 +1,94 @@
+---
+// One inbox file from planning.json's `inbox`, whole: its header fields, then
+// every section in file order (Idea, Reproduction, Links, Notes, and any
+// other), each rendered by Astro from its `inbox-sections` entry
+// (src/loaders/records.ts, ADR-016, ADR-017), with the IDs in them linked, and
+// what links to it.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { getEntry, render } from 'astro:content';
+
+import ExportStamp from '../../../components/ExportStamp.astro';
+import LinkedFrom from '../../../components/LinkedFrom.astro';
+import LinkedText from '../../../components/LinkedText.astro';
+import RecordSections from '../../../components/RecordSections.astro';
+import RefLink from '../../../components/RefLink.astro';
+import { briefAnchor, loadPlanning } from '../../../lib/planning';
+import type { InboxEntry } from '../../../lib/planning-types';
+import '../../../styles/components.css';
+
+export function getStaticPaths() {
+	return loadPlanning().inbox.map((entry) => ({ params: { slug: briefAnchor(entry.file) }, props: { entry } }));
+}
+
+const { entry } = Astro.props as { entry: InboxEntry };
+const slug = briefAnchor(entry.file);
+const sections = await Promise.all(
+	entry.sections.map(async ({ heading, markdown }, index) => {
+		const stored = markdown.trim() === '' ? undefined : await getEntry('inbox-sections', `${slug}/${index}`);
+
+		return { heading, Content: stored ? (await render(stored)).Content : null };
+	}),
+);
+const facts = [
+	{ label: 'Captured', text: entry.captured },
+	{ label: 'Source', text: entry.source },
+	{ label: 'Kind', text: entry.kind },
+	{ label: 'Severity', text: entry.severity },
+	{ label: 'Affects', text: entry.affects },
+	{ label: 'Context', text: entry.context },
+	{ label: 'Discuss', text: entry.discuss },
+	{ label: 'Reviewed', text: entry.reviewed },
+].filter((fact) => fact.text && fact.text !== 'none');
+---
+
+<StarlightPage frontmatter={{ title: entry.title, description: `${entry.kind ?? 'Idea'} in the inbox, captured ${entry.captured ?? 'on an unknown date'}.`, tableOfContents: false }}>
+	<ExportStamp kind="Inbox" />
+
+	<p><a href="/plan/inbox/">Inbox</a></p>
+
+	<dl class="plan-facts">
+		{
+			facts.map((fact) => (
+				<div>
+					<dt>{fact.label}</dt>
+					<dd>
+						<LinkedText text={fact.text} />
+					</dd>
+				</div>
+			))
+		}
+		{
+			entry.related.length > 0 && (
+				<div>
+					<dt>Related</dt>
+					<dd>
+						{entry.related.map((ref, index) => (
+							<>
+								{index > 0 && ', '}
+								<RefLink ref={ref} />
+							</>
+						))}
+					</dd>
+				</div>
+			)
+		}
+		{
+			entry.brief && (
+				<div>
+					<dt>Brief</dt>
+					<dd>
+						<RefLink ref={entry.brief} label="id" />
+					</dd>
+				</div>
+			)
+		}
+		<div>
+			<dt>File</dt>
+			<dd><RefLink ref={entry.file} label="id" /></dd>
+		</div>
+	</dl>
+
+	<RecordSections sections={sections} />
+
+	<LinkedFrom ref={entry.file} />
+</StarlightPage>

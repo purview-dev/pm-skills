@@ -115,6 +115,14 @@ export interface InboxEntry {
 	brief: string | null;
 	reviewed: string | null;
 	idea: string | null;
+	/** Every `##` section in file order, its Markdown verbatim (ADR-016). */
+	sections: RecordSection[];
+}
+
+/** One `##` section of a brief or inbox file. */
+export interface RecordSection {
+	heading: string;
+	markdown: string;
 }
 
 export interface Brief {
@@ -128,6 +136,8 @@ export interface Brief {
 	problem: string | null;
 	doneWhen: string | null;
 	revisions: { date: string | null; text: string }[];
+	/** Every `##` section in file order, its Markdown verbatim (ADR-016). */
+	sections: RecordSection[];
 }
 
 export interface Risk {

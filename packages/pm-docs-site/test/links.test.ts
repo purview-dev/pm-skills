@@ -50,7 +50,7 @@ const keysWithPages = (views: typeof ALL_VIEWS) => new Set([...targets(planning,
 const urlOf = (page: string) => `/${page.replace(/index\.html$/, '')}`;
 /** `/plan/x/` → `plan/x/index.html`. */
 const fileOf = (path: string) => `${path.replace(/^\//, '')}${path.endsWith('/') || path === '' ? 'index.html' : ''}`.replace(/^$/, 'index.html');
-const TARGET_PAGE = /^\/plan\/(features|milestones|risks|decisions)\/[^/]+\/$/;
+const TARGET_PAGE = /^\/plan\/(features|milestones|risks|decisions|briefs|inbox)\/[^/]+\/$/;
 
 let site: Build;
 let dist = '';
@@ -164,6 +164,35 @@ describe('a build with views off', () => {
 		expect(problems(off)).toEqual({ unlinked: [], dead: [] });
 	});
 });
+describe('brief and inbox pages', () => {
+	it('a brief page renders its section table and links IDs inside it', () => {
+		const page = html('plan/briefs/2026-11-09-invoice-export/index.html');
+
+		expect(page).toContain('<table');
+		expect(page).toContain('href="/plan/features/r-012/"');
+		expect(page).toContain('None recorded.');
+	});
+
+	it('a brief with no sections still has its facts and Linked from', () => {
+		const page = html('plan/briefs/2026-11-07-referrals/index.html');
+
+		expect(page).toContain('data-linked-from');
+		expect(page).toContain('shaping');
+	});
+
+	it('an inbox page renders Reproduction as a list', () => {
+		const page = html('plan/inbox/2026-11-08-1010-csv-encoding/index.html');
+
+		expect(page).toMatch(/<h2[^>]*>Reproduction<\/h2>/);
+		expect(page).toContain('<ol>');
+	});
+
+	it('the list pages link each brief and inbox file to its page', () => {
+		expect(html('plan/briefs/index.html')).toContain('href="/plan/briefs/2026-11-09-invoice-export/"');
+		expect(html('plan/inbox/index.html')).toContain('href="/plan/inbox/2026-11-08-1010-csv-encoding/"');
+	});
+});
+
 describe('ADR pages', () => {
 	it('render a section table as HTML and link IDs, inside code too', () => {
 		const page = html('plan/decisions/adr-002/index.html');

@@ -10,36 +10,36 @@ describe('checkExport', () => {
 	});
 
 	it('checks the schemaVersion of an object', () => {
-		expect(() => checkExport({ schemaVersion: 5 }, 'p.json')).not.toThrow();
-		expect(() => checkExport({ schemaVersion: 6 }, 'p.json')).toThrow('has schemaVersion 6');
+		expect(() => checkExport({ schemaVersion: 6 }, 'p.json')).not.toThrow();
+		expect(() => checkExport({ schemaVersion: 7 }, 'p.json')).toThrow('has schemaVersion 7');
 	});
 });
 
 describe('checkSchemaVersion', () => {
-	it('supports schemaVersion 5 only', () => {
-		expect(SUPPORTED_SCHEMA_VERSIONS).toEqual([5]);
+	it('supports schemaVersion 6 only', () => {
+		expect(SUPPORTED_SCHEMA_VERSIONS).toEqual([6]);
 	});
 
-	it('accepts 5', () => {
-		expect(() => checkSchemaVersion(5, 'p.json')).not.toThrow();
+	it('accepts 6', () => {
+		expect(() => checkSchemaVersion(6, 'p.json')).not.toThrow();
 	});
 
-	it.each([2, 3, 4, 6, '5', undefined])('rejects %p', (version) => {
+	it.each([2, 3, 4, 5, 7, '6', undefined])('rejects %p', (version) => {
 		expect(() => checkSchemaVersion(version, 'p.json')).toThrow(PlanningExportError);
 		expect(() => checkSchemaVersion(version, 'p.json')).toThrow(
-			`p.json has schemaVersion ${String(version)}; this site reads schemaVersion 5. Run the pm-export skill to write planning.json.`,
+			`p.json has schemaVersion ${String(version)}; this site reads schemaVersion 6. Run the pm-export skill to write planning.json.`,
 		);
 	});
 });
 
 describe('parseExport', () => {
 	it('throws for an unsupported schemaVersion, naming it and the version this site reads', () => {
-		expect(() => parseExport('{"schemaVersion":6}', 'p.json')).toThrow('schemaVersion 6');
-		expect(() => parseExport('{"schemaVersion":6}', 'p.json')).toThrow('reads schemaVersion 5');
+		expect(() => parseExport('{"schemaVersion":7}', 'p.json')).toThrow('schemaVersion 7');
+		expect(() => parseExport('{"schemaVersion":7}', 'p.json')).toThrow('reads schemaVersion 6');
 	});
 
 	it('accepts an unsupported schemaVersion when the caller widens the supported list', () => {
-		expect(parseExport('{"schemaVersion":6}', 'p.json', [5, 6])).toEqual({ schemaVersion: 6 });
+		expect(parseExport('{"schemaVersion":7}', 'p.json', [6, 7])).toEqual({ schemaVersion: 7 });
 	});
 });
 

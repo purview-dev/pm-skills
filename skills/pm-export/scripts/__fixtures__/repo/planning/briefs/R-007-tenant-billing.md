@@ -20,6 +20,11 @@ Bill tenants in the app.
 
 Monthly invoices per seat.
 
+```text
+<!-- kept -->
+## not a heading
+```
+
 ## Alternatives considered
 
 - Do nothing.

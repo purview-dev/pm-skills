@@ -1,6 +1,6 @@
 {
   "$schema": "./planning.schema.json",
-  "schemaVersion": 5,
+  "schemaVersion": 6,
   "generatedAt": "2026-11-09T12:50:07+00:00",
   "generator": { "skill": "pm-export", "skillsVersion": 12, "rulesVersion": 12 },
   "project": { "pmRoot": "planning/", "defaultBranch": "main", "branchPattern": "feat/<id>-<slug>" },
@@ -92,12 +92,12 @@
     "reviews": [{ "date": "2026-11-03", "summary": "Inbox 14 to 5." }]
   },
   "inbox": [
-    { "file": "planning/inbox/2026-11-08-1010-csv-encoding.md", "title": "CSV from R-012 opens garbled in Excel", "captured": "2026-11-08 10:10", "source": "user", "kind": "bug", "severity": "major", "affects": "R-012", "context": "R-012 execute", "discuss": "no", "related": ["R-012"], "brief": null, "reviewed": "never", "idea": "Accented names show as two characters." },
-    { "file": "planning/inbox/2026-11-09-0900-yearly-export.md", "title": "Export a whole year at once", "captured": "2026-11-09 09:00", "source": "agent (R-012 execute)", "kind": "feature", "severity": null, "affects": null, "context": "R-012 execute", "discuss": "yes", "related": [], "brief": null, "reviewed": "never", "idea": "One CSV for the tax year." }
+    { "file": "planning/inbox/2026-11-08-1010-csv-encoding.md", "title": "CSV from R-012 opens garbled in Excel", "captured": "2026-11-08 10:10", "source": "user", "kind": "bug", "severity": "major", "affects": "R-012", "context": "R-012 execute", "discuss": "no", "related": ["R-012"], "brief": null, "reviewed": "never", "idea": "Accented names show as two characters.", "sections": [{ "heading": "Idea", "markdown": "Accented names show as two characters." }, { "heading": "Reproduction", "markdown": "1. Export R-012.\n2. Open it in Excel." }] },
+    { "file": "planning/inbox/2026-11-09-0900-yearly-export.md", "title": "Export a whole year at once", "captured": "2026-11-09 09:00", "source": "agent (R-012 execute)", "kind": "feature", "severity": null, "affects": null, "context": "R-012 execute", "discuss": "yes", "related": [], "brief": null, "reviewed": "never", "idea": "One CSV for the tax year.", "sections": [{ "heading": "Idea", "markdown": "One CSV for the tax year." }] }
   ],
   "briefs": [
-    { "path": "planning/briefs/2026-11-07-referrals.md", "id": null, "title": "Referral credit", "status": "shaping", "origin": "user request", "updated": "2026-11-07", "decision": null, "problem": "Tenants refer others for nothing.", "doneWhen": null, "revisions": [] },
-    { "path": "planning/briefs/2026-11-09-invoice-export.md", "id": "R-012", "title": "Invoice export", "status": "on roadmap (R-012)", "origin": "inbox/2026-11-01-0800-invoice-export.md", "updated": "2026-11-09", "decision": "Added to Next as R-012.", "problem": "Tenants email us for invoices.", "doneWhen": "An invoice downloads as CSV.", "revisions": [{ "date": "2026-11-09", "text": "CSV, not PDF. Mode: fix-in-place." }] }
+    { "path": "planning/briefs/2026-11-07-referrals.md", "id": null, "title": "Referral credit", "status": "shaping", "origin": "user request", "updated": "2026-11-07", "decision": null, "problem": "Tenants refer others for nothing.", "doneWhen": null, "revisions": [], "sections": [] },
+    { "path": "planning/briefs/2026-11-09-invoice-export.md", "id": "R-012", "title": "Invoice export", "status": "on roadmap (R-012)", "origin": "inbox/2026-11-01-0800-invoice-export.md", "updated": "2026-11-09", "decision": "Added to Next as R-012.", "problem": "Tenants email us for invoices.", "doneWhen": "An invoice downloads as CSV.", "revisions": [{ "date": "2026-11-09", "text": "CSV, not PDF. Mode: fix-in-place." }], "sections": [{ "heading": "Problem", "markdown": "Tenants email us for invoices." }, { "heading": "Proposal", "markdown": "Export invoices as CSV, built by R-012.\n\n| Format | Item |\n| --- | --- |\n| CSV | R-012 |" }, { "heading": "Open questions", "markdown": "" }, { "heading": "Decision", "markdown": "Added to Next as R-012." }] }
   ],
   "risks": {
     "open": [

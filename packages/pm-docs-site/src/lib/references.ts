@@ -5,17 +5,17 @@
 
 import type { ViewName } from '../../lib/types.ts';
 import { graphData } from './graph';
-import { adrHref, adrsOf, briefAnchor, briefOf, featureHref, features, milestoneHref, milestoneSummaries, roadmapGroups, type Feature } from './planning';
+import { adrHref, adrsOf, briefHref, briefOf, featureHref, inboxHref, features, milestoneHref, milestoneSummaries, roadmapGroups, type Feature } from './planning';
 import type { Planning } from './planning-types';
 import { refPattern } from './ref-boundary';
 
 export type Views = Record<ViewName, boolean>;
 
-export type TargetKind = 'item' | 'milestone' | 'risk' | 'brief' | 'adr';
+export type TargetKind = 'item' | 'milestone' | 'risk' | 'brief' | 'inbox' | 'adr';
 
 export interface Target {
 	kind: TargetKind;
-	/** The ID, `none` for the No-milestone page, or the brief's path. */
+	/** The ID, `none` for the No-milestone page, the brief's path, or the inbox file's path. */
 	key: string;
 	/** The page or anchor; `null` when that page is not built. */
 	href: string | null;
@@ -59,7 +59,11 @@ export function targets(planning: Planning, views: Views): Map<string, Target> {
 	}
 
 	for (const brief of planning.briefs) {
-		add({ kind: 'brief', key: brief.path, href: views.briefs ? `/plan/briefs/#${briefAnchor(brief.path)}` : null, label: brief.title });
+		add({ kind: 'brief', key: brief.path, href: views.briefs ? briefHref(brief.path) : null, label: brief.title });
+	}
+
+	for (const entry of planning.inbox) {
+		add({ kind: 'inbox', key: entry.file, href: views.inbox ? inboxHref(entry.file) : null, label: entry.title });
 	}
 
 	return known;
@@ -92,7 +96,7 @@ const escape = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
  */
 export function linkify(text: string, known: Map<string, Target>): Run[] {
 	const paths = [...known.values()]
-		.filter((target) => target.kind === 'brief')
+		.filter((target) => target.kind === 'brief' || target.kind === 'inbox')
 		.map((target) => target.key)
 		.sort((a, b) => b.length - a.length)
 		.map(escape);
@@ -152,8 +156,10 @@ export interface Backlink {
  * checks that every rendered link appears in its target's list. An ADR page's
  * sections are rendered HTML, so `adrKeys` (siteRefs: the keys linkHtml linked
  * in each ADR's HTML) replaces the raw-Markdown pass over them (ADR-011).
+ * `recordKeys` does the same for brief and inbox sections, keyed by the
+ * brief's path or the inbox file's path (ADR-017).
  */
-export function references(planning: Planning, views: Views, adrKeys?: Map<string, Set<string>>): Map<string, Backlink[]> {
+export function references(planning: Planning, views: Views, adrKeys?: Map<string, Set<string>>, recordKeys?: Map<string, Set<string>>): Map<string, Backlink[]> {
 	const known = targets(planning, views);
 	const back = new Map<string, Backlink[]>([...known.keys()].map((key) => [key, []]));
 	const all = features(planning);
@@ -175,6 +181,13 @@ export function references(planning: Planning, views: Views, adrKeys?: Map<strin
 		};
 
 		return { link, prose };
+	};
+	// A brief or inbox page's section links: the keys linkHtml linked in its rendered HTML, else its raw Markdown.
+	const sectionLinks = (page: ReturnType<typeof source>, key: string, sections: { markdown: string }[]) => {
+		const keys = recordKeys?.get(key);
+
+		if (keys) for (const linked of keys) page.link(linked, 'mentions');
+		else for (const section of sections) page.prose(section.markdown);
 	};
 
 	if (views.features) {
@@ -355,11 +368,23 @@ export function references(planning: Planning, views: Views, adrKeys?: Map<strin
 		const page = source('/plan/inbox/', 'Inbox');
 
 		for (const entry of planning.inbox) {
+			page.link(entry.file, 'listed');
 			page.prose(entry.title);
 			page.prose(entry.affects, 'affects');
 			for (const id of entry.related) page.link(id, 'related');
 			page.link(entry.brief, 'brief');
 			page.prose(entry.idea);
+		}
+
+		// Each inbox page: its facts, then its sections, as rendered when given (ADR-017).
+		for (const entry of planning.inbox) {
+			const own = source(inboxHref(entry.file), entry.title);
+
+			own.prose(entry.affects, 'affects');
+			for (const text of [entry.captured, entry.source, entry.context, entry.reviewed]) own.prose(text);
+			for (const id of entry.related) own.link(id, 'related');
+			own.link(entry.brief, 'brief');
+			sectionLinks(own, entry.file, entry.sections);
 		}
 	}
 
@@ -367,8 +392,18 @@ export function references(planning: Planning, views: Views, adrKeys?: Map<strin
 		const page = source('/plan/briefs/', 'Briefs');
 
 		for (const brief of planning.briefs) {
+			page.link(brief.path, 'listed');
 			page.link(brief.id, 'listed');
 			for (const text of [brief.status, brief.origin, brief.problem, brief.decision, brief.doneWhen, ...brief.revisions.map((revision) => revision.text)]) page.prose(text);
+		}
+
+		// Each brief page: its ID, its facts, then its sections, as rendered when given (ADR-017).
+		for (const brief of planning.briefs) {
+			const own = source(briefHref(brief.path), brief.title);
+
+			own.link(brief.id, 'listed');
+			for (const text of [brief.status, brief.origin, brief.updated]) own.prose(text);
+			sectionLinks(own, brief.path, brief.sections);
 		}
 	}
 

@@ -8,7 +8,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
-export const SCHEMA_VERSION = 5;
+export const SCHEMA_VERSION = 6;
 
 /** The schema this exporter writes, shipped beside it. */
 export const SCHEMA_PATH = join(import.meta.dir, "..", "references", "planning.schema.json");
@@ -68,9 +68,13 @@ export function stripCommentsOutsideCode(text: string): string {
 export function sections(text: string, level: number): Section[] {
   const marker = "#".repeat(level) + " ";
   const out: Section[] = [{ heading: "", body: "" }];
-  let fenced = false;
+  // The open fence's run (```` ``` ````, `~~~~`): only the same character, at least as long, closes it (as FENCE does).
+  let open: string | null = null;
   for (const line of text.split("\n")) {
-    if (/^\s*(```|~~~)/.test(line)) fenced = !fenced;
+    const run = /^ {0,3}(`{3,}|~{3,})/.exec(line)?.[1];
+    if (run && open === null) open = run;
+    else if (run && run[0] === open![0] && run.length >= open!.length && /^ {0,3}[`~]+[ \t]*$/.test(line)) open = null;
+    const fenced = open !== null || run !== undefined;
     if (!fenced && line.startsWith(marker)) out.push({ heading: line.slice(marker.length).trim(), body: "" });
     else out[out.length - 1]!.body += line + "\n";
   }
@@ -173,6 +177,23 @@ const sectionText = (parts: Section[], name: string): string | null => {
   const part = parts.find((section) => section.heading.toLowerCase() === name);
   return part ? part.body.replace(/^\s*\n/, "").replace(/\s+$/, "") : null;
 };
+
+/** One `##` section of a brief or inbox file: its heading and its Markdown, verbatim (ADR-016). */
+export interface RecordSection {
+  heading: string;
+  markdown: string;
+}
+
+/**
+ * Every `##` section after the header block, in file order, each body trimmed
+ * as `sectionText` trims it. HTML comments go outside code and stay inside it,
+ * and a `## ` line inside a fence is not a heading (ADR-016).
+ */
+export function recordSections(text: string): RecordSection[] {
+  return sections(stripCommentsOutsideCode(text), 2)
+    .slice(1)
+    .map((part) => ({ heading: part.heading, markdown: part.body.replace(/^\s*\n/, "").replace(/\s+$/, "") }));
+}
 
 /**
  * One ADR file as an export object; `null` for a file that is not `ADR-NNN-<slug>.md`.
@@ -648,7 +669,9 @@ export function build(options: BuildOptions): BuildResult {
   };
   const title = (text: string) => /^# (.+)$/m.exec(text)?.[1]?.trim() ?? "";
 
-  const inbox = folder("inbox").map(({ file, text }) => {
+  // Read raw: the summary fields strip every comment, `sections` keeps those inside code (ADR-016).
+  const inbox = folder("inbox", true).map(({ file, text: raw }) => {
+    const text = stripComments(raw);
     const parts = sections(text, 2);
     const f = fields(parts[0]!.body);
     const kind = (value(f.get("kind")) ?? "").toLowerCase();
@@ -668,10 +691,12 @@ export function build(options: BuildOptions): BuildResult {
       brief: optional(f.get("brief")),
       reviewed: value(f.get("reviewed")) ?? "never",
       idea: value(find(parts, /^Idea/i)?.body.trim()),
+      sections: recordSections(raw),
     };
   });
 
-  const briefs = folder("briefs").map(({ file, text }) => {
+  const briefs = folder("briefs", true).map(({ file, text: raw }) => {
+    const text = stripComments(raw);
     const parts = sections(text, 2);
     const f = fields(parts[0]!.body);
     const status = value(f.get("status"));
@@ -690,6 +715,7 @@ export function build(options: BuildOptions): BuildResult {
         const date = /^(\d{4}-\d{2}-\d{2})[:\s]+/.exec(line);
         return { date: date?.[1] ?? null, text: date ? line.slice(date[0].length).trim() : line };
       }),
+      sections: recordSections(raw),
     };
   });
 

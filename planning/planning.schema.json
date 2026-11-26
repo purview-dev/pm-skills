@@ -31,7 +31,7 @@
       "const": "./planning.schema.json"
     },
     "schemaVersion": {
-      "const": 5
+      "const": 6
     },
     "generatedAt": {
       "type": "string",
@@ -119,7 +119,8 @@
         "related",
         "brief",
         "reviewed",
-        "idea"
+        "idea",
+        "sections"
       ],
       "properties": {
         "file": {
@@ -177,6 +178,12 @@
         },
         "idea": {
           "$ref": "#/$defs/text"
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/section"
+          }
         }
       }
     },
@@ -193,7 +200,8 @@
         "decision",
         "doneWhen",
         "problem",
-        "revisions"
+        "revisions",
+        "sections"
       ],
       "properties": {
         "path": {
@@ -235,6 +243,28 @@
           "items": {
             "$ref": "#/$defs/revision"
           }
+        },
+        "sections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/section"
+          }
+        }
+      }
+    },
+    "section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "heading",
+        "markdown"
+      ],
+      "properties": {
+        "heading": {
+          "type": "string"
+        },
+        "markdown": {
+          "type": "string"
         }
       }
     },

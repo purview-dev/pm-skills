@@ -23,7 +23,7 @@ const planning = loadPlanning();
 		planning.briefs.map((brief) => (
 			<section id={briefAnchor(brief.path)}>
 				<h2>
-					{brief.id && <RefLink ref={brief.id} label="id" />} {brief.title}
+					{brief.id && <RefLink ref={brief.id} label="id" />} <RefLink ref={brief.path} fallback={brief.title} />
 				</h2>
 				<p class="plan-meta">
 					{brief.status ? <LinkedText text={brief.status} /> : 'No status'}

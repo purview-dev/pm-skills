@@ -1164,6 +1164,13 @@ a review finding is a `Note` and an inbox file), and records a package
 `pm-purview` accepted in `ENGINEERING.md` when its item closes. No setting
 is added.
 
+Version 21 also moves the export to `schemaVersion` 6 (ADR-016): each brief
+and inbox entry carries its `sections`, every `##` section in file order,
+and the docs site gives each brief and inbox file its own page. Run
+`pm-export`, and `pm-docs-site upgrade` for an installed site;
+`@purview-dev/pm-docs-site` reads `schemaVersion` 6 from `0.1.0-pre.7`. No
+setting is added.
+
 ## Asking the user (mandatory)
 
 - **Every question uses the agent's interactive question tool** (for

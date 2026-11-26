@@ -7,7 +7,10 @@ docs/guide/getting-started/index.html
 docs/readme/index.html
 index.html
 plan/board/index.html
+plan/briefs/2026-11-10-gift-vouchers/index.html
 plan/briefs/index.html
+plan/briefs/r-007-online-payments/index.html
+plan/briefs/r-013-several-locations/index.html
 plan/decisions/adr-001/index.html
 plan/decisions/adr-002/index.html
 plan/decisions/adr-003/index.html
@@ -33,6 +36,10 @@ plan/features/r-014/index.html
 plan/features/r-015/index.html
 plan/features/r-016/index.html
 plan/graph/index.html
+plan/inbox/2026-11-10-1400-gift-vouchers/index.html
+plan/inbox/2026-11-15-1030-instructor-bios-on-class-pages/index.html
+plan/inbox/2026-11-18-1610-do-studios-need-invoices/index.html
+plan/inbox/2026-11-19-0915-double-booking-on-fast-clicks/index.html
 plan/inbox/index.html
 plan/log/index.html
 plan/milestones/index.html

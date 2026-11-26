@@ -31,7 +31,7 @@ so a package linked from another drive fails the build.
     "build": "pm-docs-site build",
     "check": "pm-docs-site check"
   },
-  "dependencies": { "@purview-dev/pm-docs-site": "0.1.0-pre.6" }
+  "dependencies": { "@purview-dev/pm-docs-site": "0.1.0-pre.7" }
 }
 ```
 
@@ -183,6 +183,21 @@ the `decisions/` folder beside `planning.json` and is built with Astro's
 image pipeline; a missing image file fails the build and names it. A
 feature page lists the ADRs whose `Item` is that item.
 
+## Briefs and Inbox
+
+The Briefs page lists every brief in the export's `briefs`, and the Inbox
+page every parked idea in `inbox`, waiting-for-discussion first. Each brief
+has its own page at `/plan/briefs/<file name>/`, and each inbox file at
+`/plan/inbox/<file name>/`, with the file name lower case and without
+`.md`. A page shows the header fields, then every `##` section of the file
+in file order (for a brief Problem through Decision and Revisions, for an
+inbox file Idea, Reproduction, Links, and Notes), rendered from Markdown
+with its IDs linked; a blank section says `None recorded.` A relative image
+resolves against the file in `briefs/` or `inbox/` beside `planning.json`,
+as for ADRs, and a missing one fails the build. Every brief and inbox page
+ends with a Linked from list, and search indexes it. The pages are built
+with the `briefs` and `inbox` views.
+
 ## Mermaid
 
 ` ```mermaid ` fences in repository docs pages and in ADR sections render to
@@ -310,7 +325,7 @@ Aspire assigns it.
 ## Supported exports
 
 `SUPPORTED_SCHEMA_VERSIONS` in `lib/schema-version.ts`: pm-export
-`schemaVersion` 5. Any other version fails the build and `check`, and the
+`schemaVersion` 6. Any other version fails the build and `check`, and the
 message says to run the `pm-export` skill.
 
 ## Development

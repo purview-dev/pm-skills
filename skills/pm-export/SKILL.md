@@ -122,7 +122,7 @@ Top-level keys, in order:
 | Key | Read from | Contents |
 | --- | --- | --- |
 | `$schema` | constant | `"./planning.schema.json"` |
-| `schemaVersion` | constant | `5`; bump it with the schema when the shape changes, together with `pm-docs-site`'s templates |
+| `schemaVersion` | constant | `6`; bump it with the schema when the shape changes, together with `pm-docs-site`'s templates |
 | `generatedAt` | clock | local ISO 8601 with offset: bash `date +%Y-%m-%dT%H:%M:%S%:z`, PowerShell `Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"` |
 | `generator` | this skill | `skill: "pm-export"`, `skillsVersion` from the marker in `pm-setup`'s reference, `rulesVersion` from `config.md` |
 | `project` | `config.md` | `pmRoot`, `defaultBranch`, `branchPattern` |
@@ -202,11 +202,16 @@ Remaining objects:
 - `inbox[]` is `{file, title, captured, source, kind, severity, affects,
   context, discuss, related[], brief, reviewed, idea}`. Missing fields are
   `null`, `related` is `[]` for `none`, and `idea` is the verbatim text
-  under `## Idea`.
+  under `## Idea`. `sections[]` is `{heading, markdown}` for every `##`
+  section after the header, in file order, the Markdown verbatim with
+  HTML comments removed outside code (ADR-016).
 - `briefs[]` is `{path, id, title, status, origin, updated, decision,
-  problem, doneWhen, revisions[]}`, where `problem` and `doneWhen` are the
-  text under `## Problem` and `## Done when` (first line of each), and
-  `revisions` holds `{date, text}` read from `## Revisions`.
+  problem, doneWhen, revisions[], sections[]}`, where `problem` and
+  `doneWhen` are the text under `## Problem` and `## Done when` (first line
+  of each), `revisions` holds `{date, text}` read from `## Revisions`, and
+  `sections[]` is `{heading, markdown}` for every `##` section after the
+  header, in file order, the Markdown verbatim with HTML comments removed
+  outside code (ADR-016).
 - A **risk object** is `{id, title, likelihood, impact, rag, ragOverride,
   status, owner, affects, trigger, mitigation, raised, reviewed, closed}`,
   read from one `### RK-NNN <Title>` block (Shared definitions: Risk
