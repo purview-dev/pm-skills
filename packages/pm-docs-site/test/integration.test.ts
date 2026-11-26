@@ -412,7 +412,7 @@ describe('ADR images, built through the fixture site', () => {
 		() => {
 			const dir = scratchSite('image-adr-');
 
-			appendToAdr(dir, 'ADR-003', 'context', 'R-013 ![a](x.png)');
+			appendToAdr(dir, 'ADR-003', 'context', 'R-013 ![a](x.png) ![r](https://example.com/r.png)');
 			// The ADR's file is decisions/<file> beside planning.json; only the image needs to exist.
 			mkdirSync(join(dir, 'decisions'));
 			writeFileSync(join(dir, 'decisions', 'x.png'), PNG);
@@ -429,6 +429,10 @@ describe('ADR images, built through the fixture site', () => {
 			expect(src).not.toBe('');
 			expect(existsSync(join(dist, decodeURI(src).replace(/^\//, '')))).toBe(true);
 			expect(html).toContain('href="/plan/features/r-013/"');
+			// A remote image stays a plain img with its own src.
+			const remote = html.match(/<img\b[^>]*\balt="r"[^>]*>/)?.[0] ?? '';
+
+			expect(remote).toContain('src="https://example.com/r.png"');
 		},
 		BUILD,
 	);
