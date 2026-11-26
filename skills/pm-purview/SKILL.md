@@ -112,8 +112,9 @@ snapshot of `https://purview.dev/llms.txt`.
    Write each accepted one as a roadmap item (new ID, `Serves`, `Owner:
    agent`, `Done when` stated as an observable check such as "`dotnet
    build` passes with Purview.BuildSdk imported and no warnings", `Size`,
-   `Note:` starting with `Purview package: <PackageId>.`, then the docs URL
-   and report path. Nothing is written to `ENGINEERING.md` here: the
+   `Note:` starting with `Purview package: <PackageId>.` only when the
+   recommendation is one package (a recommendation of several packages or
+   a practice gets no marker), then the docs URL and report path. Nothing is written to `ENGINEERING.md` here: the
    package is not installed yet; `pm-checkpoint` (`done`) records it when
    the item closes and finds it in a manifest (ADR-014). Park the ones the
    user wants to think about as inbox files with `Discuss: yes`.

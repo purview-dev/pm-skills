@@ -34,7 +34,10 @@ likely modes as options.
 
 - If `<PM root>/` does not exist, reply `No <PM root> folder. Run pm-init.`
   Stop.
-- Write in the main worktree, not the current feature worktree.
+- Write in the main worktree, not the current feature worktree. The one
+  exception is `pm-checkpoint` (`done`), which applies the `add
+  technology` write steps in the worktree that holds the item's branch,
+  as part of the Completion record (ADR-014).
 - If `<PM root>/ENGINEERING.md` is missing, create it from `pm-init`'s
   `templates/ENGINEERING.md` before the first write. `view` writes nothing
   and shows an empty file instead.

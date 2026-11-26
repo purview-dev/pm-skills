@@ -84,13 +84,13 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   `Depends on` ID appears in `## Done` in `LOG.md`.
 - **Completion record:** the PM writes that close an item: its `## Done`
   line in `LOG.md`, `NOW.md` set to idle, its removal from `ROADMAP.md`, the
-  brief's `Status: done`, its milestone's `Status: done (<date>)` when it is
-  the last open item of that milestone, and, for a `Note` naming a Purview
-  package found in a manifest, its technology entry in `ENGINEERING.md`
-  (ADR-014). `pm-checkpoint` (`done`)
+  brief's `Status: done`, and its milestone's `Status: done (<date>)` when
+  it is the last open item of that milestone. `pm-checkpoint` (`done`)
   writes it for the active item; `pm-item` (`done`) for any other.
-  `pm-checkpoint` (`done`) runs the principles check first and writes
-  nothing when a command check fails. It is committed on the item's
+  `pm-checkpoint` (`done`) runs the principles command checks first and
+  writes nothing when one fails, and also records, for a `Note` naming a
+  Purview package found in a manifest, its technology entry in
+  `ENGINEERING.md` (ADR-014). It is committed on the item's
   branch, inside the item's pull request, before CI runs (rules:
   Committing PM state, **Completion rides the branch**).
 - **Unmerged completion:** a **Completion record** whose branch has not been
@@ -264,7 +264,8 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   `STRATEGY.md` `## Decisions` and briefs; technical decisions in ADRs; one
   item's detail in its spec, which names the ADR IDs it writes or follows.
 - **Engineering file:** `<PM root>/ENGINEERING.md`, an **Optional file**
-  (a missing file is empty), written only by `pm-engineering`. It records
+  (a missing file is empty), written only by `pm-engineering`, or by
+  `pm-checkpoint` (`done`) through its write steps (ADR-014). It records
   the current state: the technology in use and the principles work must
   follow. The reason beyond one line lives in the ADR its `Decision` names.
   Three sections, in order: `## Technology` (alphabetical), `## Principles`
@@ -324,7 +325,9 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   `EP-NNN <title>: <Rule> (Check: <command | review>)`, or `none`; a
   missing `ENGINEERING.md` is `none`. A path the spec names is any
   repository-relative path or glob it gives, backticked or in a file
-  table; a glob matches when any named path falls under it. A spec naming
+  table; a glob matches when any named path falls under it, and a glob the
+  spec names matches an `Applies to` glob when the two can match a common
+  path. A spec naming
   no paths gets only `all` principles, and the list says so (ADR-013).
 - **RAG:** a risk's red, amber, or green status. It is derived from
   Likelihood and Impact, scored `low` 1, `medium` 2, `high` 3, by their

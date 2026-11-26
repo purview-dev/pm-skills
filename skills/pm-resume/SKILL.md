@@ -149,7 +149,7 @@ directory` setting (default `planning/`).
 1. <one action>
    - Start with: <exact command, file, or skill name>
    - Done when: <observable check>
-   - ADRs: <ADR-NNN <title> (<status>), ... | none; only when the action starts design or plan>
+   - ADRs: <ADR-NNN <title> (<status>), ... | none; for design every accepted and proposed ADR, for plan the ADRs the spec names; only when the action starts design or plan>
    - Principles: <EP-NNN <title>: <Rule> (Check: <command | review>); ... | none; only when the action starts plan>
 
 ## For you

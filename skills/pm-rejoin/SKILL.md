@@ -121,6 +121,10 @@ ambiguous, ask which one is true.
    - If the item has a brief, set its `Status: done`.
    - When this was the last open item of its milestone, apply the milestone
      prompt from `pm-checkpoint` (`done`) and record it in the same commit.
+   - When the `Note` in `NOW.md` holds `Purview package: <PackageId>`,
+     write nothing to `ENGINEERING.md` and add the Note `Purview package
+     <PackageId> not recorded; run pm-engineering add technology
+     <PackageId>.` (ADR-014).
    - Set `NOW.md` to idle.
    - Commit `docs(pm): close <ID> late` (rules: Committing PM state); switch
      to the PM branch when the commit offers it, and run **Pull latest**

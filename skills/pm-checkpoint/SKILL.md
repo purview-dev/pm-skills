@@ -120,21 +120,17 @@ and `Explain <ID>`.
      holds the item's branch, excluding the PM root. Read `ENGINEERING.md`
      from the **PM base**. A missing file, or no principle whose `Applies
      to` is `all` or matches a changed file, is the Note `Principles: none
-     apply.` Otherwise, for each matching principle: a `Check: <command>`
-     runs in the item's worktree, in the shell the session uses; a
-     non-zero exit, or a command that cannot run (not found; in PowerShell
-     `$?` is false while `$LASTEXITCODE` may stay 0), keeps `done` in
-     `pause` with nothing written, listing `EP-NNN <title>: <command>
-     failed (exit <n>).`, or `failed (not run: <error>).` for a command
-     that cannot run, with the last 20 lines of output — run every
-     matching command check before stopping, so every failure is listed at
-     once. A `Check: review` reads the diff of the matching files against
-     `Rule`; each break found is the Note `EP-NNN <title>: <file>
-     <finding>` and one inbox file by `pm-park` (`agent` mode, `Kind:
-     tech-debt`, `Affects: <ID>`, `Source: agent (<ID> done)`), and it
-     never blocks. Record the result as one Note: `Principles: <n> command
-     checks passed, <m> review findings.` A review finding's inbox file is
-     a capture (ADR-010), as **Check before writing** applies next.
+     apply.` Otherwise, for each matching principle with a
+     `Check: <command>`, the command runs in the item's worktree, in the
+     shell the session uses; a non-zero exit, or a command that cannot run
+     (not found; in PowerShell `$?` is false while `$LASTEXITCODE` may stay
+     0), keeps `done` in `pause` with nothing written, listing
+     `EP-NNN <title>: <command> failed (exit <n>).`, or
+     `failed (not run: <error>).` for a command that cannot run, with the
+     last 20 lines of output — run every matching command check before
+     stopping, so every failure is listed at once. The `Check: review`
+     principles wait for **Principles review**, which runs only when every
+     command check has passed and **Check before writing** has passed.
    - **Check before writing** (ADR-010). A capture is an uncommitted inbox
      file, decisions-folder file, or `RISKS.md`, written mid-workflow by
      `pm-park`, `pm-bug`, `pm-risk`, or `pm-adr`. Captures never stop the
@@ -147,6 +143,15 @@ and `Explain <ID>`.
      there: add the Note `<n> captures
      uncommitted on <main worktree's branch>: <paths>. The next PM commit
      there carries them.`
+   - **Principles review** (ADR-013): for each matching principle with
+     `Check: review`, read the diff of the matching files against `Rule`;
+     each break found is the Note `EP-NNN <title>: <file> <finding>` and
+     one inbox file by `pm-park` (`agent` mode, `Kind: tech-debt`,
+     `Affects: <ID>`, `Source: agent (<ID> done)`). Its inbox file is a
+     capture (ADR-010), swept into this commit or named in the captures
+     Note as **Check before writing** says. A review finding never blocks.
+     Record the principles result as one Note:
+     `Principles: <n> command checks passed, <m> review findings.`
    - **Choose the commit worktree** (rules: **Completion rides the branch**).
      Fetch first: the record starts from the **PM base**. When the item's
      branch is the PM branch, run **Pull latest** and write it in place.
