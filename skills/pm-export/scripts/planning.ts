@@ -68,9 +68,13 @@ export function stripCommentsOutsideCode(text: string): string {
 export function sections(text: string, level: number): Section[] {
   const marker = "#".repeat(level) + " ";
   const out: Section[] = [{ heading: "", body: "" }];
-  let fenced = false;
+  // The open fence's run (```` ``` ````, `~~~~`): only the same character, at least as long, closes it (as FENCE does).
+  let open: string | null = null;
   for (const line of text.split("\n")) {
-    if (/^\s*(```|~~~)/.test(line)) fenced = !fenced;
+    const run = /^ {0,3}(`{3,}|~{3,})/.exec(line)?.[1];
+    if (run && open === null) open = run;
+    else if (run && run[0] === open![0] && run.length >= open!.length && /^ {0,3}[`~]+[ \t]*$/.test(line)) open = null;
+    const fenced = open !== null || run !== undefined;
     if (!fenced && line.startsWith(marker)) out.push({ heading: line.slice(marker.length).trim(), body: "" });
     else out[out.length - 1]!.body += line + "\n";
   }

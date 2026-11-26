@@ -208,6 +208,12 @@ it("stripCommentsOutsideCode: inline code and fences keep comments", () => {
     expect(recordSections("# T\n\n## A\n\n<!-- gone -->\ntext\n")).toEqual([{ heading: "A", markdown: "text" }]);
   });
 
+  it("recordSections: a fence closes only on its own character and length", () => {
+    const text = "# T\n\n## A\n\n~~~\n```\n## Inner\n~~~\n\n## B\n\n````md\n```\n## Quoted\n```\n````\n\n## C\n\nc\n";
+    expect(recordSections(text).map((s) => s.heading)).toEqual(["A", "B", "C"]);
+    expect(recordSections(text)[1]!.markdown).toContain("## Quoted");
+  });
+
   it("derives counts and checks from the files", () => {
     expect(doc.counts).toEqual({
       next: 4, later: 2, nextMax: 5, openInbox: 2, discuss: 1, shapingBriefs: 1, done: 2, dropped: 1, blockers: 1,
