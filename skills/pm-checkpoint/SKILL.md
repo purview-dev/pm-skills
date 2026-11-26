@@ -225,7 +225,9 @@ and `Explain <ID>`.
 6. **switch:** write a checkpoint first, as in `pause`. When the user names
    the item to switch to, show `R-NNN <title>`. Copy the active
    item to the top of `## Next` in `ROADMAP.md` with `Status: paused` and
-   `Paused checkpoint:` set to that checkpoint, keeping its `Brief`,
+   `Paused checkpoint:` set to that checkpoint on one line, starting with
+   `Stage: <stage>. Spec: <path | none>. Plan: <path | none>.` from
+   `NOW.md` so `pm-next` restores them, keeping its `Brief`,
    `Milestone`, `Serves`, `Owner`, `Size`, `Depends on`, `Revisits`, and
    `Note` from `NOW.md` (omit an optional field `NOW.md` does not have), and
    `Done when` built by joining the `## Done when` bullets with a semicolon
