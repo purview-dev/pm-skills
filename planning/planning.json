@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-26T15:54:57+00:00",
+  "generatedAt": "2026-11-26T16:29:58+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-006-check-pm-setup-skill-counts",
-    "head": "17e9da2826b956fe08cea67088b07b3c52607d11"
+    "branch": "feat/r-052-docs-site-package-brief-and-inbox-pages",
+    "head": "d6702ee5f03312821a139071f0889bc695d094d9"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -381,50 +381,38 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
-    "brief": null,
-    "milestone": null,
+    "status": "active",
+    "item": {
+      "id": "R-052",
+      "title": "Docs-site package: brief and inbox pages",
+      "serves": [
+        "V4"
+      ],
+      "owner": "agent",
+      "size": "S",
+      "dependsOn": [],
+      "revisits": null
+    },
+    "stage": "design",
+    "session": "feat/r-052-docs-site-package-brief-and-inbox-pages",
+    "brief": "planning/briefs/2026-11-17-docs-site-package.md",
+    "milestone": "M5",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-26",
+    "doneWhen": [
+      "The package builds one page per brief and one per inbox file, each with links and a Linked from list as item, risk, and ADR pages have, a test in `packages/pm-docs-site/test/` covers both, and `just package-test` and `just docs-check` pass."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-052",
-        "title": "Docs-site package: brief and inbox pages",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M5",
-        "owner": "agent",
-        "doneWhen": "the package builds one page per brief and one per inbox file, each with links and a Linked from list as item, risk, and ADR pages have, a test in `packages/pm-docs-site/test/` covers both, and `just package-test` and `just docs-check` pass.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": "planning/briefs/2026-11-17-docs-site-package.md",
-        "note": "From the 2026-11-25 review (inbox 2026-11-23-1525, user, R-013 design). The package must contain everything before 1.0.0. A page per brief and per inbox file, as items, risks, and ADRs already have, with links and Linked from (S). Sliced out of R-013 by the user's choice on 2026-11-23; 1.0.0 depends on it.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-056",
         "title": "Package tests stable under full lint-check",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4"
@@ -448,7 +436,7 @@
         "id": "R-042",
         "title": "Docs-site package: deferred review minors",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -747,15 +735,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-052",
           "title": "Docs-site package: brief and inbox pages",
           "owner": "agent",
           "size": "S",
-          "detail": "ready"
-        },
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-056",
           "title": "Package tests stable under full lint-check",
@@ -2147,11 +2136,11 @@
   "briefs": [
     {
       "path": "planning/briefs/2026-11-17-docs-site-package.md",
-      "id": null,
+      "id": "R-052",
       "title": "Docs site as a versioned package",
-      "status": "done",
+      "status": "on roadmap (R-052), active",
       "origin": "user request",
-      "updated": "2026-11-24",
+      "updated": "2026-11-26",
       "decision": "2026-11-17 Add to Next. R-008 Docs-site package: skeleton at parity and R-014 Create the npm @purview-dev scope and token at the bottom of Next; R-009 to R-013 at the bottom of Later in dependency order. R-002, R-005, and R-007 dropped (folded in or already built). Reason: the problems are evidenced in the current templates and scripts, and the user chose the full package with every view in the first release.",
       "problem": "The docs site is chaotic to maintain and builds non-deterministically: each consumer carries its own copy of the templates, resolves its own package versions, and any template change forces a rules-major bump on every consumer.",
       "doneWhen": "`docs-site/` contains only `package.json`, `astro.config.mjs`, and `bun.lock` (plus `.gitignore`), and `just docs-check` passes.",
@@ -2498,7 +2487,7 @@
     }
   ],
   "counts": {
-    "next": 3,
+    "next": 2,
     "later": 11,
     "nextMax": 5,
     "openInbox": 7,
@@ -2516,7 +2505,6 @@
     "reviewDue": false,
     "lastReview": "2026-11-26",
     "claimable": [
-      "R-052",
       "R-056",
       "R-042"
     ],

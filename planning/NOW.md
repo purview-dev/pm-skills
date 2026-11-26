@@ -11,22 +11,25 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: idle
-- Item:
-- Session:
-- Stage:
-- Brief:
-- Milestone:
-- Serves:
-- Owner:
-- Size:
-- Depends on:
+- Status: active
+- Item: R-052 Docs-site package: brief and inbox pages
+- Session: feat/r-052-docs-site-package-brief-and-inbox-pages
+- Stage: design
+- Brief: planning/briefs/2026-11-17-docs-site-package.md
+- Milestone: M5
+- Serves: V4
+- Owner: agent
+- Size: S
+- Depends on: none
 - Revisits:
+- Note: From the 2026-11-25 review (inbox 2026-11-23-1525, user, R-013 design). The package must contain everything before 1.0.0. A page per brief and per inbox file, as items, risks, and ADRs already have, with links and Linked from (S). Sliced out of R-013 by the user's choice on 2026-11-23; 1.0.0 depends on it. 2026-11-26: Started as is although Current focus is M2 Verified install and upgrade: M2 is done (2026-11-26) and every Next item serves M5 (user's choice).
 - Spec:
 - Plan:
-- Started:
+- Started: 2026-11-26
 
 ## Done when
+
+- The package builds one page per brief and one per inbox file, each with links and a Linked from list as item, risk, and ADR pages have, a test in `packages/pm-docs-site/test/` covers both, and `just package-test` and `just docs-check` pass.
 
 ## Checkpoint
 
