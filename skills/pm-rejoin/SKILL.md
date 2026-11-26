@@ -121,6 +121,10 @@ ambiguous, ask which one is true.
    - If the item has a brief, set its `Status: done`.
    - When this was the last open item of its milestone, apply the milestone
      prompt from `pm-checkpoint` (`done`) and record it in the same commit.
+   - When the `Note` in `NOW.md` holds `Purview package: <PackageId>`,
+     write nothing to `ENGINEERING.md` and add the Note `Purview package
+     <PackageId> not recorded; run pm-engineering add technology
+     <PackageId>.` (ADR-014).
    - Set `NOW.md` to idle.
    - Commit `docs(pm): close <ID> late` (rules: Committing PM state); switch
      to the PM branch when the commit offers it, and run **Pull latest**
@@ -153,7 +157,9 @@ ambiguous, ask which one is true.
 7. **Hand off.** Invoke the skill for `Stage` from the Handoffs table in
    `config.md`, passing the item title, `Serves`, `Done when`, the brief
    path, and the checkpoint's `Next action`. When `Stage` is `design`, also
-   pass the ADR instruction (Shared definitions: **Every design handoff**).
+   pass the ADR instruction (Shared definitions: **Every design handoff**);
+   when it is `plan`, pass the principles and ADRs instead (Shared
+   definitions: **Every plan handoff**).
    If that stage has no skill in
    the table, say so and ask the user to edit `config.md`; never name a
    development skill that is not in that table.

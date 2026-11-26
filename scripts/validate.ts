@@ -63,6 +63,30 @@ for (const name of ["pm-next", "pm-checkpoint", "pm-revise", "pm-rejoin", "pm-re
   }
 }
 
+// Every way into plan passes the principles and ADRs (R-036).
+for (const name of ["pm-next", "pm-checkpoint", "pm-revise", "pm-rejoin", "pm-resume"]) {
+  if (!read("skills", name, "SKILL.md").includes("**Every plan handoff**")) {
+    fail(`skills/${name}/SKILL.md: a plan re-entry does not cite **Every plan handoff**`);
+  }
+}
+if (!section.includes("- **Every plan handoff**")) {
+  fail("AGENTS-section.md: missing **Every plan handoff**");
+}
+
+// done checks the item's changed files against the principles before writing the completion record (R-036).
+const checkpoint = read("skills", "pm-checkpoint", "SKILL.md");
+if (!checkpoint.includes("**Principles check**") || !checkpoint.includes("--diff-filter=d")) {
+  fail("skills/pm-checkpoint/SKILL.md: done has no **Principles check**");
+}
+
+// A Purview package accepted through pm-purview is recorded in ENGINEERING.md when its item closes (R-036, ADR-014).
+if (!read("skills", "pm-purview", "SKILL.md").includes("Purview package: <PackageId>.")) {
+  fail("skills/pm-purview/SKILL.md: accepted item's Note has no Purview package marker");
+}
+if (!checkpoint.includes("**Record the Purview package**")) {
+  fail("skills/pm-checkpoint/SKILL.md: done has no **Record the Purview package** sub-step");
+}
+
 for (const name of repo) {
   const fm = checkFrontmatter("skills", name);
   if (fm === null) continue;

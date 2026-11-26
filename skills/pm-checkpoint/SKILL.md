@@ -78,7 +78,9 @@ and `Explain <ID>`.
    (design, plan, execute, finish). Fill `Spec` or `Plan` with the file the
    finished skill wrote. Do not write a checkpoint block. Commit the PM
    state (step 9), then invoke the next handoff skill with that file path,
-   not the conversation that produced it (rules: Context budget). In the
+   not the conversation that produced it (rules: Context budget). When the
+   next stage is `plan`, the handoff also passes the principles and ADRs
+   (Shared definitions: **Every plan handoff**). In the
    output, show the commit as a Note, not under "Do this next".
 4. **pause:** replace `## Checkpoint` with this block, using real values:
 
@@ -113,24 +115,50 @@ and `Explain <ID>`.
    is another worktree, in its decisions folder, where `pm-adr` writes
    (ADR-010). When an ID is in neither, stay in `pause` and list `ADR-NNN
    named in <spec> has no file.` Otherwise:
+   - **Principles check** (ADR-013): changed files are `git diff
+     --name-only --diff-filter=d <PM base>...HEAD` in the worktree that
+     holds the item's branch, excluding the PM root. Read `ENGINEERING.md`
+     from the **PM base**. A missing file, or no principle whose `Applies
+     to` is `all` or matches a changed file, is the Note `Principles: none
+     apply.` Otherwise, for each matching principle with a
+     `Check: <command>`, the command runs in the item's worktree, in the
+     shell the session uses; a non-zero exit, or a command that cannot run
+     (not found; in PowerShell `$?` is false while `$LASTEXITCODE` may stay
+     0), keeps `done` in `pause` with nothing written, listing
+     `EP-NNN <title>: <command> failed (exit <n>).`, or
+     `failed (not run: <error>).` for a command that cannot run, with the
+     last 20 lines of output — run every matching command check before
+     stopping, so every failure is listed at once. The `Check: review`
+     principles wait for **Principles review**, which runs only when every
+     command check has passed and **Check before writing** has passed.
    - **Check before writing** (ADR-010). A capture is an uncommitted inbox
      file, decisions-folder file, or `RISKS.md`, written mid-workflow by
      `pm-park`, `pm-bug`, `pm-risk`, or `pm-adr`. Captures never stop the
      close. Stop, with nothing written, only when the PM branch and its
      remote have diverged, or when either worktree has another uncommitted
-     PM path (`NOW.md`, `ROADMAP.md`, `LOG.md`, `STRATEGY.md`, a brief):
-     the record must start from committed state. Captures in the item's
-     worktree are swept into this commit. Captures in the main worktree,
-     when it is another worktree, stay there: add the Note `<n> captures
+     PM path (`NOW.md`, `ROADMAP.md`, `LOG.md`, `STRATEGY.md`,
+     `ENGINEERING.md`, a brief): the record must start from committed
+     state. Captures in the item's worktree are swept into this commit.
+     Captures in the main worktree, when it is another worktree, stay
+     there: add the Note `<n> captures
      uncommitted on <main worktree's branch>: <paths>. The next PM commit
      there carries them.`
+   - **Principles review** (ADR-013): for each matching principle with
+     `Check: review`, read the diff of the matching files against `Rule`;
+     each break found is the Note `EP-NNN <title>: <file> <finding>` and
+     one inbox file by `pm-park` (`agent` mode, `Kind: tech-debt`,
+     `Affects: <ID>`, `Source: agent (<ID> done)`). Its inbox file is a
+     capture (ADR-010), swept into this commit or named in the captures
+     Note as **Check before writing** says. A review finding never blocks.
+     Record the principles result as one Note:
+     `Principles: <n> command checks passed, <m> review findings.`
    - **Choose the commit worktree** (rules: **Completion rides the branch**).
      Fetch first: the record starts from the **PM base**. When the item's
      branch is the PM branch, run **Pull latest** and write it in place.
-     Otherwise read `LOG.md`, `NOW.md`, `ROADMAP.md`, `STRATEGY.md`, and
-     the brief from the **PM base** (`git show <PM base>:<PM
-     root>/<file>`), apply the record to those contents, and write and
-     commit them in the worktree that holds the item's branch.
+     Otherwise read `LOG.md`, `NOW.md`, `ROADMAP.md`, `STRATEGY.md`,
+     `ENGINEERING.md`, and the brief from the **PM base** (`git show <PM
+     base>:<PM root>/<file>`), apply the record to those contents, and
+     write and commit them in the worktree that holds the item's branch.
    - Append to `## Done` in `LOG.md`:
      `- <date> <ID> <Title>. Milestone: <the Milestone in NOW.md, or none>.
      Owner: <owner>. Plan: <path | none>. Result: branch <branch>.`
@@ -151,6 +179,24 @@ and `Explain <ID>`.
      worktree; the next PM commit on <main worktree's branch> carries it.`
      The decisions folder is never read from the **PM base**. Leave every other ADR as it is, including a proposed ADR
      of another item that the spec only cites.
+   - **Record the Purview package** (ADR-014): when the `Note` in `NOW.md`
+     holds `Purview package: <PackageId>`, search the item branch's
+     manifests (`*.csproj`, `Directory.Packages.props`,
+     `Directory.Build.props`, `global.json` for an SDK) for it. Not found:
+     write nothing to `ENGINEERING.md` and add the Note `Purview package
+     <PackageId> is not in a manifest; not recorded.` Found: apply
+     `pm-engineering` `add technology` write steps only (no question,
+     output, or commit): `Kind: library` (`tool` for an SDK found in
+     `global.json`), `Version` from the `PackageReference` or the central
+     `PackageVersion` in `Directory.Packages.props`, `Reason` the first
+     sentence of `## Decision` in the ADR whose `Item` is this ID and that
+     names the package (accepted or still proposed), else `Adopted through
+     <ID> <title> (pm-purview).`, `Decision` that ADR, or `none` when there
+     is none, `Source` the path of the manifest that holds the
+     `PackageReference` (or `global.json` for an SDK), even when the
+     version comes from `Directory.Packages.props`, `Added` today. An existing
+     `### <Name>` entry of that name gets only its `Version` changed. Add
+     the Note `Recorded <PackageId> <version> in ENGINEERING.md.`
    - If this item is the last open item of its milestone (no other item
      with that `Milestone` in `NOW.md`, `## Next`, or `## Later`), ask one
      choice question: `All <M> <Name> items are done.
@@ -179,7 +225,9 @@ and `Explain <ID>`.
 6. **switch:** write a checkpoint first, as in `pause`. When the user names
    the item to switch to, show `R-NNN <title>`. Copy the active
    item to the top of `## Next` in `ROADMAP.md` with `Status: paused` and
-   `Paused checkpoint:` set to that checkpoint, keeping its `Brief`,
+   `Paused checkpoint:` set to that checkpoint on one line, starting with
+   `Stage: <stage>. Spec: <path | none>. Plan: <path | none>.` from
+   `NOW.md` so `pm-next` restores them, keeping its `Brief`,
    `Milestone`, `Serves`, `Owner`, `Size`, `Depends on`, `Revisits`, and
    `Note` from `NOW.md` (omit an optional field `NOW.md` does not have), and
    `Done when` built by joining the `## Done when` bullets with a semicolon
@@ -258,7 +306,9 @@ and `Explain <ID>`.
    the Handoffs table in `config.md`, passing the checkpoint's
    `Next action`; when the stack still has entries, name the next one as a
    Note. When the restored `Stage` is `design`, the handoff also passes the
-   ADR instruction (Shared definitions: **Every design handoff**).
+   ADR instruction (Shared definitions: **Every design handoff**); when it
+   is `plan`, the handoff also passes the principles and ADRs (Shared
+   definitions: **Every plan handoff**).
 9. **Commit** the PM state (rules: Committing PM state) in every mode,
    after the last PM file is written. In `done`, the commit worktree is the
    worktree that holds the item's branch and the message is
@@ -289,7 +339,7 @@ and `Explain <ID>`.
 
 ## Note
 
-- <commit result, changed files outside the PM root, assumptions, newly claimable items, the next stacked item>
+- <commit result, changed files outside the PM root, assumptions, newly claimable items, the next stacked item, the principles check result>
 ```
 
 Omit item 2 in every mode except `done`.

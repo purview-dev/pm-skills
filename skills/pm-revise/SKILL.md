@@ -165,7 +165,9 @@ only in the conversation, and never resume the interrupted step silently.
     is not in that table. When the stage is `design` (a `rewind` to
     design), also pass the ADR instruction (Shared definitions:
     **Every design handoff**), naming any ADR the revision reverses and any
-    ADR that superseded it in step 5.
+    ADR that superseded it in step 5. When the stage is `plan` (a `rewind`
+    to plan), pass the principles and ADRs instead (Shared definitions:
+    **Every plan handoff**).
 
 ## Output
 

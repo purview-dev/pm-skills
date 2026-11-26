@@ -34,7 +34,10 @@ likely modes as options.
 
 - If `<PM root>/` does not exist, reply `No <PM root> folder. Run pm-init.`
   Stop.
-- Write in the main worktree, not the current feature worktree.
+- Write in the main worktree, not the current feature worktree. The one
+  exception is `pm-checkpoint` (`done`), which applies the `add
+  technology` write steps in the worktree that holds the item's branch,
+  as part of the Completion record (ADR-014).
 - If `<PM root>/ENGINEERING.md` is missing, create it from `pm-init`'s
   `templates/ENGINEERING.md` before the first write. `view` writes nothing
   and shows an empty file instead.
@@ -42,6 +45,9 @@ likely modes as options.
   and only when the user asks for it. `add`, `change`, and `remove` apply
   Non-interruption rule 4 and stop. A library chosen during design is
   recorded with `pm-adr new`; it reaches this file after the workflow.
+  `pm-checkpoint` (`done`) applies the `add technology` write steps for a
+  Purview package found in a manifest (ADR-014), as `pm-adr` names
+  `accept`.
 - If a named entry is not in the file, reply `<name or EP-NNN> not found.`
   and list the technology names and the principles as `EP-NNN <title>`.
   Stop.

@@ -72,7 +72,10 @@ add `Explain <ID>` to the question (Asking the user).
    <path | none>. Result: <evidence>.` Remove the item from `ROADMAP.md`.
    Name items whose `Depends on` is now met. When it was the last open item
    of its milestone, run the milestone prompt from `pm-checkpoint` (`done`)
-   and record the result in the same commit.
+   and record the result in the same commit. When the item's `Note` holds
+   `Purview package: <PackageId>`, write nothing else and add the Note
+   `Purview package <PackageId> not recorded; run pm-engineering add
+   technology <PackageId>.` (ADR-014).
    The Completion record follows the **Completion rides the branch** rule:
    commit on the current branch when it is an item's session branch, so it
    rides that pull request; otherwise commit on the PM branch. Never close

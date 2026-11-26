@@ -95,6 +95,10 @@ directory` setting (default `planning/`).
      reads the ones its decision touches first (Shared definitions:
      **Every design handoff**). This only lists them; it reads the folder
      and writes nothing.
+   - If the next action starts the `plan` skill, add an `ADRs:` bullet and
+     a `Principles:` bullet in that format
+     (Shared definitions: **Every plan handoff**). This only lists them; it
+     reads the decisions folder and `ENGINEERING.md` and writes nothing.
 7. **Pause.** When the pause file exists:
    - Its `Session` matches the current session: the pause's `Next action`
      and `Start with` replace the next action from steps 5 and 6, unless
@@ -145,7 +149,8 @@ directory` setting (default `planning/`).
 1. <one action>
    - Start with: <exact command, file, or skill name>
    - Done when: <observable check>
-   - ADRs: <ADR-NNN <title> (<status>), ... | none; only when the action starts design>
+   - ADRs: <ADR-NNN <title> (<status>), ... | none; for design every accepted and proposed ADR, for plan the ADRs the spec names; only when the action starts design or plan>
+   - Principles: <EP-NNN <title>: <Rule> (Check: <command | review>); ... | none; only when the action starts plan>
 
 ## For you
 

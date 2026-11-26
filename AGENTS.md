@@ -369,9 +369,13 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   line in `LOG.md`, `NOW.md` set to idle, its removal from `ROADMAP.md`, the
   brief's `Status: done`, and its milestone's `Status: done (<date>)` when
   it is the last open item of that milestone. `pm-checkpoint` (`done`)
-  writes it for the active item; `pm-item` (`done`) for any other. It is
-  committed on the item's branch, inside the item's pull request, before CI
-  runs (rules: Committing PM state, **Completion rides the branch**).
+  writes it for the active item; `pm-item` (`done`) for any other.
+  `pm-checkpoint` (`done`) runs the principles command checks first and
+  writes nothing when one fails, and also records, for a `Note` naming a
+  Purview package found in a manifest, its technology entry in
+  `ENGINEERING.md` (ADR-014). It is committed on the item's
+  branch, inside the item's pull request, before CI runs (rules:
+  Committing PM state, **Completion rides the branch**).
 - **Unmerged completion:** a **Completion record** whose branch has not been
   merged. It is reversible: `pm-revise` (`fix-in-place`) removes the
   `## Done` line and restores `NOW.md` at `execute`, and the fix re-runs the
@@ -543,7 +547,8 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   `STRATEGY.md` `## Decisions` and briefs; technical decisions in ADRs; one
   item's detail in its spec, which names the ADR IDs it writes or follows.
 - **Engineering file:** `<PM root>/ENGINEERING.md`, an **Optional file**
-  (a missing file is empty), written only by `pm-engineering`. It records
+  (a missing file is empty), written only by `pm-engineering`, or by
+  `pm-checkpoint` (`done`) through its write steps (ADR-014). It records
   the current state: the technology in use and the principles work must
   follow. The reason beyond one line lives in the ADR its `Decision` names.
   Three sections, in order: `## Technology` (alphabetical), `## Principles`
@@ -587,6 +592,26 @@ Every `pm-*` skill uses these definitions. The skills do not redefine them.
   proposing approaches, to record each architecture decision the spec
   makes with `pm-adr new` or `supersede`, and to name the ADR IDs in the
   spec.
+- **Every plan handoff** (`pm-checkpoint` `stage` into plan, `pm-next`
+  resuming a `Paused checkpoint` at `plan`, and a resume, `pop`, `rewind`,
+  or `rejoin` into plan) lists, in this format:
+
+  ```markdown
+  - ADRs: <ADR-NNN <title> (<status>), ... | none>
+  - Principles: <EP-NNN <title>: <Rule> (Check: <command | review>); ... | none>
+  - Cite the EP and ADR IDs in the tasks they constrain; put each command check in the plan's verification steps.
+  ```
+
+  `ADRs` is every `ADR-NNN` the spec names, as named references with their
+  status, or `none`. `Principles` is every principle in `ENGINEERING.md`
+  whose `Applies to` is `all` or matches a path or glob the spec names, as
+  `EP-NNN <title>: <Rule> (Check: <command | review>)`, or `none`; a
+  missing `ENGINEERING.md` is `none`. A path the spec names is any
+  repository-relative path or glob it gives, backticked or in a file
+  table; a glob matches when any named path falls under it, and a glob the
+  spec names matches an `Applies to` glob when the two can match a common
+  path. A spec naming
+  no paths gets only `all` principles, and the list says so (ADR-013).
 - **RAG:** a risk's red, amber, or green status. It is derived from
   Likelihood and Impact, scored `low` 1, `medium` 2, `high` 3, by their
   product: 6 or more is `red`, 3 or 4 is `amber`, 2 or less is `green`. An
@@ -1202,9 +1227,9 @@ The commit worktree:
 - The record starts from the **PM base** (Shared definitions), so it
   fetches first. When the item's branch is the PM branch, write the record
   in place. Otherwise (the normal case) read `LOG.md`, `NOW.md`,
-  `ROADMAP.md`, `STRATEGY.md`, and the brief from the **PM base**
-  (`git show <PM base>:<PM root>/<file>`), apply the record to those
-  contents, then write and commit them in the worktree that holds the
+  `ROADMAP.md`, `STRATEGY.md`, `ENGINEERING.md`, and the brief from the
+  **PM base** (`git show <PM base>:<PM root>/<file>`), apply the record to
+  those contents, then write and commit them in the worktree that holds the
   item's branch. This keeps the commit from reverting PM state the PM
   branch gained after the branch was cut.
 - Stop when the PM branch and its remote have diverged, or when either
@@ -1414,6 +1439,13 @@ flight: an inbox file, risk, or ADR written mid-workflow is committed with
 the record or named in a `Note`, never a reason to stop, and an item's
 ADR that `pm-adr` wrote in the main worktree is found and accepted there.
 No setting is added.
+
+Version 21 also passes the ADRs the spec names and the principles that
+apply to its files to every plan handoff, has `pm-checkpoint` (`done`) run
+the principles' command checks before it closes an item (a failure blocks;
+a review finding is a `Note` and an inbox file), and records a package
+`pm-purview` accepted in `ENGINEERING.md` when its item closes. No setting
+is added.
 
 ## Asking the user (mandatory)
 

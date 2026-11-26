@@ -18,7 +18,7 @@
 - V2: After compaction or a new session, `pm-resume` names the active item, its stage, and the next action from `planning/` alone.
 - V3: During an active workflow, only the Non-interruption rules' exceptions run (capture, `pm-checkpoint` stage, done, push and pop, `pm-pause`, `pm-revise`, and the read-only views and checks); every other PM skill waits, and a capture replies in one line while the step in progress resumes.
 - V4: `pm-export` writes a schema-valid `planning.json`, and `pm-docs-site` builds a site from it whose `just docs-check` passes.
-- V5: Technical decisions are recorded and followed: `pm-init` records an existing repository's technology and principles, the design handoff names the ADRs and principles that apply, and `pm-checkpoint` (`done`) refuses to close an item whose command checks fail.
+- V5: Technical decisions are recorded and followed: `pm-engineering` records the technology and principles in use, the design handoff names the ADRs and principles that apply, and `pm-checkpoint` (`done`) refuses to close an item whose command checks fail.
 
 ## Out of scope for v1
 
