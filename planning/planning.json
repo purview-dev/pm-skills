@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-26T10:28:41+00:00",
+  "generatedAt": "2026-11-26T11:03:48+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-015-rehearse-a-fresh-install",
-    "head": "be03d1e6511832f503d9cab56946464e6a2ac616"
+    "head": "6898ac4c8c1ea85a716324a3162acbb6ddfba952"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -370,28 +370,16 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-015",
-      "title": "Rehearse a fresh install in a scratch repository",
-      "serves": [
-        "V1"
-      ],
-      "owner": "agent",
-      "size": "S",
-      "dependsOn": [],
-      "revisits": null
-    },
-    "stage": "design",
-    "session": "feat/r-015-rehearse-a-fresh-install",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
     "brief": null,
-    "milestone": "M2",
+    "milestone": null,
     "spec": null,
     "plan": null,
-    "started": "2026-11-26",
-    "doneWhen": [
-      "in an empty scratch repository, `npx skills add https://github.com/purview-dev/pm-skills -y` then `pm-setup` reports every pm-* and workflow skill installed, recorded in a report in `planning/research/`."
-    ],
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
   "plan": null,
@@ -796,15 +784,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-015",
-          "title": "Rehearse a fresh install in a scratch repository",
-          "owner": "agent",
-          "size": "S",
-          "detail": "design"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-057",
@@ -1155,6 +1135,15 @@
         "milestone": "M4",
         "owner": "agent",
         "result": "branch feat/r-036-plan-citation-and-done-check"
+      },
+      {
+        "date": "2026-11-26",
+        "kind": "dropped",
+        "id": "R-015",
+        "title": "Rehearse a fresh install in a scratch repository",
+        "milestone": null,
+        "owner": null,
+        "result": "Reason: the user dropped it during R-015 design (after choosing an isolated-home install); M2's fresh-install exit criterion, B3, and A6 go to pm-strategy"
       },
       {
         "date": "2026-11-26",
@@ -1902,6 +1891,12 @@
     "dropped": [
       {
         "date": "2026-11-26",
+        "id": "R-015",
+        "title": "Rehearse a fresh install in a scratch repository",
+        "reason": "the user dropped it during R-015 design (after choosing an isolated-home install); M2's fresh-install exit criterion, B3, and A6 go to pm-strategy"
+      },
+      {
+        "date": "2026-11-26",
         "id": null,
         "title": "GitHub issue and Project sync",
         "reason": "the user dropped it in the 2026-11-26 review; brief `planning/briefs/2026-11-22-github-issue-project-sync.md` set to dropped"
@@ -2395,7 +2390,7 @@
     "discuss": 3,
     "shapingBriefs": 0,
     "done": 34,
-    "dropped": 10,
+    "dropped": 11,
     "blockers": 0,
     "openRisks": 0,
     "redRisks": 0,
@@ -2411,6 +2406,6 @@
       "R-052",
       "R-056"
     ],
-    "drift": false
+    "drift": true
   }
 }

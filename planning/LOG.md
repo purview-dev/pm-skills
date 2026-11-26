@@ -44,6 +44,7 @@
 
 ## Dropped
 
+- 2026-11-26 R-015 Rehearse a fresh install in a scratch repository. Reason: the user dropped it during R-015 design (after choosing an isolated-home install); M2's fresh-install exit criterion, B3, and A6 go to pm-strategy.
 - 2026-11-26 GitHub issue and Project sync. Reason: the user dropped it in the 2026-11-26 review; brief `planning/briefs/2026-11-22-github-issue-project-sync.md` set to dropped.
 - 2026-11-25 R-035 pm-engineering infer from an existing repository. Reason: not needed now; recording technology by hand with pm-engineering add is enough (user, during R-035 design).
 - 2026-11-25 R-037 Engineering export and docs-site view. Reason: the user dropped it when pm-next offered it, including the Revisits fix in its Note.
