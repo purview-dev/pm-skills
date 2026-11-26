@@ -38,40 +38,40 @@
 
 - Produces: `export function skillCountDrift(file: string, text: string, expected: number): string[]`
 
-- [ ] **Step 1: Write the failing tests** in `scripts/skill-counts.test.ts` (`describe("pm-setup skill counts")`):
+- [x] **Step 1: Write the failing tests** in `scripts/skill-counts.test.ts` (`describe("pm-setup skill counts")`):
   - `"reports nothing when every count matches"`: text `"- Skills: <n> of 26 installed.\n- Skills: <26 of 26 installed | missing: names>\n- Workflow skills: <n> of <total> installed."`, expected 26 → `[]`.
   - `"names the line and the wrong number"`: text `"a\n- Skills: <25 of 26 installed>"`, expected 26 → `["pm-setup/SKILL.md:2: skill count 25, expected 26"]` (file argument `"pm-setup/SKILL.md"`).
   - `"reports each wrong number"`: text `"<27 of 27"`, expected 26 → two messages, both `pm-setup/SKILL.md:1: skill count 27, expected 26`.
   - `"fails when no count is found"`: text `"- Workflow skills: <n> of <total>"` → `['pm-setup/SKILL.md: no "<N> of <N>" skill count found']`.
   - `"counts lines in CRLF text"`: text `"a\r\n<25 of 26"` → message names line 2.
 
-- [ ] **Step 2: Run to verify failure**
+- [x] **Step 2: Run to verify failure**
   Run: `bun test scripts/skill-counts.test.ts`
   Expected: FAIL (module `./skill-counts.ts` not found).
 
-- [ ] **Step 3: Implement `skillCountDrift`** in `scripts/skill-counts.ts`: split on `\n`, match `/(\d+) of (\d+)/g` per line, push `<file>:<line>: skill count <N>, expected <expected>` for each number not equal to `expected`; when no line matched, return the single "no count found" message. Add a one-line comment saying the inventory omits `pm-setup` itself.
+- [x] **Step 3: Implement `skillCountDrift`** in `scripts/skill-counts.ts`: split on `\n`, match `/(\d+) of (\d+)/g` per line, push `<file>:<line>: skill count <N>, expected <expected>` for each number not equal to `expected`; when no line matched, return the single "no count found" message. Add a one-line comment saying the inventory omits `pm-setup` itself.
 
-- [ ] **Step 4: Run to verify pass**
+- [x] **Step 4: Run to verify pass**
   Run: `bun test scripts/skill-counts.test.ts`
   Expected: 5 pass, 0 fail.
 
-- [ ] **Step 5: Wire into `validate.ts`**: import `skillCountDrift`; after the shipped loop, `for (const message of skillCountDrift("pm-setup/SKILL.md", setup, shipped.filter((name) => name !== "pm-setup").length)) fail(message);`
+- [x] **Step 5: Wire into `validate.ts`**: import `skillCountDrift`; after the shipped loop, `for (const message of skillCountDrift("pm-setup/SKILL.md", setup, shipped.filter((name) => name !== "pm-setup").length)) fail(message);`
 
-- [ ] **Step 6: Verify `just validate` passes on the real file**
+- [x] **Step 6: Verify `just validate` passes on the real file**
   Run: `just validate`
   Expected: exit 0, `validate: 27 skills OK, 1 repo-local (release)`.
 
-- [ ] **Step 7: Verify it fails on a wrong count** (temporary edit, then restore)
+- [x] **Step 7: Verify it fails on a wrong count** (temporary edit, then restore)
   Run: change `<n> of 26` to `<n> of 25` in `skills/pm-setup/SKILL.md:146`, run `just validate`, then `git checkout -- skills/pm-setup/SKILL.md`.
   Expected: exit 1 with `- pm-setup/SKILL.md:146: skill count 25, expected 26`; after restore, `git status --porcelain -- skills` prints nothing.
 
-- [ ] **Step 8: Document** in `AGENTS.md`: in the `Validate only` bullet's list, after `markers,` add `pm-setup's skill counts against the shipped skills,`.
+- [x] **Step 8: Document** in `AGENTS.md`: in the `Validate only` bullet's list, after `markers,` add `pm-setup's skill counts against the shipped skills,`.
 
-- [ ] **Step 9: Full check**
+- [x] **Step 9: Full check**
   Run: `just lint-check`
   Expected: exit 0 (markdownlint, validate, pm-lint, and `just test` all pass).
 
-- [ ] **Step 10: Commit**
+- [x] **Step 10: Commit**
 
 ```bash
 git add scripts/skill-counts.ts scripts/skill-counts.test.ts scripts/validate.ts AGENTS.md
