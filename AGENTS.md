@@ -157,7 +157,8 @@ same `bun` commands as the `just` recipes). Markdown is linted with
 - Lint all Markdown, validate skills, and test their scripts:
   `just lint-check` (auto-fix Markdown: `just lint-fix`)
 - Validate only (`scripts/validate.ts`: frontmatter, README, managed-section
-  and setup inventory, markers, `pm-init` template placeholders, the export
+  and setup inventory, `pm-setup`'s skill counts against the shipped
+  skills, markers, `pm-init` template placeholders, the export
   schema against its example, the `pm-docs-site` package's supported
   schema versions and fixture against the schema, the skill's minimum
   package version against the package's, the Astro Components Kit MIT
