@@ -1,6 +1,6 @@
 {
   "$schema": "./planning.schema.json",
-  "schemaVersion": 5,
+  "schemaVersion": 6,
   "generatedAt": "2026-11-20T09:59:10+00:00",
   "generator": {
     "skill": "pm-export",
@@ -763,7 +763,21 @@
       ],
       "brief": "planning/briefs/2026-11-10-gift-vouchers.md",
       "reviewed": "2026-11-16",
-      "idea": "Let clients buy a voucher for a friend that pays for any class at the studio."
+      "idea": "Let clients buy a voucher for a friend that pays for any class at the studio.",
+      "sections": [
+        {
+          "heading": "Idea",
+          "markdown": "Let clients buy a voucher for a friend that pays for any class at the studio."
+        },
+        {
+          "heading": "Links",
+          "markdown": "- none"
+        },
+        {
+          "heading": "Notes",
+          "markdown": "- 2026-11-16 Shaped and kept parked until payments ship."
+        }
+      ]
     },
     {
       "file": "planning/inbox/2026-11-15-1030-instructor-bios-on-class-pages.md",
@@ -778,7 +792,21 @@
       "related": [],
       "brief": null,
       "reviewed": "never",
-      "idea": "Clients ask who teaches a class before they book. Show a short bio and a photo of the instructor on each class page."
+      "idea": "Clients ask who teaches a class before they book. Show a short bio and a photo of the instructor on each class page.",
+      "sections": [
+        {
+          "heading": "Idea",
+          "markdown": "Clients ask who teaches a class before they book. Show a short bio and a photo of the instructor on each class page."
+        },
+        {
+          "heading": "Links",
+          "markdown": "- none"
+        },
+        {
+          "heading": "Notes",
+          "markdown": "- 2026-11-16 Three pilots asked for it in the weekly call."
+        }
+      ]
     },
     {
       "file": "planning/inbox/2026-11-18-1610-do-studios-need-invoices.md",
@@ -793,7 +821,21 @@
       "related": [],
       "brief": null,
       "reviewed": "never",
-      "idea": "Some countries require a numbered invoice for each card payment. Does the provider's receipt cover it, or must Slotwise issue invoices?"
+      "idea": "Some countries require a numbered invoice for each card payment. Does the provider's receipt cover it, or must Slotwise issue invoices?",
+      "sections": [
+        {
+          "heading": "Idea",
+          "markdown": "Some countries require a numbered invoice for each card payment. Does the provider's receipt cover it, or must Slotwise issue invoices?"
+        },
+        {
+          "heading": "Links",
+          "markdown": "- none"
+        },
+        {
+          "heading": "Notes",
+          "markdown": "- none"
+        }
+      ]
     },
     {
       "file": "planning/inbox/2026-11-19-0915-double-booking-on-fast-clicks.md",
@@ -810,7 +852,25 @@
       ],
       "brief": null,
       "reviewed": "never",
-      "idea": "Two clients booked the last place in the Thursday pottery class within a second of each other, and both got a confirmation."
+      "idea": "Two clients booked the last place in the Thursday pottery class within a second of each other, and both got a confirmation.",
+      "sections": [
+        {
+          "heading": "Idea",
+          "markdown": "Two clients booked the last place in the Thursday pottery class within a second of each other, and both got a confirmation."
+        },
+        {
+          "heading": "Reproduction",
+          "markdown": "1. Open a class with one free place in two browsers.\n2. Press Book in both within one second.\n3. Both bookings are confirmed. It happened twice in 300 bookings."
+        },
+        {
+          "heading": "Links",
+          "markdown": "- none"
+        },
+        {
+          "heading": "Notes",
+          "markdown": "- 2026-11-19 The pilot studio refunded the second client by hand."
+        }
+      ]
     }
   ],
   "briefs": [
@@ -824,7 +884,53 @@
       "decision": "2026-11-16 Keep it parked. Why: it needs R-007 Online payments at booking first.",
       "problem": "Clients want to give a class as a present, and studios sell paper vouchers by hand.",
       "doneWhen": "A client buys a voucher, and the recipient books a class with its code.",
-      "revisions": []
+      "revisions": [],
+      "sections": [
+        {
+          "heading": "Problem",
+          "markdown": "- Clients want to give a class as a present, and studios sell paper vouchers by hand."
+        },
+        {
+          "heading": "Who and evidence",
+          "markdown": "- Two pilots sell about ten paper vouchers a month before the holidays."
+        },
+        {
+          "heading": "Original idea",
+          "markdown": "Let clients buy a voucher for a friend that pays for any class at the studio."
+        },
+        {
+          "heading": "Proposal",
+          "markdown": "- A voucher is a prepaid code that pays for one booking."
+        },
+        {
+          "heading": "Alternatives considered",
+          "markdown": "| Option | Effort | Benefit | Cost |\n| --- | --- | --- | --- |\n| Do nothing | none | No work. | Paper vouchers stay. |\n| **Prepaid codes after payments ship (recommended)** | S | Reuses R-007's checkout. | Waits for M2. |\n| Vouchers now with manual payment | M | Ready for the holidays. | A second payment path to maintain. |"
+        },
+        {
+          "heading": "Challenges and answers",
+          "markdown": "- 2026-11-16. Claim: vouchers need card payments, which R-007 is still building. Answer: keep it parked until R-007 is done."
+        },
+        {
+          "heading": "Ramifications",
+          "markdown": "| Area | Effect | Mitigation |\n| --- | --- | --- |\n| Data and migrations | A vouchers table. | Additive. |\n| Security and privacy | Codes must not be guessable. | Random 12-character codes. |\n| Performance | none found | |\n| User experience | A code field at checkout. | |\n| Operations and cost | none found | |\n| Maintenance | none found | |\n| Dependencies | Needs R-007. | |\n| Reversibility | Reversible. | |"
+        },
+        {
+          "heading": "Done when",
+          "markdown": "- A client buys a voucher, and the recipient books a class with its code."
+        },
+        {
+          "heading": "Size and slicing",
+          "markdown": "- Size S, one item."
+        },
+        {
+          "heading": "Open questions",
+          "markdown": "- Do vouchers expire?"
+        },
+        {
+          "heading": "Decision",
+          "markdown": "- 2026-11-16 Keep it parked. Why: it needs R-007 Online payments at booking first."
+        }
+      ]
     },
     {
       "path": "planning/briefs/R-007-online-payments.md",
@@ -836,7 +942,53 @@
       "decision": "2026-11-17 Build it now. Why: the M2 focus, and five pilots asked for it.",
       "problem": "Clients book and do not show up, and studios chase payment by bank transfer afterwards.",
       "doneWhen": "A client pays by card on the booking page, and the booking is confirmed only after the payment succeeds.",
-      "revisions": []
+      "revisions": [],
+      "sections": [
+        {
+          "heading": "Problem",
+          "markdown": "- Clients book and do not show up, and studios chase payment by bank transfer afterwards."
+        },
+        {
+          "heading": "Who and evidence",
+          "markdown": "- Five of the eight pilot studios asked for payment at booking in the 2026-11-18 calls.\n- Pilots that take a deposit report 4% no-shows against 11% for the rest (STRATEGY.md B1)."
+        },
+        {
+          "heading": "Original idea",
+          "markdown": "Take the full class price by card when the client books."
+        },
+        {
+          "heading": "Proposal",
+          "markdown": "- The booking page sends the client to the provider's hosted checkout.\n- The provider's webhook confirms the booking; a failed payment frees the slot.\n- The dashboard lists each payment beside its booking."
+        },
+        {
+          "heading": "Alternatives considered",
+          "markdown": "| Option | Effort | Benefit | Cost |\n| --- | --- | --- | --- |\n| Do nothing | none | No work. | No-shows stay at 11%. |\n| Deposit only | S | Cuts no-shows. | Studios still chase the rest. |\n| **Full payment by hosted checkout (recommended)** | M | No card data on our servers; no-shows fall. | A 1.5% fee per booking. |"
+        },
+        {
+          "heading": "Challenges and answers",
+          "markdown": "- 2026-11-17. Claim: studios may refuse the card fee. Answer: A1 holds; all eight pilots accepted it (STRATEGY.md)."
+        },
+        {
+          "heading": "Ramifications",
+          "markdown": "| Area | Effect | Mitigation |\n| --- | --- | --- |\n| Data and migrations | A payments table keyed by booking. | Additive migration. |\n| Security and privacy | No card data stored; the webhook needs signature checks. | Verify every webhook signature. |\n| Performance | none found | |\n| User experience | One extra step before the confirmation. | Hosted checkout keeps the studio's colours. |\n| Operations and cost | 1.5% per booking. | Shown on the pricing page (R-010). |\n| Maintenance | One provider SDK to keep current. | |\n| Dependencies | Needs R-002; R-008 and R-016 wait on it. | |\n| Reversibility | Payments can be switched off per studio. | |"
+        },
+        {
+          "heading": "Done when",
+          "markdown": "- A client pays by card on the booking page, and the booking is confirmed only after the payment succeeds.\n- The studio dashboard lists the payment with its booking on the same day."
+        },
+        {
+          "heading": "Size and slicing",
+          "markdown": "- Size M, one item."
+        },
+        {
+          "heading": "Open questions",
+          "markdown": "- none"
+        },
+        {
+          "heading": "Decision",
+          "markdown": "- 2026-11-17 Build it now. Why: the M2 focus, and five pilots asked for it."
+        }
+      ]
     },
     {
       "path": "planning/briefs/R-013-several-locations.md",
@@ -848,7 +1000,53 @@
       "decision": "2026-11-12 Add to Later under M3. Why: it serves V4, and M2 comes first.",
       "problem": "A studio with a second location runs two Slotwise accounts and two calendars.",
       "doneWhen": "An owner adds a second location with its own rooms, hours, and timezone, and clients choose the location when they book.",
-      "revisions": []
+      "revisions": [],
+      "sections": [
+        {
+          "heading": "Problem",
+          "markdown": "- A studio with a second location runs two Slotwise accounts and two calendars."
+        },
+        {
+          "heading": "Who and evidence",
+          "markdown": "- One pilot opened a second room across town in November and asked for one account."
+        },
+        {
+          "heading": "Original idea",
+          "markdown": "One studio account with many locations, each with its own rooms, hours, and timezone."
+        },
+        {
+          "heading": "Proposal",
+          "markdown": "- A location owns rooms, opening hours, and a timezone.\n- Clients pick the location before the class."
+        },
+        {
+          "heading": "Alternatives considered",
+          "markdown": "| Option | Effort | Benefit | Cost |\n| --- | --- | --- | --- |\n| Do nothing | none | No work. | Two accounts per studio. |\n| **Locations inside one account (recommended)** | M | One dashboard and one client list. | Every query gains a location filter. |\n| Linked accounts | S | Little code. | Clients see two studios. |"
+        },
+        {
+          "heading": "Challenges and answers",
+          "markdown": "- 2026-11-12. Claim: per-location timezones need R-011 first. Answer: R-013 depends on R-011."
+        },
+        {
+          "heading": "Ramifications",
+          "markdown": "| Area | Effect | Mitigation |\n| --- | --- | --- |\n| Data and migrations | A location column on rooms and classes. | Backfill one location per studio. |\n| Security and privacy | none found | |\n| Performance | none found | |\n| User experience | One more choice when booking. | Skip it for single-location studios. |\n| Operations and cost | none found | |\n| Maintenance | Location filters on every query. | |\n| Dependencies | Depends on R-011; R-014 depends on it. | |\n| Reversibility | Reversible while one location exists. | |"
+        },
+        {
+          "heading": "Done when",
+          "markdown": "- An owner adds a second location with its own rooms, hours, and timezone, and clients choose the location when they book."
+        },
+        {
+          "heading": "Size and slicing",
+          "markdown": "- Size M, one item."
+        },
+        {
+          "heading": "Open questions",
+          "markdown": "- none"
+        },
+        {
+          "heading": "Decision",
+          "markdown": "- 2026-11-12 Add to Later under M3. Why: it serves V4, and M2 comes first."
+        }
+      ]
     }
   ],
   "risks": {

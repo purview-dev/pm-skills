@@ -36,15 +36,17 @@
 ### Task 1: Export ordered sections (ADR-016) and move to schemaVersion 6
 
 **Files:**
+
 - Modify: `skills/pm-export/scripts/planning.ts` (brief and inbox builders near lines 651-694; a new exported helper beside `sectionText` near line 172)
 - Modify: `skills/pm-export/references/planning.schema.json` (`schemaVersion` const, `$defs.brief`, `$defs.inboxEntry`, new `$defs.section`)
 - Modify: `skills/pm-export/references/planning.example.json`
 - Modify: `skills/pm-export/SKILL.md` (line 125 `schemaVersion` row; lines 202-209 field map)
-- Modify: `skills/pm-export/scripts/__fixtures__/repo/planning/briefs/R-007-tenant-billing.md` (add a fenced block with an HTML comment and a `## ` line inside it, under `## Proposal`)
+- Modify: `skills/pm-export/scripts/__fixtures__/repo/planning/briefs/R-007-tenant-billing.md` (add a fenced block with an HTML comment and a `##` line inside it, under `## Proposal`)
 - Modify: `skills/pm-export/scripts/export.test.ts`
 - Modify: `packages/pm-docs-site/lib/schema-version.ts` (`[5]` → `[6]`), `packages/pm-docs-site/src/lib/planning-types.ts` (`Brief`, `InboxEntry`), `packages/pm-docs-site/test/fixtures/planning.json`, `packages/pm-docs-site/package.json` (version), `skills/pm-docs-site/SKILL.md` (lines 28, 30), `packages/pm-docs-site/test/schema-version.test.ts` if it pins `5`
 
 **Interfaces:**
+
 - Produces: `export interface RecordSection { heading: string; markdown: string }` and `export function recordSections(text: string): RecordSection[]` in `planning.ts`; `sections: RecordSection[]` as the last key of each `briefs[]` and `inbox[]` entry (schema `properties` order: after `revisions` / `idea`); package types `Brief.sections` and `InboxEntry.sections` of type `{ heading: string; markdown: string }[]`.
 
 - [ ] **Step 1: Write the failing tests** in `export.test.ts`, describe `build`:
@@ -107,6 +109,7 @@ git commit -m "feat(pm-export): export brief and inbox sections, schemaVersion 6
 ### Task 2: Section collections for briefs and inbox files (ADR-017)
 
 **Files:**
+
 - Create: `packages/pm-docs-site/src/loaders/sections.ts` (shared render helper)
 - Create: `packages/pm-docs-site/src/loaders/records.ts` (`briefSectionsLoader`, `inboxSectionsLoader`)
 - Modify: `packages/pm-docs-site/src/loaders/adrs.ts` (use the helper; behaviour unchanged)
@@ -114,6 +117,7 @@ git commit -m "feat(pm-export): export brief and inbox sections, schemaVersion 6
 - Test: `packages/pm-docs-site/test/adrs-loader.test.ts`, new `packages/pm-docs-site/test/records-loader.test.ts`
 
 **Interfaces:**
+
 - Consumes: `Brief.sections`, `InboxEntry.sections` (Task 1).
 - Produces:
   - `recordFile(planningPath: string, folder: 'decisions' | 'briefs' | 'inbox', recordPath: string): string` — `join(dirname(planningPath), folder, basename(recordPath))`; `adrFile` becomes `recordFile(p, 'decisions', a)`.
@@ -161,12 +165,14 @@ git commit -m "feat(pm-docs-site): brief and inbox section collections (R-052)"
 ### Task 3: Brief and inbox targets and backlinks
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/src/lib/references.ts`
 - Modify: `packages/pm-docs-site/src/lib/site-refs.ts`
 - Modify: `packages/pm-docs-site/src/lib/planning.ts` (add `briefHref`, `inboxHref`)
 - Test: `packages/pm-docs-site/test/references.test.ts`
 
 **Interfaces:**
+
 - Consumes: `'brief-sections'`, `'inbox-sections'` and `RecordSectionData` (Task 2).
 - Produces:
   - `briefHref(path: string): string` → `/plan/briefs/<slug>/`; `inboxHref(file: string): string` → `/plan/inbox/<slug>/`.
@@ -217,12 +223,14 @@ git commit -m "feat(pm-docs-site): brief and inbox link targets and backlinks (R
 ### Task 4: Brief and inbox pages
 
 **Files:**
+
 - Create: `packages/pm-docs-site/src/routes/plan/briefs/[slug].astro`, `packages/pm-docs-site/src/routes/plan/inbox/[slug].astro`
 - Modify: `packages/pm-docs-site/lib/index.ts` (routes for the `inbox` and `briefs` views)
 - Modify: `packages/pm-docs-site/src/routes/plan/briefs.astro`, `packages/pm-docs-site/src/routes/plan/inbox.astro` (link each entry to its page; Briefs keeps its section `id` anchors)
 - Modify: `packages/pm-docs-site/test/fixtures/expected-pages.txt`, `packages/pm-docs-site/test/links.test.ts` (`TARGET_PAGE` adds `briefs|inbox`), `packages/pm-docs-site/test/integration.test.ts`
 
 **Interfaces:**
+
 - Consumes: Task 2 collections, Task 3 `briefHref`, `inboxHref`, `siteRefs()`.
 - Produces: pages at `/plan/briefs/<slug>/` and `/plan/inbox/<slug>/`, following `src/routes/plan/decisions/[id].astro`: `<ExportStamp kind="Brief" | "Inbox" />`, a back link (`All briefs` → `/plan/briefs/`, `Inbox` → `/plan/inbox/`), a `plan-facts` list (brief: Status, Origin, Updated, File; inbox: Captured, Source, Kind, Severity, Affects, Context, Discuss, Related, Brief, Reviewed, File, each present value only, prose through `LinkedText`, IDs through `RefLink`), each section as `<h2>{heading}</h2>` with its `render()`ed `Content` in `<LinkedHtml>`, or `<p>None recorded.</p>` when blank, then `<LinkedFrom ref={key} />`. Title: brief `` `${brief.id} ${brief.title}` `` when it has an ID, else the title; inbox: its title.
 
@@ -247,6 +255,7 @@ it('an inbox page renders Reproduction as a list', () => {
 ```
 
 Add the four pages to `expected-pages.txt`. In `integration.test.ts`, add `appendToRecord(dir, kind: 'briefs' | 'inbox', key: string, heading: string, markdown: string)` beside `appendToAdr`, and in `describe('ADR images ...')`'s style add:
+
 - `a brief section with a relative image builds to a resolved img`: append `![a](x.png)` to `2026-11-09-invoice-export.md`'s `Proposal`, write `briefs/x.png` beside `planning.json`; assert as the ADR test does on `plan/briefs/2026-11-09-invoice-export/index.html`.
 - `a brief section with a missing relative image fails the build`: `![a](missing.png)`; expect exit non-zero and `missing.png` in the output.
 - `a missing brief image does not fail the build when the Briefs view is off`: options with `views` omitting `briefs`; expect exit 0 and no `plan/briefs/` page directory.
@@ -271,6 +280,7 @@ git commit -m "feat(pm-docs-site): a page per brief and per inbox file (R-052)"
 ### Task 5: Docs, upgrade note, versions, and full verification
 
 **Files:**
+
 - Modify: `packages/pm-docs-site/README.md` (the Briefs and Inbox views: one page per brief and per inbox file, whole, with Linked from; relative images beside the file)
 - Modify: `skills/pm-setup/references/AGENTS-section.md` (new upgrade paragraph after the last `Version 21 also` paragraph) and the installed copy at the end of `AGENTS.md`
 - Modify: `package.json` via `just bump prerelease`
