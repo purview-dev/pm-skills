@@ -50,7 +50,7 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 ### M2 Verified install and upgrade
 
 - Serves: V1
-- Exit criteria: in an empty scratch repository, `npx skills add https://github.com/purview-dev/pm-skills -y` then `pm-setup` reports every pm-* and workflow skill installed, and `just validate` fails when `pm-setup`'s skill count differs from the shipped skills.
+- Exit criteria: `just validate` fails when `pm-setup`'s skill count differs from the shipped skills, and `pm-setup` run in a repository with `docs/adr/` and no `<PM root>/config.md` prints the Note that suggests `pm-adr import docs/adr/`.
 - Target: none
 - Status: active
 
@@ -77,10 +77,6 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
   Evidence: `planning/briefs/2026-11-22-where-do-adrs-fit.md` and `planning/briefs/2026-11-20-technology-and-engineering-principles.md` record agents contradicting earlier decisions because nothing records or points at them.
   We will know when: the M4 rehearsal report in `planning/research/` shows the design handoff naming the ADRs and principles that apply and `pm-checkpoint` (`done`) refusing a failing command check.
   Status: won (2026-11-26)
-- B3: We believe rehearsing a fresh install in a scratch repository will catch install and setup defects before a consumer hits them, for new consumers of pm-skills.
-  Evidence: the R-036 rehearsal's setup alone found that `pm-setup` run before `pm-init` never suggests `pm-adr import` (R-057 pm-setup suggests ADR import before init).
-  We will know when: R-015 Rehearse a fresh install in a scratch repository reports every pm-* and workflow skill installed, and every defect it finds is on the roadmap.
-  Status: open
 
 ## Assumptions and risks
 
@@ -96,8 +92,6 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 - A3: Integration options and Starlight component overrides cover the customisation this repository's `docs-site/` needs. Test: R-013 Docs-site package: publish and migrate moves `docs-site/` onto the package with no copied files.
   Status: holds (2026-11-25)
 - A5: A design stage that is handed the applicable ADRs and principles follows them. Test: the next item whose spec names ADRs has its plan written by a separate session from the handoff, and that plan cites them (the R-036 rehearsal plan cited every ID, but one agent wrote both the handoff and the plan).
-  Status: untested
-- A6: `npx skills add https://github.com/purview-dev/pm-skills -y` installs every shipped skill and none of the repository-local ones. Test: R-015 Rehearse a fresh install in a scratch repository's report.
   Status: untested
 
 ## Not doing
@@ -119,6 +113,9 @@ Newest first. Nothing in this file changes without a line here.
 - <YYYY-MM-DD> <decision>. Why: <reason>. Rejected: <alternatives>.
 -->
 
+- 2026-11-26 Focus stays M2 Verified install and upgrade (R-057, R-006); R-042 Docs-site package: deferred review minors moves to Next 5. Why: M2 is 2 S items, about 0.25 weeks; Next had a free slot. Rejected: focus on M5; leaving Next at 4.
+- 2026-11-26 Bet B3 and assumption A6 removed. Why: R-015 Rehearse a fresh install in a scratch repository, their only test, was dropped. Rejected: keeping both untested; keeping A6 only.
+- 2026-11-26 M2 Verified install and upgrade exit criteria drop the fresh-install rehearsal and add the pm-setup ADR import Note before init. Why: R-015 was dropped (user, during its design); R-006 and R-057 now cover M2. Rejected: a smaller isolated `npx skills list` item; retiring M2.
 - 2026-11-26 Re-planned roadmap. Why: focus moved to M2 Verified install and upgrade, so Next is R-015, R-057, R-006 (M2, risk first), then R-052 and R-056 (M5); R-042 and R-053 move to the top of Later under M5; Later is M5, M3, then Unassigned. Rejected: keeping Next all M5; R-042 in Next ahead of R-056.
 - 2026-11-26 Not doing: GitHub issue and Project sync removed (dropped in the 2026-11-26 review); hosting the docs site stays deferred, revisit after M5 Docs-site package 1.0.0 is done. Why: M1's revisit condition is met and M5 is not done. Rejected: hosting now.
 - 2026-11-26 Bet B3 and assumption A6 added for M2; B2 won; A5 stays untested with an independent-session test. Why: the M4 rehearsal report meets B2's signal, but one agent wrote both A5's handoff and plan. Rejected: marking A5 holds.

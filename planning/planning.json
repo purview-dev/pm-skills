@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-26T11:03:48+00:00",
+  "generatedAt": "2026-11-26T11:06:31+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-015-rehearse-a-fresh-install",
-    "head": "6898ac4c8c1ea85a716324a3162acbb6ddfba952"
+    "branch": "main",
+    "head": "f6b08265ffab7c6fff1a0365cc0f252815c487e4"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -93,7 +93,7 @@
         "serves": [
           "V1"
         ],
-        "exitCriteria": "in an empty scratch repository, `npx skills add https://github.com/purview-dev/pm-skills -y` then `pm-setup` reports every pm-* and workflow skill installed, and `just validate` fails when `pm-setup`'s skill count differs from the shipped skills.",
+        "exitCriteria": "`just validate` fails when `pm-setup`'s skill count differs from the shipped skills, and `pm-setup` run in a repository with `docs/adr/` and no `<PM root>/config.md` prints the Note that suggests `pm-adr import docs/adr/`.",
         "target": null,
         "status": "active"
       },
@@ -123,13 +123,6 @@
         "evidence": "`planning/briefs/2026-11-22-where-do-adrs-fit.md` and `planning/briefs/2026-11-20-technology-and-engineering-principles.md` record agents contradicting earlier decisions because nothing records or points at them.",
         "signal": "the M4 rehearsal report in `planning/research/` shows the design handoff naming the ADRs and principles that apply and `pm-checkpoint` (`done`) refusing a failing command check.",
         "status": "won (2026-11-26)"
-      },
-      {
-        "id": "B3",
-        "statement": "We believe rehearsing a fresh install in a scratch repository will catch install and setup defects before a consumer hits them, for new consumers of pm-skills.",
-        "evidence": "the R-036 rehearsal's setup alone found that `pm-setup` run before `pm-init` never suggests `pm-adr import` (R-057 pm-setup suggests ADR import before init).",
-        "signal": "R-015 Rehearse a fresh install in a scratch repository reports every pm-* and workflow skill installed, and every defect it finds is on the roadmap.",
-        "status": "open"
       }
     ],
     "assumptions": [
@@ -156,12 +149,6 @@
         "statement": "A design stage that is handed the applicable ADRs and principles follows them.",
         "test": "the next item whose spec names ADRs has its plan written by a separate session from the handoff, and that plan cites them (the R-036 rehearsal plan cited every ID, but one agent wrote both the handoff and the plan).",
         "status": "untested"
-      },
-      {
-        "id": "A6",
-        "statement": "`npx skills add https://github.com/purview-dev/pm-skills -y` installs every shipped skill and none of the repository-local ones.",
-        "test": "R-015 Rehearse a fresh install in a scratch repository's report.",
-        "status": "untested"
       }
     ],
     "notDoing": [
@@ -187,6 +174,24 @@
       }
     ],
     "decisions": [
+      {
+        "date": "2026-11-26",
+        "decision": "Focus stays M2 Verified install and upgrade (R-057, R-006); R-042 Docs-site package: deferred review minors moves to Next 5.",
+        "why": "M2 is 2 S items, about 0.25 weeks; Next had a free slot.",
+        "rejected": "focus on M5; leaving Next at 4."
+      },
+      {
+        "date": "2026-11-26",
+        "decision": "Bet B3 and assumption A6 removed.",
+        "why": "R-015 Rehearse a fresh install in a scratch repository, their only test, was dropped.",
+        "rejected": "keeping both untested; keeping A6 only."
+      },
+      {
+        "date": "2026-11-26",
+        "decision": "M2 Verified install and upgrade exit criteria drop the fresh-install rehearsal and add the pm-setup ADR import Note before init.",
+        "why": "R-015 was dropped (user, during its design); R-006 and R-057 now cover M2.",
+        "rejected": "a smaller isolated `npx skills list` item; retiring M2."
+      },
       {
         "date": "2026-11-26",
         "decision": "Re-planned roadmap.",
@@ -480,15 +485,13 @@
         "note": "From the 2026-11-25 strategy re-plan (bug, inbox 2026-11-25-0717, severity minor, from R-041 execute). Two consecutive `just lint-check` runs on a prose-only branch failed in `package-test`, each on a different test that passes alone: `cli.test.ts` timed out after 180000ms (4.27s alone), and `graph.browser.ts:296` found `.plan-graph__toolbar` hidden within 5000ms (482ms alone). Reproduction: run `just lint-check` twice on Windows; one package test fails per run under load.",
         "revisits": null,
         "claimable": true
-      }
-    ],
-    "later": [
+      },
       {
         "id": "R-042",
         "title": "Docs-site package: deferred review minors",
-        "section": "later",
-        "position": 1,
-        "label": "later",
+        "section": "next",
+        "position": 5,
+        "label": "next",
         "serves": [
           "V4"
         ],
@@ -505,13 +508,15 @@
         "brief": null,
         "note": "From the 2026-11-22 review; review minors in `packages/pm-docs-site` (inbox 2026-11-18-1222, 2026-11-20-1844 x3). R-010 board: (1) the 3s reveal of a pending board also fires on a slow but successful hydration; document it in `components.css` and the `useBoardUrlState.ts` header, or tune it. (2) The pending mark is also set on `/plan/roadmap/?owner=...`; scope it to the Board page. (3) `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`. (4) The lane header is a plain `div`; use an `h3` or `role=\"heading\"`. (5) Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed. (6) The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page. (7) A collapsed column's vertical title stretches the shared header row. (8) `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab`; its header comment lists only some changes. (9) `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array. (10) `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id`; `tagHref` never asserted. (11) `integration.test.ts` asserts the integration names two ways. (12) `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`. (13) The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP. R-028: (14) `test/island-imports.test.ts` scans only `.ts` and `.tsx` under `src/components`, so an `.astro` client `<script>` that value-imports a server-only lib is not caught. (15) `start()` in `src/scripts/plan.ts` adds `pointerdown`, `pointerup`, and `click` listeners on `document` each run, so they stack under view transitions. (16) `test/browser/board.browser.ts` test \"a localStorage that throws leaves the Board usable\" pins Starlight theme-script error counts per `<starlight-theme-select>`; a Starlight upgrade fails it with no fault in the package; loosen it or report the unguarded `localStorage` read upstream. R-031 (inbox 2026-11-21-1205): (17) `relativeImports` in `test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports in comments, and misses template-literal dynamic imports (false failures only). (18) In `scripts/check-demo.ts`, a `plan-empty` element's text is cut off at a nested `plan-empty` element. (19) `src/pages/plan/log.astro` labels a known ID whose page is not built with the logged title, not the export's current title, and no test covers that view-off case. R-025 (2026-11-25 review, inbox 2026-11-22-1821): (20) `revisers()` order is not pinned by a test: every assertion in `test/planning.test.ts` (the revisers case) returns one item; give a second item `revisits: 'R-003'` in the populated case and assert both IDs in `features()` order. (21) `src/lib/references.ts` line 188 still checks `other.dependsOn.includes(feature.id) || other.revisits === feature.id` inline; it could reuse `dependents()` and `revisers()`. R-013 (2026-11-25 review, inbox 2026-11-24-2044): (22) `--port=4399` (the `=` form) is not parsed, so it becomes the site folder, and any unknown flag silently becomes a positional argument (`lib/cli-args.ts`). (23) `test/cli.test.ts` \"dev --port 4399 serves on 4399\" uses a fixed port, which can collide with another process. (24) `skills/pm-docs-site/SKILL.md` Guard checks `bun --version` but not Node 24, so an older Node fails only at verify, after files are written. (25) Two byte-identical Markdown sources on one page (for example two ADR sections with the same text and fence) get the same Pele IDs (`lib/mermaid.ts`). R-040 (2026-11-25 review, inbox 2026-11-25-1008): (26) linkHtml: a raw `<` inside a script or style body (`<script>if (a<b) x='R-012'</script>`) is read as a tag, so the script never closes and the rest of the ADR section is not linked; links and Linked from entries still agree. Fix: while script or style is open, scan to the matching close tag (`src/lib/link-html.ts`). (27) `test/link-html.test.ts`, `test/links.test.ts`, and `test/references.test.ts` lack a final newline, and `skills/pm-export/scripts/export.test.ts` has an `it(` at column 0 near line 122. (28) The Decisions noscript test checks a string only. R-050 (2026-11-25 strategy re-plan, inbox 2026-11-25-1417): (29) No test pins a remote ADR image staying a plain img with its src; a consumer who sets Astro `image.domains` would get it optimised and its src rewritten. Append `![r](https://example.com/r.png)` to the relative-image test in `test/integration.test.ts` and assert `src=\"https://example.com/r.png\"`. (30) Every non-empty ADR section is rendered twice per build (the `adrs` html and the `adr-sections` entry in `src/loaders/adrs.ts`), Mermaid included; share one memoised render per section.",
         "revisits": null,
-        "claimable": false
-      },
+        "claimable": true
+      }
+    ],
+    "later": [
       {
         "id": "R-053",
         "title": "Docs-site package: release 1.0.0",
         "section": "later",
-        "position": 2,
+        "position": 1,
         "label": "waiting",
         "serves": [
           "V4"
@@ -537,7 +542,7 @@
         "id": "R-016",
         "title": "Rehearse the lifecycle guards",
         "section": "later",
-        "position": 3,
+        "position": 2,
         "label": "later",
         "serves": [
           "V2",
@@ -562,7 +567,7 @@
         "id": "R-024",
         "title": "Self-contained aspire module test example",
         "section": "later",
-        "position": 4,
+        "position": 3,
         "label": "later",
         "serves": [
           "V4"
@@ -586,7 +591,7 @@
         "id": "R-030",
         "title": "Pre-push runs fast checks only",
         "section": "later",
-        "position": 5,
+        "position": 4,
         "label": "later",
         "serves": [
           "V4"
@@ -610,7 +615,7 @@
         "id": "R-032",
         "title": "pm-checkpoint and pm-lint Note follow-ups",
         "section": "later",
-        "position": 6,
+        "position": 5,
         "label": "later",
         "serves": [
           "V2"
@@ -634,7 +639,7 @@
         "id": "R-046",
         "title": "Upgrade, format, and git rules move to references",
         "section": "later",
-        "position": 7,
+        "position": 6,
         "label": "later",
         "serves": [
           "V2"
@@ -660,7 +665,7 @@
         "id": "R-047",
         "title": "Core rules file and a 15 KB managed section",
         "section": "later",
-        "position": 8,
+        "position": 7,
         "label": "waiting",
         "serves": [
           "V2"
@@ -686,7 +691,7 @@
         "id": "R-048",
         "title": "Repository AGENTS.md top part into dedicated files",
         "section": "later",
-        "position": 9,
+        "position": 8,
         "label": "later",
         "serves": [
           "V2"
@@ -710,7 +715,7 @@
         "id": "R-049",
         "title": "Trim the largest SKILL.md files",
         "section": "later",
-        "position": 10,
+        "position": 9,
         "label": "waiting",
         "serves": [
           "V2"
@@ -736,7 +741,7 @@
         "id": "R-051",
         "title": "PM sync review minors",
         "section": "later",
-        "position": 11,
+        "position": 10,
         "label": "later",
         "serves": [
           "V2"
@@ -760,7 +765,7 @@
         "id": "R-054",
         "title": "Git subprocess tests stable under load",
         "section": "later",
-        "position": 12,
+        "position": 11,
         "label": "later",
         "serves": [
           "V4"
@@ -812,6 +817,13 @@
           "title": "Package tests stable under full lint-check",
           "owner": "agent",
           "size": "S",
+          "detail": "ready"
+        },
+        {
+          "id": "R-042",
+          "title": "Docs-site package: deferred review minors",
+          "owner": "agent",
+          "size": "M",
           "detail": "ready"
         }
       ],
@@ -2383,8 +2395,8 @@
     }
   ],
   "counts": {
-    "next": 4,
-    "later": 12,
+    "next": 5,
+    "later": 11,
     "nextMax": 5,
     "openInbox": 3,
     "discuss": 3,
@@ -2404,8 +2416,9 @@
       "R-057",
       "R-006",
       "R-052",
-      "R-056"
+      "R-056",
+      "R-042"
     ],
-    "drift": true
+    "drift": false
   }
 }
