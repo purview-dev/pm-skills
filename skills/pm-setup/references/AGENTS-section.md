@@ -1154,6 +1154,13 @@ the record or named in a `Note`, never a reason to stop, and an item's
 ADR that `pm-adr` wrote in the main worktree is found and accepted there.
 No setting is added.
 
+Version 21 also passes the ADRs the spec names and the principles that
+apply to its files to every plan handoff, has `pm-checkpoint` (`done`) run
+the principles' command checks before it closes an item (a failure blocks;
+a review finding is a `Note` and an inbox file), and records a package
+`pm-purview` accepted in `ENGINEERING.md` when its item closes. No setting
+is added.
+
 ## Asking the user (mandatory)
 
 - **Every question uses the agent's interactive question tool** (for
