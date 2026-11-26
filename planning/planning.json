@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 6,
-  "generatedAt": "2026-11-26T18:56:13+00:00",
+  "generatedAt": "2026-11-26T20:55:04+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-052-docs-site-package-brief-and-inbox-pages",
-    "head": "20795b7a30094bc6870a47723c58588c3b1c614a"
+    "branch": "feat/r-056-package-tests-stable-under-full-lint-check",
+    "head": "47265d9481fba228a29426edce1431cefaf9d005"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -381,50 +381,38 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
+    "status": "active",
+    "item": {
+      "id": "R-056",
+      "title": "Package tests stable under full lint-check",
+      "serves": [
+        "V4"
+      ],
+      "owner": "agent",
+      "size": "S",
+      "dependsOn": [],
+      "revisits": null
+    },
+    "stage": "design",
+    "session": "feat/r-056-package-tests-stable-under-full-lint-check",
     "brief": null,
-    "milestone": null,
+    "milestone": "M5",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-26",
+    "doneWhen": [
+      "Two consecutive `just lint-check` runs on Windows pass `package-test`, including `test/cli.test.ts` \"still reads a site whose config is astro.config.mjs\" and `test/browser/graph.browser.ts` \"usable at 320px\"."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-056",
-        "title": "Package tests stable under full lint-check",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M5",
-        "owner": "agent",
-        "doneWhen": "two consecutive `just lint-check` runs on Windows pass `package-test`, including `test/cli.test.ts` \"still reads a site whose config is astro.config.mjs\" and `test/browser/graph.browser.ts` \"usable at 320px\".",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "From the 2026-11-25 strategy re-plan (bug, inbox 2026-11-25-0717, severity minor, from R-041 execute). Two consecutive `just lint-check` runs on a prose-only branch failed in `package-test`, each on a different test that passes alone: `cli.test.ts` timed out after 180000ms (4.27s alone), and `graph.browser.ts:296` found `.plan-graph__toolbar` hidden within 5000ms (482ms alone). Reproduction: run `just lint-check` twice on Windows; one package test fails per run under load.",
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-042",
         "title": "Docs-site package: deferred review minors",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V4"
@@ -723,15 +711,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-056",
           "title": "Package tests stable under full lint-check",
           "owner": "agent",
           "size": "S",
-          "detail": "ready"
-        },
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-042",
           "title": "Docs-site package: deferred review minors",
@@ -2951,7 +2940,7 @@
     }
   ],
   "counts": {
-    "next": 2,
+    "next": 1,
     "later": 11,
     "nextMax": 5,
     "openInbox": 8,
@@ -2969,7 +2958,6 @@
     "reviewDue": false,
     "lastReview": "2026-11-26",
     "claimable": [
-      "R-056",
       "R-042"
     ],
     "drift": true

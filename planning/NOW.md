@@ -11,22 +11,25 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: idle
-- Item:
-- Session:
-- Stage:
+- Status: active
+- Item: R-056 Package tests stable under full lint-check
+- Session: feat/r-056-package-tests-stable-under-full-lint-check
+- Stage: design
 - Brief:
-- Milestone:
-- Serves:
-- Owner:
-- Size:
-- Depends on:
+- Milestone: M5
+- Serves: V4
+- Owner: agent
+- Size: S
+- Depends on: none
 - Revisits:
+- Note: From the 2026-11-25 strategy re-plan (bug, inbox 2026-11-25-0717, severity minor, from R-041 execute). Two consecutive `just lint-check` runs on a prose-only branch failed in `package-test`, each on a different test that passes alone: `cli.test.ts` timed out after 180000ms (4.27s alone), and `graph.browser.ts:296` found `.plan-graph__toolbar` hidden within 5000ms (482ms alone). Reproduction: run `just lint-check` twice on Windows; one package test fails per run under load. 2026-11-26: started as is outside the current focus (M2 Verified install and upgrade), because M2 has no open items since R-015 was dropped.
 - Spec:
 - Plan:
-- Started:
+- Started: 2026-11-26
 
 ## Done when
+
+- Two consecutive `just lint-check` runs on Windows pass `package-test`, including `test/cli.test.ts` "still reads a site whose config is astro.config.mjs" and `test/browser/graph.browser.ts` "usable at 320px".
 
 ## Checkpoint
 
