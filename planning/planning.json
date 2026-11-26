@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 5,
-  "generatedAt": "2026-11-26T17:44:20+00:00",
+  "generatedAt": "2026-11-26T18:08:18+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-052-docs-site-package-brief-and-inbox-pages",
-    "head": "2f491c4abb7b5017ddf5847ec5cf0958ac3da9f8"
+    "head": "be6867aff9f2309f1077bca320d6fae167aaf97a"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -393,19 +393,173 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "plan",
+    "stage": "execute",
     "session": "feat/r-052-docs-site-package-brief-and-inbox-pages",
     "brief": "planning/briefs/2026-11-17-docs-site-package.md",
     "milestone": "M5",
     "spec": "docs/superpowers/specs/2026-11-26-docs-site-brief-and-inbox-pages-design.md",
-    "plan": null,
+    "plan": "docs/superpowers/plans/2026-11-26-docs-site-brief-and-inbox-pages.md",
     "started": "2026-11-26",
     "doneWhen": [
       "The package builds one page per brief and one per inbox file, each with links and a Linked from list as item, risk, and ADR pages have, a test in `packages/pm-docs-site/test/` covers both, and `just package-test` and `just docs-check` pass."
     ],
     "checkpoint": null
   },
-  "plan": null,
+  "plan": {
+    "path": "docs/superpowers/plans/2026-11-26-docs-site-brief-and-inbox-pages.md",
+    "checked": 0,
+    "total": 27,
+    "tasks": [
+      {
+        "number": 1,
+        "title": "Export ordered sections (ADR-016) and move to schemaVersion 6",
+        "checked": 0,
+        "total": 7,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** in `export.test.ts`, describe `build`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run to verify they fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement `recordSections(text: string): RecordSection[]`** in `planning.ts`: `sections(stripCommentsOutsideCode(text), 2).slice(1)`, each body trimmed as `sectionText` does (leading blank lines, trailing whitespace). Read the inbox and brief files raw (`folder(\"inbox\", true)`, `folder(\"briefs\", true)`) and apply `stripComments` yourself for the existing fields, so only `sections` keeps comments inside code. Append `sections: recordSections(text)` to both entries.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Schema, example, field map.** Add `$defs.section` `{ type: object, additionalProperties: false, required: [heading, markdown], properties: { heading: {type: string}, markdown: {type: string} } }`; add `sections: { type: array, items: { $ref: \"#/$defs/section\" } }` last in `brief` and `inboxEntry` `properties` and `required`; `schemaVersion` const `6`. Give every brief and inbox entry in `planning.example.json` a `sections` array, and set `schemaVersion: 6`. In `skills/pm-export/SKILL.md`, row `schemaVersion` reads `6`, and append to both field-map bullets: `` `sections[]` is `{heading, markdown}` for every `##` section after the header, in file order, the Markdown verbatim with HTML comments removed outside code (ADR-016). ``",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Package reads 6.** `SUPPORTED_SCHEMA_VERSIONS = Object.freeze([6])`; add `sections` to `Brief` and `InboxEntry`; in `test/fixtures/planning.json` set `schemaVersion` 6 and give each brief and inbox entry `sections` — `2026-11-09-invoice-export.md` gets `Problem`, `Proposal` (with a two-column Markdown table naming `R-012`), `Decision`, and an empty `Open questions` (`\"\"`); `2026-11-07-referrals.md` gets `[]`; `2026-11-08-1010-csv-encoding.md` gets `Idea` and `Reproduction` (`1. Export R-012.\\n2. Open it in Excel.`); `2026-11-09-0900-yearly-export.md` gets `Idea`. Package `version` `0.1.0-pre.7`; `skills/pm-docs-site/SKILL.md` lines 28 and 30 as in Global Constraints. Update any test that pins `5`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 6: Verify**",
+            "checked": false
+          },
+          {
+            "text": "**Step 7: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 2,
+        "title": "Section collections for briefs and inbox files (ADR-017)",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** in `test/records-loader.test.ts`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run to verify they fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement** `sections.ts` (`recordFile`, `recordSectionId`, `recordEntries`, and `renderSection(renderMarkdown, markdown, file)` returning the `store.set` fields `rendered`, `filePath`, `assetImports`, with `siteRoot` as `adrSectionsLoader` computes it); `records.ts` loaders; register both in `content.config.ts` with one comment each, naming ADR-017. Refactor `adrSectionsLoader` onto `renderSection` and `recordFile`.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Verify**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "Brief and inbox targets and backlinks",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests** in `references.test.ts`, using the fixture planning:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run to verify they fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement** the Interfaces above.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Verify**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "Brief and inbox pages",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Write the failing tests.** In `links.test.ts`, change `TARGET_PAGE` to `/^\\/plan\\/(features|milestones|risks|decisions|briefs|inbox)\\/[^/]+\\/$/` (the existing Linked from tests now cover both kinds). Add `describe('brief and inbox pages')`:",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: Run to verify they fail**",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Implement** the two pages, the routes in `lib/index.ts` (`inbox: [['/plan/inbox', ...], ['/plan/inbox/[slug]', 'plan/inbox/[slug].astro']]`, same for `briefs`), and the list-page links (`RefLink` on the brief title and the inbox card title, `label=\"full\"`). `getStaticPaths` returns `[]` when the export has no briefs / inbox entries, so an empty collection is never looked up.",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Verify**",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      },
+      {
+        "number": 5,
+        "title": "Docs, upgrade note, versions, and full verification",
+        "checked": 0,
+        "total": 5,
+        "steps": [
+          {
+            "text": "**Step 1: Upgrade note.** Append to the managed section reference, and to the same place in `AGENTS.md` (the installed copy has no `version=` in its marker):",
+            "checked": false
+          },
+          {
+            "text": "**Step 2: README** of the package: document both pages under the Briefs and Inbox views.",
+            "checked": false
+          },
+          {
+            "text": "**Step 3: Versions and the demo.**",
+            "checked": false
+          },
+          {
+            "text": "**Step 4: Full verification** (the item's `Done when`)",
+            "checked": false
+          },
+          {
+            "text": "**Step 5: Commit**",
+            "checked": false
+          }
+        ]
+      }
+    ]
+  },
   "roadmap": {
     "next": [
       {
@@ -741,7 +895,7 @@
           "title": "Docs-site package: brief and inbox pages",
           "owner": "agent",
           "size": "S",
-          "detail": "plan"
+          "detail": "execute, 0/27 plan steps"
         }
       ],
       "next": [
