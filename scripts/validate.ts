@@ -5,6 +5,7 @@ import { SCHEMA_VERSION as EXPORTER_SCHEMA_VERSION } from "../skills/pm-export/s
 import { formatErrors, validate as validateSchema } from "../skills/pm-export/scripts/schema.ts";
 import { versionDrift } from "./package-docs.ts";
 import { compare as compareVersions, parse as parseVersion } from "./semver.ts";
+import { skillCountDrift } from "./skill-counts.ts";
 
 const root = join(import.meta.dir, "..");
 const skillsDir = join(root, "skills");
@@ -54,6 +55,9 @@ for (const name of shipped) {
   if (!section.includes(`| \`${name}\` |`)) fail(`AGENTS-section.md: ${name} not in skills table`);
   if (name !== "pm-setup" && !setup.includes(`\`${name}\``)) fail(`pm-setup/SKILL.md: ${name} not in inventory`);
   if (!help.includes(`| \`${name}\` |`)) fail(`pm-help/SKILL.md: ${name} not in skill guide`);
+}
+for (const message of skillCountDrift("pm-setup/SKILL.md", setup, shipped.filter((name) => name !== "pm-setup").length)) {
+  fail(message);
 }
 
 // Every way back into design passes the ADR instruction (R-039).

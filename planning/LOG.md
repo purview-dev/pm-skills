@@ -4,6 +4,7 @@
 
 ## Done
 
+- 2026-11-26 R-006 Check pm-setup's skill counts in validate. Milestone: M2. Owner: agent. Plan: docs/superpowers/plans/2026-11-26-r-006-pm-setup-skill-counts.md. Result: branch feat/r-006-check-pm-setup-skill-counts.
 - 2026-11-26 R-058 ADR pages: fix and release. Milestone: M5. Owner: agent. Plan: docs/superpowers/plans/2026-11-26-adr-pages-fix-and-release.md. Result: branch feat/r-058-adr-pages-fix-and-release.
 - 2026-11-26 R-057 pm-setup suggests ADR import before init. Milestone: M2. Owner: agent. Plan: docs/superpowers/plans/2026-11-26-pm-setup-adr-import-before-init.md. Result: branch feat/r-057-pm-setup-suggests-adr-import-before-init.
 - 2026-11-26 R-036 Plan citation and done check. Milestone: M4. Owner: agent. Plan: docs/superpowers/plans/2026-11-26-plan-citation-and-done-check.md. Result: branch feat/r-036-plan-citation-and-done-check.

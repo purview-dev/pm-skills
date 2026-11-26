@@ -14,16 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-006 Check pm-setup's skill counts in validate
-
-- Serves: V1
-- Milestone: M2
-- Owner: agent
-- Done when: `just validate` fails when the `<n> of 22` counts in `pm-setup` differ from the number of shipped skills.
-- Size: S
-- Depends on: none
-- Status: ready
-
 ### R-052 Docs-site package: brief and inbox pages
 
 - Serves: V4
