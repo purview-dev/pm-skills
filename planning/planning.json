@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 6,
-  "generatedAt": "2026-11-26T23:11:15+00:00",
+  "generatedAt": "2026-11-27T00:24:24+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-056-package-tests-stable-under-full-lint-check",
-    "head": "800a606c74bb4f9261fea4483088789ed1a61237"
+    "head": "011052bbefd1a43f3ce33ef590a8ba640474f26b"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -381,133 +381,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-056",
-      "title": "Package tests stable under full lint-check",
-      "serves": [
-        "V4"
-      ],
-      "owner": "agent",
-      "size": "S",
-      "dependsOn": [],
-      "revisits": null
-    },
-    "stage": "execute",
-    "session": "feat/r-056-package-tests-stable-under-full-lint-check",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
     "brief": null,
-    "milestone": "M5",
-    "spec": "docs/superpowers/specs/2026-11-26-package-tests-stable-under-load-design.md",
-    "plan": "docs/superpowers/plans/2026-11-26-package-tests-stable-under-load.md",
-    "started": "2026-11-26",
-    "doneWhen": [
-      "Two consecutive `just lint-check` runs on Windows pass `package-test`, including `test/cli.test.ts` \"still reads a site whose config is astro.config.mjs\" and `test/browser/graph.browser.ts` \"usable at 320px\"."
-    ],
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-26-package-tests-stable-under-load.md",
-    "checked": 0,
-    "total": 16,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "`runCli` stops a hung child and reports it",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing tests** in `test/helpers.test.ts`:",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run to verify they fail**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement** in `test/helpers.ts`: `childTimeout` returns `BUILD - 10_000` when `args[0] === 'build'`, else `CHECK - 10_000`. `runCli` passes `timeout: options?.timeout ?? childTimeout(args)` and `killSignal: 'SIGKILL'` to `Bun.spawnSync`, sets `timedOut` from the result's `exitedDueToTimeout === true`, maps a `null` exit code to `-1`, and on a timeout prefixes stderr with `runCli: timed out after <ms>ms: node lib/cli.ts <args joined by spaces>\\n`. Move `BUILD` and `CHECK` here and import them in the three test files.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run to verify they pass**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Type-check and commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 2,
-        "title": "One hydration timeout for the browser tests",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing guard test** in `test/hydration.test.ts`:",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run to verify it fails**",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement** `hydration.ts`, and in each `hydrated()` call `toBeVisible({ timeout: HYDRATED })`, importing `HYDRATED` from `./hydration.ts`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run to verify**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit**",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 3,
-        "title": "Reproduce under the full run and fix the cause",
-        "checked": 0,
-        "total": 4,
-        "steps": [
-          {
-            "text": "**Step 1: Run the full check, output to a file**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Record each run** in the Run log: exit code, failing test name, and for a `runCli: timed out` line the 20 stderr lines after it. Note any `EBUSY`/`EPERM` from `afterAll` (Review Focus 5).",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Fix the cause** the output shows, with a test that fails before the fix. If the cause is in `lib/` or `src/`, stop: write `SCOPE CHANGE: <cause, file>` in the Run log and report to the user before any change. If both runs passed and no `timed out` line appeared, write `No hang reproduced in 2 runs; Task 1 reports it if it recurs.` and skip to Task 4.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Commit** the fix with `fix(pm-docs-site): <cause> (R-056)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 4,
-        "title": "Done when",
-        "checked": 0,
-        "total": 2,
-        "steps": [
-          {
-            "text": "**Step 1:** Run `just lint-check` twice in a row on Windows. Expected: both exit 0, and both logs show `still reads a site whose config is astro.config.mjs` and `usable at 320px` passing. Record both in the Run log.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2:** Commit the Run log update: `git add docs/superpowers/plans/2026-11-26-package-tests-stable-under-load.md` and `git commit -m \"docs(plan): R-056 run log\"`.",
-            "checked": false
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [
       {
@@ -813,15 +699,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-056",
-          "title": "Package tests stable under full lint-check",
-          "owner": "agent",
-          "size": "S",
-          "detail": "execute, 0/16 plan steps"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-042",
@@ -834,6 +712,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-27",
+          "id": "R-056",
+          "title": "Package tests stable under full lint-check",
+          "milestone": "M5",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-26-package-tests-stable-under-load.md",
+          "result": "branch feat/r-056-package-tests-stable-under-full-lint-check"
+        },
         {
           "date": "2026-11-26",
           "id": "R-052",
@@ -1179,6 +1066,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-27",
+        "kind": "done",
+        "id": "R-056",
+        "title": "Package tests stable under full lint-check",
+        "milestone": "M5",
+        "owner": "agent",
+        "result": "branch feat/r-056-package-tests-stable-under-full-lint-check"
+      },
       {
         "date": "2026-11-26",
         "kind": "done",
@@ -1669,6 +1565,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-27",
+        "id": "R-056",
+        "title": "Package tests stable under full lint-check",
+        "milestone": "M5",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-26-package-tests-stable-under-load.md",
+        "result": "branch feat/r-056-package-tests-stable-under-full-lint-check"
+      },
       {
         "date": "2026-11-26",
         "id": "R-052",
@@ -2314,6 +2219,52 @@
         {
           "heading": "Idea",
           "markdown": "The R-052 whole-branch review found five minors. (1) `skills/pm-export/SKILL.md` field map: the `inbox[]` key list omits `sections[]` (the prose after it describes it). (2) `src/lib/references.ts`: a brief page appears in Linked from as its title only (\"Invoice export\"), while its page title and feature and ADR pages use `<ID> <title>`. (3) `src/routes/plan/inbox.astro`: every card's `Open` link has the same accessible name; add `aria-label={`Open ${entry.title}`}`. (4) `src/components/RecordSections.astro`: section headings render as raw text, so inline Markdown or an ID in a heading is neither formatted nor linked. (5) `src/routes/plan/inbox/[slug].astro`: the description starts lower case (\"bug in the inbox\"). Also noted: a relative Markdown link in a brief or inbox section resolves page-relative, as on ADR pages, and goes nowhere."
+        }
+      ]
+    },
+    {
+      "file": "planning/inbox/2026-11-26-2330-lint-check-markdownlint-matches-no-files.md",
+      "title": "lint-check markdownlint matches no files",
+      "captured": "2026-11-26 23:30",
+      "source": "agent (R-056 execute)",
+      "kind": "bug",
+      "severity": "minor",
+      "affects": "justfile (lint-check)",
+      "context": "R-056 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "On Windows, `just lint-check` ends with `bunx markdownlint-cli2 \"**/*.md\" \"#node_modules\"` printing `Summary: 0 issues in 0 files`, so the recipe may lint no Markdown at all. Running it on one file directly finds issues, so the glob or its quoting under just's shell likely matches nothing.",
+      "sections": [
+        {
+          "heading": "Idea",
+          "markdown": "On Windows, `just lint-check` ends with `bunx markdownlint-cli2 \"**/*.md\" \"#node_modules\"` printing `Summary: 0 issues in 0 files`, so the recipe may lint no Markdown at all. Running it on one file directly finds issues, so the glob or its quoting under just's shell likely matches nothing."
+        },
+        {
+          "heading": "Reproduction",
+          "markdown": "Run `just lint-check` on Windows and read its last lines: `Summary: 0 issues in 0 files`. Seen on every run during R-056 execute (2026-11-26)."
+        }
+      ]
+    },
+    {
+      "file": "planning/inbox/2026-11-27-0000-r-056-review-minors.md",
+      "title": "R-056 review minors",
+      "captured": "2026-11-27 00:00",
+      "source": "agent (R-056 done)",
+      "kind": "tech-debt",
+      "severity": null,
+      "affects": "R-056, packages/pm-docs-site/test/",
+      "context": "R-056 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "Final-review minors deferred from R-056 Package tests stable under full lint-check. (1) `test/cli.test.ts` `peers` tests: two `runCli` calls with 50000ms child limits under one 60000ms `CHECK` test, and one under bun's 5000ms default, so a hung child there is killed by bun without its output. (2) `test/helpers.test.ts` kills a build after 50ms, before Astro loads, so no test shows a part-built scratch folder is removable after a kill on Windows; it also builds the shared `test/fixtures/site` that `cli.test.ts` builds, where a `scratchFixture` would keep them apart. (3) `test/hydration.test.ts` misses an arrow-function `hydrated` and accepts `HYDRATED` written only in a comment.",
+      "sections": [
+        {
+          "heading": "Idea",
+          "markdown": "Final-review minors deferred from R-056 Package tests stable under full lint-check. (1) `test/cli.test.ts` `peers` tests: two `runCli` calls with 50000ms child limits under one 60000ms `CHECK` test, and one under bun's 5000ms default, so a hung child there is killed by bun without its output. (2) `test/helpers.test.ts` kills a build after 50ms, before Astro loads, so no test shows a part-built scratch folder is removable after a kill on Windows; it also builds the shared `test/fixtures/site` that `cli.test.ts` builds, where a `scratchFixture` would keep them apart. (3) `test/hydration.test.ts` misses an arrow-function `hydrated` and accepts `HYDRATED` written only in a comment."
         }
       ]
     }
@@ -3045,10 +2996,10 @@
     "next": 1,
     "later": 11,
     "nextMax": 5,
-    "openInbox": 8,
+    "openInbox": 10,
     "discuss": 3,
     "shapingBriefs": 0,
-    "done": 38,
+    "done": 39,
     "dropped": 11,
     "blockers": 0,
     "openRisks": 0,
@@ -3057,11 +3008,11 @@
     "greenRisks": 0
   },
   "checks": {
-    "reviewDue": false,
+    "reviewDue": true,
     "lastReview": "2026-11-26",
     "claimable": [
       "R-042"
     ],
-    "drift": false
+    "drift": true
   }
 }
