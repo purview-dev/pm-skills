@@ -5,7 +5,7 @@
 - Kind: improvement
 - Affects: packages/pm-docs-site/src/pages/plan/board.astro
 - Context: R-042 design
-- Discuss: no
+- Discuss: yes
 - Related: R-042
 - Brief: none
 - Reviewed: never

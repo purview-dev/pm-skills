@@ -5,7 +5,7 @@
 - Kind: feature
 - Affects: examples/demo
 - Context: R-058 execute
-- Discuss: no
+- Discuss: yes
 - Related: none
 - Brief: none
 - Reviewed: never

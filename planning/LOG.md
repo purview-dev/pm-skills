@@ -50,6 +50,7 @@
 
 ## Dropped
 
+- 2026-11-27 lint-check markdownlint matches no files. Reason: fixed already; on 2026-11-27 `just lint-check` printed `Linting: 232 files` and reported real issues.
 - 2026-11-26 R-015 Rehearse a fresh install in a scratch repository. Reason: the user dropped it during R-015 design (after choosing an isolated-home install); M2's fresh-install exit criterion, B3, and A6 go to pm-strategy.
 - 2026-11-26 GitHub issue and Project sync. Reason: the user dropped it in the 2026-11-26 review; brief `planning/briefs/2026-11-22-github-issue-project-sync.md` set to dropped.
 - 2026-11-25 R-035 pm-engineering infer from an existing repository. Reason: not needed now; recording technology by hand with pm-engineering add is enough (user, during R-035 design).
@@ -67,6 +68,7 @@
 
 ## Reviews
 
+- 2026-11-27 Inbox 12 to 5. Added R-059 and R-060; 4 files merged into R-032, R-059, and R-060, 1 dropped (lint-check markdownlint, already fixed), 5 to shape; Next filled from Later with R-054, R-051, R-030; M2's items are done or dropped, so pm-strategy sets the next focus.
 - 2026-11-26 Inbox 7 to 4. Added R-057; 1 file merged into R-032, 1 dropped (GitHub issue and Project sync), 3 to shape, 1 kept parked; ADR docs-site findings stay in R-042; Next order kept; M4 is done, so pm-strategy sets the next focus.
 - 2026-11-25 Inbox 16 to 4. Added R-050 to R-055; 5 files merged into R-037 and R-042, 2 dropped, 3 to shape, 1 kept parked; current focus M1 is done, so pm-strategy sets the next; Next filled from Later with R-037, R-055, R-035, R-036.
 - 2026-11-22 Inbox 15 to 1. Added R-040, R-041, R-042; 11 files merged into R-013, R-032, R-040, and R-042, 1 to shape; R-013 Done when moved to schemaVersion 6; R-032 resized to M; Next filled from Later with R-041 and R-040.
