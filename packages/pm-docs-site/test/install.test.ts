@@ -11,9 +11,10 @@ import { expectedPages, FIXTURES, htmlPages, PACKAGE, relativeImports, resolvesT
 
 const tmp = mkdtempSync(join(tmpdir(), 'pm-docs-site-install-'));
 
-// Windows can take longer than the default hook timeout to remove a real
-// node_modules tree, so give the cleanup room to finish.
-afterAll(() => rmSync(tmp, { recursive: true, force: true }), 60_000);
+// Removing a real node_modules tree takes longer than the default 5s hook
+// timeout on Windows (measured over 5s under the full suite), so the cleanup
+// gets 60s; retries cover a file the install still holds open for a moment.
+afterAll(() => rmSync(tmp, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 }), 60_000);
 
 // Paths under `dir`, at any depth, whose name matches `pattern`.
 function filesUnder(dir: string, pattern: RegExp): string[] {

@@ -68,24 +68,6 @@ describe('pmDocsSite', () => {
 		expect(updates[0]!.integrations.map((integration) => integration.name)).toEqual(['@astrojs/starlight', '@astrojs/react']);
 	});
 
-	it('adds React with Starlight, so islands need no consumer config', async () => {
-		const updates: Update[] = [];
-		const hook = pmDocsSite({ title: 'T' }).hooks['astro:config:setup'];
-
-		if (!hook) throw new Error('no astro:config:setup hook');
-
-		await hook({
-			config: { root: fixtureSite },
-			updateConfig: (update: Update) => updates.push(update),
-			injectRoute: () => {},
-		} as never);
-
-		const names = updates[0]!.integrations.map((integration) => integration.name);
-
-		expect(names).toContain('@astrojs/starlight');
-		expect(names).toContain('@astrojs/react');
-	});
-
 	it('bundles Starlight and the package in every server environment, prerender included', async () => {
 		const plugin = (await setup({ title: 'T' }))[0]!.vite.plugins.find((entry) => entry.name === 'pm-docs-site:no-external');
 		const noExternal = ['@astrojs/starlight', '@purview-dev/pm-docs-site'];

@@ -1,4 +1,5 @@
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { createServer } from 'node:net';
 import { join, relative, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -56,14 +57,64 @@ export function siteConfig(options: string): string {
 	return `import pmDocsSite from '${index}';\nexport default { integrations: [pmDocsSite(${options})] };\n`;
 }
 
-/** The `./` and `../` specifiers a file imports, re-exports, imports for side effects, or imports dynamically. */
-export function relativeImports(file: string): string[] {
-	const source = readFileSync(file, 'utf8');
+/** `source` with its `//` and block comments blanked; quotes, template literals, and everything else are kept. */
+function stripComments(source: string): string {
+	let out = '';
+	let quote: string | null = null;
 
-	return [...source.matchAll(/\b(?:from|import\s*\(|import)\s*(['"])(\.\.?\/[^'"]+)\1/g)].map((match) => match[2]!);
+	for (let index = 0; index < source.length; index++) {
+		const char = source[index]!;
+
+		if (quote !== null) {
+			out += char;
+			if (char === '\\') out += source[++index] ?? '';
+			else if (char === quote) quote = null;
+		} else if (char === '/' && source[index + 1] === '/') {
+			while (index < source.length && source[index] !== '\n') index++;
+			out += '\n';
+		} else if (char === '/' && source[index + 1] === '*') {
+			const end = source.indexOf('*/', index + 2);
+
+			index = end === -1 ? source.length : end + 1;
+			out += ' ';
+		} else {
+			if (char === "'" || char === '"' || char === '`') quote = char;
+			out += char;
+		}
+	}
+
+	return out;
+}
+
+/**
+ * The `./` and `../` specifiers a file imports, re-exports, imports for side
+ * effects, or imports dynamically (a quoted or plain template-literal
+ * specifier). Comments are ignored, and so is a member call such as
+ * `foo.import('./x')` or `Array.from('./x')`. It reads type imports too, so it
+ * also checks `.d.ts` and `.astro` files.
+ */
+export function relativeImports(file: string): string[] {
+	const source = stripComments(readFileSync(file, 'utf8'));
+
+	return [...source.matchAll(/(?<![.\w$])(?:from|import\s*\(|import)\s*(['"`])(\.\.?\/[^'"`$]+?)\1/g)].map((match) => match[2]!);
 }
 
 /** Whether `base` plus one of `suffixes` is a file (a directory never resolves an import). */
 export function resolvesToFile(base: string, suffixes: string[]): boolean {
 	return suffixes.some((suffix) => existsSync(base + suffix) && statSync(base + suffix).isFile());
+}
+
+/** A TCP port that was free a moment ago: listen on port 0, read the port the system chose, and close. */
+export function freePort(): Promise<number> {
+	return new Promise((resolve, reject) => {
+		const server = createServer();
+
+		server.once('error', reject);
+		server.listen(0, () => {
+			const address = server.address();
+			const port = typeof address === 'object' && address !== null ? address.port : 0;
+
+			server.close(() => (port > 0 ? resolve(port) : reject(new Error('no free port'))));
+		});
+	});
 }

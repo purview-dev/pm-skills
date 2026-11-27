@@ -5,7 +5,7 @@ import { afterAll, describe, expect, it } from 'bun:test';
 
 import { INSTALL_COMMAND } from '../lib/astroc4.ts';
 import { parse } from '../lib/cli-args.ts';
-import { CLI, expectedPages, FIXTURES, htmlPages, PACKAGE, runCli, SCRATCH, scratchFixture, siteConfig } from './helpers';
+import { CLI, expectedPages, FIXTURES, freePort, htmlPages, PACKAGE, runCli, SCRATCH, scratchFixture, siteConfig } from './helpers';
 
 const BUILD = 180_000;
 // A check runs the CLI in a Node subprocess and builds nothing, but the start-up
@@ -374,9 +374,11 @@ describe('pm-docs-site arguments', () => {
 	});
 
 	it(
-		'dev --port 4399 serves on 4399',
+		'dev --port <free port> serves on it',
 		async () => {
-			const proc = Bun.spawn(['node', CLI, 'dev', FIXTURE_SITE, '--port', '4399'], { cwd: PACKAGE, stdout: 'pipe', stderr: 'pipe' });
+			// A port chosen at run time, so the test never collides with the browser tests' 4399 or another process.
+			const port = await freePort();
+			const proc = Bun.spawn(['node', CLI, 'dev', FIXTURE_SITE, '--port', String(port)], { cwd: PACKAGE, stdout: 'pipe', stderr: 'pipe' });
 
 			try {
 				const deadline = Date.now() + 60_000;
@@ -384,7 +386,7 @@ describe('pm-docs-site arguments', () => {
 
 				while (Date.now() < deadline) {
 					try {
-						const response = await fetch('http://localhost:4399/');
+						const response = await fetch(`http://localhost:${port}/`);
 						served = response.status === 200;
 						if (served) break;
 					} catch {
