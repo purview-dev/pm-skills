@@ -8,7 +8,7 @@ import { afterAll, describe, expect, it, mock } from 'bun:test';
 import { loadAstroc4 } from '../lib/astroc4.ts';
 import pmDocsSite from '../lib/index.ts';
 import { resolveOptions } from '../lib/options.ts';
-import { runCli, scratchFixture, siteConfig } from './helpers';
+import { BUILD, runCli, scratchFixture, siteConfig } from './helpers';
 
 const DEFAULT_ROOT = fileURLToPath(pathToFileURL('/site/'));
 
@@ -303,7 +303,6 @@ describe('pm-docs-site:fs-allow', () => {
 	});
 });
 
-const BUILD = 180_000;
 // The fixture site's own options (test/fixtures/site/astro.config.ts), so the docs collection is on.
 const FIXTURE_SITE_OPTIONS = `{ title: 'Fixture plan', planning: '../planning.json', docs: { root: '../docs', sources: [{ label: 'Guide', base: '.', include: ['README.md', 'guide/*.md'], prefix: 'docs/' }] } }`;
 const scratches: string[] = [];

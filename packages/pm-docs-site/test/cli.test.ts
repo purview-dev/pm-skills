@@ -5,12 +5,7 @@ import { afterAll, describe, expect, it } from 'bun:test';
 
 import { INSTALL_COMMAND } from '../lib/astroc4.ts';
 import { parse } from '../lib/cli-args.ts';
-import { CLI, expectedPages, FIXTURES, freePort, htmlPages, PACKAGE, runCli, SCRATCH, scratchFixture, siteConfig } from './helpers';
-
-const BUILD = 180_000;
-// A check runs the CLI in a Node subprocess and builds nothing, but the start-up
-// can pass bun's 5000ms default under load on Windows.
-const CHECK = 60_000;
+import { BUILD, CHECK, CLI, expectedPages, FIXTURES, freePort, htmlPages, PACKAGE, runCli, SCRATCH, scratchFixture, siteConfig } from './helpers';
 const FIXTURE_SITE = join(FIXTURES, 'site');
 
 afterAll(() => {
@@ -214,7 +209,8 @@ describe('pm-docs-site check', () => {
 			expect(build.code).not.toBe(0);
 			expect(build.stdout + build.stderr).toContain('schemaVersion 6');
 		},
-		BUILD,
+		// A check and a build: room for both child limits, so a hung child still reports.
+		BUILD + CHECK,
 	);
 
 	it('warns that --title and --planning are ignored when the site has a config file', () => {

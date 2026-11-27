@@ -1,11 +1,13 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { HYDRATED } from './hydration.ts';
+
 const rows = (page: Page) => page.locator('[data-adr]:visible');
 
 /** Opens a Decisions URL and waits for the island to hydrate (Astro drops `ssr` once it has). */
 async function openDecisions(page: Page, path = '/plan/decisions/'): Promise<void> {
 	await page.goto(path);
-	await expect(page.locator('astro-island:has(.decisions)')).not.toHaveAttribute('ssr', '');
+	await expect(page.locator('astro-island:has(.decisions)')).not.toHaveAttribute('ssr', '', { timeout: HYDRATED });
 }
 
 const ids = async (page: Page) => rows(page).evaluateAll((items) => items.map((item) => item.getAttribute('data-adr')));
@@ -28,7 +30,7 @@ test('keeps the search and a chip in the URL across a reload, and Clear restores
 	await expect.poll(() => new URL(page.url()).search).toBe('?q=invoices&status=proposed%2Caccepted%2Cdeprecated%2Csuperseded');
 
 	await page.reload();
-	await expect(page.locator('astro-island:has(.decisions)')).not.toHaveAttribute('ssr', '');
+	await expect(page.locator('astro-island:has(.decisions)')).not.toHaveAttribute('ssr', '', { timeout: HYDRATED });
 	await expect(page.getByLabel('Search decisions')).toHaveValue('invoices');
 	await expect(superseded).toHaveAttribute('aria-pressed', 'true');
 	await expect.poll(() => ids(page)).toEqual(['ADR-001', 'ADR-002']);

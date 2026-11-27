@@ -14,17 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-056 Package tests stable under full lint-check
-
-- Serves: V4
-- Milestone: M5
-- Owner: agent
-- Done when: two consecutive `just lint-check` runs on Windows pass `package-test`, including `test/cli.test.ts` "still reads a site whose config is astro.config.mjs" and `test/browser/graph.browser.ts` "usable at 320px".
-- Size: S
-- Depends on: none
-- Status: ready
-- Note: From the 2026-11-25 strategy re-plan (bug, inbox 2026-11-25-0717, severity minor, from R-041 execute). Two consecutive `just lint-check` runs on a prose-only branch failed in `package-test`, each on a different test that passes alone: `cli.test.ts` timed out after 180000ms (4.27s alone), and `graph.browser.ts:296` found `.plan-graph__toolbar` hidden within 5000ms (482ms alone). Reproduction: run `just lint-check` twice on Windows; one package test fails per run under load.
-
 ## Later
 
 <!-- Grouped by milestone where one is set. Same item format. -->

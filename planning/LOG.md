@@ -5,6 +5,7 @@
 ## Done
 
 - 2026-11-27 R-042 Docs-site package: deferred review minors. Milestone: M5. Owner: agent. Plan: docs/superpowers/plans/2026-11-27-r-042-docs-site-deferred-review-minors.md. Result: branch feat/r-042-docs-site-package-deferred-review-minors.
+- 2026-11-27 R-056 Package tests stable under full lint-check. Milestone: M5. Owner: agent. Plan: docs/superpowers/plans/2026-11-26-package-tests-stable-under-load.md. Result: branch feat/r-056-package-tests-stable-under-full-lint-check.
 - 2026-11-26 R-052 Docs-site package: brief and inbox pages. Milestone: M5. Owner: agent. Plan: docs/superpowers/plans/2026-11-26-docs-site-brief-and-inbox-pages.md. Result: branch feat/r-052-docs-site-package-brief-and-inbox-pages.
 - 2026-11-26 R-006 Check pm-setup's skill counts in validate. Milestone: M2. Owner: agent. Plan: docs/superpowers/plans/2026-11-26-r-006-pm-setup-skill-counts.md. Result: branch feat/r-006-check-pm-setup-skill-counts.
 - 2026-11-26 R-058 ADR pages: fix and release. Milestone: M5. Owner: agent. Plan: docs/superpowers/plans/2026-11-26-adr-pages-fix-and-release.md. Result: branch feat/r-058-adr-pages-fix-and-release.
