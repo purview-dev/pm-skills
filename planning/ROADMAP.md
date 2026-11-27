@@ -14,16 +14,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
-### R-016 Rehearse the lifecycle guards
-
-- Serves: V2, V3
-- Milestone: M3
-- Owner: both
-- Done when: a report in `planning/research/` shows `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea instead of running during an active workflow.
-- Size: M
-- Depends on: none
-- Status: ready
-
 ### R-059 pm-setup runs read-only checks on a current install
 
 - Serves: V1

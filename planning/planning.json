@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 6,
-  "generatedAt": "2026-11-27T14:17:36+00:00",
+  "generatedAt": "2026-11-27T14:31:39+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "main",
-    "head": "e41495570de7ff5a877665055cce2ea7439074c6"
+    "branch": "feat/r-016-rehearse-the-lifecycle-guards",
+    "head": "fa6c49edec4c285e7a5753cb7f24b1abcccb5d81"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -424,51 +424,39 @@
     ]
   },
   "now": {
-    "status": "idle",
-    "item": null,
-    "stage": null,
-    "session": null,
+    "status": "active",
+    "item": {
+      "id": "R-016",
+      "title": "Rehearse the lifecycle guards",
+      "serves": [
+        "V2",
+        "V3"
+      ],
+      "owner": "both",
+      "size": "M",
+      "dependsOn": [],
+      "revisits": null
+    },
+    "stage": "design",
+    "session": "feat/r-016-rehearse-the-lifecycle-guards",
     "brief": null,
-    "milestone": null,
+    "milestone": "M3",
     "spec": null,
     "plan": null,
-    "started": null,
-    "doneWhen": [],
+    "started": "2026-11-27",
+    "doneWhen": [
+      "A report in `planning/research/` shows `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea instead of running during an active workflow."
+    ],
     "checkpoint": null
   },
   "plan": null,
   "roadmap": {
     "next": [
       {
-        "id": "R-016",
-        "title": "Rehearse the lifecycle guards",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V2",
-          "V3"
-        ],
-        "milestone": "M3",
-        "owner": "both",
-        "doneWhen": "a report in `planning/research/` shows `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea instead of running during an active workflow.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": null,
-        "revisits": null,
-        "claimable": true
-      },
-      {
         "id": "R-059",
         "title": "pm-setup runs read-only checks on a current install",
         "section": "next",
-        "position": 2,
+        "position": 1,
         "label": "next",
         "serves": [
           "V1"
@@ -492,7 +480,7 @@
         "id": "R-060",
         "title": "Docs-site package: review minors after R-042",
         "section": "next",
-        "position": 3,
+        "position": 2,
         "label": "next",
         "serves": [
           "V4"
@@ -516,7 +504,7 @@
         "id": "R-054",
         "title": "Git subprocess tests stable under load",
         "section": "next",
-        "position": 4,
+        "position": 3,
         "label": "next",
         "serves": [
           "V4"
@@ -540,7 +528,7 @@
         "id": "R-051",
         "title": "PM sync review minors",
         "section": "next",
-        "position": 5,
+        "position": 4,
         "label": "next",
         "serves": [
           "V2"
@@ -766,15 +754,16 @@
   },
   "board": {
     "columns": {
-      "now": [],
-      "next": [
+      "now": [
         {
           "id": "R-016",
           "title": "Rehearse the lifecycle guards",
           "owner": "both",
           "size": "M",
-          "detail": "ready"
-        },
+          "detail": "design"
+        }
+      ],
+      "next": [
         {
           "id": "R-059",
           "title": "pm-setup runs read-only checks on a current install",
@@ -3005,7 +2994,7 @@
     }
   ],
   "counts": {
-    "next": 5,
+    "next": 4,
     "later": 8,
     "nextMax": 5,
     "openInbox": 5,
@@ -3023,7 +3012,6 @@
     "reviewDue": false,
     "lastReview": "2026-11-27",
     "claimable": [
-      "R-016",
       "R-059",
       "R-060",
       "R-054",

@@ -11,22 +11,25 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: idle
-- Item:
-- Session:
-- Stage:
+- Status: active
+- Item: R-016 Rehearse the lifecycle guards
+- Session: feat/r-016-rehearse-the-lifecycle-guards
+- Stage: design
 - Brief:
-- Milestone:
-- Serves:
-- Owner:
-- Size:
-- Depends on:
+- Milestone: M3
+- Serves: V2, V3
+- Owner: both
+- Size: M
+- Depends on: none
 - Revisits:
+- Note: 2026-11-27: Started as is without a brief (size M). The problem is M3's exit criterion, and `planning/research/2026-11-26-m4-rehearsal.md` gives the rehearsal method (user, pm-next).
 - Spec:
 - Plan:
-- Started:
+- Started: 2026-11-27
 
 ## Done when
+
+- A report in `planning/research/` shows `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea instead of running during an active workflow.
 
 ## Checkpoint
 
