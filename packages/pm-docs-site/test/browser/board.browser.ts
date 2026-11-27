@@ -301,6 +301,21 @@ test('the URL carries the state', async ({ page }) => {
 	expect(await laneSummary(page)).toEqual({ keys: ['user'], counts: ['3'] });
 });
 
+test('a filter change keeps the query keys the board does not own', async ({ page }) => {
+	await page.goto('/plan/board/?utm=x&owner=agent');
+	await hydrated(page);
+	await page.selectOption('#board-owner', 'user');
+
+	await expect.poll(() => new URL(page.url()).search).toBe('?utm=x&owner=user');
+});
+
+test('a board key on the Roadmap sets no pending mark', async ({ page }) => {
+	await page.goto('/plan/roadmap/?owner=agent');
+	await page.waitForLoadState('load');
+
+	await expect(page.locator('html')).not.toHaveAttribute('data-board-pending');
+});
+
 test('a filtered link never shows the unfiltered board', async ({ page }) => {
 	// Hydration is async and may finish before or after DOMContentLoaded, so at
 	// DOMContentLoaded the board is either still marked pending and hidden, or

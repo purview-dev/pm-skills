@@ -131,6 +131,25 @@ export function boardQuery(state: BoardState): string {
 	return `?${pairs.map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&')}`;
 }
 
+/** The query keys the board owns; PlanInteractions.astro's pre-paint script lists the same keys. */
+export const BOARD_KEYS: readonly string[] = ['owner', 'milestone', 'size', 'rag', 'group'];
+
+/**
+ * The URL for this state: the pathname, the query keys the board does not own
+ * in their original order, then boardQuery's keys, then the hash.
+ */
+export function boardUrl(state: BoardState, location: { pathname: string; search: string; hash: string }): string {
+	const others = new URLSearchParams(location.search);
+
+	for (const key of BOARD_KEYS) others.delete(key);
+
+	const kept = others.toString();
+	const board = boardQuery(state).slice(1);
+	const query = [kept, board].filter((part) => part !== '').join('&');
+
+	return location.pathname + (query === '' ? '' : `?${query}`) + location.hash;
+}
+
 /** Any filter set; group alone is not a filter. */
 export function isFiltered(state: BoardState): boolean {
 	const { owner, milestone, size, rag } = state.filters;

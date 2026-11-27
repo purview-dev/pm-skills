@@ -29,7 +29,7 @@ const details = [...new Set(cards.filter((card) => card.href && card.id).map((ca
 	frontmatter={{ title: 'Board', description: 'Now, Next, For you, Waiting and Done.', tableOfContents: false }}
 >
 	<ExportStamp />
-	<PlanInteractions />
+	<PlanInteractions board />
 
 	<!-- `not-content`: Starlight's prose spacing would push every column after the first down. -->
 	<div class="plan-columns not-content">

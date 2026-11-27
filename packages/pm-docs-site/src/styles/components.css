@@ -77,7 +77,8 @@
    PlanInteractions.astro) it is hidden, until the island has rendered that
    state, so a filtered link never shows the unfiltered board. If the island
    never loads and so never clears the mark, the board shows anyway after 3s,
-   unfiltered: never a blank board. */
+   unfiltered: never a blank board. A hydration that is slow but succeeds after
+   3s shows the unfiltered board until the island applies the URL; accepted. */
 .plan-board__body {
 	display: contents;
 }
