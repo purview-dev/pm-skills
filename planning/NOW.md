@@ -31,7 +31,13 @@ Milestone: optional; the item's milestone while it is active
 
 - A report in `planning/research/` shows `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea instead of running during an active workflow.
 
-## Checkpoint
+## Checkpoint 2026-11-27 16:03
+
+- Stopped at: plan Task 4, Step 1 (V3a and V3b recorded in the report; this pause is the V2 precondition)
+- Next action: Record the pm-resume output under "Probe V2" in planning/research/2026-11-27-m3-rehearsal.md (plan Task 4, Step 4)
+- Start with: planning/research/2026-11-27-m3-rehearsal.md
+- Decisions: V3a scored pass with `Discuss: no`, because the prompt did not ask to discuss; V3b followed the pm-shape Guard (park) over the rule-4 question, and the conflict is logged as a defect in Task 5
+- Context: the user runs `/clear` and then asks where work stopped; the plan ledger is `.superpowers/sdd/2026-11-27-lifecycle-guards-rehearsal/progress.md` (not gitignored, never committed); the bash helper scripts cannot run on the P: drive, so ledger lines are written by hand
 
 <!--
 Active example:
