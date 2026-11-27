@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 6,
-  "generatedAt": "2026-11-27T16:22:48+00:00",
+  "generatedAt": "2026-11-27T16:31:53+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-016-rehearse-the-lifecycle-guards",
-    "head": "fb7dba651a816fb1c1de8d1f2ed19379668621ae"
+    "head": "03237de25e0a21aa56f8f66838713ace0d4cfde4"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -2414,6 +2414,31 @@
           "markdown": "R-042 finding 6, moved out of R-042 at the user's choice (option B, 2026-11-27): the Board island receives the full `BoardCard[]` (with `titleRuns` and `detail` LinkRun arrays) as props beside the rendered HTML. Measured: demo Board page 60.2 KB, island props 9.0 KB (about 15% of the page), island HTML 12.4 KB. Send the island only card IDs and filter fields and reuse the server-rendered card DOM. Touches `src/pages/plan/board.astro` (line 36), `src/components/board/Board.tsx`, the card components, and their tests; likely size M or L, its own item."
         }
       ]
+    },
+    {
+      "file": "planning/inbox/2026-11-27-1631-rule-4-and-pm-shape-guard-conflict.md",
+      "title": "Rule 4 and pm-shape Guard conflict",
+      "captured": "2026-11-27 16:31",
+      "source": "agent (R-016 execute)",
+      "kind": "bug",
+      "severity": "minor",
+      "affects": "Non-interruption rule 4 (skills/pm-setup/references/AGENTS-section.md), skills/pm-shape/SKILL.md Guard",
+      "context": "R-016 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "When the user names `pm-shape` mid-workflow, Non-interruption rule 4 says the agent asks `<skill> is at <step>. When should pm-shape run?` (`After <skill> finishes (recommended)`, `Pause now and run it`). But `pm-shape`'s Guard and rule 5 say park the idea with `pm-park` in capture mode and reply in one line. The two instructions disagree. The agent followed the Guard, so the rule-4 question never appeared. Make rule 4 name the exception for `pm-shape` (rule 5 wins), or change the Guard to ask the rule-4 question.",
+      "sections": [
+        {
+          "heading": "Idea",
+          "markdown": "When the user names `pm-shape` mid-workflow, Non-interruption rule 4 says the agent asks `<skill> is at <step>. When should pm-shape run?` (`After <skill> finishes (recommended)`, `Pause now and run it`). But `pm-shape`'s Guard and rule 5 say park the idea with `pm-park` in capture mode and reply in one line. The two instructions disagree. The agent followed the Guard, so the rule-4 question never appeared. Make rule 4 name the exception for `pm-shape` (rule 5 wins), or change the Guard to ask the rule-4 question."
+        },
+        {
+          "heading": "Reproduction",
+          "markdown": "- Expected: one instruction for `/pm-shape <idea>` typed during an active workflow.\n- Actual: rule 4 says ask; the `pm-shape` Guard and rule 5 say park without asking.\n- Steps: start a plan with `executing-plans`, then type `/pm-shape more pies`.\n- Frequency: every run.\n- Evidence: `planning/research/2026-11-27-m3-rehearsal.md`, Probe V3b."
+        }
+      ]
     }
   ],
   "briefs": [
@@ -3143,7 +3168,7 @@
     "next": 5,
     "later": 7,
     "nextMax": 5,
-    "openInbox": 5,
+    "openInbox": 6,
     "discuss": 5,
     "shapingBriefs": 0,
     "done": 40,
