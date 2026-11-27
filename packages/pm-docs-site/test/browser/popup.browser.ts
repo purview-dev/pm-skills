@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { HYDRATED } from './hydration.ts';
+
 /** The text of a card's popup template, whitespace collapsed. */
 const templateText = (page: Page, id: string) =>
 	page.evaluate((item) => document.querySelector<HTMLTemplateElement>(`template[data-item-detail="${item}"]`)!.content.textContent!.replace(/\s+/g, ' ').trim(), id);
@@ -61,7 +63,7 @@ for (const path of ['/plan/board/', '/plan/roadmap/']) {
 
 test('after filtering, card links still say they open a dialog', async ({ page }) => {
 	await page.goto('/plan/board/');
-	await expect(page.locator('.plan-board__filters')).toBeVisible();
+	await expect(page.locator('.plan-board__filters')).toBeVisible({ timeout: HYDRATED });
 	await page.selectOption('#board-owner', 'agent');
 
 	expect(await page.locator('a[data-item]').count()).toBeGreaterThan(0);

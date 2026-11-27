@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { HYDRATED } from './hydration.ts';
+
 // The fixture (test/fixtures/planning.json): M1 First release (done
 // 2026-11-03, no target), M2 Billing (active, focus, target 2026-12-15, 1 of 4
 // done), M3 Self-serve upgrades (planned, target 2027-02-01), M4 Partner
@@ -9,7 +11,7 @@ import { expect, test, type Page } from '@playwright/test';
 
 /** Waits for the Timeline island to hydrate: the toolbar shows once the URL state is applied. */
 async function hydrated(page: Page): Promise<void> {
-	await expect(page.locator('.plan-timeline__toolbar')).toBeVisible();
+	await expect(page.locator('.plan-timeline__toolbar')).toBeVisible({ timeout: HYDRATED });
 }
 
 /** Opens the Roadmap page and waits for the island to hydrate. */
@@ -272,7 +274,7 @@ test('usable at 320px', async ({ page }) => {
 
 	expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
 	await expect(strip(page)).toBeVisible();
-	await expect(page.locator('.plan-timeline__toolbar')).toBeVisible();
+	await expect(page.locator('.plan-timeline__toolbar')).toBeVisible({ timeout: HYDRATED });
 });
 
 test('the timeline hydrates with no page errors', async ({ page }) => {

@@ -7,6 +7,8 @@
 import { readFileSync } from 'node:fs';
 
 import { expect, test } from '@playwright/test';
+
+import { HYDRATED } from './hydration.ts';
 import type { Page } from '@playwright/test';
 
 import { DEV_LOG, startupProblems } from './dev-log.ts';
@@ -44,7 +46,7 @@ test('a filtered board hydrates under pm-docs-site dev', async ({ page }) => {
 	await expect(html).not.toHaveAttribute('data-board-pending', { timeout: 30_000 }).catch(() => {});
 	expect(errors).toEqual([]);
 	await expect(html).not.toHaveAttribute('data-board-pending', { timeout: 1_000 });
-	await expect(page.locator('.plan-board__filters')).toBeVisible();
+	await expect(page.locator('.plan-board__filters')).toBeVisible({ timeout: HYDRATED });
 	const lanes = await page.locator('[data-lane]').evaluateAll((elements) => elements.map((element) => element.getAttribute('data-lane')));
 
 	expect(lanes).toEqual(['user']);
