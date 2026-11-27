@@ -87,6 +87,28 @@ describe('mermaidFences', () => {
 		for (const id of firstIds) expect(secondIds).not.toContain(id);
 	});
 
+	it('two identical sections of one file get distinct ids, and the same ids on a rebuild', async () => {
+		// loaders/sections.ts renders each section of an ADR as its own compile,
+		// against the same file, with the section's ID as the URL's fragment.
+		const zero = new URL('file:///x/ADR-001.md#adr-001-0');
+		const one = new URL('file:///x/ADR-001.md#adr-001-1');
+		const first = peleIds(await renderMarkdown(SANKEY_A, zero));
+		const second = peleIds(await renderMarkdown(SANKEY_A, one));
+
+		expect(first.length).toBeGreaterThan(0);
+		for (const id of first) expect(second).not.toContain(id);
+		expect(peleIds(await renderMarkdown(SANKEY_A, zero))).toEqual(first);
+	});
+
+	it('the ids do not depend on the file path, only on the fragment and the source', async () => {
+		const here = peleIds(await renderMarkdown(SANKEY_A, new URL('file:///a/ADR-001.md#adr-001-0')));
+		const elsewhere = peleIds(await renderMarkdown(SANKEY_A, new URL('file:///b/c/ADR-001.md#adr-001-0')));
+
+		expect(elsewhere).toEqual(here);
+		// No fragment (a docs page): the prefix is the source hash alone, as before.
+		expect(peleIds(await renderMarkdown(SANKEY_A, new URL('file:///a/page.md')))).toEqual(peleIds(await renderMarkdown(SANKEY_A)));
+	});
+
 	it('two fences in one source get sequential, distinct ids sharing one prefix', async () => {
 		// One renderMarkdown call, two fences: the per-document counter (not the
 		// hash) must tell them apart, since they share the same factory.source.

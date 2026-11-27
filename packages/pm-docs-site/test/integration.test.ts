@@ -10,7 +10,6 @@ import pmDocsSite from '../lib/index.ts';
 import { resolveOptions } from '../lib/options.ts';
 import { runCli, scratchFixture, siteConfig } from './helpers';
 
-const fixtureSite = new URL('./fixtures/site/', import.meta.url);
 const DEFAULT_ROOT = fileURLToPath(pathToFileURL('/site/'));
 
 type Plugin = {

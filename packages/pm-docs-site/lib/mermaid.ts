@@ -50,18 +50,30 @@ function describe(fileURL: URL | undefined): string {
  * sources never collide (distinct across sources) even when each resets its
  * own fence counter to 0 — the case when `adrs.ts` renders two sections of the
  * same ADR as two separate compiles, each with one fence.
+ *
+ * Two byte-identical sections of one record are told apart by the fragment of
+ * `ctx.fileURL` (loaders/sections.ts sets it to the section's ID), which joins
+ * the hash. The path itself never does, so the IDs are the same on every
+ * machine, and a docs page (no fragment) keeps the source-only hash (ADR-006).
  */
 export function mermaidFences(): SatteriMdastPluginFactory {
 	return (factory) => {
 		if (!FENCE_MARKS.some((mark) => factory.source.includes(mark))) return null;
 
-		const prefix = createHash('sha256').update(factory.source).digest('hex').slice(0, 8);
+		let prefix: string | undefined;
 		let index = 0;
 
 		return {
 			name: 'mermaid-fences',
 			code(node, ctx) {
 				if (node.lang !== FENCE_LANG) return;
+
+				const fragment = ctx.fileURL?.hash ?? '';
+
+				prefix ??= createHash('sha256')
+					.update(fragment === '' ? factory.source : `${fragment}\n${factory.source}`)
+					.digest('hex')
+					.slice(0, 8);
 
 				const where = describe(ctx.fileURL);
 				let svg: string;
