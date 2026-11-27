@@ -349,6 +349,25 @@ describe('pm-docs-site arguments', () => {
 		expect(() => parse(['dev', '--port', '0'], {})).toThrow('pm-docs-site: --port needs a port number (1-65535)');
 	});
 
+	it('accepts the --flag=value form for every flag', () => {
+		const result = parse(['dev', 'site', '--port=4399', '--host=0.0.0.0'], {});
+
+		expect(result.server).toEqual({ port: 4399, host: '0.0.0.0' });
+		expect(result.siteDir).toEndWith('site');
+		expect(parse(['build', '--title=My plan', '--planning=docs/plan.json', 'site'], {}).flags).toEqual({ title: 'My plan', planning: 'docs/plan.json' });
+	});
+
+	it('--flag= with no value and --port=0 throw the spaced form\'s messages', () => {
+		expect(() => parse(['dev', '--port='], {})).toThrow('pm-docs-site: --port needs a value');
+		expect(() => parse(['dev', '--port=0'], {})).toThrow('pm-docs-site: --port needs a port number (1-65535)');
+		expect(() => parse(['build', '--title='], {})).toThrow('pm-docs-site: --title needs a value');
+	});
+
+	it('an unknown option throws, naming it, instead of becoming the site folder', () => {
+		expect(() => parse(['build', '--verbose'], {})).toThrow('pm-docs-site: unknown option --verbose');
+		expect(() => parse(['build', 'site', '--outDir=x'], {})).toThrow('pm-docs-site: unknown option --outDir=x');
+	});
+
 	it('parse(["dev"], {}) gives an empty server, so Astro\'s default port 4321 applies', () => {
 		const result = parse(['dev'], {});
 
