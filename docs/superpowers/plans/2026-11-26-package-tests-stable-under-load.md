@@ -171,4 +171,5 @@ Expected: exit 0, or a failure whose output names the test. Repeat once more as 
 - Run 2: exit 0. `just test` 241 pass; `package-test` 438 pass, 0 fail; browser 82 passed; dev 4 passed. No `runCli: timed out` line, no `EBUSY`/`EPERM`.
 - Run 3: exit 1 in `pm-lint` on an inbox capture written during this run (a bug without `Severity`); the capture was fixed. Not a test fault.
 - Runs 4 and 5 (Task 4, consecutive, 2026-11-27): both exit 0. `package-test` 438 pass, 0 fail, 0 skip (includes `test/cli.test.ts` "still reads a site whose config is astro.config.mjs"); browser 82 passed, including `graph.browser.ts:298` "usable at 320px" (1.7s, 2.2s); dev 4 passed.
+- Runs 6 and 7 (after the final-review fixes in `f823f1b`, consecutive, 2026-11-27): both exit 0. `package-test` 439 pass, 0 fail; browser 82 passed, including "usable at 320px" (1.3s, 1.4s); dev 4 passed.
 - No hang reproduced in 2 runs; Task 1 reports it if it recurs. Task 3 Step 4 had no fix to commit.
