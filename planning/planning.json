@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 6,
-  "generatedAt": "2026-11-27T08:54:38+00:00",
+  "generatedAt": "2026-11-27T10:12:23+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-042-docs-site-package-deferred-review-minors",
-    "head": "2f6e1e551100f7e0e1b610703a0d388d92c15c75"
+    "head": "2142bba7ea61d8efc5327fb7cd39964d28e3363d"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -381,337 +381,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-042",
-      "title": "Docs-site package: deferred review minors",
-      "serves": [
-        "V4"
-      ],
-      "owner": "agent",
-      "size": "M",
-      "dependsOn": [],
-      "revisits": null
-    },
-    "stage": "execute",
-    "session": "feat/r-042-docs-site-package-deferred-review-minors",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
     "brief": null,
-    "milestone": "M5",
-    "spec": "docs/superpowers/specs/2026-11-27-r-042-docs-site-deferred-review-minors-design.md",
-    "plan": "docs/superpowers/plans/2026-11-27-r-042-docs-site-deferred-review-minors.md",
-    "started": "2026-11-27",
-    "doneWhen": [
-      "each finding listed in this Note is fixed or has a one-line won't-fix reason in the item's plan, `.astro` client scripts are covered by the island import guard, `start()` in `src/scripts/plan.ts` registers its listeners once per document, and `just package-test` passes."
-    ],
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
     "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-27-r-042-docs-site-deferred-review-minors.md",
-    "checked": 0,
-    "total": 55,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "Board URL state and pending mark (findings 1, 2, 3)",
-        "checked": 0,
-        "total": 8,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing tests** in `test/board.test.ts`:",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bun test test/board.test.ts` in `packages/pm-docs-site`. Expected: FAIL, `boardUrl` is not exported.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement `boardUrl`**, and in `useBoardUrlState` call `history.replaceState(history.state, '', boardUrl(state, location))` when it differs from the current URL.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Scope the pending mark (2).** `PlanInteractions.astro` emits the `boardPending` block only when `board` is true; `src/pages/plan/board.astro` passes `board`, `roadmap.astro` does not. Update the component's header comment.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Document the 3s reveal (1).** In `components.css:75-80` and the `useBoardUrlState.ts` header add: a slow but successful hydration (over 3s) also shows the unfiltered board until the island applies the URL; accepted, so the board is never blank.",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Browser test** in `test/browser/board.browser.ts`: `/plan/roadmap/?owner=agent` leaves `<html>` without `data-board-pending`; `/plan/board/?owner=agent&utm=x`, after changing the owner filter to `user`, has `location.search` `?utm=x&owner=user`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 7: Run** `bun test test/board.test.ts` and `bunx playwright test test/browser/board.browser.ts`. Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 8: Commit** `fix(pm-docs-site): board url keeps other keys and scopes its pending mark (R-042)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 2,
-        "title": "Board markup and CSS (findings 4, 7, 8)",
-        "checked": 0,
-        "total": 6,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing browser tests:**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bunx playwright test test/browser/board.browser.ts -g \"lane header|collapsed header\"`. Expected: FAIL.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement.** Lane header `<h3 className=\"plan-lane__header\">`, with the margin reset so it looks the same. A collapsed column's toggle gets `max-block-size` equal to the expanded header's height (or the row's track sized from the expanded columns), `overflow: hidden`, `text-overflow: ellipsis`, `white-space: nowrap`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: kanban.css (8).** Delete `cursor: grab` and both `.k-item:focus-visible` selectors (`.k-item:hover` stays); rewrite the header comment to list every change from the kit source: theme variables, RAG dot, and no drag cursor or focus ring (cards are not focusable; `test/browser/cards.browser.ts:10`).",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Run** `bunx playwright test test/browser/board.browser.ts test/browser/cards.browser.ts`. Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Commit** `fix(pm-docs-site): lane headings and collapsed column height (R-042)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 3,
-        "title": "board.ts and board-data.ts (findings 9, 10)",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing tests:**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bun test test/board.test.ts test/board-data.test.ts`. Expected: FAIL (same array; `'robot'` passes through).",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement.** `oneOf` replaces the four casts in `parseBoardQuery`; `lanes()` builds `order` per group and shares one `order.filter(...).map(...)` tail; `'none'` returns `[...cards]`. `isOwner` replaces both `as Owner | null` casts (`value` not an owner → `null`).",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run** `bun test`. Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit** `refactor(pm-docs-site): board helpers without casts (R-042)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 4,
-        "title": "Island import guard and plan.ts listeners (findings 14, 15)",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Write the failing tests:**",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bun test test/island-imports.test.ts test/plan-script.test.ts`. Expected: FAIL (`bundledScripts` and `start` not defined/exported).",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement** as in Interfaces. Today's files pass (agent check: `PlanInteractions.astro` imports only `../scripts/plan.ts`, which imports nothing).",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run** `bun test`. Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit** `test(pm-docs-site): guard astro client scripts and start once per document (R-042)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 5,
-        "title": "Test hygiene (findings 11, 12, 16, 17, 20, 23, 27 package part)",
-        "checked": 0,
-        "total": 6,
-        "steps": [
-          {
-            "text": "**Step 1: relativeImports (17), failing test** in `test/imports.test.ts`: a file with `foo.import('./no.ts');`, `// import './comment.ts';`, `/* from './block.ts' */`, ``const t = await import(`./tpl.ts`);``, ``import(`./${x}.ts`)``, `const u = 'https://x'; import './after.ts';` → `['./tpl.ts', './after.ts']`. The existing case at `:29` still passes.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bun test test/imports.test.ts`. Expected: FAIL.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement.** Strip block and line comments outside string literals first (a small scanner over `'`, `\"`, and `` ` `` quotes), then match with `(?<![.\\w$])` before `from`/`import` and accept a backtick-quoted specifier with no `${`. Add the final newline to `test/helpers.ts`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: The rest.**",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Run** `bun test` and `bunx playwright test test/browser/board.browser.ts`. Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Commit** `test(pm-docs-site): test hygiene from the deferred review (R-042)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 6,
-        "title": "References and the log page (findings 19, 21)",
-        "checked": 0,
-        "total": 6,
-        "steps": [
-          {
-            "text": "**Step 1: Failing test** in `test/references.test.ts`: with a fixture item that both depends on and revisits another, the target's page lists that item once as `related`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bun test test/references.test.ts`. Expected: FAIL only if today's loop double-links; otherwise PASS and it pins the behaviour before the refactor.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement (21).** `new Set([...dependents(all, feature.id), ...revisers(all, feature.id)])` in `features()` order, one `page.link(other.id, 'related')` each.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Log page (19).** Keep the logged title; the comment at `:15` says the log is history, so it shows the title as logged. Add a test: with item pages off, `/plan/log/` shows `R-NNN <logged title>` as text, not a link (use the existing views-off build).",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Run** `bun test`. Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 6: Commit** `refactor(pm-docs-site): related links reuse dependents and revisers (R-042)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 7,
-        "title": "CLI flags (finding 22)",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Failing tests** (`parse` from `lib/cli-args.ts`):",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bun test test/cli.test.ts -t parse`. Expected: FAIL.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement.** Split `--name=value` on the first `=` into name and value; the four flags take the value from there or the next argument; any other argument starting with `--` throws `pm-docs-site: unknown option <arg>`. Document in the `parse` doc comment.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run** `bun test test/cli.test.ts`. Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit** `fix(pm-docs-site): cli accepts --flag=value and rejects unknown options (R-042)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 8,
-        "title": "Distinct Mermaid IDs per section (finding 25, ADR-006)",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Failing test** in `test/mermaid.test.ts`: compile one identical mermaid source twice with `fileURL` `file:///x/ADR-001.md#adr-001-0` and `#adr-001-1`; the two `pele-<hash>-0` prefixes differ; compiling the first again gives the same prefix; without a fileURL the prefix equals today's (`sha256(source)` first 8 hex).",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `bun test test/mermaid.test.ts`. Expected: FAIL.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Implement** as in Interfaces; update the doc comment at `:45-53` and `describe()` (it already ignores the hash; check `fileURLToPath` drops it).",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run** `bun test` then `just package-test` from the repository root. Expected: PASS, including the ADR relative-image checks.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit** `fix(pm-docs-site): mermaid ids differ per section (R-042)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 9,
-        "title": "Skills, versions, and docs (findings 24, 27 skills part)",
-        "checked": 0,
-        "total": 5,
-        "steps": [
-          {
-            "text": "**Step 1: Node guard (24).** Add a Guard row after the Bun row: `node --version` is v24 or later | `Node 24 or later is required (found <version or none>). Install it, then run pm-docs-site <mode> again.`; at `:125` add `and whether node --version is v24 or later`. It runs with the other Guard checks, before any file is written.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Indent (27).** Indent the `it(` at `skills/pm-export/scripts/export.test.ts:122` and its body to the describe block's level.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Versions.** Package `version` `0.1.0-pre.8`; README and wiki pins `0.1.0-pre.8`. Run `just bump prerelease`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Run** `just validate`, `just test`, and `just version-check`. Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 5: Commit** `fix(pm-docs-site): node 24 guard and release 0.1.0-pre.8 (R-042)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 10,
-        "title": "Final verification",
-        "checked": 0,
-        "total": 4,
-        "steps": [
-          {
-            "text": "**Step 1: Run** `just package-test`. Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Run** `just lint-check` twice (R-056 anti-goal). Expected: PASS both times.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Run** `just docs-check`. Expected: PASS.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4:** Confirm every finding 1 to 25 and 27 maps to a task or a Won't fix line above.",
-            "checked": false
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [
       {
@@ -1017,15 +699,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-042",
-          "title": "Docs-site package: deferred review minors",
-          "owner": "agent",
-          "size": "M",
-          "detail": "execute, 0/55 plan steps"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-056",
@@ -1038,6 +712,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-27",
+          "id": "R-042",
+          "title": "Docs-site package: deferred review minors",
+          "milestone": "M5",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-27-r-042-docs-site-deferred-review-minors.md",
+          "result": "branch feat/r-042-docs-site-package-deferred-review-minors"
+        },
         {
           "date": "2026-11-26",
           "id": "R-052",
@@ -1383,6 +1066,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-27",
+        "kind": "done",
+        "id": "R-042",
+        "title": "Docs-site package: deferred review minors",
+        "milestone": "M5",
+        "owner": "agent",
+        "result": "branch feat/r-042-docs-site-package-deferred-review-minors"
+      },
       {
         "date": "2026-11-26",
         "kind": "done",
@@ -1873,6 +1565,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-27",
+        "id": "R-042",
+        "title": "Docs-site package: deferred review minors",
+        "milestone": "M5",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-27-r-042-docs-site-deferred-review-minors.md",
+        "result": "branch feat/r-042-docs-site-package-deferred-review-minors"
+      },
       {
         "date": "2026-11-26",
         "id": "R-052",
@@ -3275,7 +2976,7 @@
     "openInbox": 9,
     "discuss": 3,
     "shapingBriefs": 0,
-    "done": 38,
+    "done": 39,
     "dropped": 11,
     "blockers": 0,
     "openRisks": 0,
@@ -3289,6 +2990,6 @@
     "claimable": [
       "R-056"
     ],
-    "drift": false
+    "drift": true
   }
 }
