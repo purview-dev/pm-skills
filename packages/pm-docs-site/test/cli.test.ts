@@ -5,7 +5,7 @@ import { afterAll, describe, expect, it } from 'bun:test';
 
 import { INSTALL_COMMAND } from '../lib/astroc4.ts';
 import { parse } from '../lib/cli-args.ts';
-import { BUILD, CHECK, CLI, expectedPages, FIXTURES, htmlPages, PACKAGE, runCli, SCRATCH, scratchFixture, siteConfig } from './helpers';
+import { BUILD, CHECK, CLI, expectedPages, FIXTURES, freePort, htmlPages, PACKAGE, runCli, SCRATCH, scratchFixture, siteConfig } from './helpers';
 const FIXTURE_SITE = join(FIXTURES, 'site');
 
 afterAll(() => {
@@ -301,6 +301,16 @@ describe('pm-docs-site usage', () => {
 		expect(result.code).toBe(2);
 		expect(result.stderr).toContain('usage: pm-docs-site <dev | build | check> [site-dir]');
 	}, CHECK);
+
+	it('exits 2 with the problem and usage for --help or an unknown option', () => {
+		for (const args of [['--help'], ['build', '--verbose']]) {
+			const result = runCli(args);
+
+			expect(result.code).toBe(2);
+			expect(result.stderr).toContain(`pm-docs-site: unknown option ${args.at(-1)}`);
+			expect(result.stderr).toContain('usage: pm-docs-site <dev | build | check> [site-dir]');
+		}
+	}, CHECK);
 });
 
 describe('pm-docs-site arguments', () => {
@@ -345,6 +355,25 @@ describe('pm-docs-site arguments', () => {
 		expect(() => parse(['dev', '--port', '0'], {})).toThrow('pm-docs-site: --port needs a port number (1-65535)');
 	});
 
+	it('accepts the --flag=value form for every flag', () => {
+		const result = parse(['dev', 'site', '--port=4399', '--host=0.0.0.0'], {});
+
+		expect(result.server).toEqual({ port: 4399, host: '0.0.0.0' });
+		expect(result.siteDir).toEndWith('site');
+		expect(parse(['build', '--title=My plan', '--planning=docs/plan.json', 'site'], {}).flags).toEqual({ title: 'My plan', planning: 'docs/plan.json' });
+	});
+
+	it('--flag= with no value and --port=0 throw the spaced form\'s messages', () => {
+		expect(() => parse(['dev', '--port='], {})).toThrow('pm-docs-site: --port needs a value');
+		expect(() => parse(['dev', '--port=0'], {})).toThrow('pm-docs-site: --port needs a port number (1-65535)');
+		expect(() => parse(['build', '--title='], {})).toThrow('pm-docs-site: --title needs a value');
+	});
+
+	it('an unknown option throws, naming it, instead of becoming the site folder', () => {
+		expect(() => parse(['build', '--verbose'], {})).toThrow('pm-docs-site: unknown option --verbose');
+		expect(() => parse(['build', 'site', '--outDir=x'], {})).toThrow('pm-docs-site: unknown option --outDir=x');
+	});
+
 	it('parse(["dev"], {}) gives an empty server, so Astro\'s default port 4321 applies', () => {
 		const result = parse(['dev'], {});
 
@@ -370,9 +399,11 @@ describe('pm-docs-site arguments', () => {
 	});
 
 	it(
-		'dev --port 4399 serves on 4399',
+		'dev --port <free port> serves on it',
 		async () => {
-			const proc = Bun.spawn(['node', CLI, 'dev', FIXTURE_SITE, '--port', '4399'], { cwd: PACKAGE, stdout: 'pipe', stderr: 'pipe' });
+			// A port chosen at run time, so the test never collides with the browser tests' 4399 or another process.
+			const port = await freePort();
+			const proc = Bun.spawn(['node', CLI, 'dev', FIXTURE_SITE, '--port', String(port)], { cwd: PACKAGE, stdout: 'pipe', stderr: 'pipe' });
 
 			try {
 				const deadline = Date.now() + 60_000;
@@ -380,7 +411,7 @@ describe('pm-docs-site arguments', () => {
 
 				while (Date.now() < deadline) {
 					try {
-						const response = await fetch('http://localhost:4399/');
+						const response = await fetch(`http://localhost:${port}/`);
 						served = response.status === 200;
 						if (served) break;
 					} catch {

@@ -77,7 +77,8 @@
    PlanInteractions.astro) it is hidden, until the island has rendered that
    state, so a filtered link never shows the unfiltered board. If the island
    never loads and so never clears the mark, the board shows anyway after 3s,
-   unfiltered: never a blank board. */
+   unfiltered: never a blank board. A hydration that is slow but succeeds after
+   3s shows the unfiltered board until the island applies the URL; accepted. */
 .plan-board__body {
 	display: contents;
 }
@@ -98,11 +99,16 @@
 	display: contents;
 }
 
-.plan-lane__header {
+/* An h3 under the columns' h2s; the doubled class outranks Starlight's
+   heading styles, so it reads like the plain header it replaced. */
+.plan-lane__header.plan-lane__header {
 	grid-column: 1 / -1;
 	display: flex;
 	gap: 0.5rem;
-	margin-top: 1rem;
+	margin: 1rem 0 0;
+	font-size: inherit;
+	line-height: inherit;
+	color: inherit;
 	font-weight: 600;
 }
 
@@ -234,6 +240,21 @@ button.plan-column__toggle:focus-visible {
 	justify-content: start;
 	align-items: center;
 	gap: 0.75rem;
+}
+
+/* A collapsed column's vertical title never sets the header row's height:
+   size containment drops its content from the row's sizing, so the row keeps
+   the expanded columns' height. The title is not clipped: it runs on down
+   over the column's cells, which are empty while it is collapsed. */
+:root[data-board-collapsed~='now'] [data-column='now'],
+:root[data-board-collapsed~='next'] [data-column='next'],
+:root[data-board-collapsed~='foryou'] [data-column='foryou'],
+:root[data-board-collapsed~='waiting'] [data-column='waiting'],
+:root[data-board-collapsed~='done'] [data-column='done'] {
+	contain: size;
+	overflow: visible;
+	position: relative;
+	z-index: 1;
 }
 
 .plan-column__cards {

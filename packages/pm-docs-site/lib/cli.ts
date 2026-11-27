@@ -66,7 +66,19 @@ async function main(): Promise<number | null> {
 		return 2;
 	}
 
-	const { command, siteDir, flags, server } = parse(argv, process.env);
+	let parsed: ReturnType<typeof parse>;
+
+	// A bad argument (an unknown option such as --help, or a flag with no value)
+	// is a usage error: name it, then print the usage, as an unknown command does.
+	try {
+		parsed = parse(argv, process.env);
+	} catch (error) {
+		console.error((error as Error).message);
+		console.error(USAGE);
+		return 2;
+	}
+
+	const { command, siteDir, flags, server } = parsed;
 
 	if (command !== 'dev' && command !== 'build' && command !== 'check') {
 		console.error(USAGE);

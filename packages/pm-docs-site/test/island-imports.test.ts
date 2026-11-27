@@ -3,7 +3,9 @@
 // APIs at build time (src/components/graph/Graph.tsx:5-7, the Timeline.tsx
 // header). A component under src/components may therefore only `import type`
 // from those modules, never a value; this guard walks every .tsx and .ts file
-// there and fails on a value import of one of them.
+// there and fails on a value import of one of them. The same holds for every
+// bundled `<script>` in an .astro file under src/ and every .ts file under
+// src/scripts/, which ship to the browser too.
 //
 // tsconfig.json extends astro/tsconfigs/strict, which turns verbatimModuleSyntax
 // on, so TypeScript never elides a type-only binding on its own: every
@@ -27,6 +29,18 @@ import { PACKAGE } from './helpers';
 
 const COMPONENTS = join(PACKAGE, 'src', 'components');
 const LIB_DIR = join(PACKAGE, 'src', 'lib');
+const SRC = join(PACKAGE, 'src');
+const SCRIPTS = join(PACKAGE, 'src', 'scripts');
+
+/**
+ * The bodies of an .astro file's bundled `<script>` elements, which ship to
+ * the browser like an island. An `is:inline` script (or one with
+ * `define:vars`, which implies it) is not bundled and cannot import, so it is
+ * skipped; the frontmatter runs at build time and is never scanned.
+ */
+function bundledScripts(astroSource: string): string[] {
+	return [...astroSource.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)].filter(([, attributes]) => !/\bis:inline\b|\bdefine:vars\b/.test(attributes!)).map(([, , body]) => body!.trim());
+}
 
 /** Strips line and block comments, so prose that mentions `import` or `from` (the file header comments above) is never mistaken for one. */
 function stripComments(source: string): string {
@@ -168,5 +182,38 @@ describe('islands import only types from server-only libs', () => {
 		// way to a later `from '<guarded lib>'`, reading a real value re-export as
 		// type-only.
 		expect(valueImportsOfGuardedLibs(`export type Foo = string;\nexport { y } from '../../lib/planning';`)).toEqual(['../../lib/planning']);
+	});
+});
+
+describe('client scripts import only types from server-only libs', () => {
+	it('reads the bundled <script> bodies of an .astro file and skips is:inline ones', () => {
+		expect(bundledScripts('<script is:inline>a</script><script>import x from "../lib/planning";</script>')).toEqual(['import x from "../lib/planning";']);
+		expect(bundledScripts('<script is:inline define:vars={{ board }}>a</script>')).toEqual([]);
+	});
+
+	it('the guard catches a value import in an .astro client script', () => {
+		const source = bundledScripts('<script>import { features } from "../../lib/planning";</script>').join('\n');
+
+		expect(valueImportsOfGuardedLibs(source)).toEqual(['../../lib/planning']);
+	});
+
+	it('every bundled .astro <script> under src and every .ts file under src/scripts imports the guarded libs as types only', () => {
+		const astro = (readdirSync(SRC, { recursive: true }) as string[]).filter((name) => name.endsWith('.astro'));
+		const scripts = (readdirSync(SCRIPTS, { recursive: true }) as string[]).filter((name) => name.endsWith('.ts'));
+
+		expect(astro.length).toBeGreaterThan(0);
+		expect(scripts.length).toBeGreaterThan(0);
+
+		for (const file of astro) {
+			const findings = valueImportsOfGuardedLibs(bundledScripts(readFileSync(join(SRC, file), 'utf8')).join('\n'));
+
+			expect(findings, `${file}: value import of ${findings.join(', ')}`).toEqual([]);
+		}
+
+		for (const file of scripts) {
+			const findings = valueImportsOfGuardedLibs(readFileSync(join(SCRIPTS, file), 'utf8'));
+
+			expect(findings, `src/scripts/${file}: value import of ${findings.join(', ')}`).toEqual([]);
+		}
 	});
 });

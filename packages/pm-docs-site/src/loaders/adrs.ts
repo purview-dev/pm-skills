@@ -78,7 +78,7 @@ export function adrSectionsLoader(): Loader {
 					store.set({
 						id,
 						data: await parseData({ id, data: { adr: adr.id, section: key } satisfies AdrSectionData }),
-						...(await renderSection(context, markdown, file)),
+						...(await renderSection(context, markdown, file, id)),
 					});
 				}
 			}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'bun:test';
 
-import { boardQuery, cardRag, COLUMNS, DEFAULT_STATE, isFiltered, lanes, matches, parseBoardQuery } from '../src/lib/board';
+import { boardQuery, boardUrl, cardRag, COLUMNS, DEFAULT_STATE, isFiltered, lanes, matches, parseBoardQuery } from '../src/lib/board';
 import type { BoardCard, BoardState } from '../src/lib/board';
 
 // A minimal card, overridden per test. Fields not exercised by a test keep a
@@ -193,5 +193,28 @@ describe('lanes', () => {
 		const result = lanes([card({ owner: 'agent' })], 'owner', milestones);
 
 		expect(result.map((lane) => lane.key)).toEqual(['agent']);
+	});
+});
+
+describe('boardUrl', () => {
+	const agent: BoardState = { filters: { owner: 'agent', milestone: null, size: null, rag: null }, group: 'none' };
+
+	it('keeps the query keys the board does not own, and the hash', () => {
+		expect(boardUrl(agent, { pathname: '/plan/board/', search: '?utm=x&owner=user', hash: '#top' })).toBe('/plan/board/?utm=x&owner=agent#top');
+	});
+
+	it('keeps other keys for the default state and drops only the board keys', () => {
+		expect(boardUrl(DEFAULT_STATE, { pathname: '/plan/board/', search: '?utm=x', hash: '' })).toBe('/plan/board/?utm=x');
+		expect(boardUrl(DEFAULT_STATE, { pathname: '/plan/board/', search: '?owner=agent', hash: '' })).toBe('/plan/board/');
+	});
+});
+
+describe('lanes, ungrouped', () => {
+	it('returns a copy of the cards, never the input array', () => {
+		const cards = [card({ key: 'a' }), card({ key: 'b' })];
+		const [lane] = lanes(cards, 'none', []);
+
+		expect(lane!.cards).not.toBe(cards);
+		expect(lane!.cards).toEqual(cards);
 	});
 });

@@ -29,7 +29,7 @@ function sectionsLoader(name: string, folder: RecordFolder, on: () => boolean, r
 				store.set({
 					id: entry.id,
 					data: await parseData({ id: entry.id, data }),
-					...(await renderSection(context, entry.markdown, recordFile(config.planning, folder, entry.record))),
+					...(await renderSection(context, entry.markdown, recordFile(config.planning, folder, entry.record), entry.id)),
 				});
 			}
 		},

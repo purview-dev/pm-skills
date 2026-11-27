@@ -162,6 +162,13 @@ describe('a build with views off', () => {
 	it('links only to pages that were built, and links what still has a page', () => {
 		expect(problems(off)).toEqual({ unlinked: [], dead: [] });
 	});
+
+	it('the log shows an item with no page as its ID and its title as logged, unlinked', () => {
+		const log = readFileSync(join(off.dist, 'plan', 'log', 'index.html'), 'utf8');
+
+		expect(log).toMatch(/R-011(?:\s|<[^>]+>)*Write the first export/);
+		expect(log).not.toContain('href="/plan/features/r-011/"');
+	});
 });
 describe('brief and inbox pages', () => {
 	it('a brief page renders its section table and links IDs inside it', () => {

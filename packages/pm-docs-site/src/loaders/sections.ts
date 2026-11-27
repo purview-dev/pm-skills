@@ -50,10 +50,15 @@ export function recordEntries(records: { key: string; sections: { heading: strin
 	});
 }
 
-/** Render one section against its file and return the store fields Astro needs to resolve its images. */
-export async function renderSection(context: Pick<LoaderContext, 'config' | 'renderMarkdown'>, markdown: string, file: string) {
+/**
+ * Render one section against its file and return the store fields Astro needs
+ * to resolve its images. `key` (the section's store ID) is the file URL's
+ * fragment, so two identical sections of one record get distinct Mermaid IDs
+ * (lib/mermaid.ts); images resolve against `filePath`, which has no fragment.
+ */
+export async function renderSection(context: Pick<LoaderContext, 'config' | 'renderMarkdown'>, markdown: string, file: string, key: string) {
 	const siteRoot = fileURLToPath(context.config.root);
-	const rendered = await context.renderMarkdown(markdown, { fileURL: pathToFileURL(file) });
+	const rendered = await context.renderMarkdown(markdown, { fileURL: new URL(`#${key}`, pathToFileURL(file)) });
 
 	return {
 		// The record's expected file, which need not exist: it is only the importer relative images resolve against.

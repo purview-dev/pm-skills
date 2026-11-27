@@ -10,7 +10,6 @@ import pmDocsSite from '../lib/index.ts';
 import { resolveOptions } from '../lib/options.ts';
 import { BUILD, runCli, scratchFixture, siteConfig } from './helpers';
 
-const fixtureSite = new URL('./fixtures/site/', import.meta.url);
 const DEFAULT_ROOT = fileURLToPath(pathToFileURL('/site/'));
 
 type Plugin = {
@@ -66,24 +65,6 @@ describe('pmDocsSite', () => {
 		expect(updates).toHaveLength(1);
 		expect(updates[0]!.srcDir.href).toEndWith('/packages/pm-docs-site/src/');
 		expect(updates[0]!.integrations.map((integration) => integration.name)).toEqual(['@astrojs/starlight', '@astrojs/react']);
-	});
-
-	it('adds React with Starlight, so islands need no consumer config', async () => {
-		const updates: Update[] = [];
-		const hook = pmDocsSite({ title: 'T' }).hooks['astro:config:setup'];
-
-		if (!hook) throw new Error('no astro:config:setup hook');
-
-		await hook({
-			config: { root: fixtureSite },
-			updateConfig: (update: Update) => updates.push(update),
-			injectRoute: () => {},
-		} as never);
-
-		const names = updates[0]!.integrations.map((integration) => integration.name);
-
-		expect(names).toContain('@astrojs/starlight');
-		expect(names).toContain('@astrojs/react');
 	});
 
 	it('bundles Starlight and the package in every server environment, prerender included', async () => {

@@ -381,8 +381,13 @@ describe('features', () => {
 		const populated = {
 			...planning,
 			now: { ...planning.now, item: { id: 'R-012', title: 'Invoice export', serves: [], owner: 'agent', size: 'S', dependsOn: [], revisits: 'R-003' } },
+			roadmap: { ...planning.roadmap, later: planning.roadmap.later.map((item) => (item.id === 'R-020' ? { ...item, revisits: 'R-003' } : item)) },
 		} as unknown as Planning;
-		expect(revisers(features(populated), 'R-003').map((feature) => feature.id)).toEqual(['R-012']);
+		const order = features(populated).map((feature) => feature.id);
+
+		// Two revisers come back in features() order: the active item first, then the roadmap.
+		expect(revisers(features(populated), 'R-003').map((feature) => feature.id)).toEqual(['R-012', 'R-020']);
+		expect(order.indexOf('R-012')).toBeLessThan(order.indexOf('R-020'));
 	});
 });
 

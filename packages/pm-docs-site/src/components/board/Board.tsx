@@ -228,9 +228,9 @@ export default function Board({ cards, milestones }: Props) {
 				{rows.map((lane) => (
 					<div key={lane.key} className="plan-lane" data-lane={lane.key}>
 						{grouped && (
-							<div className="plan-lane__header">
+							<h3 className="plan-lane__header">
 								<span className="plan-lane__name">{lane.label}</span> <span className="plan-lane__count">{lane.cards.length}</span>
-							</div>
+							</h3>
 						)}
 						{COLUMNS.map(({ name }) => {
 							const inCell = lane.cards.filter((card) => card.column === name);

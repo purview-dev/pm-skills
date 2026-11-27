@@ -35,19 +35,26 @@ function isDialogBackdrop(target: EventTarget | null): target is HTMLDialogEleme
 	return target instanceof HTMLDialogElement && target.matches('dialog[data-item-dialog]');
 }
 
-function start(): void {
+/** The documents start() has run for, so a second import or call never stacks the listeners. */
+const started = new WeakSet<Document>();
+
+/** Adds the popup's three document listeners, once per document. */
+export function start(doc: Document = document): void {
+	if (started.has(doc)) return;
+	started.add(doc);
+
 	let pointerDownOnBackdrop = false;
 	let pointerUpOnBackdrop = false;
 
-	document.addEventListener('pointerdown', (event) => {
+	doc.addEventListener('pointerdown', (event) => {
 		pointerDownOnBackdrop = isDialogBackdrop(event.target);
 	});
 
-	document.addEventListener('pointerup', (event) => {
+	doc.addEventListener('pointerup', (event) => {
 		pointerUpOnBackdrop = isDialogBackdrop(event.target);
 	});
 
-	document.addEventListener('click', (event) => {
+	doc.addEventListener('click', (event) => {
 		const target = event.target as Element | null;
 		const link = target?.closest<HTMLAnchorElement>('a[data-item]');
 
@@ -69,4 +76,5 @@ function start(): void {
 	});
 }
 
-start();
+// Tests import this module with no DOM; the browser always has one.
+if (typeof document !== 'undefined') start();

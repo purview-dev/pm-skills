@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 6,
-  "generatedAt": "2026-11-27T00:24:24+00:00",
+  "generatedAt": "2026-11-27T13:19:10+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-056-package-tests-stable-under-full-lint-check",
-    "head": "011052bbefd1a43f3ce33ef590a8ba640474f26b"
+    "branch": "feat/r-042-docs-site-package-deferred-review-minors",
+    "head": "fd80a1be19aaac12c8449287023753332c3616fa"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -395,32 +395,7 @@
   },
   "plan": null,
   "roadmap": {
-    "next": [
-      {
-        "id": "R-042",
-        "title": "Docs-site package: deferred review minors",
-        "section": "next",
-        "position": 1,
-        "label": "next",
-        "serves": [
-          "V4"
-        ],
-        "milestone": "M5",
-        "owner": "agent",
-        "doneWhen": "each finding listed in this Note is fixed or has a one-line won't-fix reason in the item's plan, `.astro` client scripts are covered by the island import guard, `start()` in `src/scripts/plan.ts` registers its listeners once per document, and `just package-test` passes.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "From the 2026-11-22 review; review minors in `packages/pm-docs-site` (inbox 2026-11-18-1222, 2026-11-20-1844 x3). R-010 board: (1) the 3s reveal of a pending board also fires on a slow but successful hydration; document it in `components.css` and the `useBoardUrlState.ts` header, or tune it. (2) The pending mark is also set on `/plan/roadmap/?owner=...`; scope it to the Board page. (3) `useBoardUrlState` `replaceState` drops non-board query parameters and `history.state`. (4) The lane header is a plain `div`; use an `h3` or `role=\"heading\"`. (5) Before hydration, `aria-expanded` is `true` on columns the pre-paint script already collapsed. (6) The card list is serialised into the island's `props` beside the rendered HTML, roughly doubling the Board page. (7) A collapsed column's vertical title stretches the shared header row. (8) `kanban.css` duplicates the Astro cards' scoped styles and keeps dead `.k-item:focus-visible` and `cursor: grab`; its header comment lists only some changes. (9) `board.ts`: repeated `(X as string[]).includes` casts; `lanes()` branches repeat their tail; `lanes(..., 'none')` returns the input array. (10) `board-data.ts` casts loose owner strings to `Owner | null`; no fixture Done entry with a null `id`; `tagHref` never asserted. (11) `integration.test.ts` asserts the integration names two ways. (12) `install.test.ts` uses a 60s `afterAll` timeout for slow Windows `rmSync`. (13) The `dev` Playwright project adds about 25s per browser run and leaves one temp folder per machine; the optimizeDeps guard is untested under Yarn PnP. R-028: (14) `test/island-imports.test.ts` scans only `.ts` and `.tsx` under `src/components`, so an `.astro` client `<script>` that value-imports a server-only lib is not caught. (15) `start()` in `src/scripts/plan.ts` adds `pointerdown`, `pointerup`, and `click` listeners on `document` each run, so they stack under view transitions. (16) `test/browser/board.browser.ts` test \"a localStorage that throws leaves the Board usable\" pins Starlight theme-script error counts per `<starlight-theme-select>`; a Starlight upgrade fails it with no fault in the package; loosen it or report the unguarded `localStorage` read upstream. R-031 (inbox 2026-11-21-1205): (17) `relativeImports` in `test/helpers.ts` over-matches `foo.import('./x')`, `Array.from('./x')`, and imports in comments, and misses template-literal dynamic imports (false failures only). (18) In `scripts/check-demo.ts`, a `plan-empty` element's text is cut off at a nested `plan-empty` element. (19) `src/pages/plan/log.astro` labels a known ID whose page is not built with the logged title, not the export's current title, and no test covers that view-off case. R-025 (2026-11-25 review, inbox 2026-11-22-1821): (20) `revisers()` order is not pinned by a test: every assertion in `test/planning.test.ts` (the revisers case) returns one item; give a second item `revisits: 'R-003'` in the populated case and assert both IDs in `features()` order. (21) `src/lib/references.ts` line 188 still checks `other.dependsOn.includes(feature.id) || other.revisits === feature.id` inline; it could reuse `dependents()` and `revisers()`. R-013 (2026-11-25 review, inbox 2026-11-24-2044): (22) `--port=4399` (the `=` form) is not parsed, so it becomes the site folder, and any unknown flag silently becomes a positional argument (`lib/cli-args.ts`). (23) `test/cli.test.ts` \"dev --port 4399 serves on 4399\" uses a fixed port, which can collide with another process. (24) `skills/pm-docs-site/SKILL.md` Guard checks `bun --version` but not Node 24, so an older Node fails only at verify, after files are written. (25) Two byte-identical Markdown sources on one page (for example two ADR sections with the same text and fence) get the same Pele IDs (`lib/mermaid.ts`). R-040 (2026-11-25 review, inbox 2026-11-25-1008): (27) `test/link-html.test.ts`, `test/links.test.ts`, and `test/references.test.ts` lack a final newline, and `skills/pm-export/scripts/export.test.ts` has an `it(` at column 0 near line 122. Findings 26, 28, 29, and 30 (ADR pages) moved to R-058 ADR pages: fix and release (2026-11-26).",
-        "revisits": null,
-        "claimable": true
-      }
-    ],
+    "next": [],
     "later": [
       {
         "id": "R-053",
@@ -700,18 +675,19 @@
   "board": {
     "columns": {
       "now": [],
-      "next": [
-        {
-          "id": "R-042",
-          "title": "Docs-site package: deferred review minors",
-          "owner": "agent",
-          "size": "M",
-          "detail": "ready"
-        }
-      ],
+      "next": [],
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-27",
+          "id": "R-042",
+          "title": "Docs-site package: deferred review minors",
+          "milestone": "M5",
+          "owner": "agent",
+          "plan": "docs/superpowers/plans/2026-11-27-r-042-docs-site-deferred-review-minors.md",
+          "result": "branch feat/r-042-docs-site-package-deferred-review-minors"
+        },
         {
           "date": "2026-11-27",
           "id": "R-056",
@@ -1066,6 +1042,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-27",
+        "kind": "done",
+        "id": "R-042",
+        "title": "Docs-site package: deferred review minors",
+        "milestone": "M5",
+        "owner": "agent",
+        "result": "branch feat/r-042-docs-site-package-deferred-review-minors"
+      },
       {
         "date": "2026-11-27",
         "kind": "done",
@@ -1565,6 +1550,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-27",
+        "id": "R-042",
+        "title": "Docs-site package: deferred review minors",
+        "milestone": "M5",
+        "owner": "agent",
+        "plan": "docs/superpowers/plans/2026-11-27-r-042-docs-site-deferred-review-minors.md",
+        "result": "branch feat/r-042-docs-site-package-deferred-review-minors"
+      },
       {
         "date": "2026-11-27",
         "id": "R-056",
@@ -2265,6 +2259,29 @@
         {
           "heading": "Idea",
           "markdown": "Final-review minors deferred from R-056 Package tests stable under full lint-check. (1) `test/cli.test.ts` `peers` tests: two `runCli` calls with 50000ms child limits under one 60000ms `CHECK` test, and one under bun's 5000ms default, so a hung child there is killed by bun without its output. (2) `test/helpers.test.ts` kills a build after 50ms, before Astro loads, so no test shows a part-built scratch folder is removable after a kill on Windows; it also builds the shared `test/fixtures/site` that `cli.test.ts` builds, where a `scratchFixture` would keep them apart. (3) `test/hydration.test.ts` misses an arrow-function `hydrated` and accepts `HYDRATED` written only in a comment."
+        }
+      ]
+    },
+    {
+      "file": "planning/inbox/2026-11-27-0809-board-island-props-slimming.md",
+      "title": "Board island sends only card IDs and filters",
+      "captured": "2026-11-27 08:09",
+      "source": "agent (R-042 design)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "packages/pm-docs-site/src/pages/plan/board.astro",
+      "context": "R-042 design",
+      "discuss": "no",
+      "related": [
+        "R-042"
+      ],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "R-042 finding 6, moved out of R-042 at the user's choice (option B, 2026-11-27): the Board island receives the full `BoardCard[]` (with `titleRuns` and `detail` LinkRun arrays) as props beside the rendered HTML. Measured: demo Board page 60.2 KB, island props 9.0 KB (about 15% of the page), island HTML 12.4 KB. Send the island only card IDs and filter fields and reuse the server-rendered card DOM. Touches `src/pages/plan/board.astro` (line 36), `src/components/board/Board.tsx`, the card components, and their tests; likely size M or L, its own item.",
+      "sections": [
+        {
+          "heading": "Idea",
+          "markdown": "R-042 finding 6, moved out of R-042 at the user's choice (option B, 2026-11-27): the Board island receives the full `BoardCard[]` (with `titleRuns` and `detail` LinkRun arrays) as props beside the rendered HTML. Measured: demo Board page 60.2 KB, island props 9.0 KB (about 15% of the page), island HTML 12.4 KB. Send the island only card IDs and filter fields and reuse the server-rendered card DOM. Touches `src/pages/plan/board.astro` (line 36), `src/components/board/Board.tsx`, the card components, and their tests; likely size M or L, its own item."
         }
       ]
     }
@@ -2993,13 +3010,13 @@
     }
   ],
   "counts": {
-    "next": 1,
+    "next": 0,
     "later": 11,
     "nextMax": 5,
-    "openInbox": 10,
+    "openInbox": 11,
     "discuss": 3,
     "shapingBriefs": 0,
-    "done": 39,
+    "done": 40,
     "dropped": 11,
     "blockers": 0,
     "openRisks": 0,
@@ -3010,9 +3027,7 @@
   "checks": {
     "reviewDue": true,
     "lastReview": "2026-11-26",
-    "claimable": [
-      "R-042"
-    ],
+    "claimable": [],
     "drift": true
   }
 }

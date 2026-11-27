@@ -3,10 +3,16 @@
 // popup). The inline part runs as the page is parsed, before the Board's
 // columns paint, so a collapsed column never flashes open and a filtered link
 // never shows the unfiltered board; it must stay in step with STORAGE_KEY in
-// src/components/board/Board.tsx and the URL keys in src/lib/board.ts.
+// src/components/board/Board.tsx and BOARD_KEYS in src/lib/board.ts. Only the
+// Board page passes `board`, so the pending mark is never set elsewhere.
+interface Props {
+	board?: boolean;
+}
+
+const { board = false } = Astro.props;
 ---
 
-<script is:inline>
+<script is:inline define:vars={{ board }}>
 	try {
 		const names = JSON.parse(localStorage.getItem('pm-docs-site:board:collapsed') ?? '[]');
 
@@ -22,7 +28,7 @@
 	{
 		const params = new URLSearchParams(location.search);
 
-		if (['owner', 'milestone', 'size', 'rag', 'group'].some((key) => params.has(key))) document.documentElement.dataset.boardPending = '';
+		if (board && ['owner', 'milestone', 'size', 'rag', 'group'].some((key) => params.has(key))) document.documentElement.dataset.boardPending = '';
 	}
 </script>
 <script>

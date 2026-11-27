@@ -28,6 +28,23 @@ describe('relativeImports', () => {
 
 		expect(relativeImports(file)).toEqual(['../styles/x.css', './a.ts', './b.ts', './c.ts']);
 	});
+
+	it('skips member calls and comments, and finds a plain template-literal dynamic import', () => {
+		const file = join(scratch(), 'b.ts');
+		writeFileSync(
+			file,
+			[
+				"foo.import('./no.ts');",
+				"// import './comment.ts';",
+				"/* export { z } from './block.ts'; */",
+				'const t = await import(`./tpl.ts`);',
+				'const d = await import(`./${name}.ts`);',
+				"const u = 'https://example.com/'; import './after.ts';",
+			].join('\n'),
+		);
+
+		expect(relativeImports(file)).toEqual(['./tpl.ts', './after.ts']);
+	});
 });
 
 describe('resolvesToFile', () => {

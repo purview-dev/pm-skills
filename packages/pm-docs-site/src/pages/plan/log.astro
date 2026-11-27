@@ -13,6 +13,7 @@ import '../../styles/components.css';
 const planning = loadPlanning();
 // `activity` carries no plan path; the Done log does.
 // An entry whose ID has no page prints the ID, then its title with the known IDs in it linked.
+// The title is the one logged, not the export's current title: the log is history.
 const { known } = await siteRefs();
 const plans = new Map(planning.log.done.filter((entry) => entry.id).map((entry) => [entry.id, entry.plan]));
 ---

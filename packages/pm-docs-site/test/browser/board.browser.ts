@@ -42,6 +42,45 @@ test('a collapsed column stays collapsed after a reload, and expands again', asy
 	expect((await done.boundingBox())!.width).toBeGreaterThanOrEqual(expandedWidth - 1);
 });
 
+test('a collapsed column header does not make the header row taller', async ({ page }) => {
+	await page.setViewportSize({ width: 1440, height: 900 });
+	await openBoard(page);
+	const now = page.locator('[data-column="now"]');
+	const expandedHeight = (await now.boundingBox())!.height;
+
+	await page.locator('[data-column="foryou"] .plan-column__toggle').click();
+	await expect(page.locator('[data-column="foryou"]')).toHaveAttribute('data-collapsed', '');
+
+	expect(Math.abs((await now.boundingBox())!.height - expandedHeight)).toBeLessThanOrEqual(1);
+});
+
+test('a collapsed column still shows its whole name and its count', async ({ page }) => {
+	await page.setViewportSize({ width: 1440, height: 900 });
+	await openBoard(page);
+	await page.locator('[data-column="foryou"] .plan-column__toggle').click();
+	await expect(page.locator('[data-column="foryou"]')).toHaveAttribute('data-collapsed', '');
+
+	// The point at the end of the count, and at the end of the name, is painted by that element, not clipped away.
+	for (const part of ['.plan-column__name', '.plan-column__count']) {
+		const shown = await page.locator(`[data-column="foryou"] ${part}`).evaluate((element) => {
+			const box = element.getBoundingClientRect();
+			const hit = document.elementFromPoint(box.left + box.width / 2, box.bottom - 2);
+
+			return hit !== null && element.contains(hit);
+		});
+
+		expect(shown, part).toBe(true);
+	}
+});
+
+test('grouped lanes have h3 headings', async ({ page }) => {
+	await openBoard(page);
+	await page.selectOption('#board-group', 'owner');
+
+	await expect(page.locator('.plan-lane__header')).not.toHaveCount(0);
+	await expect(page.locator('h3.plan-lane__header')).toHaveCount(await page.locator('.plan-lane__header').count());
+});
+
 test('a junk stored value leaves every column expanded and throws nothing', async ({ page }) => {
 	const errors: Error[] = [];
 
@@ -182,7 +221,9 @@ test('a localStorage that throws leaves the Board usable', async ({ page }) => {
 		Object.defineProperty(window, 'localStorage', {
 			configurable: true,
 			get() {
-				throw new DOMException('blocked', 'SecurityError');
+				// A plain Error records its calling frames (a DOMException thrown by a getter carries no stack),
+				// so an unguarded read in package code names that code's chunk in the stack.
+				throw Object.assign(new Error('blocked'), { name: 'SecurityError' });
 			},
 		}),
 	);
@@ -197,37 +238,40 @@ test('a localStorage that throws leaves the Board usable', async ({ page }) => {
 	await expect(visible).not.toHaveCount(0);
 	await expect(visible).toHaveCount(await page.locator('[data-card][data-owner="agent"]:visible').count());
 
-	// @astrojs/starlight's own ThemeProvider and ThemeSelect components
-	// (dist/components/{ThemeProvider,ThemeSelect}.astro) read `typeof localStorage` with no
-	// try/catch: `typeof` only swallows a ReferenceError for an undeclared binding, not an
-	// exception the property's own getter throws, so this broken localStorage makes them throw
-	// too, on every page load, before the Board ever mounts. ThemeProvider's inline script throws
-	// once (SecurityError "blocked"); its `<starlight-theme-select>` element throws once more per
-	// instance on the page (same message, from its constructor's `loadTheme()`) because
-	// `window.StarlightThemeProvider` was never assigned, and that element's own duplicated
-	// `is:inline` script then throws a ReferenceError referencing that missing global, once per
-	// instance too. Both are identified narrowly below (name, message, and, for the ReferenceError,
-	// a stack that names only the page's inline script, never the Board island or
-	// PlanInteractions.astro) and excluded only by that exact, counted shape, so a regression in
-	// Board.tsx's or PlanInteractions.astro's own guards - which both already catch every
-	// localStorage access - still fails this assertion instead of hiding behind the vendor noise.
-	const themeSelectInstances = await page.locator('starlight-theme-select').count();
-	const starlightBlocked = errors.filter((error) => error.name === 'SecurityError' && error.message === 'blocked');
-	const starlightMissingGlobal = errors.filter((error) => error.name === 'ReferenceError' && error.message === 'StarlightThemeProvider is not defined');
-	const other = errors.filter((error) => !starlightBlocked.includes(error) && !starlightMissingGlobal.includes(error));
+	// Starlight's own ThemeProvider and ThemeSelect read localStorage with no try/catch, so
+	// this broken localStorage makes them throw too, on every page load. Those vendor errors
+	// never name package code, so they are ignored instead of counted (a Starlight upgrade can
+	// change how often they throw). An error from the Board island or PlanInteractions.astro,
+	// whose own guards catch every localStorage access, names its chunk and fails here; the inline
+	// part of PlanInteractions.astro is checked by its effect, in the next test.
+	const ours = errors.filter((error) => /_astro\/(Board|PlanInteractions)/i.test(error.stack ?? ''));
 
-	// The Board island's compiled chunk is named after its component (`/_astro/Board.<hash>.js`,
-	// pinned below and in the "island never loads" test); PlanInteractions.astro's own inline
-	// script would show as a literal reference to it. Neither ever appears in these stacks: every
-	// SecurityError here carries no stack at all (it comes from a getter, not a call Chromium
-	// records frames for), and the ReferenceErrors below point only at the page's own inline
-	// script, matching the raw page URL and never a chunk or component name.
-	for (const error of [...starlightBlocked, ...starlightMissingGlobal]) expect(error.stack ?? '').not.toMatch(/_astro\/Board|PlanInteractions/i);
-	expect(starlightBlocked).toHaveLength(themeSelectInstances + 1);
-	expect(starlightMissingGlobal).toHaveLength(themeSelectInstances);
-	expect(other).toEqual([]);
+	expect(ours).toEqual([]);
 });
 
+test('with a localStorage that throws, the pre-paint script still marks a filtered link pending', async ({ page }) => {
+	await page.addInitScript(() => {
+		Object.defineProperty(window, 'localStorage', {
+			configurable: true,
+			get() {
+				throw Object.assign(new Error('blocked'), { name: 'SecurityError' });
+			},
+		});
+		// Record whether the inline script reached its pending mark, which runs after its storage read.
+		const seen = { pending: false };
+
+		(window as unknown as { seen: typeof seen }).seen = seen;
+		// The init script can run before <html> exists, so observe the document and its subtree.
+		new MutationObserver(() => {
+			if (document.documentElement?.hasAttribute('data-board-pending')) seen.pending = true;
+		}).observe(document, { attributes: true, subtree: true, attributeFilter: ['data-board-pending'] });
+	});
+	await page.goto('/plan/board/?owner=agent');
+	await hydrated(page);
+
+	expect(await page.evaluate(() => (window as unknown as { seen: { pending: boolean } }).seen.pending)).toBe(true);
+	await expect(page.locator('html')).not.toHaveAttribute('data-board-pending');
+});
 /** The lanes' keys and their header counts, in page order. */
 async function laneSummary(page: Page): Promise<{ keys: string[]; counts: string[] }> {
 	const lanes = page.locator('[data-lane]');
@@ -301,6 +345,21 @@ test('the URL carries the state', async ({ page }) => {
 	await expect(page.locator('#board-owner')).toHaveValue('user');
 	await expect(page.locator('#board-group')).toHaveValue('owner');
 	expect(await laneSummary(page)).toEqual({ keys: ['user'], counts: ['3'] });
+});
+
+test('a filter change keeps the query keys the board does not own', async ({ page }) => {
+	await page.goto('/plan/board/?utm=x&owner=agent');
+	await hydrated(page);
+	await page.selectOption('#board-owner', 'user');
+
+	await expect.poll(() => new URL(page.url()).search).toBe('?utm=x&owner=user');
+});
+
+test('a board key on the Roadmap sets no pending mark', async ({ page }) => {
+	await page.goto('/plan/roadmap/?owner=agent');
+	await page.waitForLoadState('load');
+
+	await expect(page.locator('html')).not.toHaveAttribute('data-board-pending');
 });
 
 test('a filtered link never shows the unfiltered board', async ({ page }) => {

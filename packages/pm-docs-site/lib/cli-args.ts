@@ -30,9 +30,13 @@ function parsePort(value: string): number {
 	return port;
 }
 
+/** The options the CLI takes; any other `--` argument is an error, never a site folder. */
+const FLAGS: readonly string[] = ['--title', '--planning', '--port', '--host'];
+
 /**
  * `--title`/`--planning`/`--port`/`--host` may appear before or after the
- * site-dir positional, in any order. For `dev` only, `--port` and `--host`
+ * site-dir positional, in any order, as `--name value` or `--name=value`. An
+ * unknown `--` option throws, naming it. For `dev` only, `--port` and `--host`
  * fall back to the `PORT` and `HOST` environment variables (an Aspire
  * `AddViteApp` resource sets `PORT`), with a flag always winning over the
  * environment; `build` and `check` never read them, since they run once and
@@ -50,21 +54,24 @@ export function parse(argv: string[], env: NodeJS.ProcessEnv): { command: string
 	for (let index = 0; index < argv.length; index++) {
 		const arg = argv[index] as string;
 
-		if (arg === '--title' || arg === '--planning') {
-			const value = argv[++index];
-			if (value === undefined) throw new Error(`pm-docs-site: ${arg} needs a value`);
-			flags[arg === '--title' ? 'title' : 'planning'] = value;
-		} else if (arg === '--port') {
-			const value = argv[++index];
-			if (value === undefined) throw new Error('pm-docs-site: --port needs a value');
-			port = parsePort(value);
-		} else if (arg === '--host') {
-			const value = argv[++index];
-			if (value === undefined) throw new Error('pm-docs-site: --host needs a value');
-			host = value;
-		} else {
+		if (!arg.startsWith('--')) {
 			positional.push(arg);
+			continue;
 		}
+
+		// `--name=value` or `--name value`; an empty `--name=` has no value.
+		const equals = arg.indexOf('=');
+		const name = equals === -1 ? arg : arg.slice(0, equals);
+
+		if (!FLAGS.includes(name)) throw new Error(`pm-docs-site: unknown option ${arg}`);
+
+		const value = equals === -1 ? argv[++index] : arg.slice(equals + 1);
+
+		if (value === undefined || value === '') throw new Error(`pm-docs-site: ${name} needs a value`);
+
+		if (name === '--title' || name === '--planning') flags[name === '--title' ? 'title' : 'planning'] = value;
+		else if (name === '--port') port = parsePort(value);
+		else host = value;
 	}
 
 	const command = positional[0];
