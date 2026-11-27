@@ -14,7 +14,7 @@ Milestone: optional; the item's milestone while it is active
 - Status: active
 - Item: R-016 Rehearse the lifecycle guards
 - Session: feat/r-016-rehearse-the-lifecycle-guards
-- Stage: design
+- Stage: plan
 - Brief:
 - Milestone: M3
 - Serves: V2, V3
@@ -23,7 +23,7 @@ Milestone: optional; the item's milestone while it is active
 - Depends on: none
 - Revisits:
 - Note: 2026-11-27: Started as is without a brief (size M). The problem is M3's exit criterion, and `planning/research/2026-11-26-m4-rehearsal.md` gives the rehearsal method (user, pm-next).
-- Spec:
+- Spec: docs/superpowers/specs/2026-11-27-lifecycle-guards-rehearsal-design.md
 - Plan:
 - Started: 2026-11-27
 

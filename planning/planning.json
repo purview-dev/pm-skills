@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 6,
-  "generatedAt": "2026-11-27T14:31:39+00:00",
+  "generatedAt": "2026-11-27T14:47:33+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-016-rehearse-the-lifecycle-guards",
-    "head": "fa6c49edec4c285e7a5753cb7f24b1abcccb5d81"
+    "head": "c634793c1a9b12f887a1634fbfa54410eb2f4388"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -437,11 +437,11 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-016-rehearse-the-lifecycle-guards",
     "brief": null,
     "milestone": "M3",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-27-lifecycle-guards-rehearsal-design.md",
     "plan": null,
     "started": "2026-11-27",
     "doneWhen": [
@@ -760,7 +760,7 @@
           "title": "Rehearse the lifecycle guards",
           "owner": "both",
           "size": "M",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
