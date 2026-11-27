@@ -73,3 +73,28 @@ describe('boardCards', () => {
 		expect(new Set(cards.map((card) => card.key)).size).toBe(cards.length);
 	});
 });
+
+describe('boardCards edge cases', () => {
+	const doneOnly = (done: unknown[]) => boardCards({ ...planning, board: { ...planning.board, columns: { ...planning.board.columns, done } } } as typeof planning, known).filter((card) => card.column === 'done');
+	const entry = { date: '2026-11-01', id: null, title: 'Tidy README', milestone: 'none', owner: null, plan: null, result: 'Done.' };
+
+	it('keys a Done entry with no ID by its position', () => {
+		const [card] = doneOnly([entry]);
+
+		expect(card!.id).toBeNull();
+		expect(card!.key).toBe('done:0');
+		expect(card!.title).toBe('Tidy README');
+	});
+
+	it('drops an owner that is not agent, user, or both', () => {
+		expect(doneOnly([{ ...entry, owner: 'robot' }])[0]!.owner).toBeNull();
+		expect(doneOnly([{ ...entry, owner: 'both' }])[0]!.owner).toBe('both');
+	});
+
+	it('links a card\'s milestone tag to the milestone page', () => {
+		const card = cards.find((each) => each.id === 'R-025')!;
+
+		expect(card.tagHref).not.toBeNull();
+		expect(card.tagHref).toBe(known.get('M1')!.href);
+	});
+});

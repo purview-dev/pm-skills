@@ -3,7 +3,7 @@
 // logic lives in board.ts and runs in the browser; this module only shapes
 // the data once, at build time, the same way board.astro did before it.
 
-import { cardRag, COLUMNS } from './board';
+import { cardRag, COLUMNS, isOwner } from './board';
 import type { BoardCard, ColumnName, LinkRun } from './board';
 import { features, initials, milestoneId, planProgress } from './planning';
 import type { Owner, Planning } from './planning-types';
@@ -35,7 +35,7 @@ export function boardCards(planning: Planning, known: Map<string, Target>): Boar
 		const feature = items.get(card.id);
 		const milestone = feature?.milestone ?? null;
 		const title = `${card.id} ${card.title}`;
-		const owner = card.owner ?? ((feature?.owner ?? null) as Owner | null);
+		const owner = card.owner ?? (isOwner(feature?.owner) ? feature.owner : null);
 
 		return {
 			key: `${column}:${card.id}`,
@@ -59,7 +59,7 @@ export function boardCards(planning: Planning, known: Map<string, Target>): Boar
 	const doneCard = (entry: Planning['board']['columns']['done'][number], index: number): BoardCard => {
 		const title = entry.id ? `${entry.id} ${entry.title}` : entry.title;
 		const milestone = milestoneId(entry.milestone, planning.strategy.milestones);
-		const owner = (entry.owner ?? null) as Owner | null;
+		const owner = isOwner(entry.owner) ? entry.owner : null;
 
 		return {
 			key: `done:${entry.id ?? index}`,

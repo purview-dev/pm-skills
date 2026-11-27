@@ -63,6 +63,16 @@ const OWNERS: readonly Owner[] = ['agent', 'user', 'both'];
 const SIZES: readonly Size[] = ['S', 'M', 'L'];
 const RAGS: readonly Rag[] = ['red', 'amber', 'green'];
 const GROUPS: readonly GroupBy[] = ['none', 'milestone', 'owner'];
+
+/** Whether `value` is one of `values`, narrowing it to that union. */
+export function oneOf<T extends string>(values: readonly T[], value: string | null): value is T {
+	return value !== null && (values as readonly string[]).includes(value);
+}
+
+/** Whether `value` is an owner (agent, user, or both); a loose export string that is not one is no owner. */
+export function isOwner(value: unknown): value is Owner {
+	return typeof value === 'string' && oneOf(OWNERS, value);
+}
 const RAG_RANK: Record<Rag, number> = { red: 3, amber: 2, green: 1 };
 
 /** The worst of red, amber, green over the open risks that affect this card's ID exactly; 'none' otherwise. */
@@ -94,12 +104,12 @@ export function parseBoardQuery(search: string, milestoneIds: string[]): BoardSt
 
 	return {
 		filters: {
-			owner: owner !== null && (OWNERS as string[]).includes(owner) ? (owner as Owner) : null,
+			owner: oneOf(OWNERS, owner) ? owner : null,
 			milestone: milestone === 'none' || (milestone !== null && milestoneIds.includes(milestone)) ? milestone : null,
-			size: size !== null && (SIZES as string[]).includes(size) ? (size as Size) : null,
-			rag: rag === 'none' || (rag !== null && (RAGS as string[]).includes(rag)) ? (rag as CardRag) : null,
+			size: oneOf(SIZES, size) ? size : null,
+			rag: rag === 'none' || oneOf(RAGS, rag) ? rag : null,
 		},
-		group: group !== null && (GROUPS as string[]).includes(group) ? (group as GroupBy) : 'none',
+		group: oneOf(GROUPS, group) ? group : 'none',
 	};
 }
 
@@ -204,25 +214,26 @@ function bucket(cards: BoardCard[], keyOf: (card: BoardCard) => string): Map<str
 /** Groups cards into lanes: ungrouped is one lane holding every card in order; milestone and owner follow a fixed lane order and omit empty lanes. */
 export function lanes(cards: BoardCard[], group: GroupBy, milestones: { id: string; name: string }[]): Lane[] {
 	if (group === 'none') {
-		return [{ key: 'all', label: '', cards }];
+		return [{ key: 'all', label: '', cards: [...cards] }];
 	}
+
+	let buckets: Map<string, BoardCard[]>;
+	let order: { key: string; label: string }[];
 
 	if (group === 'milestone') {
 		const knownIds = new Set(milestones.map((milestone) => milestone.id));
-		const buckets = bucket(cards, (card) => (card.milestone !== null && knownIds.has(card.milestone) ? card.milestone : 'none'));
-		const order = [...milestones.map((milestone) => ({ key: milestone.id, label: `${milestone.id} ${milestone.name}` })), { key: 'none', label: 'No milestone' }];
 
-		return order.filter(({ key }) => (buckets.get(key)?.length ?? 0) > 0).map(({ key, label }) => ({ key, label, cards: buckets.get(key)! }));
+		buckets = bucket(cards, (card) => (card.milestone !== null && knownIds.has(card.milestone) ? card.milestone : 'none'));
+		order = [...milestones.map((milestone) => ({ key: milestone.id, label: `${milestone.id} ${milestone.name}` })), { key: 'none', label: 'No milestone' }];
+	} else {
+		buckets = bucket(cards, (card) => card.owner ?? 'none');
+		order = [
+			{ key: 'agent', label: 'agent' },
+			{ key: 'user', label: 'user' },
+			{ key: 'both', label: 'both' },
+			{ key: 'none', label: 'No owner' },
+		];
 	}
-
-	// group === 'owner'
-	const buckets = bucket(cards, (card) => card.owner ?? 'none');
-	const order = [
-		{ key: 'agent', label: 'agent' },
-		{ key: 'user', label: 'user' },
-		{ key: 'both', label: 'both' },
-		{ key: 'none', label: 'No owner' },
-	];
 
 	return order.filter(({ key }) => (buckets.get(key)?.length ?? 0) > 0).map(({ key, label }) => ({ key, label, cards: buckets.get(key)! }));
 }

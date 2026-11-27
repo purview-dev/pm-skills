@@ -208,3 +208,13 @@ describe('boardUrl', () => {
 		expect(boardUrl(DEFAULT_STATE, { pathname: '/plan/board/', search: '?owner=agent', hash: '' })).toBe('/plan/board/');
 	});
 });
+
+describe('lanes, ungrouped', () => {
+	it('returns a copy of the cards, never the input array', () => {
+		const cards = [card({ key: 'a' }), card({ key: 'b' })];
+		const [lane] = lanes(cards, 'none', []);
+
+		expect(lane!.cards).not.toBe(cards);
+		expect(lane!.cards).toEqual(cards);
+	});
+});
