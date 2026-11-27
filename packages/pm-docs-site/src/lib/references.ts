@@ -5,7 +5,7 @@
 
 import type { ViewName } from '../../lib/types.ts';
 import { graphData } from './graph';
-import { adrHref, adrsOf, briefHref, briefOf, featureHref, inboxHref, features, milestoneHref, milestoneSummaries, roadmapGroups, type Feature } from './planning';
+import { adrHref, adrsOf, briefHref, briefOf, dependents, featureHref, inboxHref, features, milestoneHref, milestoneSummaries, revisers, roadmapGroups, type Feature } from './planning';
 import type { Planning } from './planning-types';
 import { refPattern } from './ref-boundary';
 
@@ -197,9 +197,10 @@ export function references(planning: Planning, views: Views, adrKeys?: Map<strin
 			for (const dep of feature.dependsOn) page.link(dep, 'depends on');
 			page.link(feature.revisits, 'revisits');
 			page.link(milestoneKey(feature.milestone), 'milestone');
-			for (const other of all) {
-				if (other.dependsOn.includes(feature.id) || other.revisits === feature.id) page.link(other.id, 'related');
-			}
+			// An item that both depends on and revisits this one is linked once.
+			const related = new Set([...dependents(all, feature.id), ...revisers(all, feature.id)]);
+
+			for (const other of all) if (related.has(other)) page.link(other.id, 'related');
 
 			const brief = briefOf(planning, feature);
 

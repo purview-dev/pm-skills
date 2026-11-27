@@ -94,6 +94,16 @@ describe('references', () => {
 		expect(from('R-011')).toContain('mentions /plan/now/');
 	});
 
+	it('an item page links the items that depend on it and the items that revise it as related, once each', () => {
+		// R-013 depends on R-010, so R-010's page lists R-013; R-020 revisits R-025, so R-025's page lists R-020.
+		expect(from('R-013')).toContain('related /plan/features/r-010/');
+		expect(from('R-020')).toContain('related /plan/features/r-025/');
+
+		const both = references({ ...planning, roadmap: { ...planning.roadmap, later: planning.roadmap.later.map((item) => (item.id === 'R-020' ? { ...item, dependsOn: ['R-025'] } : item)) } } as typeof planning, all);
+
+		expect(both.get('R-020')!.filter((link) => link.relation === 'related' && link.href === '/plan/features/r-025/')).toHaveLength(1);
+	});
+
 	it('labels each source page', () => {
 		expect(back.get('R-012')!.find((link) => link.href === '/plan/board/')?.label).toBe('Board');
 		expect(back.get('R-010')!.find((link) => link.href === '/plan/features/r-013/')?.label).toBe('R-013 Email invoices to tenants');
