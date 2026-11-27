@@ -11,33 +11,24 @@ Brief: optional; the item's brief, if it has one
 Milestone: optional; the item's milestone while it is active
 -->
 
-- Status: active
-- Item: R-016 Rehearse the lifecycle guards
-- Session: feat/r-016-rehearse-the-lifecycle-guards
-- Stage: execute
+- Status: idle
+- Item:
+- Session:
+- Stage:
 - Brief:
-- Milestone: M3
-- Serves: V2, V3
-- Owner: both
-- Size: M
-- Depends on: none
+- Milestone:
+- Serves:
+- Owner:
+- Size:
+- Depends on:
 - Revisits:
-- Note: 2026-11-27: Started as is without a brief (size M). The problem is M3's exit criterion, and `planning/research/2026-11-26-m4-rehearsal.md` gives the rehearsal method (user, pm-next).
-- Spec: docs/superpowers/specs/2026-11-27-lifecycle-guards-rehearsal-design.md
-- Plan: docs/superpowers/plans/2026-11-27-lifecycle-guards-rehearsal.md
-- Started: 2026-11-27
+- Spec:
+- Plan:
+- Started:
 
 ## Done when
 
-- A report in `planning/research/` shows `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea instead of running during an active workflow.
-
-## Checkpoint 2026-11-27 16:03
-
-- Stopped at: plan Task 4, Step 1 (V3a and V3b recorded in the report; this pause is the V2 precondition)
-- Next action: Record the pm-resume output under "Probe V2" in planning/research/2026-11-27-m3-rehearsal.md (plan Task 4, Step 4)
-- Start with: planning/research/2026-11-27-m3-rehearsal.md
-- Decisions: V3a scored pass with `Discuss: no`, because the prompt did not ask to discuss; V3b followed the pm-shape Guard (park) over the rule-4 question, and the conflict is logged as a defect in Task 5
-- Context: the user runs `/clear` and then asks where work stopped; the plan ledger is `.superpowers/sdd/2026-11-27-lifecycle-guards-rehearsal/progress.md` (not gitignored, never committed); the bash helper scripts cannot run on the P: drive, so ledger lines are written by hand
+## Checkpoint
 
 <!--
 Active example:

@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 6,
-  "generatedAt": "2026-11-27T16:31:53+00:00",
+  "generatedAt": "2026-11-27T17:27:27+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-016-rehearse-the-lifecycle-guards",
-    "head": "03237de25e0a21aa56f8f66838713ace0d4cfde4"
+    "head": "0415865c64a637a3474b2da7dd121966f04c7258"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -86,7 +86,7 @@
         ],
         "exitCriteria": "a rehearsal report in `planning/research/` shows `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea instead of running during an active workflow.",
         "target": null,
-        "status": "active"
+        "status": "done (2026-11-27)"
       },
       {
         "id": "M5",
@@ -187,6 +187,12 @@
       }
     ],
     "decisions": [
+      {
+        "date": "2026-11-27",
+        "decision": "M3 Verified lifecycle guards complete.",
+        "why": "`planning/research/2026-11-27-m3-rehearsal.md` shows `pm-resume` naming R-016 Rehearse the lifecycle guards, `execute`, and the checkpoint's next action after `/clear` (Probe V2), and `/pm-shape` parking an idea with no brief during `executing-plans` (Probe V3b); the rule-4 conflict is inbox bug 2026-11-27-1631.",
+        "rejected": "none."
+      },
       {
         "date": "2026-11-27",
         "decision": "Re-planned roadmap.",
@@ -424,158 +430,19 @@
     ]
   },
   "now": {
-    "status": "active",
-    "item": {
-      "id": "R-016",
-      "title": "Rehearse the lifecycle guards",
-      "serves": [
-        "V2",
-        "V3"
-      ],
-      "owner": "both",
-      "size": "M",
-      "dependsOn": [],
-      "revisits": null
-    },
-    "stage": "execute",
-    "session": "feat/r-016-rehearse-the-lifecycle-guards",
+    "status": "idle",
+    "item": null,
+    "stage": null,
+    "session": null,
     "brief": null,
-    "milestone": "M3",
-    "spec": "docs/superpowers/specs/2026-11-27-lifecycle-guards-rehearsal-design.md",
-    "plan": "docs/superpowers/plans/2026-11-27-lifecycle-guards-rehearsal.md",
-    "started": "2026-11-27",
-    "doneWhen": [
-      "A report in `planning/research/` shows `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea instead of running during an active workflow."
-    ],
-    "checkpoint": {
-      "at": "2026-11-27 16:03",
-      "stoppedAt": "plan Task 4, Step 1 (V3a and V3b recorded in the report; this pause is the V2 precondition)",
-      "nextAction": "Record the pm-resume output under \"Probe V2\" in planning/research/2026-11-27-m3-rehearsal.md (plan Task 4, Step 4)",
-      "startWith": "planning/research/2026-11-27-m3-rehearsal.md",
-      "decisions": "V3a scored pass with `Discuss: no`, because the prompt did not ask to discuss; V3b followed the pm-shape Guard (park) over the rule-4 question, and the conflict is logged as a defect in Task 5",
-      "context": "the user runs `/clear` and then asks where work stopped; the plan ledger is `.superpowers/sdd/2026-11-27-lifecycle-guards-rehearsal/progress.md` (not gitignored, never committed); the bash helper scripts cannot run on the P: drive, so ledger lines are written by hand",
-      "openQuestion": null
-    }
+    "milestone": null,
+    "spec": null,
+    "plan": null,
+    "started": null,
+    "doneWhen": [],
+    "checkpoint": null
   },
-  "plan": {
-    "path": "docs/superpowers/plans/2026-11-27-lifecycle-guards-rehearsal.md",
-    "checked": 0,
-    "total": 18,
-    "tasks": [
-      {
-        "number": 1,
-        "title": "Report skeleton and preconditions (agent)",
-        "checked": 0,
-        "total": 3,
-        "steps": [
-          {
-            "text": "**Step 1: Confirm the stage.** Run `Select-String -Path planning/NOW.md -Pattern 'Stage: execute'`. Expected: one match (`pm-checkpoint stage` moved R-016 to execute when this plan was staged).",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Write the report header.** The header is a `# M3 rehearsal 2026-11-27` title, then `Item: R-016 Rehearse the lifecycle guards`, `Branch: feat/r-016-rehearse-the-lifecycle-guards`, `Skills commit: <git rev-parse --short HEAD>`, and `Session: live Claude Code session in this repository, driven by the user; skills from skills/ through just setup-skills`. Below it, add empty `## Probe V3a: plain idea`, `## Probe V3b: /pm-shape`, `## Probe V2: resume after /clear`, and `## Skill defects found` sections.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Verify.** Run `bun skills/pm-lint/scripts/lint.ts check planning/research/2026-11-27-m3-rehearsal.md --root .` and `bunx markdownlint-cli2 planning/research/2026-11-27-m3-rehearsal.md`. Expected: `pm-lint: clean` and `0 issues`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 2,
-        "title": "Probe V3a, plain idea (user, then agent)",
-        "checked": 0,
-        "total": 3,
-        "steps": [
-          {
-            "text": "**Step 1 (user):** With this plan running, type an idea in your own words and ask to talk it through, without naming a skill.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2 (agent):** Respond as the rules direct, with no rehearsal-aware shortcut.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3 (agent):** Record in the report: the exact prompt, the verbatim reply, the inbox file written (path and its `Discuss:` line), `git status --porcelain`, whether a follow-up question was asked, and whether the plan step resumed. Set `Result: pass` when exactly one inbox file with `Discuss: yes` was written, the reply was one line, and no question was asked (rules 3 and 5). Otherwise set `Result: fail (<rule>)`.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 3,
-        "title": "Probe V3b, `/pm-shape` (user, then agent)",
-        "checked": 0,
-        "total": 4,
-        "steps": [
-          {
-            "text": "**Step 1 (user):** Type `/pm-shape <an idea in your words>`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2 (agent):** Respond as the rules direct.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3 (user):** If the rule-4 question appears, pick `After <skill> finishes (recommended)`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4 (agent):** Record the prompt, the verbatim output, the question and its options, the option picked, whether the idea was parked (inbox path or `not parked`), what stopped `pm-shape` (its Guard or the agent), and `git status --porcelain`. Set `Result: pass` when `pm-shape` wrote no brief and the rule-4 question had both options. Then add a line that compares the Done when's \"parking\" with rule 4's \"ask\".",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 4,
-        "title": "Probe V2, resume after `/clear` (agent, user, then agent)",
-        "checked": 0,
-        "total": 4,
-        "steps": [
-          {
-            "text": "**Step 1 (agent):** Run `pm-checkpoint pause`, with `Next action: Record the pm-resume output under \"Probe V2\" in planning/research/2026-11-27-m3-rehearsal.md (plan Task 4, Step 4)`. Record the commit sha in the report.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2 (user):** Run `/clear`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3 (user):** Ask where work stopped, as `/pm-resume` or in plain words.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4 (agent, new context):** Record the prompt, the verbatim output, `git status --porcelain` before and after, and a field check against `planning/NOW.md` (Item, Stage, Next action). Set `Result: pass` when the output names `R-016 Rehearse the lifecycle guards`, `execute`, and the checkpoint's `Next action`, contradicts no `NOW.md` field, and writes nothing.",
-            "checked": false
-          }
-        ]
-      },
-      {
-        "number": 5,
-        "title": "Defects, verification, and commit (agent)",
-        "checked": 0,
-        "total": 4,
-        "steps": [
-          {
-            "text": "**Step 1:** For each `fail` result, run `pm-bug` (capture) with the probe's evidence, and list `<probe>: <rule broken>, <inbox file>` under `## Skill defects found`. Write `none` when nothing failed.",
-            "checked": false
-          },
-          {
-            "text": "**Step 2: Verify.** Run `bun skills/pm-lint/scripts/lint.ts check planning/ --root .` and `bunx markdownlint-cli2 planning/research/2026-11-27-m3-rehearsal.md`. Expected: `pm-lint: clean` and `0 issues`.",
-            "checked": false
-          },
-          {
-            "text": "**Step 3: Done when check.** Check that the report has V2 and V3a (or V3b) sections with verbatim output and a result line.",
-            "checked": false
-          },
-          {
-            "text": "**Step 4: Commit.** Run `git add planning/` and `git commit -m \"docs(pm): R-016 lifecycle guards rehearsal report\"`.",
-            "checked": false
-          }
-        ]
-      }
-    ]
-  },
+  "plan": null,
   "roadmap": {
     "next": [
       {
@@ -880,15 +747,7 @@
   },
   "board": {
     "columns": {
-      "now": [
-        {
-          "id": "R-016",
-          "title": "Rehearse the lifecycle guards",
-          "owner": "both",
-          "size": "M",
-          "detail": "execute, 0/18 plan steps"
-        }
-      ],
+      "now": [],
       "next": [
         {
           "id": "R-059",
@@ -929,6 +788,15 @@
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-27",
+          "id": "R-016",
+          "title": "Rehearse the lifecycle guards",
+          "milestone": "M3",
+          "owner": "both",
+          "plan": "docs/superpowers/plans/2026-11-27-lifecycle-guards-rehearsal.md",
+          "result": "branch feat/r-016-rehearse-the-lifecycle-guards"
+        },
         {
           "date": "2026-11-27",
           "id": "R-042",
@@ -1292,6 +1160,15 @@
       ]
     },
     "activity": [
+      {
+        "date": "2026-11-27",
+        "kind": "done",
+        "id": "R-016",
+        "title": "Rehearse the lifecycle guards",
+        "milestone": "M3",
+        "owner": "both",
+        "result": "branch feat/r-016-rehearse-the-lifecycle-guards"
+      },
       {
         "date": "2026-11-27",
         "kind": "done",
@@ -1827,6 +1704,15 @@
   },
   "log": {
     "done": [
+      {
+        "date": "2026-11-27",
+        "id": "R-016",
+        "title": "Rehearse the lifecycle guards",
+        "milestone": "M3",
+        "owner": "both",
+        "plan": "docs/superpowers/plans/2026-11-27-lifecycle-guards-rehearsal.md",
+        "result": "branch feat/r-016-rehearse-the-lifecycle-guards"
+      },
       {
         "date": "2026-11-27",
         "id": "R-042",
@@ -3171,7 +3057,7 @@
     "openInbox": 6,
     "discuss": 5,
     "shapingBriefs": 0,
-    "done": 40,
+    "done": 41,
     "dropped": 12,
     "blockers": 0,
     "openRisks": 0,
@@ -3189,6 +3075,6 @@
       "R-051",
       "R-030"
     ],
-    "drift": false
+    "drift": true
   }
 }

@@ -45,7 +45,7 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 - Serves: V2, V3
 - Exit criteria: a rehearsal report in `planning/research/` shows `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea instead of running during an active workflow.
 - Target: none
-- Status: active
+- Status: done (2026-11-27)
 
 ### M5 Docs-site package 1.0.0
 
@@ -119,6 +119,7 @@ Newest first. Nothing in this file changes without a line here.
 - <YYYY-MM-DD> <decision>. Why: <reason>. Rejected: <alternatives>.
 -->
 
+- 2026-11-27 M3 Verified lifecycle guards complete. Why: `planning/research/2026-11-27-m3-rehearsal.md` shows `pm-resume` naming R-016 Rehearse the lifecycle guards, `execute`, and the checkpoint's next action after `/clear` (Probe V2), and `/pm-shape` parking an idea with no brief during `executing-plans` (Probe V3b); the rule-4 conflict is inbox bug 2026-11-27-1631. Rejected: none.
 - 2026-11-27 Re-planned roadmap. Why: the focus moved to M3, so R-016 Rehearse the lifecycle guards leads Next; Next was full, so R-030 Pre-push runs fast checks only moved to the top of Unassigned in Later; Later is grouped M5, then Unassigned. Rejected: leaving R-016 in Later.
 - 2026-11-27 Current focus M3 Verified lifecycle guards, with bet B3 and assumption A6. Why: M2 is done, and M3 tests the riskiest open assumption (V2 and V3 unrehearsed). Rejected: focus on M5 Docs-site package 1.0.0.
 - 2026-11-27 Not doing unchanged. Why: the user chose none of Board island props slimming, Portable vision export, or Deploy the demo site for it; they stay in the inbox to shape. Rejected: deferring each until after M5.
