@@ -301,7 +301,7 @@ test('usable at 320px', async ({ page }) => {
 
 	expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
 	await expect(page.locator('.plan-graph__canvas')).toBeVisible();
-	await expect(page.locator('.plan-graph__toolbar')).toBeVisible();
+	await expect(page.locator('.plan-graph__toolbar')).toBeVisible({ timeout: HYDRATED });
 });
 
 test('the server-rendered HTML has every node of the default layout; hydration adds and removes none', async ({ page, request }) => {

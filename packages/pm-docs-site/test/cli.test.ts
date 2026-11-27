@@ -209,7 +209,8 @@ describe('pm-docs-site check', () => {
 			expect(build.code).not.toBe(0);
 			expect(build.stdout + build.stderr).toContain('schemaVersion 6');
 		},
-		BUILD,
+		// A check and a build: room for both child limits, so a hung child still reports.
+		BUILD + CHECK,
 	);
 
 	it('warns that --title and --planning are ignored when the site has a config file', () => {

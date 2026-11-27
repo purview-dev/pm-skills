@@ -274,7 +274,7 @@ test('usable at 320px', async ({ page }) => {
 
 	expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
 	await expect(strip(page)).toBeVisible();
-	await expect(page.locator('.plan-timeline__toolbar')).toBeVisible();
+	await expect(page.locator('.plan-timeline__toolbar')).toBeVisible({ timeout: HYDRATED });
 });
 
 test('the timeline hydrates with no page errors', async ({ page }) => {
