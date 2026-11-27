@@ -37,33 +37,33 @@
 - Create: `planning/research/2026-11-27-m3-rehearsal.md`
 - Modify: `planning/NOW.md` (by `pm-checkpoint stage`, before this task starts)
 
-- [ ] **Step 1: Confirm the stage.** Run `Select-String -Path planning/NOW.md -Pattern 'Stage: execute'`. Expected: one match (`pm-checkpoint stage` moved R-016 to execute when this plan was staged).
-- [ ] **Step 2: Write the report header.** The header is a `# M3 rehearsal 2026-11-27` title, then `Item: R-016 Rehearse the lifecycle guards`, `Branch: feat/r-016-rehearse-the-lifecycle-guards`, `Skills commit: <git rev-parse --short HEAD>`, and `Session: live Claude Code session in this repository, driven by the user; skills from skills/ through just setup-skills`. Below it, add empty `## Probe V3a: plain idea`, `## Probe V3b: /pm-shape`, `## Probe V2: resume after /clear`, and `## Skill defects found` sections.
-- [ ] **Step 3: Verify.** Run `bun skills/pm-lint/scripts/lint.ts check planning/research/2026-11-27-m3-rehearsal.md --root .` and `bunx markdownlint-cli2 planning/research/2026-11-27-m3-rehearsal.md`. Expected: `pm-lint: clean` and `0 issues`.
+- [x] **Step 1: Confirm the stage.** Run `Select-String -Path planning/NOW.md -Pattern 'Stage: execute'`. Expected: one match (`pm-checkpoint stage` moved R-016 to execute when this plan was staged).
+- [x] **Step 2: Write the report header.** The header is a `# M3 rehearsal 2026-11-27` title, then `Item: R-016 Rehearse the lifecycle guards`, `Branch: feat/r-016-rehearse-the-lifecycle-guards`, `Skills commit: <git rev-parse --short HEAD>`, and `Session: live Claude Code session in this repository, driven by the user; skills from skills/ through just setup-skills`. Below it, add empty `## Probe V3a: plain idea`, `## Probe V3b: /pm-shape`, `## Probe V2: resume after /clear`, and `## Skill defects found` sections.
+- [x] **Step 3: Verify.** Run `bun skills/pm-lint/scripts/lint.ts check planning/research/2026-11-27-m3-rehearsal.md --root .` and `bunx markdownlint-cli2 planning/research/2026-11-27-m3-rehearsal.md`. Expected: `pm-lint: clean` and `0 issues`.
 
 ### Task 2: Probe V3a, plain idea (user, then agent)
 
-- [ ] **Step 1 (user):** With this plan running, type an idea in your own words and ask to talk it through, without naming a skill.
-- [ ] **Step 2 (agent):** Respond as the rules direct, with no rehearsal-aware shortcut.
-- [ ] **Step 3 (agent):** Record in the report: the exact prompt, the verbatim reply, the inbox file written (path and its `Discuss:` line), `git status --porcelain`, whether a follow-up question was asked, and whether the plan step resumed. Set `Result: pass` when exactly one inbox file with `Discuss: yes` was written, the reply was one line, and no question was asked (rules 3 and 5). Otherwise set `Result: fail (<rule>)`.
+- [x] **Step 1 (user):** With this plan running, type an idea in your own words and ask to talk it through, without naming a skill.
+- [x] **Step 2 (agent):** Respond as the rules direct, with no rehearsal-aware shortcut.
+- [x] **Step 3 (agent):** Record in the report: the exact prompt, the verbatim reply, the inbox file written (path and its `Discuss:` line), `git status --porcelain`, whether a follow-up question was asked, and whether the plan step resumed. Set `Result: pass` when exactly one inbox file with `Discuss: yes` was written, the reply was one line, and no question was asked (rules 3 and 5). Otherwise set `Result: fail (<rule>)`.
 
 ### Task 3: Probe V3b, `/pm-shape` (user, then agent)
 
-- [ ] **Step 1 (user):** Type `/pm-shape <an idea in your words>`.
-- [ ] **Step 2 (agent):** Respond as the rules direct.
-- [ ] **Step 3 (user):** If the rule-4 question appears, pick `After <skill> finishes (recommended)`.
-- [ ] **Step 4 (agent):** Record the prompt, the verbatim output, the question and its options, the option picked, whether the idea was parked (inbox path or `not parked`), what stopped `pm-shape` (its Guard or the agent), and `git status --porcelain`. Set `Result: pass` when `pm-shape` wrote no brief and the rule-4 question had both options. Then add a line that compares the Done when's "parking" with rule 4's "ask".
+- [x] **Step 1 (user):** Type `/pm-shape <an idea in your words>`.
+- [x] **Step 2 (agent):** Respond as the rules direct.
+- [x] **Step 3 (user):** If the rule-4 question appears, pick `After <skill> finishes (recommended)`.
+- [x] **Step 4 (agent):** Record the prompt, the verbatim output, the question and its options, the option picked, whether the idea was parked (inbox path or `not parked`), what stopped `pm-shape` (its Guard or the agent), and `git status --porcelain`. Set `Result: pass` when `pm-shape` wrote no brief and the rule-4 question had both options. Then add a line that compares the Done when's "parking" with rule 4's "ask".
 
 ### Task 4: Probe V2, resume after `/clear` (agent, user, then agent)
 
-- [ ] **Step 1 (agent):** Run `pm-checkpoint pause`, with `Next action: Record the pm-resume output under "Probe V2" in planning/research/2026-11-27-m3-rehearsal.md (plan Task 4, Step 4)`. Record the commit sha in the report.
-- [ ] **Step 2 (user):** Run `/clear`.
-- [ ] **Step 3 (user):** Ask where work stopped, as `/pm-resume` or in plain words.
-- [ ] **Step 4 (agent, new context):** Record the prompt, the verbatim output, `git status --porcelain` before and after, and a field check against `planning/NOW.md` (Item, Stage, Next action). Set `Result: pass` when the output names `R-016 Rehearse the lifecycle guards`, `execute`, and the checkpoint's `Next action`, contradicts no `NOW.md` field, and writes nothing.
+- [x] **Step 1 (agent):** Run `pm-checkpoint pause`, with `Next action: Record the pm-resume output under "Probe V2" in planning/research/2026-11-27-m3-rehearsal.md (plan Task 4, Step 4)`. Record the commit sha in the report.
+- [x] **Step 2 (user):** Run `/clear`.
+- [x] **Step 3 (user):** Ask where work stopped, as `/pm-resume` or in plain words.
+- [x] **Step 4 (agent, new context):** Record the prompt, the verbatim output, `git status --porcelain` before and after, and a field check against `planning/NOW.md` (Item, Stage, Next action). Set `Result: pass` when the output names `R-016 Rehearse the lifecycle guards`, `execute`, and the checkpoint's `Next action`, contradicts no `NOW.md` field, and writes nothing.
 
 ### Task 5: Defects, verification, and commit (agent)
 
-- [ ] **Step 1:** For each `fail` result, run `pm-bug` (capture) with the probe's evidence, and list `<probe>: <rule broken>, <inbox file>` under `## Skill defects found`. Write `none` when nothing failed.
-- [ ] **Step 2: Verify.** Run `bun skills/pm-lint/scripts/lint.ts check planning/ --root .` and `bunx markdownlint-cli2 planning/research/2026-11-27-m3-rehearsal.md`. Expected: `pm-lint: clean` and `0 issues`.
-- [ ] **Step 3: Done when check.** Check that the report has V2 and V3a (or V3b) sections with verbatim output and a result line.
-- [ ] **Step 4: Commit.** Run `git add planning/` and `git commit -m "docs(pm): R-016 lifecycle guards rehearsal report"`.
+- [x] **Step 1:** For each `fail` result, run `pm-bug` (capture) with the probe's evidence, and list `<probe>: <rule broken>, <inbox file>` under `## Skill defects found`. Write `none` when nothing failed.
+- [x] **Step 2: Verify.** Run `bun skills/pm-lint/scripts/lint.ts check planning/ --root .` and `bunx markdownlint-cli2 planning/research/2026-11-27-m3-rehearsal.md`. Expected: `pm-lint: clean` and `0 issues`.
+- [x] **Step 3: Done when check.** Check that the report has V2 and V3a (or V3b) sections with verbatim output and a result line.
+- [x] **Step 4: Commit.** Run `git add planning/` and `git commit -m "docs(pm): R-016 lifecycle guards rehearsal report"`.
