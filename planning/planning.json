@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 6,
-  "generatedAt": "2026-11-27T07:58:27+00:00",
+  "generatedAt": "2026-11-27T08:41:26+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-042-docs-site-package-deferred-review-minors",
-    "head": "47265d9481fba228a29426edce1431cefaf9d005"
+    "head": "d2b6956f26e91b82920078dd6235e4402ca44828"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -393,11 +393,11 @@
       "dependsOn": [],
       "revisits": null
     },
-    "stage": "design",
+    "stage": "plan",
     "session": "feat/r-042-docs-site-package-deferred-review-minors",
     "brief": null,
     "milestone": "M5",
-    "spec": null,
+    "spec": "docs/superpowers/specs/2026-11-27-r-042-docs-site-deferred-review-minors-design.md",
     "plan": null,
     "started": "2026-11-27",
     "doneWhen": [
@@ -717,7 +717,7 @@
           "title": "Docs-site package: deferred review minors",
           "owner": "agent",
           "size": "M",
-          "detail": "design"
+          "detail": "plan"
         }
       ],
       "next": [
@@ -2214,6 +2214,29 @@
           "markdown": "The R-052 whole-branch review found five minors. (1) `skills/pm-export/SKILL.md` field map: the `inbox[]` key list omits `sections[]` (the prose after it describes it). (2) `src/lib/references.ts`: a brief page appears in Linked from as its title only (\"Invoice export\"), while its page title and feature and ADR pages use `<ID> <title>`. (3) `src/routes/plan/inbox.astro`: every card's `Open` link has the same accessible name; add `aria-label={`Open ${entry.title}`}`. (4) `src/components/RecordSections.astro`: section headings render as raw text, so inline Markdown or an ID in a heading is neither formatted nor linked. (5) `src/routes/plan/inbox/[slug].astro`: the description starts lower case (\"bug in the inbox\"). Also noted: a relative Markdown link in a brief or inbox section resolves page-relative, as on ADR pages, and goes nowhere."
         }
       ]
+    },
+    {
+      "file": "planning/inbox/2026-11-27-0809-board-island-props-slimming.md",
+      "title": "Board island sends only card IDs and filters",
+      "captured": "2026-11-27 08:09",
+      "source": "agent (R-042 design)",
+      "kind": "improvement",
+      "severity": null,
+      "affects": "packages/pm-docs-site/src/pages/plan/board.astro",
+      "context": "R-042 design",
+      "discuss": "no",
+      "related": [
+        "R-042"
+      ],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "R-042 finding 6, moved out of R-042 at the user's choice (option B, 2026-11-27): the Board island receives the full `BoardCard[]` (with `titleRuns` and `detail` LinkRun arrays) as props beside the rendered HTML. Measured: demo Board page 60.2 KB, island props 9.0 KB (about 15% of the page), island HTML 12.4 KB. Send the island only card IDs and filter fields and reuse the server-rendered card DOM. Touches `src/pages/plan/board.astro` (line 36), `src/components/board/Board.tsx`, the card components, and their tests; likely size M or L, its own item.",
+      "sections": [
+        {
+          "heading": "Idea",
+          "markdown": "R-042 finding 6, moved out of R-042 at the user's choice (option B, 2026-11-27): the Board island receives the full `BoardCard[]` (with `titleRuns` and `detail` LinkRun arrays) as props beside the rendered HTML. Measured: demo Board page 60.2 KB, island props 9.0 KB (about 15% of the page), island HTML 12.4 KB. Send the island only card IDs and filter fields and reuse the server-rendered card DOM. Touches `src/pages/plan/board.astro` (line 36), `src/components/board/Board.tsx`, the card components, and their tests; likely size M or L, its own item."
+        }
+      ]
     }
   ],
   "briefs": [
@@ -2943,7 +2966,7 @@
     "next": 1,
     "later": 11,
     "nextMax": 5,
-    "openInbox": 8,
+    "openInbox": 9,
     "discuss": 3,
     "shapingBriefs": 0,
     "done": 38,
@@ -2960,6 +2983,6 @@
     "claimable": [
       "R-056"
     ],
-    "drift": true
+    "drift": false
   }
 }
