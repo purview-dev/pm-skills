@@ -209,7 +209,7 @@
 
 ### Task 10: Final verification
 
-- [ ] **Step 1: Run** `just package-test`. Expected: PASS.
-- [ ] **Step 2: Run** `just lint-check` twice (R-056 anti-goal). Expected: PASS both times.
-- [ ] **Step 3: Run** `just docs-check`. Expected: PASS.
-- [ ] **Step 4:** Confirm every finding 1 to 25 and 27 maps to a task or a Won't fix line above.
+- [x] **Step 1: Run** `just package-test`. Expected: PASS.
+- [x] **Step 2: Run** `just lint-check` twice (R-056 anti-goal). Expected: PASS both times.
+- [x] **Step 3: Run** `just docs-check`. Expected: PASS.
+- [x] **Step 4:** Confirm every finding 1 to 25 and 27 maps to a task or a Won't fix line above.
