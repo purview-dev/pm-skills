@@ -46,4 +46,4 @@ at the end of `execute`, before the finish step opens the pull request.
 
 ## Last review
 
-- Date: 2026-11-26
+- Date: 2026-11-27

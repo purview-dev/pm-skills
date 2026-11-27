@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 6,
-  "generatedAt": "2026-11-27T13:19:10+00:00",
+  "generatedAt": "2026-11-27T17:27:27+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -13,8 +13,8 @@
     "branchPattern": "feat/<id>-<slug>"
   },
   "source": {
-    "branch": "feat/r-042-docs-site-package-deferred-review-minors",
-    "head": "fd80a1be19aaac12c8449287023753332c3616fa"
+    "branch": "feat/r-016-rehearse-the-lifecycle-guards",
+    "head": "0415865c64a637a3474b2da7dd121966f04c7258"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -53,8 +53,8 @@
   },
   "strategy": {
     "focus": {
-      "milestone": "M2 Verified install and upgrade",
-      "whyNow": "M4 is done (2026-11-26), and the user chose M2 over M5 on 2026-11-26; a consumer's fresh install (V1) has never been rehearsed end to end, which is the riskiest open assumption. Its 3 items (R-006, R-015, R-057) are S, so the forecast is about 0.4 weeks at 8.5 items per week."
+      "milestone": "M3 Verified lifecycle guards",
+      "whyNow": "M2 is done (2026-11-26), and the user chose M3 over M5 on 2026-11-27; V2 and V3 have never been rehearsed end to end, which is the riskiest open assumption, and the open major bug Bare IDs in questions and feedback shows guidance output still failing in use. Its one item (R-016, M, both) gives a forecast of about 0.1 weeks at 10 items per week (40 done in the last 4 weeks / 4)."
     },
     "milestones": [
       {
@@ -78,6 +78,17 @@
         "status": "done (2026-11-26)"
       },
       {
+        "id": "M3",
+        "name": "Verified lifecycle guards",
+        "serves": [
+          "V2",
+          "V3"
+        ],
+        "exitCriteria": "a rehearsal report in `planning/research/` shows `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea instead of running during an active workflow.",
+        "target": null,
+        "status": "done (2026-11-27)"
+      },
+      {
         "id": "M5",
         "name": "Docs-site package 1.0.0",
         "serves": [
@@ -96,17 +107,6 @@
         "exitCriteria": "`just validate` fails when `pm-setup`'s skill count differs from the shipped skills, and `pm-setup` run in a repository with `docs/adr/` and no `<PM root>/config.md` prints the Note that suggests `pm-adr import docs/adr/`.",
         "target": null,
         "status": "done (2026-11-26)"
-      },
-      {
-        "id": "M3",
-        "name": "Verified lifecycle guards",
-        "serves": [
-          "V2",
-          "V3"
-        ],
-        "exitCriteria": "a rehearsal report in `planning/research/` shows `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea instead of running during an active workflow.",
-        "target": null,
-        "status": "planned"
       }
     ],
     "bets": [
@@ -123,6 +123,13 @@
         "evidence": "`planning/briefs/2026-11-22-where-do-adrs-fit.md` and `planning/briefs/2026-11-20-technology-and-engineering-principles.md` record agents contradicting earlier decisions because nothing records or points at them.",
         "signal": "the M4 rehearsal report in `planning/research/` shows the design handoff naming the ADRs and principles that apply and `pm-checkpoint` (`done`) refusing a failing command check.",
         "status": "won (2026-11-26)"
+      },
+      {
+        "id": "B3",
+        "statement": "We believe rehearsing the lifecycle guards in a fresh session will show whether `pm-resume` and the Non-interruption rules hold, or exactly where they break, for solo developers who build with AI coding agents.",
+        "evidence": "no report in `planning/research/` covers V2 or V3; the inbox bug Bare IDs in questions and feedback (major, 2026-11-24) shows guidance output failing in use.",
+        "signal": "R-016 Rehearse the lifecycle guards writes its report in `planning/research/`, showing `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea during an active workflow, or naming each step that failed.",
+        "status": "open"
       }
     ],
     "assumptions": [
@@ -149,6 +156,12 @@
         "statement": "A design stage that is handed the applicable ADRs and principles follows them.",
         "test": "the next item whose spec names ADRs has its plan written by a separate session from the handoff, and that plan cites them (the R-036 rehearsal plan cited every ID, but one agent wrote both the handoff and the plan).",
         "status": "untested"
+      },
+      {
+        "id": "A6",
+        "statement": "A rehearsal in this repository, with the skills loaded from `skills/` through `just setup-skills`, shows how a consumer's agent follows the guards.",
+        "test": "R-016 Rehearse the lifecycle guards; it is broken if a consumer later reports a guard failure that the rehearsal passed.",
+        "status": "untested"
       }
     ],
     "notDoing": [
@@ -174,6 +187,42 @@
       }
     ],
     "decisions": [
+      {
+        "date": "2026-11-27",
+        "decision": "M3 Verified lifecycle guards complete.",
+        "why": "`planning/research/2026-11-27-m3-rehearsal.md` shows `pm-resume` naming R-016 Rehearse the lifecycle guards, `execute`, and the checkpoint's next action after `/clear` (Probe V2), and `/pm-shape` parking an idea with no brief during `executing-plans` (Probe V3b); the rule-4 conflict is inbox bug 2026-11-27-1631.",
+        "rejected": "none."
+      },
+      {
+        "date": "2026-11-27",
+        "decision": "Re-planned roadmap.",
+        "why": "the focus moved to M3, so R-016 Rehearse the lifecycle guards leads Next; Next was full, so R-030 Pre-push runs fast checks only moved to the top of Unassigned in Later; Later is grouped M5, then Unassigned.",
+        "rejected": "leaving R-016 in Later."
+      },
+      {
+        "date": "2026-11-27",
+        "decision": "Current focus M3 Verified lifecycle guards, with bet B3 and assumption A6.",
+        "why": "M2 is done, and M3 tests the riskiest open assumption (V2 and V3 unrehearsed).",
+        "rejected": "focus on M5 Docs-site package 1.0.0."
+      },
+      {
+        "date": "2026-11-27",
+        "decision": "Not doing unchanged.",
+        "why": "the user chose none of Board island props slimming, Portable vision export, or Deploy the demo site for it; they stay in the inbox to shape.",
+        "rejected": "deferring each until after M5."
+      },
+      {
+        "date": "2026-11-27",
+        "decision": "Milestone order for open work: M3 Verified lifecycle guards, then M5 Docs-site package 1.0.0; M3 active.",
+        "why": "M2 is done, and M3 tests the riskiest open assumption (V2 and V3 have never been rehearsed end to end; the open major bug Bare IDs in questions and feedback shows guidance output still failing).",
+        "rejected": "M5 first."
+      },
+      {
+        "date": "2026-11-27",
+        "decision": "R-059 pm-setup runs read-only checks on a current install has no milestone.",
+        "why": "M2 Verified install and upgrade is done and its exit criteria are met; R-059 is a V1 fix outside them.",
+        "rejected": "reopening M2."
+      },
       {
         "date": "2026-11-26",
         "decision": "M2 Verified install and upgrade complete.",
@@ -395,7 +444,128 @@
   },
   "plan": null,
   "roadmap": {
-    "next": [],
+    "next": [
+      {
+        "id": "R-059",
+        "title": "pm-setup runs read-only checks on a current install",
+        "section": "next",
+        "position": 1,
+        "label": "next",
+        "serves": [
+          "V1"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "on an install whose `Rules version` equals the skills version, `pm-setup` prints the read-only Step 5 checks, including the Note about an ADR folder outside the PM root, before it stops; each skill-count message from `just validate` names the installed count or the total; `just validate` and `just test` pass.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "From the 2026-11-27 review (inbox 2026-11-26-1130, question, agent, from R-057 execute). pm-setup Step 4 stops after showing the plan when the install is already current, so Step 5 never runs; the read-only Step 5 checks (item 7, the outside ADR folder Note) then never surface on a current install. Decide whether read-only checks belong before the Step 4 stop. Files: `skills/pm-setup/SKILL.md`, `scripts/skill-counts.ts`. A `skills/` change, so `just bump prerelease`. Also from R-006 (inbox 2026-11-26-1541): when both numbers on the output line (`- Skills: <27 of 27 installed`) are wrong, validate prints two identical messages (`skill count 27, expected 26`), so the reader cannot tell the installed count from the total; name which number each message is about (\"installed count\" or \"total\").",
+        "revisits": null,
+        "claimable": true
+      },
+      {
+        "id": "R-060",
+        "title": "Docs-site package: review minors after R-042",
+        "section": "next",
+        "position": 2,
+        "label": "next",
+        "serves": [
+          "V4"
+        ],
+        "milestone": "M5",
+        "owner": "agent",
+        "doneWhen": "each finding listed in this Note is fixed or has a one-line won't-fix reason in the item's plan, and `just package-test` passes.",
+        "size": "M",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "From the 2026-11-27 review; review minors in `packages/pm-docs-site`. R-058 (inbox 2026-11-26-1412): (1) the comment above `adrs:` in `src/content.config.ts` still says the sections are rendered there (ADR-015 moved rendering to `adr-sections`). (2) No test pins a whitespace-only section as blank (`hasContent('  \\n')` in `src/loaders/adrs.ts`); the fixture's empty section is `\"\"`. (3) The Decisions-view-off integration test does not assert the build skips the empty `adr-sections` collection (no \"does not exist or is empty\" warning). (4) `src/lib/site-refs.ts` repeats the loader's non-empty-section predicate inline; export one predicate beside `hasContent`. R-042 final review (2026-11-27): (5) the README CLI section and the `lib/cli.ts` header do not describe `--flag=value`, the unknown-option error, or that an empty value such as `--title ''` is now an error. (6) `boardUrl` in `src/lib/board.ts` re-encodes and reorders the query keys the board does not own (`?flag` becomes `?flag=`, `%20` becomes `+`). (7) `BOARD_KEYS` in `src/lib/board.ts` and the inline key list in `src/components/PlanInteractions.astro` have no test keeping them equal. (8) `stripComments` in `test/helpers.ts` treats an apostrophe in JSX text as a quote, as it does a regex literal. (9) `test/helpers.ts` and `test/island-imports.test.ts` each define a `stripComments`. R-052 (inbox 2026-11-26-1855): (10) `skills/pm-export/SKILL.md` field map: the `inbox[]` key list omits `sections[]` (the prose after it describes it); a `skills/` change, so `just bump prerelease`. (11) `src/lib/references.ts`: a brief page appears in Linked from as its title only (\"Invoice export\"), while its page title and feature and ADR pages use `<ID> <title>`. (12) `src/routes/plan/inbox.astro`: every card's `Open` link has the same accessible name; add an `aria-label` naming the entry. (13) `src/components/RecordSections.astro`: section headings render as raw text, so inline Markdown or an ID in a heading is neither formatted nor linked. (14) `src/routes/plan/inbox/[slug].astro`: the description starts lower case (\"bug in the inbox\"). Also noted: a relative Markdown link in a brief or inbox section resolves page-relative, as on ADR pages, and goes nowhere. R-056 (inbox 2026-11-27-0000): (15) `test/cli.test.ts` `peers` tests: two `runCli` calls with 50000ms child limits under one 60000ms `CHECK` test, and one under bun's 5000ms default, so a hung child there is killed by bun without its output. (16) `test/helpers.test.ts` kills a build after 50ms, before Astro loads, so no test shows a part-built scratch folder is removable after a kill on Windows; it also builds the shared `test/fixtures/site` that `cli.test.ts` builds, where a `scratchFixture` would keep them apart. (17) `test/hydration.test.ts` misses an arrow-function `hydrated` and accepts `HYDRATED` written only in a comment.",
+        "revisits": null,
+        "claimable": true
+      },
+      {
+        "id": "R-054",
+        "title": "Git subprocess tests stable under load",
+        "section": "next",
+        "position": 3,
+        "label": "next",
+        "serves": [
+          "V4"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "`bun test scripts/` and the `skills/pm-lint` and `skills/pm-next/scripts/sync.test.ts` suites pass three runs in a row while `just package-test` runs at the same time, and `just test` passes.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "From the 2026-11-25 review (inbox 2026-11-24-2045, R-013 execute). During R-013, `bun test scripts/` gave 198 pass and 5 fail while builds and browser tests ran at the same time, and the same suite gave 244 pass and 0 fail on an idle machine. The failing tests were seen in `skills/pm-lint` and `skills/pm-next/scripts/sync.test.ts`, which spawn git subprocesses; they time out or race under load, so a pre-push `just lint-check` can fail without a code change.",
+        "revisits": null,
+        "claimable": true
+      },
+      {
+        "id": "R-051",
+        "title": "PM sync review minors",
+        "section": "next",
+        "position": 4,
+        "label": "next",
+        "serves": [
+          "V2"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "each of the five findings in this Note is fixed or has a one-line won't-fix reason in the item's plan, `skills/pm-next/scripts/sync.test.ts` covers a detached HEAD, `core.autocrlf=true`, and a remote name containing `/`, and `just test` passes.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "From the 2026-11-25 review (inbox 2026-11-22-1933, R-044 execute). Deferred minors from the R-044 final review. (1) `release` reports a pure fast-forward of the PM branch as \"Moved 0 PM commits\". (2) The carry commit does not consult `PM state commit: ask | never`, and a carry onto a PM branch that is not checked out leaves `planning.json` stale (reported in its line). (3) No test for a detached HEAD or `core.autocrlf=true`. (4) Remote names containing `/` are split wrongly in `options()`, and a PM branch that exists only on the remote makes `rev-list` throw (fails safe). (5) Existing behaviour, not R-044: PM commits made on a pending pull request's branch after its last push are never delivered if the pull request merges without another push.",
+        "revisits": null,
+        "claimable": true
+      },
+      {
+        "id": "R-030",
+        "title": "Pre-push runs fast checks only",
+        "section": "next",
+        "position": 5,
+        "label": "next",
+        "serves": [
+          "V4"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "the lefthook pre-push hook no longer runs `package-test`, finishes offline in under 15 seconds, and CI still runs `just package-test` on every pull request.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "From the 2026-11-20 review (question, decided: CI-only package-test). R-008 added `package-test` to `just lint-check`, which the lefthook pre-push hook runs. It adds two Astro builds, a pack, and a networked `bun install` to every push: about 40 to 60 seconds, and a push fails offline. Files: `justfile`, `.config/lefthook.yml`.",
+        "revisits": null,
+        "claimable": true
+      }
+    ],
     "later": [
       {
         "id": "R-053",
@@ -424,35 +594,10 @@
         "claimable": false
       },
       {
-        "id": "R-016",
-        "title": "Rehearse the lifecycle guards",
-        "section": "later",
-        "position": 2,
-        "label": "later",
-        "serves": [
-          "V2",
-          "V3"
-        ],
-        "milestone": "M3",
-        "owner": "both",
-        "doneWhen": "a report in `planning/research/` shows `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea instead of running during an active workflow.",
-        "size": "M",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": null,
-        "revisits": null,
-        "claimable": false
-      },
-      {
         "id": "R-024",
         "title": "Self-contained aspire module test example",
         "section": "later",
-        "position": 3,
+        "position": 2,
         "label": "later",
         "serves": [
           "V4"
@@ -473,34 +618,10 @@
         "claimable": false
       },
       {
-        "id": "R-030",
-        "title": "Pre-push runs fast checks only",
-        "section": "later",
-        "position": 4,
-        "label": "later",
-        "serves": [
-          "V4"
-        ],
-        "milestone": null,
-        "owner": "agent",
-        "doneWhen": "the lefthook pre-push hook no longer runs `package-test`, finishes offline in under 15 seconds, and CI still runs `just package-test` on every pull request.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "From the 2026-11-20 review (question, decided: CI-only package-test). R-008 added `package-test` to `just lint-check`, which the lefthook pre-push hook runs. It adds two Astro builds, a pack, and a networked `bun install` to every push: about 40 to 60 seconds, and a push fails offline. Files: `justfile`, `.config/lefthook.yml`.",
-        "revisits": null,
-        "claimable": false
-      },
-      {
         "id": "R-032",
         "title": "pm-checkpoint and pm-lint Note follow-ups",
         "section": "later",
-        "position": 5,
+        "position": 3,
         "label": "later",
         "serves": [
           "V2"
@@ -516,7 +637,7 @@
           "since": null
         },
         "brief": null,
-        "note": "From the 2026-11-20 review; R-026 final-review minors, a rules bump. (1) `skills/pm-lint/scripts/structure.ts` comment on `NOW_NOTE` says \"rules 22\"; the change shipped on rules 21 (21.0.0-pre.2). (2) The R-026 spec (design item 6) and plan (Task 3) still describe `just bump major` to rules 22; add a superseded line. (3) The `now/fields` rule text in `rules.md`, `rules.ts`, and the `checkNow` message says \"and then an optional Note\", readable as after `Started`; say \"an optional Note after Revisits\". (4) `pm-checkpoint` `switch` recovery runs only when `Serves`/`Size` are missing and never restores `Note`, so an item claimed under 21.0.0-pre.1 switches back without it; also restore `Note` from the claim-commit block. (5) `pm-next` steps 3 and 5 can each hold a `Note:`, but step 7 joins \"a held note\" in the singular; state the order for two. (6) A blank `- Note:` on an item: say \"a non-empty Note\" in `pm-next` step 7 and `pm-rejoin` step 3. (7) No test pins that a `Note` without the five item fields fails `now/fields`. From the 2026-11-22 review (inbox 2026-11-22-1425): (8) `expandTargets` in `skills/pm-lint/scripts/lint.ts` (added in `981977a`) expands a folder argument one level only, so `check planning/` misses `inbox/`, `briefs/`, and `decisions/` files; recurse, and test it. (9) No test covers `--staged` with a folder argument. (10) Cosmetic: ADR-001's Alternatives row says ADRs are \"exported\" (quoted from the spec), and the `pm-init` template row keeps \"(new project only)\" inside the code span because `scripts/validate.ts` parses it. From the 2026-11-26 review (bug, inbox 2026-11-26-0300, severity minor, from R-036 execute): (11) `pm-checkpoint switch` run on an item branch writes NOW.md and ROADMAP.md, then the PM commit's recommended option `Switch to main and commit` fails: `git switch` refuses because NOW.md and ROADMAP.md differ between the item branch and main. Reproduction: the M4 rehearsal re-run (`planning/research/2026-11-26-m4-rehearsal.md`, Skill defects found); claim an item on its branch, stage it to plan, run `pm-checkpoint switch`, accept the recommended option. Every run.",
+        "note": "From the 2026-11-20 review; R-026 final-review minors, a rules bump. (1) `skills/pm-lint/scripts/structure.ts` comment on `NOW_NOTE` says \"rules 22\"; the change shipped on rules 21 (21.0.0-pre.2). (2) The R-026 spec (design item 6) and plan (Task 3) still describe `just bump major` to rules 22; add a superseded line. (3) The `now/fields` rule text in `rules.md`, `rules.ts`, and the `checkNow` message says \"and then an optional Note\", readable as after `Started`; say \"an optional Note after Revisits\". (4) `pm-checkpoint` `switch` recovery runs only when `Serves`/`Size` are missing and never restores `Note`, so an item claimed under 21.0.0-pre.1 switches back without it; also restore `Note` from the claim-commit block. (5) `pm-next` steps 3 and 5 can each hold a `Note:`, but step 7 joins \"a held note\" in the singular; state the order for two. (6) A blank `- Note:` on an item: say \"a non-empty Note\" in `pm-next` step 7 and `pm-rejoin` step 3. (7) No test pins that a `Note` without the five item fields fails `now/fields`. From the 2026-11-22 review (inbox 2026-11-22-1425): (8) `expandTargets` in `skills/pm-lint/scripts/lint.ts` (added in `981977a`) expands a folder argument one level only, so `check planning/` misses `inbox/`, `briefs/`, and `decisions/` files; recurse, and test it. (9) No test covers `--staged` with a folder argument. (10) Cosmetic: ADR-001's Alternatives row says ADRs are \"exported\" (quoted from the spec), and the `pm-init` template row keeps \"(new project only)\" inside the code span because `scripts/validate.ts` parses it. From the 2026-11-26 review (bug, inbox 2026-11-26-0300, severity minor, from R-036 execute): (11) `pm-checkpoint switch` run on an item branch writes NOW.md and ROADMAP.md, then the PM commit's recommended option `Switch to main and commit` fails: `git switch` refuses because NOW.md and ROADMAP.md differ between the item branch and main. Reproduction: the M4 rehearsal re-run (`planning/research/2026-11-26-m4-rehearsal.md`, Skill defects found); claim an item on its branch, stage it to plan, run `pm-checkpoint switch`, accept the recommended option. Every run. From the 2026-11-27 review (inbox 2026-11-25-1605, R-055 final review): (12) `engineering/values` and `engineering/decision-current` messages name a technology headed `### EP-001 Bun` as `EP-001`, because `checkEngineeringValues` uses `block.id || block.title`; use `block.name` for Technology blocks. (13) The `engineering/removed` message says \"A removed entry is\", while the rule text now says \"A removed line is\". (14) The `pm-engineering` view recommends `change <entry> Decision <ADR-MMM>` with the immediate successor, not the end of the `superseded by` chain that step 1 now follows; a deprecated chain end has no ADR to suggest. (15) The \"orders technology with English collation\" test passes on an English-locale host without the `\"en\"` argument; add a case where code-point order and English collation differ. (16) `pm-engineering` step 4 (`change`) does not name the Challenge protocol checks that the managed section now says apply to it.",
         "revisits": null,
         "claimable": false
       },
@@ -524,7 +645,7 @@
         "id": "R-046",
         "title": "Upgrade, format, and git rules move to references",
         "section": "later",
-        "position": 6,
+        "position": 4,
         "label": "later",
         "serves": [
           "V2"
@@ -550,7 +671,7 @@
         "id": "R-047",
         "title": "Core rules file and a 15 KB managed section",
         "section": "later",
-        "position": 7,
+        "position": 5,
         "label": "waiting",
         "serves": [
           "V2"
@@ -576,7 +697,7 @@
         "id": "R-048",
         "title": "Repository AGENTS.md top part into dedicated files",
         "section": "later",
-        "position": 8,
+        "position": 6,
         "label": "later",
         "serves": [
           "V2"
@@ -600,7 +721,7 @@
         "id": "R-049",
         "title": "Trim the largest SKILL.md files",
         "section": "later",
-        "position": 9,
+        "position": 7,
         "label": "waiting",
         "serves": [
           "V2"
@@ -621,64 +742,61 @@
         "note": "Slice 5 of 5 from pm-shape 2026-11-24. A rules change. Conflicts with R-041 and R-032 edits to the same skills.",
         "revisits": null,
         "claimable": false
-      },
-      {
-        "id": "R-051",
-        "title": "PM sync review minors",
-        "section": "later",
-        "position": 10,
-        "label": "later",
-        "serves": [
-          "V2"
-        ],
-        "milestone": null,
-        "owner": "agent",
-        "doneWhen": "each of the five findings in this Note is fixed or has a one-line won't-fix reason in the item's plan, `skills/pm-next/scripts/sync.test.ts` covers a detached HEAD, `core.autocrlf=true`, and a remote name containing `/`, and `just test` passes.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "From the 2026-11-25 review (inbox 2026-11-22-1933, R-044 execute). Deferred minors from the R-044 final review. (1) `release` reports a pure fast-forward of the PM branch as \"Moved 0 PM commits\". (2) The carry commit does not consult `PM state commit: ask | never`, and a carry onto a PM branch that is not checked out leaves `planning.json` stale (reported in its line). (3) No test for a detached HEAD or `core.autocrlf=true`. (4) Remote names containing `/` are split wrongly in `options()`, and a PM branch that exists only on the remote makes `rev-list` throw (fails safe). (5) Existing behaviour, not R-044: PM commits made on a pending pull request's branch after its last push are never delivered if the pull request merges without another push.",
-        "revisits": null,
-        "claimable": false
-      },
-      {
-        "id": "R-054",
-        "title": "Git subprocess tests stable under load",
-        "section": "later",
-        "position": 11,
-        "label": "later",
-        "serves": [
-          "V4"
-        ],
-        "milestone": null,
-        "owner": "agent",
-        "doneWhen": "`bun test scripts/` and the `skills/pm-lint` and `skills/pm-next/scripts/sync.test.ts` suites pass three runs in a row while `just package-test` runs at the same time, and `just test` passes.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "From the 2026-11-25 review (inbox 2026-11-24-2045, R-013 execute). During R-013, `bun test scripts/` gave 198 pass and 5 fail while builds and browser tests ran at the same time, and the same suite gave 244 pass and 0 fail on an idle machine. The failing tests were seen in `skills/pm-lint` and `skills/pm-next/scripts/sync.test.ts`, which spawn git subprocesses; they time out or race under load, so a pre-push `just lint-check` can fail without a code change.",
-        "revisits": null,
-        "claimable": false
       }
     ]
   },
   "board": {
     "columns": {
       "now": [],
-      "next": [],
+      "next": [
+        {
+          "id": "R-059",
+          "title": "pm-setup runs read-only checks on a current install",
+          "owner": "agent",
+          "size": "S",
+          "detail": "ready"
+        },
+        {
+          "id": "R-060",
+          "title": "Docs-site package: review minors after R-042",
+          "owner": "agent",
+          "size": "M",
+          "detail": "ready"
+        },
+        {
+          "id": "R-054",
+          "title": "Git subprocess tests stable under load",
+          "owner": "agent",
+          "size": "S",
+          "detail": "ready"
+        },
+        {
+          "id": "R-051",
+          "title": "PM sync review minors",
+          "owner": "agent",
+          "size": "S",
+          "detail": "ready"
+        },
+        {
+          "id": "R-030",
+          "title": "Pre-push runs fast checks only",
+          "owner": "agent",
+          "size": "S",
+          "detail": "ready"
+        }
+      ],
       "foryou": [],
       "waiting": [],
       "done": [
+        {
+          "date": "2026-11-27",
+          "id": "R-016",
+          "title": "Rehearse the lifecycle guards",
+          "milestone": "M3",
+          "owner": "both",
+          "plan": "docs/superpowers/plans/2026-11-27-lifecycle-guards-rehearsal.md",
+          "result": "branch feat/r-016-rehearse-the-lifecycle-guards"
+        },
         {
           "date": "2026-11-27",
           "id": "R-042",
@@ -1045,6 +1163,15 @@
       {
         "date": "2026-11-27",
         "kind": "done",
+        "id": "R-016",
+        "title": "Rehearse the lifecycle guards",
+        "milestone": "M3",
+        "owner": "both",
+        "result": "branch feat/r-016-rehearse-the-lifecycle-guards"
+      },
+      {
+        "date": "2026-11-27",
+        "kind": "done",
         "id": "R-042",
         "title": "Docs-site package: deferred review minors",
         "milestone": "M5",
@@ -1059,6 +1186,33 @@
         "milestone": "M5",
         "owner": "agent",
         "result": "branch feat/r-056-package-tests-stable-under-full-lint-check"
+      },
+      {
+        "date": "2026-11-27",
+        "kind": "dropped",
+        "id": null,
+        "title": "lint-check markdownlint matches no files",
+        "milestone": null,
+        "owner": null,
+        "result": "Reason: fixed already; on 2026-11-27 `just lint-check` printed `Linting: 232 files` and reported real issues"
+      },
+      {
+        "date": "2026-11-27",
+        "kind": "review",
+        "id": null,
+        "title": null,
+        "milestone": null,
+        "owner": null,
+        "result": "Inbox 7 to 5. Removed 2 R-016 rehearsal probe files; 5 stay to shape; R-030 Pre-push runs fast checks only promoted to Next 5; M3's only item is R-016, active."
+      },
+      {
+        "date": "2026-11-27",
+        "kind": "review",
+        "id": null,
+        "title": null,
+        "milestone": null,
+        "owner": null,
+        "result": "Inbox 12 to 5. Added R-059 and R-060; 4 files merged into R-032, R-059, and R-060, 1 dropped (lint-check markdownlint, already fixed), 5 to shape; Next filled from Later with R-054, R-051, R-030; M2's items are done or dropped, so pm-strategy sets the next focus."
       },
       {
         "date": "2026-11-26",
@@ -1552,6 +1706,15 @@
     "done": [
       {
         "date": "2026-11-27",
+        "id": "R-016",
+        "title": "Rehearse the lifecycle guards",
+        "milestone": "M3",
+        "owner": "both",
+        "plan": "docs/superpowers/plans/2026-11-27-lifecycle-guards-rehearsal.md",
+        "result": "branch feat/r-016-rehearse-the-lifecycle-guards"
+      },
+      {
+        "date": "2026-11-27",
         "id": "R-042",
         "title": "Docs-site package: deferred review minors",
         "milestone": "M5",
@@ -1913,6 +2076,12 @@
     ],
     "dropped": [
       {
+        "date": "2026-11-27",
+        "id": null,
+        "title": "lint-check markdownlint matches no files",
+        "reason": "fixed already; on 2026-11-27 `just lint-check` printed `Linting: 232 files` and reported real issues"
+      },
+      {
         "date": "2026-11-26",
         "id": "R-015",
         "title": "Rehearse a fresh install in a scratch repository",
@@ -1980,6 +2149,14 @@
       }
     ],
     "reviews": [
+      {
+        "date": "2026-11-27",
+        "summary": "Inbox 7 to 5. Removed 2 R-016 rehearsal probe files; 5 stay to shape; R-030 Pre-push runs fast checks only promoted to Next 5; M3's only item is R-016, active."
+      },
+      {
+        "date": "2026-11-27",
+        "summary": "Inbox 12 to 5. Added R-059 and R-060; 4 files merged into R-032, R-059, and R-060, 1 dropped (lint-check markdownlint, already fixed), 5 to shape; Next filled from Later with R-054, R-051, R-030; M2's items are done or dropped, so pm-strategy sets the next focus."
+      },
       {
         "date": "2026-11-26",
         "summary": "Inbox 7 to 4. Added R-057; 1 file merged into R-032, 1 dropped (GitHub issue and Project sync), 3 to shape, 1 kept parked; ADR docs-site findings stay in R-042; Next order kept; M4 is done, so pm-strategy sets the next focus."
@@ -2077,54 +2254,6 @@
       ]
     },
     {
-      "file": "planning/inbox/2026-11-25-1605-engineering-lint-review-minors-follow-ups.md",
-      "title": "Engineering lint review minors follow-ups",
-      "captured": "2026-11-25 16:05",
-      "source": "agent (R-055 execute, final review)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "skills/pm-lint/scripts/structure.ts, skills/pm-lint/scripts/lint.test.ts, skills/pm-engineering/SKILL.md",
-      "context": "R-055 execute",
-      "discuss": "no",
-      "related": [
-        "R-055"
-      ],
-      "brief": null,
-      "reviewed": "2026-11-26",
-      "idea": "Five minors the R-055 whole-branch review found and deferred. (1) `engineering/values` and `engineering/decision-current` messages name a technology headed `### EP-001 Bun` as `EP-001`, because `checkEngineeringValues` uses `block.id || block.title`; use `block.name` for Technology blocks. (2) The `engineering/removed` message says \"A removed entry is\", while the rule text now says \"A removed line is\". (3) The `pm-engineering` view recommends `change <entry> Decision <ADR-MMM>` with the immediate successor, not the end of the `superseded by` chain that step 1 now follows; a deprecated chain end has no ADR to suggest. (4) The \"orders technology with English collation\" test passes on an English-locale host without the `\"en\"` argument; add a case where code-point order and English collation differ. (5) `pm-engineering` step 4 (`change`) does not name the Challenge protocol checks that the managed section now says apply to it.",
-      "sections": [
-        {
-          "heading": "Idea",
-          "markdown": "Five minors the R-055 whole-branch review found and deferred. (1) `engineering/values` and `engineering/decision-current` messages name a technology headed `### EP-001 Bun` as `EP-001`, because `checkEngineeringValues` uses `block.id || block.title`; use `block.name` for Technology blocks. (2) The `engineering/removed` message says \"A removed entry is\", while the rule text now says \"A removed line is\". (3) The `pm-engineering` view recommends `change <entry> Decision <ADR-MMM>` with the immediate successor, not the end of the `superseded by` chain that step 1 now follows; a deprecated chain end has no ADR to suggest. (4) The \"orders technology with English collation\" test passes on an English-locale host without the `\"en\"` argument; add a case where code-point order and English collation differ. (5) `pm-engineering` step 4 (`change`) does not name the Challenge protocol checks that the managed section now says apply to it."
-        }
-      ]
-    },
-    {
-      "file": "planning/inbox/2026-11-26-1130-pm-setup-current-install-skips-step-5.md",
-      "title": "pm-setup current install skips Step 5 checks",
-      "captured": "2026-11-26 11:30",
-      "source": "agent (R-057 execute)",
-      "kind": "question",
-      "severity": null,
-      "affects": "pm-setup",
-      "context": "R-057 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "pm-setup Step 4 stops after showing the plan when the install is already current, so Step 5 never runs; the read-only Step 5 checks (item 7, the outside ADR folder Note) then never surface on a current install. Decide whether read-only checks belong before the Step 4 stop.",
-      "sections": [
-        {
-          "heading": "Idea",
-          "markdown": "pm-setup Step 4 stops after showing the plan when the install is already current, so Step 5 never runs; the read-only Step 5 checks (item 7, the outside ADR folder Note) then never surface on a current install. Decide whether read-only checks belong before the Step 4 stop."
-        },
-        {
-          "heading": "Links",
-          "markdown": "- skills/pm-setup/SKILL.md"
-        }
-      ]
-    },
-    {
       "file": "planning/inbox/2026-11-26-1339-deploy-the-demo-site.md",
       "title": "Deploy the demo site",
       "captured": "2026-11-26 13:39",
@@ -2133,7 +2262,7 @@
       "severity": null,
       "affects": "examples/demo",
       "context": "R-058 execute",
-      "discuss": "no",
+      "discuss": "yes",
       "related": [],
       "brief": null,
       "reviewed": "never",
@@ -2150,119 +2279,6 @@
       ]
     },
     {
-      "file": "planning/inbox/2026-11-26-1412-r-058-review-minors.md",
-      "title": "R-058 review minors in pm-docs-site",
-      "captured": "2026-11-26 14:12",
-      "source": "agent (R-058 done)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "R-058, packages/pm-docs-site",
-      "context": "R-058 done",
-      "discuss": "no",
-      "related": [
-        "R-042"
-      ],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "The R-058 whole-branch review found four minors in `packages/pm-docs-site`. (1) The comment above `adrs:` in `src/content.config.ts` still says the sections are rendered there (ADR-015 moved rendering to `adr-sections`). (2) No test pins a whitespace-only section as blank (`hasContent('  \\n')` in `src/loaders/adrs.ts`); the fixture's empty section is `\"\"`. (3) The Decisions-view-off integration test does not assert the build skips the empty `adr-sections` collection (no \"does not exist or is empty\" warning). (4) `src/lib/site-refs.ts` repeats the loader's non-empty-section predicate inline; export one predicate beside `hasContent`.",
-      "sections": [
-        {
-          "heading": "Idea",
-          "markdown": "The R-058 whole-branch review found four minors in `packages/pm-docs-site`. (1) The comment above `adrs:` in `src/content.config.ts` still says the sections are rendered there (ADR-015 moved rendering to `adr-sections`). (2) No test pins a whitespace-only section as blank (`hasContent('  \\n')` in `src/loaders/adrs.ts`); the fixture's empty section is `\"\"`. (3) The Decisions-view-off integration test does not assert the build skips the empty `adr-sections` collection (no \"does not exist or is empty\" warning). (4) `src/lib/site-refs.ts` repeats the loader's non-empty-section predicate inline; export one predicate beside `hasContent`."
-        }
-      ]
-    },
-    {
-      "file": "planning/inbox/2026-11-26-1541-r-006-count-message-minor.md",
-      "title": "R-006 skill count messages are ambiguous",
-      "captured": "2026-11-26 15:41",
-      "source": "agent (R-006 done)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "R-006, scripts/skill-counts.ts",
-      "context": "R-006 done",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "The R-006 whole-branch review found one minor in `scripts/skill-counts.ts`: when both numbers on the output line (`- Skills: <27 of 27 installed`) are wrong, validate prints two identical messages (`skill count 27, expected 26`), so the reader cannot tell the installed count from the total. Name which number each message is about (\"installed count\" or \"total\").",
-      "sections": [
-        {
-          "heading": "Idea",
-          "markdown": "The R-006 whole-branch review found one minor in `scripts/skill-counts.ts`: when both numbers on the output line (`- Skills: <27 of 27 installed`) are wrong, validate prints two identical messages (`skill count 27, expected 26`), so the reader cannot tell the installed count from the total. Name which number each message is about (\"installed count\" or \"total\")."
-        }
-      ]
-    },
-    {
-      "file": "planning/inbox/2026-11-26-1855-r-052-review-minors.md",
-      "title": "R-052 review minors in brief and inbox pages",
-      "captured": "2026-11-26 18:55",
-      "source": "agent (R-052 done)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "R-052, packages/pm-docs-site",
-      "context": "R-052 done",
-      "discuss": "no",
-      "related": [
-        "R-042"
-      ],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "The R-052 whole-branch review found five minors. (1) `skills/pm-export/SKILL.md` field map: the `inbox[]` key list omits `sections[]` (the prose after it describes it). (2) `src/lib/references.ts`: a brief page appears in Linked from as its title only (\"Invoice export\"), while its page title and feature and ADR pages use `<ID> <title>`. (3) `src/routes/plan/inbox.astro`: every card's `Open` link has the same accessible name; add `aria-label={`Open ${entry.title}`}`. (4) `src/components/RecordSections.astro`: section headings render as raw text, so inline Markdown or an ID in a heading is neither formatted nor linked. (5) `src/routes/plan/inbox/[slug].astro`: the description starts lower case (\"bug in the inbox\"). Also noted: a relative Markdown link in a brief or inbox section resolves page-relative, as on ADR pages, and goes nowhere.",
-      "sections": [
-        {
-          "heading": "Idea",
-          "markdown": "The R-052 whole-branch review found five minors. (1) `skills/pm-export/SKILL.md` field map: the `inbox[]` key list omits `sections[]` (the prose after it describes it). (2) `src/lib/references.ts`: a brief page appears in Linked from as its title only (\"Invoice export\"), while its page title and feature and ADR pages use `<ID> <title>`. (3) `src/routes/plan/inbox.astro`: every card's `Open` link has the same accessible name; add `aria-label={`Open ${entry.title}`}`. (4) `src/components/RecordSections.astro`: section headings render as raw text, so inline Markdown or an ID in a heading is neither formatted nor linked. (5) `src/routes/plan/inbox/[slug].astro`: the description starts lower case (\"bug in the inbox\"). Also noted: a relative Markdown link in a brief or inbox section resolves page-relative, as on ADR pages, and goes nowhere."
-        }
-      ]
-    },
-    {
-      "file": "planning/inbox/2026-11-26-2330-lint-check-markdownlint-matches-no-files.md",
-      "title": "lint-check markdownlint matches no files",
-      "captured": "2026-11-26 23:30",
-      "source": "agent (R-056 execute)",
-      "kind": "bug",
-      "severity": "minor",
-      "affects": "justfile (lint-check)",
-      "context": "R-056 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "On Windows, `just lint-check` ends with `bunx markdownlint-cli2 \"**/*.md\" \"#node_modules\"` printing `Summary: 0 issues in 0 files`, so the recipe may lint no Markdown at all. Running it on one file directly finds issues, so the glob or its quoting under just's shell likely matches nothing.",
-      "sections": [
-        {
-          "heading": "Idea",
-          "markdown": "On Windows, `just lint-check` ends with `bunx markdownlint-cli2 \"**/*.md\" \"#node_modules\"` printing `Summary: 0 issues in 0 files`, so the recipe may lint no Markdown at all. Running it on one file directly finds issues, so the glob or its quoting under just's shell likely matches nothing."
-        },
-        {
-          "heading": "Reproduction",
-          "markdown": "Run `just lint-check` on Windows and read its last lines: `Summary: 0 issues in 0 files`. Seen on every run during R-056 execute (2026-11-26)."
-        }
-      ]
-    },
-    {
-      "file": "planning/inbox/2026-11-27-0000-r-056-review-minors.md",
-      "title": "R-056 review minors",
-      "captured": "2026-11-27 00:00",
-      "source": "agent (R-056 done)",
-      "kind": "tech-debt",
-      "severity": null,
-      "affects": "R-056, packages/pm-docs-site/test/",
-      "context": "R-056 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "Final-review minors deferred from R-056 Package tests stable under full lint-check. (1) `test/cli.test.ts` `peers` tests: two `runCli` calls with 50000ms child limits under one 60000ms `CHECK` test, and one under bun's 5000ms default, so a hung child there is killed by bun without its output. (2) `test/helpers.test.ts` kills a build after 50ms, before Astro loads, so no test shows a part-built scratch folder is removable after a kill on Windows; it also builds the shared `test/fixtures/site` that `cli.test.ts` builds, where a `scratchFixture` would keep them apart. (3) `test/hydration.test.ts` misses an arrow-function `hydrated` and accepts `HYDRATED` written only in a comment.",
-      "sections": [
-        {
-          "heading": "Idea",
-          "markdown": "Final-review minors deferred from R-056 Package tests stable under full lint-check. (1) `test/cli.test.ts` `peers` tests: two `runCli` calls with 50000ms child limits under one 60000ms `CHECK` test, and one under bun's 5000ms default, so a hung child there is killed by bun without its output. (2) `test/helpers.test.ts` kills a build after 50ms, before Astro loads, so no test shows a part-built scratch folder is removable after a kill on Windows; it also builds the shared `test/fixtures/site` that `cli.test.ts` builds, where a `scratchFixture` would keep them apart. (3) `test/hydration.test.ts` misses an arrow-function `hydrated` and accepts `HYDRATED` written only in a comment."
-        }
-      ]
-    },
-    {
       "file": "planning/inbox/2026-11-27-0809-board-island-props-slimming.md",
       "title": "Board island sends only card IDs and filters",
       "captured": "2026-11-27 08:09",
@@ -2271,7 +2287,7 @@
       "severity": null,
       "affects": "packages/pm-docs-site/src/pages/plan/board.astro",
       "context": "R-042 design",
-      "discuss": "no",
+      "discuss": "yes",
       "related": [
         "R-042"
       ],
@@ -2282,6 +2298,31 @@
         {
           "heading": "Idea",
           "markdown": "R-042 finding 6, moved out of R-042 at the user's choice (option B, 2026-11-27): the Board island receives the full `BoardCard[]` (with `titleRuns` and `detail` LinkRun arrays) as props beside the rendered HTML. Measured: demo Board page 60.2 KB, island props 9.0 KB (about 15% of the page), island HTML 12.4 KB. Send the island only card IDs and filter fields and reuse the server-rendered card DOM. Touches `src/pages/plan/board.astro` (line 36), `src/components/board/Board.tsx`, the card components, and their tests; likely size M or L, its own item."
+        }
+      ]
+    },
+    {
+      "file": "planning/inbox/2026-11-27-1631-rule-4-and-pm-shape-guard-conflict.md",
+      "title": "Rule 4 and pm-shape Guard conflict",
+      "captured": "2026-11-27 16:31",
+      "source": "agent (R-016 execute)",
+      "kind": "bug",
+      "severity": "minor",
+      "affects": "Non-interruption rule 4 (skills/pm-setup/references/AGENTS-section.md), skills/pm-shape/SKILL.md Guard",
+      "context": "R-016 execute",
+      "discuss": "no",
+      "related": [],
+      "brief": null,
+      "reviewed": "never",
+      "idea": "When the user names `pm-shape` mid-workflow, Non-interruption rule 4 says the agent asks `<skill> is at <step>. When should pm-shape run?` (`After <skill> finishes (recommended)`, `Pause now and run it`). But `pm-shape`'s Guard and rule 5 say park the idea with `pm-park` in capture mode and reply in one line. The two instructions disagree. The agent followed the Guard, so the rule-4 question never appeared. Make rule 4 name the exception for `pm-shape` (rule 5 wins), or change the Guard to ask the rule-4 question.",
+      "sections": [
+        {
+          "heading": "Idea",
+          "markdown": "When the user names `pm-shape` mid-workflow, Non-interruption rule 4 says the agent asks `<skill> is at <step>. When should pm-shape run?` (`After <skill> finishes (recommended)`, `Pause now and run it`). But `pm-shape`'s Guard and rule 5 say park the idea with `pm-park` in capture mode and reply in one line. The two instructions disagree. The agent followed the Guard, so the rule-4 question never appeared. Make rule 4 name the exception for `pm-shape` (rule 5 wins), or change the Guard to ask the rule-4 question."
+        },
+        {
+          "heading": "Reproduction",
+          "markdown": "- Expected: one instruction for `/pm-shape <idea>` typed during an active workflow.\n- Actual: rule 4 says ask; the `pm-shape` Guard and rule 5 say park without asking.\n- Steps: start a plan with `executing-plans`, then type `/pm-shape more pies`.\n- Frequency: every run.\n- Evidence: `planning/research/2026-11-27-m3-rehearsal.md`, Probe V3b."
         }
       ]
     }
@@ -3010,14 +3051,14 @@
     }
   ],
   "counts": {
-    "next": 0,
-    "later": 11,
+    "next": 5,
+    "later": 7,
     "nextMax": 5,
-    "openInbox": 11,
-    "discuss": 3,
+    "openInbox": 6,
+    "discuss": 5,
     "shapingBriefs": 0,
-    "done": 40,
-    "dropped": 11,
+    "done": 41,
+    "dropped": 12,
     "blockers": 0,
     "openRisks": 0,
     "redRisks": 0,
@@ -3025,9 +3066,15 @@
     "greenRisks": 0
   },
   "checks": {
-    "reviewDue": true,
-    "lastReview": "2026-11-26",
-    "claimable": [],
+    "reviewDue": false,
+    "lastReview": "2026-11-27",
+    "claimable": [
+      "R-059",
+      "R-060",
+      "R-054",
+      "R-051",
+      "R-030"
+    ],
     "drift": true
   }
 }
