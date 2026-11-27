@@ -44,10 +44,12 @@
 ### Task 1: Board URL state and pending mark (findings 1, 2, 3)
 
 **Files:**
+
 - Modify: `src/components/board/useBoardUrlState.ts`, `src/lib/board.ts`, `src/components/PlanInteractions.astro`, `src/pages/plan/board.astro`, `src/pages/plan/roadmap.astro`, `src/styles/components.css:75-80`
 - Test: `test/board.test.ts`, `test/browser/board.browser.ts`
 
 **Interfaces:**
+
 - Produces: `boardUrl(state: BoardState, location: { pathname: string; search: string; hash: string }): string` in `src/lib/board.ts` — the pathname, then the non-board query keys in their original order followed by `boardQuery(state)`'s keys in its fixed order, then the hash.
 - Produces: `PlanInteractions.astro` prop `board?: boolean` (default `false`).
 
@@ -65,6 +67,7 @@
 ### Task 2: Board markup and CSS (findings 4, 7, 8)
 
 **Files:**
+
 - Modify: `src/components/board/Board.tsx:231-233`, `src/styles/components.css:228-237`, `src/styles/kanban.css:1-41`, and the CSS selector for `.plan-lane__header` if it styles a `div`
 - Test: `test/browser/board.browser.ts`
 
@@ -80,10 +83,12 @@
 ### Task 3: board.ts and board-data.ts (findings 9, 10)
 
 **Files:**
+
 - Modify: `src/lib/board.ts:97-102,186-209`, `src/lib/board-data.ts:38,62`
 - Test: `test/board.test.ts`, `test/board-data.test.ts`
 
 **Interfaces:**
+
 - Produces: `oneOf<T extends string>(values: readonly T[], value: string | null): value is T` in `src/lib/board.ts`; `isOwner(value: unknown): value is Owner` in `src/lib/board-data.ts` (or `board.ts` if `Owner` lives there).
 
 - [ ] **Step 1: Write the failing tests:**
@@ -97,10 +102,12 @@
 ### Task 4: Island import guard and plan.ts listeners (findings 14, 15)
 
 **Files:**
+
 - Modify: `test/island-imports.test.ts:127-139`, `src/scripts/plan.ts:38-72`
 - Test: `test/island-imports.test.ts`, Create: `test/plan-script.test.ts`
 
 **Interfaces:**
+
 - Produces: `bundledScripts(astroSource: string): string[]` in `test/island-imports.test.ts` — the bodies of `<script>` elements without `is:inline`.
 - Produces: `export function start(doc: Document = document): void` in `src/scripts/plan.ts`, a no-op for a document it already started (module-level `WeakSet<Document>`); the module calls `start()` only when `typeof document !== 'undefined'`.
 
@@ -117,10 +124,12 @@
 ### Task 5: Test hygiene (findings 11, 12, 16, 17, 20, 23, 27 package part)
 
 **Files:**
+
 - Modify: `test/integration.test.ts:71-87`, `test/install.test.ts:14-16`, `test/browser/board.browser.ts:198-226`, `test/helpers.ts:59-64`, `test/planning.test.ts:377-386`, `test/cli.test.ts:376-392`, `test/link-html.test.ts`, `test/links.test.ts`
 - Test: `test/imports.test.ts`
 
 **Interfaces:**
+
 - Produces: `freePort(): Promise<number>` in `test/helpers.ts` (listen on port 0 with `node:net`, read the port, close).
 
 - [ ] **Step 1: relativeImports (17), failing test** in `test/imports.test.ts`: a file with `foo.import('./no.ts');`, `// import './comment.ts';`, `/* from './block.ts' */`, ``const t = await import(`./tpl.ts`);``, ``import(`./${x}.ts`)``, `const u = 'https://x'; import './after.ts';` → `['./tpl.ts', './after.ts']`. The existing case at `:29` still passes.
@@ -139,6 +148,7 @@
 ### Task 6: References and the log page (findings 19, 21)
 
 **Files:**
+
 - Modify: `src/lib/references.ts:200-202`, `src/pages/plan/log.astro:15` (comment)
 - Test: `test/references.test.ts`, the test that builds the fixture with views off (find it with `grep -rn "features: false" test`)
 
@@ -152,6 +162,7 @@
 ### Task 7: CLI flags (finding 22)
 
 **Files:**
+
 - Modify: `lib/cli-args.ts:44-68`
 - Test: `test/cli.test.ts`
 
@@ -168,10 +179,12 @@
 ### Task 8: Distinct Mermaid IDs per section (finding 25, ADR-006)
 
 **Files:**
+
 - Modify: `lib/mermaid.ts:45-80`, `src/loaders/sections.ts:54-56`, its callers `src/loaders/adrs.ts:81` and `src/loaders/records.ts:32`
 - Test: `test/mermaid.test.ts`
 
 **Interfaces:**
+
 - Produces: `renderSection(context, markdown: string, file: string, key: string)` — passes `fileURL: new URL('#' + key, pathToFileURL(file))`; `key` is the entry's `recordSectionId` (the `id` the caller already has). `filePath` is unchanged, so images still resolve.
 - Produces: `mermaidFences()` computes the prefix on the first fence from `ctx.fileURL?.hash ?? ''` plus `factory.source` (hash, never the full path, so IDs are the same on every machine and docs pages without a hash keep today's IDs).
 
@@ -184,6 +197,7 @@
 ### Task 9: Skills, versions, and docs (findings 24, 27 skills part)
 
 **Files:**
+
 - Modify: `skills/pm-docs-site/SKILL.md:92,125`, `skills/pm-export/scripts/export.test.ts:122`, `packages/pm-docs-site/package.json`, `packages/pm-docs-site/README.md:34`, `docs/wiki/guide/Docs-Site-Package.md:33`, `package.json` (via the bump)
 
 - [ ] **Step 1: Node guard (24).** Add a Guard row after the Bun row: `node --version` is v24 or later | `Node 24 or later is required (found <version or none>). Install it, then run pm-docs-site <mode> again.`; at `:125` add `and whether node --version is v24 or later`. It runs with the other Guard checks, before any file is written.
