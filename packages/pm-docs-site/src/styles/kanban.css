@@ -6,8 +6,9 @@
  * KanbanItemCard and TaskKanbanCard are from the Astro Components Kit by Konstantin
  * (https://astrocomponents.dev/docs/kanban-item-card/, https://astrocomponents.dev/docs/task-kanban-card/,
  * https://github.com/konstantinWDK/astro-components), MIT License. Copied from its manual-install
- * source; the only changes are that hard-coded dark-theme colours use Starlight theme variables,
- * so the cards read in light and dark themes, and the RAG dot added beside the size pill.
+ * source. Changes: hard-coded dark-theme colours use Starlight theme variables, so the cards read
+ * in light and dark themes; the RAG dot sits beside the size pill; and the drag cursor and the
+ * focus ring are gone, because the cards are not draggable or focusable (test/browser/cards.browser.ts).
  */
 
 .k-item {
@@ -19,7 +20,6 @@
 	display: flex;
 	flex-direction: column;
 	gap: 0.65rem;
-	cursor: grab;
 	transition:
 		transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
 		border-color 0.2s ease,
@@ -29,15 +29,10 @@
 	outline: none;
 }
 
-.k-item:hover,
-.k-item:focus-visible {
+.k-item:hover {
 	transform: translateY(-2px);
 	border-color: var(--sl-color-accent, rgba(99, 102, 241, 0.4));
 	box-shadow: 0 10px 24px -6px rgba(0, 0, 0, 0.25);
-}
-
-.k-item:focus-visible {
-	box-shadow: 0 0 0 2px var(--c-primary, #6366f1);
 }
 
 .k-item__head {

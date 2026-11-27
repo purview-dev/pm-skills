@@ -40,6 +40,26 @@ test('a collapsed column stays collapsed after a reload, and expands again', asy
 	expect((await done.boundingBox())!.width).toBeGreaterThanOrEqual(expandedWidth - 1);
 });
 
+test('a collapsed column header does not make the header row taller', async ({ page }) => {
+	await page.setViewportSize({ width: 1440, height: 900 });
+	await openBoard(page);
+	const now = page.locator('[data-column="now"]');
+	const expandedHeight = (await now.boundingBox())!.height;
+
+	await page.locator('[data-column="foryou"] .plan-column__toggle').click();
+	await expect(page.locator('[data-column="foryou"]')).toHaveAttribute('data-collapsed', '');
+
+	expect(Math.abs((await now.boundingBox())!.height - expandedHeight)).toBeLessThanOrEqual(1);
+});
+
+test('grouped lanes have h3 headings', async ({ page }) => {
+	await openBoard(page);
+	await page.selectOption('#board-group', 'owner');
+
+	await expect(page.locator('.plan-lane__header')).not.toHaveCount(0);
+	await expect(page.locator('h3.plan-lane__header')).toHaveCount(await page.locator('.plan-lane__header').count());
+});
+
 test('a junk stored value leaves every column expanded and throws nothing', async ({ page }) => {
 	const errors: Error[] = [];
 
