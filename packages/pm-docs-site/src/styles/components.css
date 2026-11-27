@@ -244,14 +244,17 @@ button.plan-column__toggle:focus-visible {
 
 /* A collapsed column's vertical title never sets the header row's height:
    size containment drops its content from the row's sizing, so the row keeps
-   the expanded columns' height and a long title is clipped. */
+   the expanded columns' height. The title is not clipped: it runs on down
+   over the column's cells, which are empty while it is collapsed. */
 :root[data-board-collapsed~='now'] [data-column='now'],
 :root[data-board-collapsed~='next'] [data-column='next'],
 :root[data-board-collapsed~='foryou'] [data-column='foryou'],
 :root[data-board-collapsed~='waiting'] [data-column='waiting'],
 :root[data-board-collapsed~='done'] [data-column='done'] {
 	contain: size;
-	overflow: hidden;
+	overflow: visible;
+	position: relative;
+	z-index: 1;
 }
 
 .plan-column__cards {

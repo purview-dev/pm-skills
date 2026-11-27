@@ -90,7 +90,7 @@ Search is part of the package.
   | `NOW.md`'s stage is `execute` | `pm-docs-site builds in execute; <ID> <title> is at <stage>.` |
   | The current branch is not the PM branch | `Build modes never write on the PM branch (<branch>).` |
   | `bun --version` succeeds | `Bun is required: https://bun.sh. Install it, then run pm-docs-site <mode> again.` |
-  | `node --version` prints v24 or later | `Node 24 or later is required (found <version | none>): https://nodejs.org. Install it, then run pm-docs-site <mode> again.` |
+  | `node --version` prints v24 or later | `Node 24 or later is required (found <version or none>): https://nodejs.org. Install it, then run pm-docs-site <mode> again.` |
 
 - Build modes write only the site root (its four files, and `bun add` of
   the package and the architecture peers there), the `Docs` group in the

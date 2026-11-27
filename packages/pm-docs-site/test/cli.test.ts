@@ -305,6 +305,16 @@ describe('pm-docs-site usage', () => {
 		expect(result.code).toBe(2);
 		expect(result.stderr).toContain('usage: pm-docs-site <dev | build | check> [site-dir]');
 	}, CHECK);
+
+	it('exits 2 with the problem and usage for --help or an unknown option', () => {
+		for (const args of [['--help'], ['build', '--verbose']]) {
+			const result = runCli(args);
+
+			expect(result.code).toBe(2);
+			expect(result.stderr).toContain(`pm-docs-site: unknown option ${args.at(-1)}`);
+			expect(result.stderr).toContain('usage: pm-docs-site <dev | build | check> [site-dir]');
+		}
+	}, CHECK);
 });
 
 describe('pm-docs-site arguments', () => {

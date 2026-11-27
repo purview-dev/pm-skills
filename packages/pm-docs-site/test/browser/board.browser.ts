@@ -52,6 +52,25 @@ test('a collapsed column header does not make the header row taller', async ({ p
 	expect(Math.abs((await now.boundingBox())!.height - expandedHeight)).toBeLessThanOrEqual(1);
 });
 
+test('a collapsed column still shows its whole name and its count', async ({ page }) => {
+	await page.setViewportSize({ width: 1440, height: 900 });
+	await openBoard(page);
+	await page.locator('[data-column="foryou"] .plan-column__toggle').click();
+	await expect(page.locator('[data-column="foryou"]')).toHaveAttribute('data-collapsed', '');
+
+	// The point at the end of the count, and at the end of the name, is painted by that element, not clipped away.
+	for (const part of ['.plan-column__name', '.plan-column__count']) {
+		const shown = await page.locator(`[data-column="foryou"] ${part}`).evaluate((element) => {
+			const box = element.getBoundingClientRect();
+			const hit = document.elementFromPoint(box.left + box.width / 2, box.bottom - 2);
+
+			return hit !== null && element.contains(hit);
+		});
+
+		expect(shown, part).toBe(true);
+	}
+});
+
 test('grouped lanes have h3 headings', async ({ page }) => {
 	await openBoard(page);
 	await page.selectOption('#board-group', 'owner');
@@ -200,7 +219,9 @@ test('a localStorage that throws leaves the Board usable', async ({ page }) => {
 		Object.defineProperty(window, 'localStorage', {
 			configurable: true,
 			get() {
-				throw new DOMException('blocked', 'SecurityError');
+				// A plain Error records its calling frames (a DOMException thrown by a getter carries no stack),
+				// so an unguarded read in package code names that code's chunk in the stack.
+				throw Object.assign(new Error('blocked'), { name: 'SecurityError' });
 			},
 		}),
 	);
@@ -219,12 +240,36 @@ test('a localStorage that throws leaves the Board usable', async ({ page }) => {
 	// this broken localStorage makes them throw too, on every page load. Those vendor errors
 	// never name package code, so they are ignored instead of counted (a Starlight upgrade can
 	// change how often they throw). An error from the Board island or PlanInteractions.astro,
-	// whose own guards catch every localStorage access, names its chunk or script and fails here.
-	const ours = errors.filter((error) => /_astro\/Board|PlanInteractions|scripts\/plan/i.test(error.stack ?? ''));
+	// whose own guards catch every localStorage access, names its chunk and fails here; the inline
+	// part of PlanInteractions.astro is checked by its effect, in the next test.
+	const ours = errors.filter((error) => /_astro\/(Board|PlanInteractions)/i.test(error.stack ?? ''));
 
 	expect(ours).toEqual([]);
 });
 
+test('with a localStorage that throws, the pre-paint script still marks a filtered link pending', async ({ page }) => {
+	await page.addInitScript(() => {
+		Object.defineProperty(window, 'localStorage', {
+			configurable: true,
+			get() {
+				throw Object.assign(new Error('blocked'), { name: 'SecurityError' });
+			},
+		});
+		// Record whether the inline script reached its pending mark, which runs after its storage read.
+		const seen = { pending: false };
+
+		(window as unknown as { seen: typeof seen }).seen = seen;
+		// The init script can run before <html> exists, so observe the document and its subtree.
+		new MutationObserver(() => {
+			if (document.documentElement?.hasAttribute('data-board-pending')) seen.pending = true;
+		}).observe(document, { attributes: true, subtree: true, attributeFilter: ['data-board-pending'] });
+	});
+	await page.goto('/plan/board/?owner=agent');
+	await hydrated(page);
+
+	expect(await page.evaluate(() => (window as unknown as { seen: { pending: boolean } }).seen.pending)).toBe(true);
+	await expect(page.locator('html')).not.toHaveAttribute('data-board-pending');
+});
 /** The lanes' keys and their header counts, in page order. */
 async function laneSummary(page: Page): Promise<{ keys: string[]; counts: string[] }> {
 	const lanes = page.locator('[data-lane]');
