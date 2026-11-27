@@ -14,10 +14,19 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 
 <!-- Ordered. Maximum is set in config.md. -->
 
+### R-016 Rehearse the lifecycle guards
+
+- Serves: V2, V3
+- Milestone: M3
+- Owner: both
+- Done when: a report in `planning/research/` shows `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea instead of running during an active workflow.
+- Size: M
+- Depends on: none
+- Status: ready
+
 ### R-059 pm-setup runs read-only checks on a current install
 
 - Serves: V1
-- Milestone: M2
 - Owner: agent
 - Done when: on an install whose `Rules version` equals the skills version, `pm-setup` prints the read-only Step 5 checks, including the Note about an ADR folder outside the PM root, before it stops; each skill-count message from `just validate` names the installed count or the total; `just validate` and `just test` pass.
 - Size: S
@@ -56,16 +65,6 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Status: ready
 - Note: From the 2026-11-25 review (inbox 2026-11-22-1933, R-044 execute). Deferred minors from the R-044 final review. (1) `release` reports a pure fast-forward of the PM branch as "Moved 0 PM commits". (2) The carry commit does not consult `PM state commit: ask | never`, and a carry onto a PM branch that is not checked out leaves `planning.json` stale (reported in its line). (3) No test for a detached HEAD or `core.autocrlf=true`. (4) Remote names containing `/` are split wrongly in `options()`, and a PM branch that exists only on the remote makes `rev-list` throw (fails safe). (5) Existing behaviour, not R-044: PM commits made on a pending pull request's branch after its last push are never delivered if the pull request merges without another push.
 
-### R-030 Pre-push runs fast checks only
-
-- Serves: V4
-- Owner: agent
-- Done when: the lefthook pre-push hook no longer runs `package-test`, finishes offline in under 15 seconds, and CI still runs `just package-test` on every pull request.
-- Size: S
-- Depends on: none
-- Status: ready
-- Note: From the 2026-11-20 review (question, decided: CI-only package-test). R-008 added `package-test` to `just lint-check`, which the lefthook pre-push hook runs. It adds two Astro builds, a pack, and a networked `bun install` to every push: about 40 to 60 seconds, and a push fails offline. Files: `justfile`, `.config/lefthook.yml`.
-
 ## Later
 
 <!-- Grouped by milestone where one is set. Same item format. -->
@@ -82,15 +81,15 @@ pm-item, pm-board, or pm-roadmap (rules: Roadmap order and edits).
 - Brief: planning/briefs/2026-11-17-docs-site-package.md
 - Note: From the 2026-11-25 review (inbox 2026-11-23-1525, user, R-013 design). Not stable until it contains everything, with complete instructions (user, 2026-11-23). Release `@purview-dev/pm-docs-site` 1.0.0 once R-013, R-045 Docs-site package: architecture view, and the brief and inbox pages, and research items are done (S, both). This replaces the brief's 2026-11-18 answer that R-013 releases 1.0.0; R-013 publishes 0.1.0-pre.4 instead. The research reports item is being shaped (inbox 2026-11-23-1525-docs-site-package-research.md); add its ID to `Depends on` when pm-shape creates it.
 
-### R-016 Rehearse the lifecycle guards
+### R-030 Pre-push runs fast checks only
 
-- Serves: V2, V3
-- Milestone: M3
-- Owner: both
-- Done when: a report in `planning/research/` shows `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea instead of running during an active workflow.
-- Size: M
+- Serves: V4
+- Owner: agent
+- Done when: the lefthook pre-push hook no longer runs `package-test`, finishes offline in under 15 seconds, and CI still runs `just package-test` on every pull request.
+- Size: S
 - Depends on: none
 - Status: ready
+- Note: From the 2026-11-20 review (question, decided: CI-only package-test). R-008 added `package-test` to `just lint-check`, which the lefthook pre-push hook runs. It adds two Astro builds, a pack, and a networked `bun install` to every push: about 40 to 60 seconds, and a push fails offline. Files: `justfile`, `.config/lefthook.yml`.
 
 ### R-024 Self-contained aspire module test example
 

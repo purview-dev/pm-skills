@@ -10,8 +10,8 @@ made along the way.
 
 ## Current focus
 
-- Milestone: M2 Verified install and upgrade
-- Why now: M4 is done (2026-11-26), and the user chose M2 over M5 on 2026-11-26; a consumer's fresh install (V1) has never been rehearsed end to end, which is the riskiest open assumption. Its 3 items (R-006, R-015, R-057) are S, so the forecast is about 0.4 weeks at 8.5 items per week.
+- Milestone: M3 Verified lifecycle guards
+- Why now: M2 is done (2026-11-26), and the user chose M3 over M5 on 2026-11-27; V2 and V3 have never been rehearsed end to end, which is the riskiest open assumption, and the open major bug Bare IDs in questions and feedback shows guidance output still failing in use. Its one item (R-016, M, both) gives a forecast of about 0.1 weeks at 10 items per week (40 done in the last 4 weeks / 4).
 
 ## Milestones
 
@@ -40,6 +40,13 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 - Target: none
 - Status: done (2026-11-26)
 
+### M3 Verified lifecycle guards
+
+- Serves: V2, V3
+- Exit criteria: a rehearsal report in `planning/research/` shows `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea instead of running during an active workflow.
+- Target: none
+- Status: active
+
 ### M5 Docs-site package 1.0.0
 
 - Serves: V4
@@ -53,13 +60,6 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 - Exit criteria: `just validate` fails when `pm-setup`'s skill count differs from the shipped skills, and `pm-setup` run in a repository with `docs/adr/` and no `<PM root>/config.md` prints the Note that suggests `pm-adr import docs/adr/`.
 - Target: none
 - Status: done (2026-11-26)
-
-### M3 Verified lifecycle guards
-
-- Serves: V2, V3
-- Exit criteria: a rehearsal report in `planning/research/` shows `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea instead of running during an active workflow.
-- Target: none
-- Status: planned
 
 ## Bets
 
@@ -77,6 +77,10 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
   Evidence: `planning/briefs/2026-11-22-where-do-adrs-fit.md` and `planning/briefs/2026-11-20-technology-and-engineering-principles.md` record agents contradicting earlier decisions because nothing records or points at them.
   We will know when: the M4 rehearsal report in `planning/research/` shows the design handoff naming the ADRs and principles that apply and `pm-checkpoint` (`done`) refusing a failing command check.
   Status: won (2026-11-26)
+- B3: We believe rehearsing the lifecycle guards in a fresh session will show whether `pm-resume` and the Non-interruption rules hold, or exactly where they break, for solo developers who build with AI coding agents.
+  Evidence: no report in `planning/research/` covers V2 or V3; the inbox bug Bare IDs in questions and feedback (major, 2026-11-24) shows guidance output failing in use.
+  We will know when: R-016 Rehearse the lifecycle guards writes its report in `planning/research/`, showing `pm-resume` naming the active item, stage, and next action after `/clear`, and `pm-shape` parking an idea during an active workflow, or naming each step that failed.
+  Status: open
 
 ## Assumptions and risks
 
@@ -92,6 +96,8 @@ Ordered. Each milestone is a checkable outcome that serves V lines.
 - A3: Integration options and Starlight component overrides cover the customisation this repository's `docs-site/` needs. Test: R-013 Docs-site package: publish and migrate moves `docs-site/` onto the package with no copied files.
   Status: holds (2026-11-25)
 - A5: A design stage that is handed the applicable ADRs and principles follows them. Test: the next item whose spec names ADRs has its plan written by a separate session from the handoff, and that plan cites them (the R-036 rehearsal plan cited every ID, but one agent wrote both the handoff and the plan).
+  Status: untested
+- A6: A rehearsal in this repository, with the skills loaded from `skills/` through `just setup-skills`, shows how a consumer's agent follows the guards. Test: R-016 Rehearse the lifecycle guards; it is broken if a consumer later reports a guard failure that the rehearsal passed.
   Status: untested
 
 ## Not doing
@@ -113,6 +119,11 @@ Newest first. Nothing in this file changes without a line here.
 - <YYYY-MM-DD> <decision>. Why: <reason>. Rejected: <alternatives>.
 -->
 
+- 2026-11-27 Re-planned roadmap. Why: the focus moved to M3, so R-016 Rehearse the lifecycle guards leads Next; Next was full, so R-030 Pre-push runs fast checks only moved to the top of Unassigned in Later; Later is grouped M5, then Unassigned. Rejected: leaving R-016 in Later.
+- 2026-11-27 Current focus M3 Verified lifecycle guards, with bet B3 and assumption A6. Why: M2 is done, and M3 tests the riskiest open assumption (V2 and V3 unrehearsed). Rejected: focus on M5 Docs-site package 1.0.0.
+- 2026-11-27 Not doing unchanged. Why: the user chose none of Board island props slimming, Portable vision export, or Deploy the demo site for it; they stay in the inbox to shape. Rejected: deferring each until after M5.
+- 2026-11-27 Milestone order for open work: M3 Verified lifecycle guards, then M5 Docs-site package 1.0.0; M3 active. Why: M2 is done, and M3 tests the riskiest open assumption (V2 and V3 have never been rehearsed end to end; the open major bug Bare IDs in questions and feedback shows guidance output still failing). Rejected: M5 first.
+- 2026-11-27 R-059 pm-setup runs read-only checks on a current install has no milestone. Why: M2 Verified install and upgrade is done and its exit criteria are met; R-059 is a V1 fix outside them. Rejected: reopening M2.
 - 2026-11-26 M2 Verified install and upgrade complete. Why: on R-006's branch `just validate` fails with `pm-setup/SKILL.md:146: skill count 25, expected 26` on a wrong count and when either count line is reworded (`scripts/skill-counts.ts`), and R-057 makes `pm-setup` print the `pm-adr import docs/adr/` Note before `pm-init`, checked by `scripts/validate.ts`. Rejected: none.
 - 2026-11-26 Focus stays M2 Verified install and upgrade (R-057, R-006); R-042 Docs-site package: deferred review minors moves to Next 5. Why: M2 is 2 S items, about 0.25 weeks; Next had a free slot. Rejected: focus on M5; leaving Next at 4.
 - 2026-11-26 Bet B3 and assumption A6 removed. Why: R-015 Rehearse a fresh install in a scratch repository, their only test, was dropped. Rejected: keeping both untested; keeping A6 only.
