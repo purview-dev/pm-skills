@@ -1,6 +1,6 @@
 # R-056 Package tests stable under load Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** `package-test` passes under two consecutive `just lint-check` runs on Windows.
 
@@ -41,7 +41,7 @@
 
 - Produces: `export const BUILD = 180_000`, `export const CHECK = 60_000` (with the existing comment on `CHECK` moved beside it), `export function childTimeout(args: string[]): number`, and `runCli(args: string[], cwd?: string, options?: { timeout?: number }): { code: number; stdout: string; stderr: string; timedOut: boolean }` in `test/helpers.ts`.
 
-- [ ] **Step 1: Write the failing tests** in `test/helpers.test.ts`:
+- [x] **Step 1: Write the failing tests** in `test/helpers.test.ts`:
 
 ```ts
 describe('runCli', () => {
@@ -72,19 +72,19 @@ describe('runCli', () => {
 
 Add an `afterAll` that removes `test/fixtures/site/dist` and `.astro`, as `cli.test.ts` does.
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run (in `packages/pm-docs-site`): `bun test test/helpers.test.ts`
 Expected: FAIL, `childTimeout` is not exported.
 
-- [ ] **Step 3: Implement** in `test/helpers.ts`: `childTimeout` returns `BUILD - 10_000` when `args[0] === 'build'`, else `CHECK - 10_000`. `runCli` passes `timeout: options?.timeout ?? childTimeout(args)` and `killSignal: 'SIGKILL'` to `Bun.spawnSync`, sets `timedOut` from the result's `exitedDueToTimeout === true`, maps a `null` exit code to `-1`, and on a timeout prefixes stderr with `runCli: timed out after <ms>ms: node lib/cli.ts <args joined by spaces>\n`. Move `BUILD` and `CHECK` here and import them in the three test files.
+- [x] **Step 3: Implement** in `test/helpers.ts`: `childTimeout` returns `BUILD - 10_000` when `args[0] === 'build'`, else `CHECK - 10_000`. `runCli` passes `timeout: options?.timeout ?? childTimeout(args)` and `killSignal: 'SIGKILL'` to `Bun.spawnSync`, sets `timedOut` from the result's `exitedDueToTimeout === true`, maps a `null` exit code to `-1`, and on a timeout prefixes stderr with `runCli: timed out after <ms>ms: node lib/cli.ts <args joined by spaces>\n`. Move `BUILD` and `CHECK` here and import them in the three test files.
 
-- [ ] **Step 4: Run to verify they pass**
+- [x] **Step 4: Run to verify they pass**
 
 Run: `bun test test/helpers.test.ts test/cli.test.ts`
 Expected: PASS, 0 fail.
 
-- [ ] **Step 5: Type-check and commit**
+- [x] **Step 5: Type-check and commit**
 
 Run: `bun run check` — expected 0 errors.
 
@@ -105,7 +105,7 @@ git commit -m "test(pm-docs-site): runCli kills a hung child and reports it (R-0
 
 - Produces: `export const HYDRATED = 30_000;` in `test/browser/hydration.ts`, with a one-line comment: hydration under a parallel full run can pass Playwright's 5000ms default (R-056).
 
-- [ ] **Step 1: Write the failing guard test** in `test/hydration.test.ts`:
+- [x] **Step 1: Write the failing guard test** in `test/hydration.test.ts`:
 
 ```ts
 it('every hydrated() helper in a browser spec waits HYDRATED, not the default', () => {
@@ -123,19 +123,19 @@ it('every hydrated() helper in a browser spec waits HYDRATED, not the default', 
 
 `BROWSER` is `join(PACKAGE, 'test', 'browser')`.
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `bun test test/hydration.test.ts`
 Expected: FAIL on `board.browser.ts` lacking `{ timeout: HYDRATED }`.
 
-- [ ] **Step 3: Implement** `hydration.ts`, and in each `hydrated()` call `toBeVisible({ timeout: HYDRATED })`, importing `HYDRATED` from `./hydration.ts`.
+- [x] **Step 3: Implement** `hydration.ts`, and in each `hydrated()` call `toBeVisible({ timeout: HYDRATED })`, importing `HYDRATED` from `./hydration.ts`.
 
-- [ ] **Step 4: Run to verify**
+- [x] **Step 4: Run to verify**
 
 Run: `bun test test/hydration.test.ts` — expected PASS.
 Run: `bun run test:browser -- --project=chromium test/browser/graph.browser.ts` — expected all pass, including "usable at 320px".
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add packages/pm-docs-site/test/browser/hydration.ts packages/pm-docs-site/test/browser/graph.browser.ts packages/pm-docs-site/test/browser/board.browser.ts packages/pm-docs-site/test/browser/timeline.browser.ts packages/pm-docs-site/test/hydration.test.ts
@@ -149,22 +149,26 @@ git commit -m "test(pm-docs-site): one hydration timeout for the browser tests (
 - Record: this plan's Run log below.
 - Modify: decided by the finding, inside `packages/pm-docs-site/test/` only.
 
-- [ ] **Step 1: Run the full check, output to a file**
+- [x] **Step 1: Run the full check, output to a file**
 
 Run (repository root, PowerShell): `just lint-check *> "$env:TEMP\r056-run1.log"; $LASTEXITCODE`
 Expected: exit 0, or a failure whose output names the test. Repeat once more as run 2.
 
-- [ ] **Step 2: Record each run** in the Run log: exit code, failing test name, and for a `runCli: timed out` line the 20 stderr lines after it. Note any `EBUSY`/`EPERM` from `afterAll` (Review Focus 5).
+- [x] **Step 2: Record each run** in the Run log: exit code, failing test name, and for a `runCli: timed out` line the 20 stderr lines after it. Note any `EBUSY`/`EPERM` from `afterAll` (Review Focus 5).
 
-- [ ] **Step 3: Fix the cause** the output shows, with a test that fails before the fix. If the cause is in `lib/` or `src/`, stop: write `SCOPE CHANGE: <cause, file>` in the Run log and report to the user before any change. If both runs passed and no `timed out` line appeared, write `No hang reproduced in 2 runs; Task 1 reports it if it recurs.` and skip to Task 4.
+- [x] **Step 3: Fix the cause** the output shows, with a test that fails before the fix. If the cause is in `lib/` or `src/`, stop: write `SCOPE CHANGE: <cause, file>` in the Run log and report to the user before any change. If both runs passed and no `timed out` line appeared, write `No hang reproduced in 2 runs; Task 1 reports it if it recurs.` and skip to Task 4.
 
-- [ ] **Step 4: Commit** the fix with `fix(pm-docs-site): <cause> (R-056)`.
+- [x] **Step 4: Commit** the fix with `fix(pm-docs-site): <cause> (R-056)`.
 
 ### Task 4: Done when
 
-- [ ] **Step 1:** Run `just lint-check` twice in a row on Windows. Expected: both exit 0, and both logs show `still reads a site whose config is astro.config.mjs` and `usable at 320px` passing. Record both in the Run log.
-- [ ] **Step 2:** Commit the Run log update: `git add docs/superpowers/plans/2026-11-26-package-tests-stable-under-load.md` and `git commit -m "docs(plan): R-056 run log"`.
+- [x] **Step 1:** Run `just lint-check` twice in a row on Windows. Expected: both exit 0, and both logs show `still reads a site whose config is astro.config.mjs` and `usable at 320px` passing. Record both in the Run log.
+- [x] **Step 2:** Commit the Run log update: `git add docs/superpowers/plans/2026-11-26-package-tests-stable-under-load.md` and `git commit -m "docs(plan): R-056 run log"`.
 
 ## Run log
 
-- (filled in by Tasks 3 and 4)
+- Run 1 (2026-11-26): exit 1 in `just test`, before `package-test`: `skills/pm-lint/scripts/lint.test.ts` "--staged lints the staged content, not the working tree" timed out after 5000ms. Out of scope: R-054 Git subprocess tests stable under load.
+- Run 2: exit 0. `just test` 241 pass; `package-test` 438 pass, 0 fail; browser 82 passed; dev 4 passed. No `runCli: timed out` line, no `EBUSY`/`EPERM`.
+- Run 3: exit 1 in `pm-lint` on an inbox capture written during this run (a bug without `Severity`); the capture was fixed. Not a test fault.
+- Runs 4 and 5 (Task 4, consecutive, 2026-11-27): both exit 0. `package-test` 438 pass, 0 fail, 0 skip (includes `test/cli.test.ts` "still reads a site whose config is astro.config.mjs"); browser 82 passed, including `graph.browser.ts:298` "usable at 320px" (1.7s, 2.2s); dev 4 passed.
+- No hang reproduced in 2 runs; Task 1 reports it if it recurs. Task 3 Step 4 had no fix to commit.
