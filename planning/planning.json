@@ -1,7 +1,7 @@
 {
   "$schema": "./planning.schema.json",
   "schemaVersion": 6,
-  "generatedAt": "2026-11-27T16:03:52+00:00",
+  "generatedAt": "2026-11-27T16:22:48+00:00",
   "generator": {
     "skill": "pm-export",
     "skillsVersion": 21,
@@ -14,7 +14,7 @@
   },
   "source": {
     "branch": "feat/r-016-rehearse-the-lifecycle-guards",
-    "head": "29004e1221b9a66783f7830009dd96e60ff44cbc"
+    "head": "fb7dba651a816fb1c1de8d1f2ed19379668621ae"
   },
   "vision": {
     "problem": "A solo developer using AI coding agents loses track of what to build next, why, and where work stopped, because agents forget between sessions and act on every idea at once.",
@@ -673,6 +673,30 @@
         "note": "From the 2026-11-25 review (inbox 2026-11-22-1933, R-044 execute). Deferred minors from the R-044 final review. (1) `release` reports a pure fast-forward of the PM branch as \"Moved 0 PM commits\". (2) The carry commit does not consult `PM state commit: ask | never`, and a carry onto a PM branch that is not checked out leaves `planning.json` stale (reported in its line). (3) No test for a detached HEAD or `core.autocrlf=true`. (4) Remote names containing `/` are split wrongly in `options()`, and a PM branch that exists only on the remote makes `rev-list` throw (fails safe). (5) Existing behaviour, not R-044: PM commits made on a pending pull request's branch after its last push are never delivered if the pull request merges without another push.",
         "revisits": null,
         "claimable": true
+      },
+      {
+        "id": "R-030",
+        "title": "Pre-push runs fast checks only",
+        "section": "next",
+        "position": 5,
+        "label": "next",
+        "serves": [
+          "V4"
+        ],
+        "milestone": null,
+        "owner": "agent",
+        "doneWhen": "the lefthook pre-push hook no longer runs `package-test`, finishes offline in under 15 seconds, and CI still runs `just package-test` on every pull request.",
+        "size": "S",
+        "dependsOn": [],
+        "status": {
+          "value": "ready",
+          "reason": null,
+          "since": null
+        },
+        "brief": null,
+        "note": "From the 2026-11-20 review (question, decided: CI-only package-test). R-008 added `package-test` to `just lint-check`, which the lefthook pre-push hook runs. It adds two Astro builds, a pack, and a networked `bun install` to every push: about 40 to 60 seconds, and a push fails offline. Files: `justfile`, `.config/lefthook.yml`.",
+        "revisits": null,
+        "claimable": true
       }
     ],
     "later": [
@@ -703,34 +727,10 @@
         "claimable": false
       },
       {
-        "id": "R-030",
-        "title": "Pre-push runs fast checks only",
-        "section": "later",
-        "position": 2,
-        "label": "later",
-        "serves": [
-          "V4"
-        ],
-        "milestone": null,
-        "owner": "agent",
-        "doneWhen": "the lefthook pre-push hook no longer runs `package-test`, finishes offline in under 15 seconds, and CI still runs `just package-test` on every pull request.",
-        "size": "S",
-        "dependsOn": [],
-        "status": {
-          "value": "ready",
-          "reason": null,
-          "since": null
-        },
-        "brief": null,
-        "note": "From the 2026-11-20 review (question, decided: CI-only package-test). R-008 added `package-test` to `just lint-check`, which the lefthook pre-push hook runs. It adds two Astro builds, a pack, and a networked `bun install` to every push: about 40 to 60 seconds, and a push fails offline. Files: `justfile`, `.config/lefthook.yml`.",
-        "revisits": null,
-        "claimable": false
-      },
-      {
         "id": "R-024",
         "title": "Self-contained aspire module test example",
         "section": "later",
-        "position": 3,
+        "position": 2,
         "label": "later",
         "serves": [
           "V4"
@@ -754,7 +754,7 @@
         "id": "R-032",
         "title": "pm-checkpoint and pm-lint Note follow-ups",
         "section": "later",
-        "position": 4,
+        "position": 3,
         "label": "later",
         "serves": [
           "V2"
@@ -778,7 +778,7 @@
         "id": "R-046",
         "title": "Upgrade, format, and git rules move to references",
         "section": "later",
-        "position": 5,
+        "position": 4,
         "label": "later",
         "serves": [
           "V2"
@@ -804,7 +804,7 @@
         "id": "R-047",
         "title": "Core rules file and a 15 KB managed section",
         "section": "later",
-        "position": 6,
+        "position": 5,
         "label": "waiting",
         "serves": [
           "V2"
@@ -830,7 +830,7 @@
         "id": "R-048",
         "title": "Repository AGENTS.md top part into dedicated files",
         "section": "later",
-        "position": 7,
+        "position": 6,
         "label": "later",
         "serves": [
           "V2"
@@ -854,7 +854,7 @@
         "id": "R-049",
         "title": "Trim the largest SKILL.md files",
         "section": "later",
-        "position": 8,
+        "position": 7,
         "label": "waiting",
         "serves": [
           "V2"
@@ -914,6 +914,13 @@
         {
           "id": "R-051",
           "title": "PM sync review minors",
+          "owner": "agent",
+          "size": "S",
+          "detail": "ready"
+        },
+        {
+          "id": "R-030",
+          "title": "Pre-push runs fast checks only",
           "owner": "agent",
           "size": "S",
           "detail": "ready"
@@ -1311,6 +1318,15 @@
         "milestone": null,
         "owner": null,
         "result": "Reason: fixed already; on 2026-11-27 `just lint-check` printed `Linting: 232 files` and reported real issues"
+      },
+      {
+        "date": "2026-11-27",
+        "kind": "review",
+        "id": null,
+        "title": null,
+        "milestone": null,
+        "owner": null,
+        "result": "Inbox 7 to 5. Removed 2 R-016 rehearsal probe files; 5 stay to shape; R-030 Pre-push runs fast checks only promoted to Next 5; M3's only item is R-016, active."
       },
       {
         "date": "2026-11-27",
@@ -2249,6 +2265,10 @@
     "reviews": [
       {
         "date": "2026-11-27",
+        "summary": "Inbox 7 to 5. Removed 2 R-016 rehearsal probe files; 5 stay to shape; R-030 Pre-push runs fast checks only promoted to Next 5; M3's only item is R-016, active."
+      },
+      {
+        "date": "2026-11-27",
         "summary": "Inbox 12 to 5. Added R-059 and R-060; 4 files merged into R-032, R-059, and R-060, 1 dropped (lint-check markdownlint, already fixed), 5 to shape; Next filled from Later with R-054, R-051, R-030; M2's items are done or dropped, so pm-strategy sets the next focus."
       },
       {
@@ -2392,48 +2412,6 @@
         {
           "heading": "Idea",
           "markdown": "R-042 finding 6, moved out of R-042 at the user's choice (option B, 2026-11-27): the Board island receives the full `BoardCard[]` (with `titleRuns` and `detail` LinkRun arrays) as props beside the rendered HTML. Measured: demo Board page 60.2 KB, island props 9.0 KB (about 15% of the page), island HTML 12.4 KB. Send the island only card IDs and filter fields and reuse the server-rendered card DOM. Touches `src/pages/plan/board.astro` (line 36), `src/components/board/Board.tsx`, the card components, and their tests; likely size M or L, its own item."
-        }
-      ]
-    },
-    {
-      "file": "planning/inbox/2026-11-27-1553-pies-and-green-branding.md",
-      "title": "Pies and green branding",
-      "captured": "2026-11-27 15:53",
-      "source": "user",
-      "kind": "improvement",
-      "severity": null,
-      "affects": null,
-      "context": "R-016 execute",
-      "discuss": "no",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "i want to change the branding to use pies and the colour green",
-      "sections": [
-        {
-          "heading": "Idea",
-          "markdown": "i want to change the branding to use pies and the colour green"
-        }
-      ]
-    },
-    {
-      "file": "planning/inbox/2026-11-27-1602-more-pies.md",
-      "title": "More pies",
-      "captured": "2026-11-27 16:02",
-      "source": "user",
-      "kind": "feature",
-      "severity": null,
-      "affects": null,
-      "context": "R-016 execute",
-      "discuss": "yes",
-      "related": [],
-      "brief": null,
-      "reviewed": "never",
-      "idea": "more pies",
-      "sections": [
-        {
-          "heading": "Idea",
-          "markdown": "more pies"
         }
       ]
     }
@@ -3162,11 +3140,11 @@
     }
   ],
   "counts": {
-    "next": 4,
-    "later": 8,
+    "next": 5,
+    "later": 7,
     "nextMax": 5,
-    "openInbox": 7,
-    "discuss": 6,
+    "openInbox": 5,
+    "discuss": 5,
     "shapingBriefs": 0,
     "done": 40,
     "dropped": 12,
@@ -3183,7 +3161,8 @@
       "R-059",
       "R-060",
       "R-054",
-      "R-051"
+      "R-051",
+      "R-030"
     ],
     "drift": false
   }

@@ -68,6 +68,7 @@
 
 ## Reviews
 
+- 2026-11-27 Inbox 7 to 5. Removed 2 R-016 rehearsal probe files; 5 stay to shape; R-030 Pre-push runs fast checks only promoted to Next 5; M3's only item is R-016, active.
 - 2026-11-27 Inbox 12 to 5. Added R-059 and R-060; 4 files merged into R-032, R-059, and R-060, 1 dropped (lint-check markdownlint, already fixed), 5 to shape; Next filled from Later with R-054, R-051, R-030; M2's items are done or dropped, so pm-strategy sets the next focus.
 - 2026-11-26 Inbox 7 to 4. Added R-057; 1 file merged into R-032, 1 dropped (GitHub issue and Project sync), 3 to shape, 1 kept parked; ADR docs-site findings stay in R-042; Next order kept; M4 is done, so pm-strategy sets the next focus.
 - 2026-11-25 Inbox 16 to 4. Added R-050 to R-055; 5 files merged into R-037 and R-042, 2 dropped, 3 to shape, 1 kept parked; current focus M1 is done, so pm-strategy sets the next; Next filled from Later with R-037, R-055, R-035, R-036.
