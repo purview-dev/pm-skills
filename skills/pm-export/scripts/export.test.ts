@@ -119,7 +119,7 @@ describe("build", () => {
     expect(adr.decision).toBe("Yes.");
   });
 
-it("stripCommentsOutsideCode: inline code and fences keep comments", () => {
+  it("stripCommentsOutsideCode: inline code and fences keep comments", () => {
     expect(stripCommentsOutsideCode("a `<!-- x -->` b <!-- y --> c")).toBe("a `<!-- x -->` b  c");
   });
 

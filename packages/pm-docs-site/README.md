@@ -31,7 +31,7 @@ so a package linked from another drive fails the build.
     "build": "pm-docs-site build",
     "check": "pm-docs-site check"
   },
-  "dependencies": { "@purview-dev/pm-docs-site": "0.1.0-pre.7" }
+  "dependencies": { "@purview-dev/pm-docs-site": "0.1.0-pre.8" }
 }
 ```
 
