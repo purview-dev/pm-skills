@@ -33,6 +33,7 @@
 ### Task 1: Report skeleton and preconditions (agent)
 
 **Files:**
+
 - Create: `planning/research/2026-11-27-m3-rehearsal.md`
 - Modify: `planning/NOW.md` (by `pm-checkpoint stage`, before this task starts)
 
